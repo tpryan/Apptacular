@@ -1,0 +1,21 @@
+th {
+	text-align: left;
+	padding-right: 10px;
+}
+td{
+	padding-right: 10px;
+	border-bottom: 1px dotted #999;	
+}	
+body{
+	font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 90%;
+}
+.alert{
+	font-weight: bold;
+	color: red;
+	border: 1px dotted red;
+	background-color: #FFDFDF;
+	padding: 1px;
+	}
+	
+form td{ border: 0;}	

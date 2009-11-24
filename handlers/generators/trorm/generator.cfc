@@ -1,8 +1,44 @@
 component{
 
 	public generator function init(){
-		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");	
+		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
+		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");		
 		return This;
+	}
+	
+	public void function generate(required any datasource, required any config){
+		var i =0;
+		
+		if (config.getCreateAppCFC()){
+			createAppCFC(datasource, config.getRootFilePath()).write(config.getCFCFormat());
+		}
+		
+		if (config.getCreateViews()){
+			createIndex(datasource, config.getRootFilePath()).write();
+			writeCSS(config.getCSSFilePath());
+			createPageWrapper(datasource, config.getCustomTagFilePath(), config.getCSSRelativePath()).write();
+		}
+		
+		var tables = arguments.datasource.getTables();
+		
+		for (i=1; i <= ArrayLen(tables); i++){
+			
+			if (config.getCreateEntities()){
+				createORMCFC(tables[i], config.getEntityFilePath()).write(config.getCFCFormat());
+			}
+			if (config.getCreateViews()){
+				createViewListCustomTag(tables[i], config.getCustomTagFilePath()).write();
+				createViewReadCustomTag(tables[i], config.getCustomTagFilePath()).write();
+				createViewEditCustomTag(tables[i], config.getCustomTagFilePath()).write();
+				createView(tables[i], config.getRootFilePath(), config.getEntityCFCPath()).write();
+			}
+			if (config.getCreateServices()){
+				createORMServiceCFC(tables[i], config.getServiceFilePath(), config.getEntityCFCPath(), config.getServiceAccess()).write(config.getCFCFormat());
+			}
+		}
+		
+		
+	
 	}
 	
 	public any function createORMCFC(required any table, required string path){
@@ -177,7 +213,8 @@ component{
 	public any function createViewReadCustomTag(required any table, required string path){
 	    var i = 0;
 		var fileLocation = path;
-		var fileName = table.getEntityName() & "Read"; 
+		var fileName = table.getEntityName() & "Read";
+		var identity = table.getIdentity(); 
 		
 	    var ct  = New apptacular.handlers.cfc.code.customTag(fileName, fileLocation);
 		var EntityName = table.getEntityName();
@@ -185,9 +222,11 @@ component{
 
 		ct.addAttribute(EntityName, 'any', true);
 		ct.AppendBody('<cfset #EntityName# = attributes.#EntityName# /> ');
+		ct.AppendBody('<cfoutput>');
+		ct.AppendBody('<p><a href="?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a></p>');
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<tbody>');
-		ct.AppendBody('	<cfoutput>');
+		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
@@ -199,9 +238,10 @@ component{
 			}
 		}
 		
-		ct.AppendBody('	</cfoutput>');
+		
 		ct.AppendBody('	</tbody>');
 		ct.AppendBody('</table>');
+		ct.AppendBody('</cfoutput>');
 	    
 	    return ct;
 	}
@@ -226,8 +266,10 @@ component{
 		ct.AppendBody('<cfelse>');
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
+		ct.AppendBody('<cfoutput>');
+		ct.AppendBody('<p><a href="?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a></p>');
 		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html">');
-		ct.AppendBody('	<cfoutput>');
+		
 		ct.AppendBody('	<table>');
 		ct.AppendBody('	<tbody>');
 		
@@ -267,17 +309,18 @@ component{
 		ct.AppendBody('			<td><input name="save" type="submit" value="Save" /></td>');
 		ct.AppendBody('		</tr>');
 		
-		ct.AppendBody('	</cfoutput>');
+		
 		ct.AppendBody('	</tbody>');
 		ct.AppendBody('	</table>');
 		ct.AppendBody('</cfform>');
+		ct.AppendBody('</cfoutput>');
 	    
 	    return ct;
 	}
 	
-	public any function createView(required any table, required string path){
+	public any function createView(required any table, required string path, required string entityCFCPath){
 	    
-	    
+	    var i=0;
 	    var view  = New apptacular.handlers.cfc.code.CFPage(table.getEntityName(), arguments.path);
 		
 		var entityName = table.getEntityName();
@@ -289,7 +332,8 @@ component{
 	    view.AppendBody('<cfparam name="url.method" type="string" default="list" />');
 	    view.AppendBody('<cfparam name="url.#identity#" type="numeric" default="0" />');
 	    view.AppendBody('<cfparam name="url.message" type="string" default="" />');
-	    view.AppendBody('<cfimport path="cfc.*" />');
+	    view.AppendBody('<cfimport path="#arguments.entityCFCPath#.*" />');
+		view.AppendBody('<cf_pageWrapper>');
 		view.AppendBody();
 	   	view.AppendBody('<h2>#displayName#</h2>');
 		view.AppendBody('<cfoutput><p><a href="index.cfm">Main</a> / <a href="##cgi.script_name##">#displayName# List</a></cfoutput>');
@@ -345,17 +389,18 @@ component{
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();   
 	    view.AppendBody('</cfswitch>');
+		view.AppendBody('</cf_pageWrapper>');
 		view.AppendBody();
 	    return view;
 	}
 	
 	public any function createIndex(required any datasource, required string path){
-		
+		var i=0;
 		var tables = datasource.getTables();
 	    
 	    var index  =  New apptacular.handlers.cfc.code.CFPage("index", path);  
 	    index.AppendBody('<cfsetting showdebugoutput="false" />');
-	    index.AppendBody('<h1>#datasource.getDisplayName()#</h1>');
+		index.AppendBody('<cf_pageWrapper>');
 	    index.AppendBody('<ul>');
 	    
 	   	for (i= 1; i <= ArrayLen(tables); i++){
@@ -365,13 +410,44 @@ component{
 	    
 	    
 	    index.AppendBody('</ul>');
+		index.AppendBody('</cf_pageWrapper>');
 		return index ;
 	
 	
 	}
 	
-	public any function createORMServiceCFC(required any table, required string path, required string EntityCFCPath, string access ="public"){
+	public any function createPageWrapper(required any datasource, required string path, required string csspath){
+	    
+	    var wrapper  =  New apptacular.handlers.cfc.code.CFPage("pageWrapper", path);  
+	    
+	    wrapper.AppendBody('<cfprocessingdirective suppresswhitespace="yes">');
+		wrapper.AppendBody('<cfif thisTag.executionMode is "start">');
+		wrapper.AppendBody('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
+		wrapper.AppendBody('<html xmlns="http://www.w3.org/1999/xhtml">');
+		wrapper.AppendBody('<head>');
+		wrapper.AppendBody('<cfoutput><title>#datasource.getDisplayName()#</title></cfoutput>');
+		wrapper.AppendBody('<link rel="stylesheet" href="#csspath#/screen.css" type="text/css" media="screen"/>');
+
+		
+		wrapper.AppendBody('</head>');
+		wrapper.AppendBody('<body>');
+		wrapper.AppendBody('<h1>#datasource.getDisplayName()#</h1>');
+		wrapper.AppendBody('<cfelse>');
+		wrapper.AppendBody('</body>');
+		wrapper.AppendBody('</html>');
+		wrapper.AppendBody('</cfif>');
+		wrapper.AppendBody('</cfprocessingdirective>');
+		
+		
+		
+	    
+		return wrapper ;
 	
+	
+	}
+	
+	public any function createORMServiceCFC(required any table, required string path, required string EntityCFCPath, string access ="public"){
+		var i=0;
 		var EntityName = table.getEntityName();
 		var cfcPath = EntityCFCPath;
 		var columns = table.getColumns();
@@ -477,6 +553,18 @@ component{
 		return cfc;
 	}    
 
+	public void function writeCSS(required string cssLocation){
+		conditionallyCreateDirectory(cssLocation);
+		var origCSS = ExpandPath("generators/trorm/storage/screen.css");
+		var newCSS = cssLocation & variables.FS & "screen.css";
+		FileCopy(origCSS, newCSS);
+	}
 
+
+	private void function conditionallyCreateDirectory(required string path){
+		if(not directoryExists(path)){
+			DirectoryCreate(path);
+		}
+	}
 	
 }
