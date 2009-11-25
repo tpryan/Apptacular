@@ -1,16 +1,20 @@
 component{
 
-	public generator function init(){
+	public generator function init(required any datasource, required any config){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
-		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");		
+		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		variables.datasource = arguments.datasource;
+		variables.config = arguments.config;
+				
 		return This;
 	}
 	
-	public void function generate(required any datasource, required any config){
+	public void function generate(){
 		var i =0;
 		
 		if (config.getCreateAppCFC()){
 			createAppCFC(datasource, config.getRootFilePath()).write(config.getCFCFormat());
+			createEventHandler(config.getEntityFilePath()).write(config.getCFCFormat());
 		}
 		
 		if (config.getCreateViews()){
@@ -19,7 +23,7 @@ component{
 			createPageWrapper(datasource, config.getCustomTagFilePath(), config.getCSSRelativePath()).write();
 		}
 		
-		var tables = arguments.datasource.getTables();
+		var tables = datasource.getTables();
 		
 		for (i=1; i <= ArrayLen(tables); i++){
 			
@@ -29,7 +33,7 @@ component{
 			if (config.getCreateViews()){
 				createViewListCustomTag(tables[i], config.getCustomTagFilePath()).write();
 				createViewReadCustomTag(tables[i], config.getCustomTagFilePath()).write();
-				createViewEditCustomTag(tables[i], config.getCustomTagFilePath()).write();
+				createViewEditCustomTag(tables[i], config.getCustomTagFilePath(), config).write();
 				createView(tables[i], config.getRootFilePath(), config.getEntityCFCPath()).write();
 			}
 			if (config.getCreateServices()){
@@ -116,6 +120,116 @@ component{
 		return cfc;
 	}
 	
+	public any function createEventHandler(required string path){
+	
+		var cfc  = New apptacular.handlers.cfc.code.cfc();
+	    cfc.setName("eventHandler");
+	    cfc.setFileLocation(path);
+		cfc.setImplements("CFIDE.ORM.IEventHandler");
+		
+		
+		var EntityArg = New apptacular.handlers.cfc.code.Argument();
+		EntityArg.setName('entity');
+		EntityArg.setRequired(false);
+		EntityArg.setType('any');
+		
+		var oldDataArg = New apptacular.handlers.cfc.code.Argument();
+		oldDataArg.setName('oldData');
+		oldDataArg.setRequired(false);
+		oldDataArg.setType('struct');
+		
+		
+		
+		var postD= New apptacular.handlers.cfc.code.function();
+		postD.setAccess("public");
+		postD.setReturnType("void");
+		postD.AddArgument(EntityArg);
+		postD.setName('postDelete');
+		cfc.addFunction(postD);
+		
+		var postI= New apptacular.handlers.cfc.code.function();
+		postI.setAccess("public");
+		postI.setReturnType("void");
+		postI.AddArgument(EntityArg);
+		postI.setName('postInsert');
+		cfc.addFunction(postI);
+		
+		var postL= New apptacular.handlers.cfc.code.function();
+		postL.setAccess("public");
+		postL.setReturnType("void");
+		postL.AddArgument(EntityArg);
+		postL.setName('postLoad');
+		cfc.addFunction(postL);
+		
+		var postU= New apptacular.handlers.cfc.code.function();
+		postU.setAccess("public");
+		postU.setReturnType("void");
+		postU.AddArgument(EntityArg);
+		postU.setName('postUpdate');
+		cfc.addFunction(postU);
+		
+		var preD= New apptacular.handlers.cfc.code.function();
+		preD.setAccess("public");
+		preD.setReturnType("void");
+		preD.AddArgument(EntityArg);
+		preD.setName('preDelete');
+		cfc.addFunction(preD);
+		
+		var preI= New apptacular.handlers.cfc.code.function();
+		preI.setAccess("public");
+		preI.setReturnType("void");
+		preI.AddArgument(EntityArg);
+		preI.setName('preInsert');
+		preI.AddOperationScript('		if (structKeyExists(entity, "set#config.getCreatedOnString()#")){');
+		preI.AddOperationScript('			entity.set#config.getCreatedOnString()#(now());');
+		preI.AddOperationScript('		}');
+		
+		preI.AddOperation('		<cfif structKeyExists(entity, "set#config.getCreatedOnString()#")>');
+		preI.AddOperation('			<cfset entity.set#config.getCreatedOnString()#(now()) />');
+		preI.AddOperation('		</cfif>');
+		cfc.addFunction(preI);
+		
+		
+		
+		var preL= New apptacular.handlers.cfc.code.function();
+		preL.setAccess("public");
+		preL.setReturnType("void");
+		preL.AddArgument(EntityArg);
+		preL.setName('preLoad');
+		cfc.addFunction(preL);
+		
+		var preU= New apptacular.handlers.cfc.code.function();
+		preU.setAccess("public");
+		preU.setReturnType("void");
+		preU.AddArgument(EntityArg);
+		preU.setName('preUpdate');
+		preU.AddArgument(OldDataArg);
+		
+		
+		preU.AddOperationScript('		if (structKeyExists(entity, "set#config.getCreatedOnString()#")){');
+		preU.AddOperationScript('			entity.set#config.getCreatedOnString()#(now());');
+		preU.AddOperationScript('		}');
+		preU.AddOperationScript('');
+		preU.AddOperationScript('		if (structKeyExists(entity, "set#config.getupdatedOnString()#")){');
+		preU.AddOperationScript('			entity.set#config.getupdatedOnString()#(now());');
+		preU.AddOperationScript('		}');
+		
+		preU.AddOperation('		<cfif structKeyExists(entity, "set#config.getCreatedOnString()#")>');
+		preU.AddOperation('			<cfset entity.set#config.getCreatedOnString()#(now()) />');
+		preU.AddOperation('		</cfif>');
+		preU.AddOperation('');
+		preU.AddOperation('		<cfif structKeyExists(entity, "set#config.getupdatedOnString()#")>');
+		preU.AddOperation('			<cfset entity.set#config.getupdatedOnString()#(now()) />');
+		preU.AddOperation('		</cfif>');
+		
+		cfc.addFunction(preU);
+	
+	
+		return cfc;
+	}
+	
+	
+	
 	public any function createAppCFC(required any datasource, required string path){
 		
 	    var dbname = arguments.datasource.getName();
@@ -127,8 +241,8 @@ component{
 	    appCFC.addApplicationProperty('name', dbname) ;
 	    appCFC.addApplicationProperty('ormenabled', true) ;
 	    appCFC.addApplicationProperty('datasource', dbname) ;
-	    appCFC.addApplicationProperty("customTagPaths", "ExpandPath('customtags/')", false) ;
-		
+	    appCFC.addApplicationProperty("customTagPaths", "ExpandPath('#config.getCustomTagFolder()#/')", false) ;
+		appCFC.addApplicationProperty('ormsettings.eventHandler', "#config.getEntityCFCPath()#.eventHandler") ;
 		
 		
 		var func= New apptacular.handlers.cfc.code.function();
@@ -246,7 +360,7 @@ component{
 	    return ct;
 	}
 	
-	public any function createViewEditCustomTag(required any table, required string path){
+	public any function createViewEditCustomTag(required any table, required string path, required any config){
 		var i = 0;
 		var fileLocation = path;
 		var fileName = table.getEntityName() & "Edit"; 
@@ -294,6 +408,14 @@ component{
 					if (compareNoCase(uitype, "date") eq 0){
 						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
 		 				ct.AppendBody('			<td><cfinput name="#columnName#" type="datefield" id="#columnName#" value="##DateFormat(#EntityName#.get#columnName#(),''mm/dd/yyyy'')##" /></td>');
+					}
+					else if (compareNoCase(uitype, "text") eq 0){
+						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+		 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" /></td>');
+					}
+					else if (config.skipUI(columnName)){
+						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+		 				ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
 					}
 					else{
 						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
@@ -362,16 +484,18 @@ component{
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    view.AppendBody('	<cfcase value="edit_process">');
-	    view.AppendBody('		<cfset #entityName# = EntityNew("' & entityName  & '") />');
+	    
 	    
 	    for (i= 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
 	    	if(column.getIsPrimaryKey()){
 	    		view.AppendBody('		<cfif form.#column.getName()# gt 0>');
-	    		view.AppendBody('			<cfset #entityName#.set#column.getName()#(form.#column.getName()#)  />');
-	    		view.AppendBody('		</cfif>');
+				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", form.#column.getName()#, true) />');
+	    		view.AppendBody('		<cfelse>');
+				view.AppendBody('			<cfset #entityName# = EntityNew("' & entityName  & '") />');
+				view.AppendBody('		</cfif>');
 	    	}
-	    	else{ 
+	    	else if (not config.skipUI(column.getName())){ 
 	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(form.#column.getName()#)  />');
 	    	}
 	    }

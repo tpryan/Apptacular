@@ -14,6 +14,8 @@ component
 		datatypes['varchar']['ormType'] = "string";
 		datatypes['varchar2']['ormType'] = "string";
 		datatypes['char']['ormType'] = "character";
+		
+		datatypes['text']['ormType'] = "text";
 	
 		datatypes['boolean']['ormType'] = "boolean";
 		datatypes['yes_no']['ormType'] = "yes_no";
@@ -37,6 +39,9 @@ component
 		datatypes['varchar']['uiType'] = "string";
 		datatypes['varchar2']['uiType'] = "string";
 		datatypes['char']['uiType'] = "string";
+		
+		datatypes['text']['uiType'] = "text";
+		
 	
 		datatypes['boolean']['uiType'] = "boolean";
 		datatypes['yes_no']['uiType'] = "boolean";

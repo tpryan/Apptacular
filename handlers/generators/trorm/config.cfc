@@ -25,6 +25,11 @@ component accessors="true"{
 	property name="CreateEntities" type="boolean";
 	property name="CFCFormat";
 	
+	property name="createdOnString";
+	property name="updatedOnString";
+	
+	
+	
 	public function init(required string rootFilePath, required string rootCFCPath){
 	
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -44,6 +49,9 @@ component accessors="true"{
 		This.setEntityFolder("cfc");
 		This.setServiceFolder("services");
 		This.setCSSFolder("css");
+		
+		This.setCreatedOnString("createdOn");
+		This.setUpdatedOnString("updatedOn");
 		
 		calculatePaths();
 		
@@ -69,6 +77,17 @@ component accessors="true"{
 		//Calcualte Relative Paths
 		var webroot = expandPath("/");
 		This.setCssRelativePath(FS & ReplaceNoCase(This.getCSSFilePath(), webroot, "", "once"));
+	}
+	
+	public boolean function skipUI(required string columnName){
+		if ((CompareNoCase(arguments.columnName, This.getCreatedOnString()) eq 0) OR
+			(CompareNoCase(arguments.columnName, This.getUpdatedOnString()) eq 0)){
+			return TRUE;
+		}
+		else{
+			return FALSE;
+		}
+	
 	}
 	
 	

@@ -1,5 +1,6 @@
 component extends="CFPage" accessors="true" {
 	property string extends;
+	property string implements;
 	property string table;
 	property string entityname;
 	property name="output" type="boolean" default="false";
@@ -22,6 +23,10 @@ component extends="CFPage" accessors="true" {
 		
 		if (len(This.getExtends()) gt 0){
 			header = ListAppend(header, 'extends="#This.getExtends()#"', ' ') ;
+		}
+		
+		if (len(This.getImplements()) gt 0){
+			header = ListAppend(header, 'implements="#This.getImplements()#"', ' ') ;
 		}
 		
 		if (len(This.getPersistent())){
@@ -51,6 +56,10 @@ component extends="CFPage" accessors="true" {
 		
 		if (len(This.getExtends()) gt 0){
 			header = ListAppend(header, 'extends="#This.getExtends()#"', ' ') ;
+		}
+		
+		if (len(This.getImplements()) gt 0){
+			header = ListAppend(header, 'implements="#This.getImplements()#"', ' ') ;
 		}
 		
 		if (len(This.getPersistent())){

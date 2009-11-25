@@ -88,13 +88,15 @@ component
 				var column = columns[j];
 				var columnName = column.getName();
 				var columnCSPath = DSCSPath & "/" & tableName & "/" & columnName;
-				var configCS = checksums[columnCSPath]['checksum'];
-				var dbCS = column.getChecksum();
-			
-				if (CompareNoCase(configCS, dbCS) neq 0 ){
-					var column = reWriteObject(column, checksums[columnCSPath]['filePath'], "column");
+				
+				if (FileExists(columnCSPath)){
+					var configCS = checksums[columnCSPath]['checksum'];
+					var dbCS = column.getChecksum();
+				
+					if (CompareNoCase(configCS, dbCS) neq 0 ){
+						var column = reWriteObject(column, checksums[columnCSPath]['filePath'], "column");
+					}
 				}
-			
 				ArrayAppend(columnsArray, column);
 				columnsStruct[columnName] = column;
 				

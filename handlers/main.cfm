@@ -23,8 +23,8 @@
 	config.setentityFolder("entity");
 	config.calculatePaths();
 	
-	generator = New generators.trorm.generator();
-	generator.generate(datamodel, config);
+	generator = New generators.trorm.generator(datamodel, config);
+	generator.generate();
 	
 	
 
