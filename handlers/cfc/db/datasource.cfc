@@ -64,6 +64,9 @@ component accessors="true" extends="dbItem"
 		
 	}
 	
+	public table function getTable(required string tableName){
+		return This.getTablesStruct()[arguments.tableName];
+	}
 	
 	public string function toXML(){
 		return objectToXML("datasource");

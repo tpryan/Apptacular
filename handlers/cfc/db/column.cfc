@@ -19,5 +19,7 @@ component accessors="true" extends="dbItem"
 	public boolean function isColumnSameAsColumnName(){
 		return (CompareNoCase(This.getName(), This.getColumn()) eq 0);	
 	}
+	
+	
 
 }

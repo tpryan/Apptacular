@@ -4,14 +4,17 @@ component accessors="true" extends="dbItem"
 	property name="displayName";
 	property name="entityName";
 	property name="identity";
-	property name="isReferencedAsFK" type="boolean";
+	property name="plural";
+	property name="ForeignKeyLabel";
+	property name="isReferencedAsForeignKey" type="boolean";
 	property name="isJoinTable" type="boolean";
 	property name="softDelete" type="boolean";   
 	property name="hasJoinTable" type="boolean";   
 	property name="hasForeignKeys" type="boolean";   
 	property name="isView" type="boolean";
 	property name="columns" type="column[]"; 
-	property name="columnsStruct" type="struct"; 
+	property name="columnsStruct" type="struct";
+	property name="references" type="reference[]";  
 	
 	
 	public function init(required string name, required string datasource){
@@ -25,10 +28,9 @@ component accessors="true" extends="dbItem"
 		setEntityName(Lcase(arguments.name));
 		
 		populateTable();
-		
+		populateForeignKeys();
 		populateColumns();
-	
-	
+		
 		return This;
 	}
 	
@@ -37,12 +39,41 @@ component accessors="true" extends="dbItem"
 	}
 	
 	private void function populateTable(){
+		
+		This.setHasForeignKeys(FALSE);
+		This.setIsJoinTable(FALSE);
+		This.setSoftDelete(FALSE);
+		This.setHasJoinTable(FALSE);
+	
+	}
+	
+	private void function populateForeignKeys(){
 		dbinfo.setType("foreignkeys");
 		var	foreignkeys = dbinfo.send().getResult();
 		
-		This.setHasForeignKeys(foreignKeys.recordCount > 0 );
+		var i = 0;
+		
+		dbinfo.setType("index");
+		var	indicies = dbinfo.send().getResult();
+		
+		This.setIsReferencedAsForeignKey(foreignKeys.recordCount > 0 );
+		
+		if (foreignkeys.recordCount gt 0){
+			var refArray = ArrayNew(1);
+			for (i = 1; i <= foreignkeys.recordCount; i++){
+				var ref = New reference();
+				ref.setForeignKeyTable(foreignkeys.fktable_name[i]);
+				ref.setForeignKey(foreignkeys.fkcolumn_name[i]);
+				arrayAppend(refArray, ref);
+			}
+			This.setReferences(refArray);
+		}
+		
+		
 	
-	} 
+	}
+	
+	 
 	
 	private void function populateColumns(){
 		dbinfo.setType("columns");
@@ -71,7 +102,12 @@ component accessors="true" extends="dbItem"
 			
 			if (column.getisPrimaryKey()){
 				this.setIdentity(column.getName());
+				this.setForeignKeyLabel(LCase(columns.column_name[i+1]));
 			}
+			
+			if (column.getIsForeignKey()){
+				This.setHasForeignKeys(TRUE);
+			}	
 			
 		}
 		This.setColumns(columnArray);
@@ -85,5 +121,16 @@ component accessors="true" extends="dbItem"
 	public boolean function isEntitySameAsTableName(){
 		return (CompareNoCase(This.getName(), This.getEntityName()) eq 0);	
 	}
+	
+	public table function getColumn(required string columnName){
+		return This.getColumnsStruct()[arguments.columnName];
+	}
+	
+	public void function setEntityName(required string EntityName){
+		variables['entityName'] = arguments.EntityName;
+		This.setPlural(pluralize(capitalize(arguments.EntityName)));
+	}
+	
+	
 	
 }

@@ -19,3 +19,16 @@ body{
 	}
 	
 form td{ border: 0;}	
+
+.subreadpage{
+	font-size: 80%;
+	background-color: #EFEFEF;
+	padding-top: 10px;
+	
+}
+.subreadpage p.breadcrumb{
+	margin: 5px 0 ;
+}
+.subreadpage table{
+	margin-top: 0;
+}

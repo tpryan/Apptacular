@@ -47,6 +47,7 @@ component{
 	
 	public any function createORMCFC(required any table, required string path){
 		var i = 0;
+		var j = 0;
 	    var fileLocation = path;
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
@@ -81,28 +82,38 @@ component{
 	       		property.setFieldtype('id');
 	       		property.setGenerator('increment');
 	       	}	
-	       	/*else if (column.isForeignKey()){
-	       		property.setName(tableData.columns.referenced_primarykey_table[i]);
+	       	else if (column.getisForeignKey()){
+				var fTable = dataSource.getTable(column.getForeignKeyTable());
+				property.setOrmType("");
+	       		property.setName(fTable.getEntityName());
 	       		property.setFieldtype('many-to-one');
-	       		property.setFkcolumn(tableData.columns.referenced_primarykey[i]);
-	       		property.setCFC(tableData.columns.referenced_primarykey_table[i]);
+	       		property.setFkcolumn(column.getForeignKey());
+	       		property.setCFC(fTable.getEntityName());
 	       		property.setInverse(true);
 	       		property.SetmissingRowIgnored(true);
-	       	}*/	
+	       	}	
 	        
 	        cfc.AddProperty(property);
 	    }
-	   
-	   		/*for (i=1; i lte tableData.foreignkeys.recordCount; i++){
-			property = New property();
-			property.setName(tableData.foreignkeys.fktable_name[i]);
-	   		property.setFieldtype('one-to-many');
-	   		property.setFkcolumn(tableData.foreignkeys.fkcolumn_name[i]);
-	   		property.setCFC(tableData.foreignkeys.fktable_name[i]);
-	   		property.setCascade("all-delete-orphan");
-	   		cfc.AddProperty(property);
-			
-		}*/
+		   	
+		var references = table.getReferences();
+	   	
+		if (not isNull(references)){
+		
+			for (j=1; j <= ArrayLen(references); j++){
+				var ref = references[j];
+				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
+				
+				property = New apptacular.handlers.cfc.code.property();
+				property.setName(foreignTable.getPlural());
+		   		property.setFieldtype('one-to-many');
+		   		property.setFkcolumn(ref.getforeignKey());
+		   		property.setCFC(foreignTable.getEntityName());
+		   		property.setCascade("all-delete-orphan");
+				property.setSingularname(foreignTable.getEntityName());
+		   		cfc.AddProperty(property);
+			}
+	   	}
 		
 		var func= New apptacular.handlers.cfc.code.function();
 		func.setName('nullifyZeroID');
@@ -183,9 +194,17 @@ component{
 		preI.AddOperationScript('		if (structKeyExists(entity, "set#config.getCreatedOnString()#")){');
 		preI.AddOperationScript('			entity.set#config.getCreatedOnString()#(now());');
 		preI.AddOperationScript('		}');
+		preI.AddOperationScript('');
+		preI.AddOperationScript('		if (structKeyExists(entity, "set#config.getupdatedOnString()#")){');
+		preI.AddOperationScript('			entity.set#config.getupdatedOnString()#(now());');
+		preI.AddOperationScript('		}');
 		
 		preI.AddOperation('		<cfif structKeyExists(entity, "set#config.getCreatedOnString()#")>');
 		preI.AddOperation('			<cfset entity.set#config.getCreatedOnString()#(now()) />');
+		preI.AddOperation('		</cfif>');
+		preI.AddOperation('');
+		preI.AddOperation('		<cfif structKeyExists(entity, "set#config.getupdatedOnString()#")>');
+		preI.AddOperation('			<cfset entity.set#config.getupdatedOnString()#(now()) />');
 		preI.AddOperation('		</cfif>');
 		cfc.addFunction(preI);
 		
@@ -206,18 +225,10 @@ component{
 		preU.AddArgument(OldDataArg);
 		
 		
-		preU.AddOperationScript('		if (structKeyExists(entity, "set#config.getCreatedOnString()#")){');
-		preU.AddOperationScript('			entity.set#config.getCreatedOnString()#(now());');
-		preU.AddOperationScript('		}');
-		preU.AddOperationScript('');
 		preU.AddOperationScript('		if (structKeyExists(entity, "set#config.getupdatedOnString()#")){');
 		preU.AddOperationScript('			entity.set#config.getupdatedOnString()#(now());');
 		preU.AddOperationScript('		}');
 		
-		preU.AddOperation('		<cfif structKeyExists(entity, "set#config.getCreatedOnString()#")>');
-		preU.AddOperation('			<cfset entity.set#config.getCreatedOnString()#(now()) />');
-		preU.AddOperation('		</cfif>');
-		preU.AddOperation('');
 		preU.AddOperation('		<cfif structKeyExists(entity, "set#config.getupdatedOnString()#")>');
 		preU.AddOperation('			<cfset entity.set#config.getupdatedOnString()#(now()) />');
 		preU.AddOperation('		</cfif>');
@@ -227,8 +238,6 @@ component{
 	
 		return cfc;
 	}
-	
-	
 	
 	public any function createAppCFC(required any datasource, required string path){
 		
@@ -272,7 +281,8 @@ component{
 	    var i = 0;
 		var fileLocation = path;
 		var fileName = table.getEntityName() & "List";
-		var identity = table.getIdentity(); 
+		var identity = table.getIdentity();
+		var entityName =  table.getEntityName();
 		
 	    var ct  = New apptacular.handlers.cfc.code.customTag(fileName, fileLocation);
 		ct.addAttribute(table.getEntityName() & "Array", "array", true);
@@ -283,7 +293,7 @@ component{
 		ct.AppendBody('<cfelse>');
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
-		ct.AppendBody('	<p><a href="?method=edit">New</a></p>');	
+		ct.AppendBody('	<p><a href="#EntityName#.cfm?method=edit">New</a></p>');	
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<thead>');
 		ct.AppendBody('		<tr>');
@@ -300,19 +310,19 @@ component{
 		
 		ct.AppendBody('	<tbody>');
 		ct.AppendBody('	<cfoutput>');
-		ct.AppendBody('	<cfloop array="##attributes.#table.getEntityName()#Array##" index="#table.getEntityName()#">');
+		ct.AppendBody('	<cfloop array="##attributes.#entityName#Array##" index="#entityName#">');
 		
 		ct.AppendBody('		<tr>');
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 		 	if (not columns[i].getIsForeignKey()){
-				ct.AppendBody('			<td>###table.getEntityName()#.get#columns[i].getName()#()##</td>');
+				ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
 			}
 		}
 		
-		ct.AppendBody('			<td><a href="?method=read&#identity#=###table.getEntityName()#.get#identity#()##">Read</a></td>');
-		ct.AppendBody('			<td><a href="?method=edit&#identity#=###table.getEntityName()#.get#identity#()##">Edit</a></td>');
-		ct.AppendBody('			<td><a href="?method=delete_process&#identity#=###table.getEntityName()#.get#identity#()##" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
+		ct.AppendBody('			<td><a href="#entityName#.cfm?method=read&#identity#=###entityName#.get#identity#()##">Read</a></td>');
+		ct.AppendBody('			<td><a href="#entityName#.cfm?method=edit&#identity#=###entityName#.get#identity#()##">Edit</a></td>');
+		ct.AppendBody('			<td><a href="#entityName#.cfm?method=delete_process&#identity#=###entityName#.get#identity#()##" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</cfloop>');
 		ct.AppendBody('	</cfoutput>');
@@ -335,16 +345,27 @@ component{
 		var columns = table.getColumns();
 
 		ct.addAttribute(EntityName, 'any', true);
+		ct.addAttribute("class", 'string', false, "readpage");
 		ct.AppendBody('<cfset #EntityName# = attributes.#EntityName# /> ');
 		ct.AppendBody('<cfoutput>');
-		ct.AppendBody('<p><a href="?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a></p>');
+		ct.AppendBody('<p class="breadcrumb"><a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a></p>');
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<tbody>');
 		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
-		 	if (not column.GetIsForeignKey()){
+		 	
+			if (column.getisForeignKey()){
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
+			
+				ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#fkTable.getEntityName()#</th>');
+				ct.AppendBody('			<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+				ct.AppendBody('		</tr>');
+			
+				}
+			else{
 		 		ct.AppendBody('		<tr>');
 		 		ct.AppendBody('			<th>#column.getName()#</th>');
 		 		ct.AppendBody('			<td>###EntityName#.get#column.getName()#()##</td>');
@@ -355,6 +376,22 @@ component{
 		
 		ct.AppendBody('	</tbody>');
 		ct.AppendBody('</table>');
+		
+		
+		var references = table.getReferences();
+	   	
+		if (not isNull(references)){
+		
+			for (j=1; j <= ArrayLen(references); j++){
+				var ref = references[j];
+				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
+				ct.AppendBody('<h3>#foreignTable.getPlural()#</h3> ');
+				ct.AppendBody('<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
+			}
+	   	}
+		
+		
+		
 		ct.AppendBody('</cfoutput>');
 	    
 	    return ct;
@@ -381,7 +418,7 @@ component{
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
 		ct.AppendBody('<cfoutput>');
-		ct.AppendBody('<p><a href="?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a></p>');
+		ct.AppendBody('<p><a href="#EntityName#.cfm??method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a></p>');
 		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html">');
 		
 		ct.AppendBody('	<table>');
@@ -392,39 +429,51 @@ component{
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
-		 	if (not column.GetIsForeignKey()){
 		 	
-				columnName = column.getName();
-					
-		 		if (column.getIsPrimaryKey()){
-		 			ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
-		 		}
-				else{
-		 			uitype = column.getUIType();
-					
-					ct.AppendBody('		<tr>');
-					
-					//Create different UI's depending on data type.
-					if (compareNoCase(uitype, "date") eq 0){
-						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
-		 				ct.AppendBody('			<td><cfinput name="#columnName#" type="datefield" id="#columnName#" value="##DateFormat(#EntityName#.get#columnName#(),''mm/dd/yyyy'')##" /></td>');
-					}
-					else if (compareNoCase(uitype, "text") eq 0){
-						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
-		 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" /></td>');
-					}
-					else if (config.skipUI(columnName)){
-						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
-		 				ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
-					}
-					else{
-						ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
-		 				ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###EntityName#.get#columnName#()##" /></td>');
-					}
-					
-					ct.AppendBody('		</tr>');
+			columnName = column.getName();
+				
+	 		if (column.getIsPrimaryKey()){
+	 			ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
+	 		}
+			else{
+	 			uitype = column.getUIType();
+				
+				ct.AppendBody('		<tr>');
+				
+				//Create different UI's depending on data type.
+				if (compareNoCase(uitype, "date") eq 0){
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
+	 				ct.AppendBody('			<td><cfinput name="#columnName#" type="datefield" id="#columnName#" value="##DateFormat(#EntityName#.get#columnName#(),''mm/dd/yyyy'')##" /></td>');
 				}
+				else if (compareNoCase(uitype, "text") eq 0){
+					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" /></td>');
+				}
+				
+				else if (config.skipUI(columnName)){
+					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+	 				ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
+				}
+				else if (column.getisForeignKey()){
+					var fkTable = datasource.getTable(column.getForeignKeyTable());
+					ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0>');
+					ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
+					ct.AppendBody('			<cfelse>');
+					ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = #EntityName#.get#fkTable.getEntityName()#().get#columnName#() />');
+					ct.AppendBody('			</cfif>');
+					
+					
+					ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getEntityName()#:</label></th>');
+	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue=""  /></td>');	
+				}
+				else{
+					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+	 				ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###EntityName#.get#columnName#()##" /></td>');
+				}
+				
+				ct.AppendBody('		</tr>');
 			}
+			
 		}
 		ct.AppendBody('		<tr>');
 		ct.AppendBody('			<th />');
@@ -495,6 +544,12 @@ component{
 				view.AppendBody('			<cfset #entityName# = EntityNew("' & entityName  & '") />');
 				view.AppendBody('		</cfif>');
 	    	}
+			else if (column.getisForeignKey()){
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				fkEName = fkTable.getentityName();
+				view.AppendBody('		<cfset #fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true) />');
+				view.AppendBody('		<cfset #entityName#.set#fkEName#(#fkEName#) />');
+			}
 	    	else if (not config.skipUI(column.getName())){ 
 	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(form.#column.getName()#)  />');
 	    	}
