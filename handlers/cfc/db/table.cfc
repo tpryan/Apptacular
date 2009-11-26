@@ -5,6 +5,7 @@ component accessors="true" extends="dbItem"
 	property name="entityName";
 	property name="identity";
 	property name="plural";
+	property name="displayPlural";
 	property name="ForeignKeyLabel";
 	property name="isReferencedAsForeignKey" type="boolean";
 	property name="isJoinTable" type="boolean";
@@ -128,7 +129,8 @@ component accessors="true" extends="dbItem"
 	
 	public void function setEntityName(required string EntityName){
 		variables['entityName'] = arguments.EntityName;
-		This.setPlural(pluralize(capitalize(arguments.EntityName)));
+		This.setPlural(pluralize(arguments.EntityName));
+		This.setDisplayPlural(pluralize(capitalize(arguments.EntityName)));
 	}
 	
 	

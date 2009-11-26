@@ -18,8 +18,10 @@ component{
 		}
 		
 		if (config.getCreateViews()){
+			
 			createIndex(datasource, config.getRootFilePath()).write();
-			writeCSS(config.getCSSFilePath());
+			writeCSS();
+			writeForeignKeyCustomTag();
 			createPageWrapper(datasource, config.getCustomTagFilePath(), config.getCSSRelativePath()).write();
 		}
 		
@@ -301,9 +303,15 @@ component{
 		var columns = table.getColumns();
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
-		 	if (not columns[i].getIsForeignKey()){
-		 		ct.AppendBody('			<th>#columns[i].getDisplayName()#</th>');
+			
+			if (columns[i].getIsForeignKey()){
+				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
+				ct.AppendBody('			<th>#fkTable.getDisplayName()#</th>');
 			}
+			else{
+				ct.AppendBody('			<th>#columns[i].getDisplayName()#</th>');
+			}
+			
 		}
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</thead>');
@@ -315,7 +323,11 @@ component{
 		ct.AppendBody('		<tr>');
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
-		 	if (not columns[i].getIsForeignKey()){
+		 	if (columns[i].getIsForeignKey()){
+				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
+				ct.AppendBody('			<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+			}
+			else{
 				ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
 			}
 		}
@@ -385,7 +397,7 @@ component{
 			for (j=1; j <= ArrayLen(references); j++){
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
-				ct.AppendBody('<h3>#foreignTable.getPlural()#</h3> ');
+				ct.AppendBody('<h3>#foreignTable.getDisplayPlural()#</h3> ');
 				ct.AppendBody('<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
 			}
 	   	}
@@ -418,7 +430,7 @@ component{
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
 		ct.AppendBody('<cfoutput>');
-		ct.AppendBody('<p><a href="#EntityName#.cfm??method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a></p>');
+		ct.AppendBody('<p><a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a></p>');
 		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html">');
 		
 		ct.AppendBody('	<table>');
@@ -464,7 +476,7 @@ component{
 					
 					
 					ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getEntityName()#:</label></th>');
-	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue=""  /></td>');	
+	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##"  /></td>');	
 				}
 				else{
 					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
@@ -732,13 +744,19 @@ component{
 		return cfc;
 	}    
 
-	public void function writeCSS(required string cssLocation){
-		conditionallyCreateDirectory(cssLocation);
+	public void function writeCSS(){
+		conditionallyCreateDirectory(config.getCSSFilePath());
 		var origCSS = ExpandPath("generators/trorm/storage/screen.css");
-		var newCSS = cssLocation & variables.FS & "screen.css";
+		var newCSS = config.getCSSFilePath() & variables.FS & "screen.css";
 		FileCopy(origCSS, newCSS);
 	}
-
+	
+	public void function writeForeignKeyCustomTag(){
+		conditionallyCreateDirectory(config.getCustomTagFilePath());
+		var origCT = ExpandPath("generators/trorm/storage/foreignKeySelector.cfm");
+		var newCT = config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm";
+		FileCopy(origCT, newCT);
+	}
 
 	private void function conditionallyCreateDirectory(required string path){
 		if(not directoryExists(path)){
