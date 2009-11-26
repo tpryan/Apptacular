@@ -8,8 +8,8 @@
 	<!-- Add menu contributions to RDS Data View -->	   
     <menucontributions >
 		<contribution target="rdsview" >
-			<menu name="TRORM Code Jumpstart">
-		    	<action name="Generate Application" handlerid="ormCFCGenerator" >
+			<menu name="Apptacular">
+		    	<action name="Generate Application" handlerid="generate" >
 		    		<input name="Location" default="{$projectlocation}" label="Enter destination" tooltip="Location where generated CFCs will be stored" type="projectdir"/>
 				</action>
 			</menu>
@@ -18,7 +18,7 @@
 
 	<!-- Define Handlers-->
 	<handlers>		
-		<handler id="ormCFCGenerator" type="CFM" filename="ormCFCGenerator.cfm" />
+		<handler id="generate" type="CFM" filename="generate.cfm" />
 	</handlers>
 
 </application>

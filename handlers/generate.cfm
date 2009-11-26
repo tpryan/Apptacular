@@ -1,3 +1,5 @@
+<cfsetting showdebugoutput="FALSE" />
+
 <cfif not structKeyExists(form, "ideeventInfo")>
 	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="ideeventInfo" />
 </cfif>
@@ -8,7 +10,7 @@
 
 	xmldoc = XMLParse(ideeventInfo);  
 	dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
-	rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value;
+	rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value & "/";
 
 
 	StartTimer = getTickCount();
@@ -59,7 +61,7 @@
 
 
 <cfheader name="Content-Type" value="text/xml">
-<response>
+<response status="success" showresponse="true">
 	<ide>
 		<dialog width="600" height="400" />
 			<body>
