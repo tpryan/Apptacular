@@ -39,10 +39,10 @@ component
 	}
 	
 	public datasource function overwriteConfig(required datasource datasource){
+
 		if (not directoryExists(variables.path)){
 			return arguments.datasource;
 		}
-		
 		
 		var i = 0;
 		var j = 0;
@@ -72,9 +72,9 @@ component
 			var tableCSPath = DSCSPath & "/" & tableName;
 			var configCS = checksums[tableCSPath]['checksum'];
 			var dbCS = table.getChecksum();
-		
+			
 			if (CompareNoCase(configCS, dbCS) neq 0 ){
-				var table = reWriteObject(table, checksums[tableCSPath]['filePath'], "table");
+				table = reWriteObject(table, checksums[tableCSPath]['filePath'], "table");
 			}
 			
 			//check columns

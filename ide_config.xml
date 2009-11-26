@@ -1,0 +1,24 @@
+<application>
+	<name>Apptacular</name>
+	<author>Adobe Systems</author>
+	<version>1.0</version>
+	<email>terry.ryan@adobe.com</email>	
+	<description>Generate simple crud app based on CF ORM technology.</description>	
+	
+	<!-- Add menu contributions to RDS Data View -->	   
+    <menucontributions >
+		<contribution target="rdsview" >
+			<menu name="TRORM Code Jumpstart">
+		    	<action name="Generate Application" handlerid="ormCFCGenerator" >
+		    		<input name="Location" default="{$projectlocation}" label="Enter destination" tooltip="Location where generated CFCs will be stored" type="projectdir"/>
+				</action>
+			</menu>
+		</contribution>
+    </menucontributions>	
+
+	<!-- Define Handlers-->
+	<handlers>		
+		<handler id="ormCFCGenerator" type="CFM" filename="ormCFCGenerator.cfm" />
+	</handlers>
+
+</application>

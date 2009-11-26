@@ -17,16 +17,17 @@ component accessors="true" extends="dbItem"
 	property name="columnsStruct" type="struct";
 	property name="references" type="reference[]";  
 	
-	
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();
 		variables.dbinfo = New dbinfo();
 		dbinfo.setDatasource(arguments.datasource);
 		dbinfo.setTable(arguments.name);
 		
-		setName(arguments.name);
-		setDisplayName(capitalize(arguments.name));
-		setEntityName(Lcase(arguments.name));
+		This.setName(arguments.name);
+		This.setDisplayName(capitalize(arguments.name));
+		This.setEntityName(Lcase(arguments.name));
+		This.setPlural(pluralize(This.getEntityName()));
+		This.setDisplayPlural(pluralize(capitalize(This.getEntityName())));
 		
 		populateTable();
 		populateForeignKeys();
@@ -73,8 +74,6 @@ component accessors="true" extends="dbItem"
 		
 	
 	}
-	
-	 
 	
 	private void function populateColumns(){
 		dbinfo.setType("columns");
@@ -126,13 +125,6 @@ component accessors="true" extends="dbItem"
 	public table function getColumn(required string columnName){
 		return This.getColumnsStruct()[arguments.columnName];
 	}
-	
-	public void function setEntityName(required string EntityName){
-		variables['entityName'] = arguments.EntityName;
-		This.setPlural(pluralize(arguments.EntityName));
-		This.setDisplayPlural(pluralize(capitalize(arguments.EntityName)));
-	}
-	
 	
 	
 }
