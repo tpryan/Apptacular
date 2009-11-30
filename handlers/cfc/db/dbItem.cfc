@@ -22,6 +22,7 @@ component
 		StructDelete(props, "dbinfo");
 		StructDelete(props, "utils");
 		StructDelete(props, "mappings");
+		StructDelete(props, "references");
 		
 		StructDelete(props, "columns");
 		StructDelete(props, "columnsStruct");
