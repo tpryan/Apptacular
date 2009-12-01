@@ -35,13 +35,13 @@
 	dbConfig.writeConfig(datamodel);
 	
 	//process both default and file version of config
-	config = New generators.trorm.Config(rootFilePath, rootCFCPath);
+	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
 	config.overwriteFromDisk();
 	config.writeToDisk();
 	
 	
 	// Fire up the generator 
-	generator = New generators.trorm.generator(datamodel, config);
+	generator = New generators.cfapp.generator(datamodel, config);
 	generator.generate();
 	generator.writeFiles();
 	

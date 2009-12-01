@@ -14,6 +14,7 @@ component
 	
 		datatypes['varchar']['ormType'] = "string";
 		datatypes['varchar2']['ormType'] = "string";
+		datatypes['enum']['ormType'] = "string";
 		datatypes['char']['ormType'] = "character";
 		
 		datatypes['text']['ormType'] = "text";
@@ -41,7 +42,7 @@ component
 		datatypes['varchar']['uiType'] = "string";
 		datatypes['varchar2']['uiType'] = "string";
 		datatypes['char']['uiType'] = "string";
-		
+		datatypes['enum']['uitype'] = "string";
 		datatypes['text']['uiType'] = "text";
 		
 	

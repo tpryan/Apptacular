@@ -120,7 +120,7 @@ component{
 	       	
 	       	property = New apptacular.handlers.cfc.code.property();
 	       	property.setName(column.getName());
-			property.setOrmType(column.getOrmType());
+			property.setType(column.getOrmType());
 	       	
 			if (not column.isColumnSameAsColumnName()){
 				property.setColumn(column.getColumn());
@@ -826,14 +826,14 @@ component{
 
 	public void function copyCSS(){
 		conditionallyCreateDirectory(config.getCSSFilePath());
-		var origCSS = ExpandPath("generators/trorm/storage/screen.css");
+		var origCSS = ExpandPath("generators/cfapp/storage/screen.css");
 		var newCSS = config.getCSSFilePath() & variables.FS & "screen.css";
 		FileCopy(origCSS, newCSS);
 	}
 	
 	public void function copyForeignKeyCustomTag(){
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
-		var origCT = ExpandPath("generators/trorm/storage/foreignKeySelector.cfm");
+		var origCT = ExpandPath("generators/cfapp/storage/foreignKeySelector.cfm");
 		var newCT = config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm";
 		FileCopy(origCT, newCT);
 	}
