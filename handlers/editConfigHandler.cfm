@@ -13,7 +13,7 @@
 <cfoutput> 
 <response showresponse="true"> 
 	<ide url="http://#cgi.server_name#/apptacular/handlers/editconfig.cfm?configPath=#configPath#" > 
-		<dialog width="455" height="600" /> 
+		<dialog width="655" height="600" /> 
 	</ide> 
 </response> 
 </cfoutput>

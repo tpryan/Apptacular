@@ -18,6 +18,7 @@
 			<menu name="Apptacular">
 				<action name="Edit Application Configuration" handlerid="editConfig"></action>
 		    	<action name="Edit Data Model" handlerid="editDB"></action>
+				<action name="Purge Excess Files" handlerid="purge"></action>
 				<action name="Regenerate Application" handlerid="generate"></action>
 			</menu>
 			
@@ -29,6 +30,7 @@
 		<handler id="generate" type="CFM" filename="generate.cfm" />
 		<handler id="editDB" type="CFM" filename="editDBHandler.cfm" />
 		<handler id="editConfig" type="CFM" filename="editConfigHandler.cfm" />
+		<handler id="purge" type="CFM" filename="purge.cfm" />
 	</handlers>
 
 </application>

@@ -22,6 +22,7 @@ component accessors="true"{
 	property name="CreateViews" type="boolean";
 	property name="CreateAppCFC" type="boolean";
 	property name="CreateServices" type="boolean";
+	property name="UseServices" type="boolean";
 	property name="CreateEntities" type="boolean";
 	property name="CFCFormat";
 	
@@ -132,17 +133,21 @@ component accessors="true"{
 		FileWrite(FileToWrite, This.toXML());
 	}
 	
-	public string function overwriteFromDisk(){
+	public void function overwriteFromDisk(){
+		
+		
 		var FileToRead = This.getRootFilePath() & ".apptacular/config.xml";
-		var XML = xmlParse(FileRead(FileToRead));
-		var keys = StructKeyArray(xml.config);
-		var i = 0;
 		
-		for (i=1; i <= ArrayLen(keys); i++){
-			var setter = This['set#keys[i]#'];
-			setter(xml.config[keys[i]].xmlText);
+		if (FileExists(FileToRead)){
+			var XML = xmlParse(FileRead(FileToRead));
+			var keys = StructKeyArray(xml.config);
+			var i = 0;
+			
+			for (i=1; i <= ArrayLen(keys); i++){
+				var setter = This['set#keys[i]#'];
+				setter(xml.config[keys[i]].xmlText);
+			}
 		}
-		
 		
 
 	}

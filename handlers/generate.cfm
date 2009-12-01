@@ -1,62 +1,54 @@
 <cfsetting showdebugoutput="FALSE" />
 
 <cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
+	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="ideeventInfo" />
 </cfif>
 
 <cfscript>
-
+	utils = New cfc.utils();
 	xmldoc = XMLParse(ideeventInfo);  
 	
+	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
 		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
 		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value & "/";
+		dbConfigPath = rootFilePath & ".apptacular/schema";  
 	}
+	//handle input from the project view
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-		
-		schemaPath = rootFilePath & FS & ".apptacular/schema/";
-		dsName = DirectoryList(schemaPath, false, "name")[1];
+		dbConfigPath = rootFilePath & FS & ".apptacular/schema/";
+		dsName = DirectoryList(dbConfigPath, false, "name")[1];
 		
 	}
-	
-	
-	dbConfigPath = rootFilePath & "/.apptacular/schema";  
 
 	StartTimer = getTickCount();
+	
+	rootCFCPath = utils.findCFCPathFromFilePath(rootFilePath);
 
+	//process both DB and file version of schema
 	db = New cfc.db.datasource(dsName);
-
-	
-	rootCFCPath = findCFCPathFromFilePath(rootFilePath);
-
 	dbConfig = New cfc.db.dbConfig(dbConfigPath);
-	
 	datamodel= dbConfig.overwriteConfig(db);
+	
 	dbConfig.writeConfig(datamodel);
 	
+	//process both default and file version of config
 	config = New generators.trorm.Config(rootFilePath, rootCFCPath);
 	config.overwriteFromDisk();
 	config.writeToDisk();
 	
 	
-	
+	// Fire up the generator 
 	generator = New generators.trorm.generator(datamodel, config);
 	generator.generate();
+	generator.writeFiles();
 	
 	EndTimer = getTickCount();
 	TickCount = EndTimer - StartTimer;
 	TickCount = TickCount / 1000;
-	filesList = DirectoryList(rootFilePath, true, "query");
 	
-	public string function findCFCPathFromFilePath(string path){
-		var results = "";
-		var webroot = ExpandPath("/");
-		results = replace(arguments.path, webroot, "", "one");
-		results = replace(results, "/", ".", "all");
-		return results;
-	}	
 
 </cfscript>
 

@@ -89,7 +89,7 @@ component
 				var columnName = column.getName();
 				var columnCSPath = DSCSPath & "/" & tableName & "/" & columnName;
 				
-				if (FileExists(columnCSPath)){
+				if (FileExists(checksums[columnCSPath]['filePath'])){
 					var configCS = checksums[columnCSPath]['checksum'];
 					var dbCS = column.getChecksum();
 				

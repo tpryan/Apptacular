@@ -71,8 +71,19 @@ component{
 			}
 		}
 		
-		writeFiles();
 	
+	}
+	
+	public array function getAllGeneratedFilePaths(){
+		var i = 0;
+		var result = ArrayNew(1);
+		for (i=1; i <= ArrayLen(files); i++){
+			ArrayAppend(result, files[i].getFileName());
+		}
+		
+		ArrayAppend(result,config.getCSSFilePath() & variables.FS & "screen.css");
+		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm");
+		return result;
 	}
 	
 	public void function writeFiles(){
@@ -418,7 +429,7 @@ component{
 				}
 			else{
 		 		ct.AppendBody('		<tr>');
-		 		ct.AppendBody('			<th>#column.getName()#</th>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 		 		ct.AppendBody('			<td>###EntityName#.get#column.getName()#()##</td>');
 				ct.AppendBody('		</tr>');
 			}
@@ -497,12 +508,12 @@ component{
 	 				ct.AppendBody('			<td><cfinput name="#columnName#" type="datefield" id="#columnName#" value="##DateFormat(#EntityName#.get#columnName#(),''mm/dd/yyyy'')##" /></td>');
 				}
 				else if (compareNoCase(uitype, "text") eq 0){
-					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" /></td>');
 				}
 				
 				else if (config.skipUI(columnName)){
-					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
 				}
 				else if (column.getisForeignKey()){
@@ -518,7 +529,7 @@ component{
 	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##"  /></td>');	
 				}
 				else{
-					ct.AppendBody('			<th><label for="#columnName#">#columnName#:</label></th>');
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###EntityName#.get#columnName#()##" /></td>');
 				}
 				
@@ -564,7 +575,9 @@ component{
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
 	    view.AppendBody('		<cfset #entityName#Array = entityLoad("' & entityName  & '") />');
-	    view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" /> ');
+	    
+		
+		view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" /> ');
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    

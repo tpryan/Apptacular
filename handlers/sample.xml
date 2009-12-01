@@ -5,5 +5,7 @@
             </database>
         </rdsview>
     </ide>
-    <user />
+    <user>
+    	<input name="Location" value="/Users/terryr/Sites/centaur.dev/CentaurKeynoteDemo" />
+	</user>	
 </event>

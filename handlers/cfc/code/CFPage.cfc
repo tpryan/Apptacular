@@ -12,6 +12,7 @@
 			This.setName(arguments.Name);
 			This.setFileLocation(arguments.fileLocation);
 			variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
+			variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 			variables.body = CreateObject("java","java.lang.StringBuilder").Init();
 			variables.bodyScript = CreateObject("java","java.lang.StringBuilder").Init();
 			
@@ -30,8 +31,16 @@
 			return variables.body;
 		}
 		
-		private string function getFileName(){
-			return "#This.getFileLocation()#/#This.getName()#.#This.getExtension()#";
+		public string function getFileName(){
+			var FS = createObject("java", "java.lang.System").getProperty("file.separator");
+			if (CompareNoCase(right(This.getFileLocation(), 1),FS) eq 0){
+				return "#This.getFileLocation()##This.getName()#.#This.getExtension()#";
+			}
+			else{
+				return "#This.getFileLocation()##fs##This.getName()#.#This.getExtension()#";
+			}
+	
+			
 		}
 		
 		public void function write(){

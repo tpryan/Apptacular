@@ -36,7 +36,16 @@
 		}
 	.breadcrumb{
 		font-size: 80%;
-	}	
+	}
+	#prev, #next
+	{ width: 100px;}	
+		
+	#next{
+		text-align: right;
+	}
+	
+	input[type="text"] { width: 400px; }		
+	
 </style>
 </head>
 <body>
