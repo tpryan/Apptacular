@@ -358,6 +358,8 @@ component{
 				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
 				ct.AppendBody('			<th>#fkTable.getDisplayName()#</th>');
 			}
+			
+			
 			else{
 				ct.AppendBody('			<th>#columns[i].getDisplayName()#</th>');
 			}
@@ -377,6 +379,12 @@ component{
 				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
 				ct.AppendBody('			<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
 			}
+			else if (compareNoCase(columns[i].getuitype(), "boolean") eq 0){
+					
+				ct.AppendBody('			<td>##YesNoFormat(#entityName#.get#columns[i].getName()#())##</td>');
+
+				
+				}	
 			else{
 				ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
 			}
