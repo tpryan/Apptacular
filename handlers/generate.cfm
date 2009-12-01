@@ -37,7 +37,10 @@
 	dbConfig.writeConfig(datamodel);
 	
 	config = New generators.trorm.Config(rootFilePath, rootCFCPath);
-	config.calculatePaths();
+	config.overwriteFromDisk();
+	config.writeToDisk();
+	
+	
 	
 	generator = New generators.trorm.generator(datamodel, config);
 	generator.generate();

@@ -16,7 +16,8 @@
 		</contribution>
 		<contribution target="projectview" >
 			<menu name="Apptacular">
-		    	<action name="Edit Data Model" handlerid="editSchema"></action>
+				<action name="Edit Application Configuration" handlerid="editConfig"></action>
+		    	<action name="Edit Data Model" handlerid="editDB"></action>
 				<action name="Regenerate Application" handlerid="generate"></action>
 			</menu>
 			
@@ -26,7 +27,8 @@
 	<!-- Define Handlers-->
 	<handlers>		
 		<handler id="generate" type="CFM" filename="generate.cfm" />
-		<handler id="editSchema" type="CFM" filename="editSchema.cfm" />
+		<handler id="editDB" type="CFM" filename="editDBHandler.cfm" />
+		<handler id="editConfig" type="CFM" filename="editConfigHandler.cfm" />
 	</handlers>
 
 </application>

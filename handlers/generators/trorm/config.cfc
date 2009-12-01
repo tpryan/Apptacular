@@ -42,7 +42,6 @@ component accessors="true"{
 			This.setRootFilePath(arguments.rootFilePath);
 		}
 		
-		This.setRootFilePath(arguments.rootFilePath);
 		This.setRootCFCPath(arguments.rootCFCPath);
 		
 		This.setcustomTagFolder("customTags");
@@ -90,5 +89,62 @@ component accessors="true"{
 	
 	}
 	
+	public string function toXML(){
+		var str = createObject("java", "java.lang.StringBuilder").init();
+		var NL = CreateObject("java", "java.lang.System").getProperty("line.separator");
+		var props = Duplicate(variables);
+		var i = 0;
+		
+		
+		StructDelete(props, "This");
+		StructDelete(props, "FS");
+		StructDelete(props, "NL");
+		
+		
+		var keys = StructKeyArray(props);
+		ArraySort(keys, "textnocase");
+		
+		
+		str.append('<?xml version="1.0" encoding="iso-8859-1"?>');
+		str.append(NL);
+		
+		str.append('<config>');
+		str.append(NL);
+		
+		for (i=1; i <= ArrayLen(keys); i++){
+			if (not IsCustomFunction(props[keys[i]]) ){
+				str.append('	');
+				str.append('<#keys[i]#>');
+				str.append('#props[keys[i]]#');
+				str.append('</#keys[i]#>');
+				str.append(NL);
+			}
+		}
+		
+		str.append('</config>');
+		str.append(NL);
+		
+		return str.toString();
+	} 
+	
+	public string function writeToDisk(){
+		var FileToWrite = This.getRootFilePath() & ".apptacular/config.xml";
+		FileWrite(FileToWrite, This.toXML());
+	}
+	
+	public string function overwriteFromDisk(){
+		var FileToRead = This.getRootFilePath() & ".apptacular/config.xml";
+		var XML = xmlParse(FileRead(FileToRead));
+		var keys = StructKeyArray(xml.config);
+		var i = 0;
+		
+		for (i=1; i <= ArrayLen(keys); i++){
+			var setter = This['set#keys[i]#'];
+			setter(xml.config[keys[i]].xmlText);
+		}
+		
+		
+
+	}
 	
 }
