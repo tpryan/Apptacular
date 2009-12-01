@@ -427,6 +427,16 @@ component{
 				ct.AppendBody('		</tr>');
 			
 				}
+			else if (compareNoCase(column.getuitype(), "boolean") eq 0){
+					
+					ct.AppendBody('		<tr>');
+		 			ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 			ct.AppendBody('			<td>##YesNoFormat(#EntityName#.get#column.getName()#())##</td>');
+					ct.AppendBody('		</tr>');
+
+				
+				}	
+				
 			else{
 		 		ct.AppendBody('		<tr>');
 		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
@@ -510,6 +520,16 @@ component{
 				else if (compareNoCase(uitype, "text") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" /></td>');
+				}
+				
+				else if (compareNoCase(uitype, "boolean") eq 0){
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
+	 				ct.AppendBody('			<td>');
+					ct.AppendBody('				<label for="#columnName#true"><input type="radio" name="#columnName#" <cfif ###EntityName#.get#columnName#()##>checked="checked"</cfif> id="#columnName#true" value="1">Yes</label>');
+					ct.AppendBody('				<label for="#columnName#false"><input type="radio" name="#columnName#" <cfif NOT ###EntityName#.get#columnName#()##>checked="checked"</cfif> id="#columnName#false" value="0">No</label>');
+					ct.AppendBody('			</td>');
+
+				
 				}
 				
 				else if (config.skipUI(columnName)){

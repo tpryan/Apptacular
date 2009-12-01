@@ -89,7 +89,7 @@ component
 				var columnName = column.getName();
 				var columnCSPath = DSCSPath & "/" & tableName & "/" & columnName;
 				
-				if (FileExists(checksums[columnCSPath]['filePath'])){
+				if (structKeyExists(checksums, columnCSPath) AND FileExists(checksums[columnCSPath]['filePath'])){
 					var configCS = checksums[columnCSPath]['checksum'];
 					var dbCS = column.getChecksum();
 				

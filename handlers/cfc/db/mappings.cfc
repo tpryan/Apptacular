@@ -6,6 +6,7 @@ component
 		
 		datatypes['int']['ormType'] = "integer";
 		datatypes['integer']['ormType'] = "integer";
+		datatypes['tinyint']['ormType'] = "integer";
 		datatypes['INT UNSIGNED']['ormType'] = "integer";
 		datatypes['smallint']['ormType'] = "short";
 		datatypes['number']['ormType'] = "big_decimal";
@@ -35,6 +36,7 @@ component
 		datatypes['smallint']['uiType'] = "string";
 		datatypes['number']['uiType'] = "string";
 		datatypes['decimal']['uiType'] = "string";
+		datatypes['tinyint']['uiType'] = "string";
 	
 		datatypes['varchar']['uiType'] = "string";
 		datatypes['varchar2']['uiType'] = "string";
