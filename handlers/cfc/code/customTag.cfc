@@ -8,6 +8,7 @@ component extends="CFPage" accessors="true"
 		This.setExtension('cfm');
 		This.setName(arguments.Name);
 		This.setFileLocation(arguments.fileLocation);
+		This.setFormat('cfml');
 		
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 

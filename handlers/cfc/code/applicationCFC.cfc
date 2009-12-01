@@ -5,6 +5,7 @@ component extends="cfc" accessors="true" {
 		
 		This.setOutput(FALSE); 
 		This.setExtension('cfc');
+		This.setFormat('cfscript');
 		variables.constructorArray = ArrayNew(1);
 		variables.functionArray = ArrayNew(1);
 		variables.propertyArray = ArrayNew(1);

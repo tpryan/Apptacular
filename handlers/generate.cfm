@@ -1,17 +1,28 @@
 <cfsetting showdebugoutput="FALSE" />
 
 <cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="ideeventInfo" />
+	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
 </cfif>
-
-
 
 <cfscript>
 
 	xmldoc = XMLParse(ideeventInfo);  
-	dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
-	rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value & "/";
-
+	
+	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
+		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
+		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value & "/";
+	}
+	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
+		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
+		
+		schemaPath = rootFilePath & FS & ".apptacular/schema/";
+		dsName = DirectoryList(schemaPath, false, "name")[1];
+		
+	}
+	
+	
+	dbConfigPath = rootFilePath & "/.apptacular/schema";  
 
 	StartTimer = getTickCount();
 
@@ -20,7 +31,7 @@
 	
 	rootCFCPath = findCFCPathFromFilePath(rootFilePath);
 
-	dbConfig = New cfc.db.dbConfig(rootFilePath);
+	dbConfig = New cfc.db.dbConfig(dbConfigPath);
 	
 	datamodel= dbConfig.overwriteConfig(db);
 	dbConfig.writeConfig(datamodel);
@@ -46,19 +57,6 @@
 
 </cfscript>
 
-<cfquery name="filesList" dbtype="query">
-	SELECT 		*
-	FROM 		filesList
-	WHERE 	 	name not like '.git'
-	AND 		directory not like '%.git%'
-	AND 		name not like '.schema'
-	AND 		directory not like '%.schema%'
-	AND 		name not like '.project'
-	AND 		name not like 'settings.xml'
-	AND			type != 'Dir'
-</cfquery>
-
-
 
 <cfheader name="Content-Type" value="text/xml">
 <response status="success" showresponse="true">
@@ -66,7 +64,7 @@
 		<dialog width="600" height="400" />
 			<body>
 				<![CDATA[
-				<cfoutput>#filesList.recordCount# Files Generated in #TickCount# seconds, even using Evaluate()</cfoutput>
+				<cfoutput>#generator.fileCount()# Files Generated in #TickCount# seconds, even using Evaluate()</cfoutput>
 				]]>
 			</body>
 		<commands>

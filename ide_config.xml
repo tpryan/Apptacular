@@ -14,11 +14,19 @@
 				</action>
 			</menu>
 		</contribution>
+		<contribution target="projectview" >
+			<menu name="Apptacular">
+		    	<action name="Edit Data Model" handlerid="editSchema"></action>
+				<action name="Regenerate Application" handlerid="generate"></action>
+			</menu>
+			
+		</contribution>
     </menucontributions>	
 
 	<!-- Define Handlers-->
 	<handlers>		
 		<handler id="generate" type="CFM" filename="generate.cfm" />
+		<handler id="editSchema" type="CFM" filename="editSchema.cfm" />
 	</handlers>
 
 </application>

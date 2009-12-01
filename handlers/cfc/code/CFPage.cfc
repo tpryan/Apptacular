@@ -2,12 +2,13 @@
 	<cfproperty name="name" hint="The name of the page" />
 	<cfproperty name="fileLocation" hint="File path of the page" />
 	<cfproperty name="extension" />
-	
+	<cfproperty name="format" />
 	
 	<cfscript>
 		public CFPage function init(required string name, required string fileLocation){
 		
 			This.setExtension('cfm');
+			This.setFormat('cfml');
 			This.setName(arguments.Name);
 			This.setFileLocation(arguments.fileLocation);
 			variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -33,10 +34,10 @@
 			return "#This.getFileLocation()#/#This.getName()#.#This.getExtension()#";
 		}
 		
-		public void function write(required string format="cfml"){
+		public void function write(){
 			conditionallyCreateDirectory(This.getFileLocation());
 
-			if (CompareNoCase(arguments.format, "cfscript") eq 0)
+			if (CompareNoCase(This.getFormat(), "cfscript") eq 0)
 				fileWrite(getFileName(), Trim(getCFScript()));
 			else{
 				fileWrite(getFileName(), Trim(getCFML()));

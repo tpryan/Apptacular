@@ -5,6 +5,7 @@ component{
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		variables.datasource = arguments.datasource;
 		variables.config = arguments.config;
+		variables.files = ArrayNew(1);
 				
 		return This;
 	}
@@ -13,16 +14,26 @@ component{
 		var i =0;
 		
 		if (config.getCreateAppCFC()){
-			createAppCFC(datasource, config.getRootFilePath()).write(config.getCFCFormat());
-			createEventHandler(config.getEntityFilePath()).write(config.getCFCFormat());
+			var AppCFC = createAppCFC(datasource, config.getRootFilePath());
+			AppCFC.setFormat(config.getCFCFormat());
+			ArrayAppend(files, AppCFC);
+			
+			var EventHandler = createEventHandler(config.getEntityFilePath());
+			EventHandler.setFormat(config.getCFCFormat());
+			ArrayAppend(files, EventHandler);
+			
+			
 		}
 		
 		if (config.getCreateViews()){
+			copyCSS();
+			copyForeignKeyCustomTag();
 			
-			createIndex(datasource, config.getRootFilePath()).write();
-			writeCSS();
-			writeForeignKeyCustomTag();
-			createPageWrapper(datasource, config.getCustomTagFilePath(), config.getCSSRelativePath()).write();
+			var index = createIndex(datasource, config.getRootFilePath());
+			ArrayAppend(files, index);
+			
+			var pageWrapper = createPageWrapper(datasource, config.getCustomTagFilePath(), config.getCSSRelativePath());
+			ArrayAppend(files, pageWrapper);
 		}
 		
 		var tables = datasource.getTables();
@@ -30,21 +41,49 @@ component{
 		for (i=1; i <= ArrayLen(tables); i++){
 			
 			if (config.getCreateEntities()){
-				createORMCFC(tables[i], config.getEntityFilePath()).write(config.getCFCFormat());
+			
+				var ORMCFC = createORMCFC(tables[i], config.getEntityFilePath());
+				ORMCFC.setFormat(config.getCFCFormat());
+				ArrayAppend(files, ORMCFC);
+			
 			}
 			if (config.getCreateViews()){
-				createViewListCustomTag(tables[i], config.getCustomTagFilePath()).write();
-				createViewReadCustomTag(tables[i], config.getCustomTagFilePath()).write();
-				createViewEditCustomTag(tables[i], config.getCustomTagFilePath(), config).write();
-				createView(tables[i], config.getRootFilePath(), config.getEntityCFCPath()).write();
+				
+				var ViewListCustomTag = createViewListCustomTag(tables[i], config.getCustomTagFilePath());
+				ArrayAppend(files, ViewListCustomTag);
+				
+				var ViewReadCustomTag = createViewReadCustomTag(tables[i], config.getCustomTagFilePath());
+				ArrayAppend(files, ViewReadCustomTag);
+				
+				var ViewEditCustomTag = createViewEditCustomTag(tables[i], config.getCustomTagFilePath(), config);
+				ArrayAppend(files, ViewEditCustomTag);
+				
+				var View = createView(tables[i], config.getRootFilePath(), config.getEntityCFCPath());
+				ArrayAppend(files, View);
+				
 			}
 			if (config.getCreateServices()){
-				createORMServiceCFC(tables[i], config.getServiceFilePath(), config.getEntityCFCPath(), config.getServiceAccess()).write(config.getCFCFormat());
+				
+				var ORMServiceCFC = createORMServiceCFC(tables[i], config.getServiceFilePath(), config.getEntityCFCPath(), config.getServiceAccess());
+				ORMServiceCFC.setFormat(config.getCFCFormat());
+				ArrayAppend(files, ORMServiceCFC);
+			
 			}
 		}
 		
-		
+		writeFiles();
 	
+	}
+	
+	public void function writeFiles(){
+		var i = 0;
+		for (i=1; i <= ArrayLen(files); i++){
+			files[i].write();
+		}
+	}
+	
+	public numeric function fileCount(){
+		return ArrayLen(files);
 	}
 	
 	public any function createORMCFC(required any table, required string path){
@@ -744,14 +783,14 @@ component{
 		return cfc;
 	}    
 
-	public void function writeCSS(){
+	public void function copyCSS(){
 		conditionallyCreateDirectory(config.getCSSFilePath());
 		var origCSS = ExpandPath("generators/trorm/storage/screen.css");
 		var newCSS = config.getCSSFilePath() & variables.FS & "screen.css";
 		FileCopy(origCSS, newCSS);
 	}
 	
-	public void function writeForeignKeyCustomTag(){
+	public void function copyForeignKeyCustomTag(){
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/trorm/storage/foreignKeySelector.cfm");
 		var newCT = config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm";

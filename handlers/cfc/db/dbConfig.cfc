@@ -5,10 +5,10 @@ component
 		variables.FS = createObject("java","java.lang.System").getProperty("file.separator");
 		
 		if (CompareNoCase(right(arguments.path, 1),variables.FS) neq 0){
-			variables.path = arguments.path & variables.FS & "schema" & variables.FS;
+			variables.path = arguments.path & variables.FS;
 		}
 		else{
-			variables.path = arguments.path & ".schema" & variables.FS;
+			variables.path = arguments.path;
 		}
 	}
 

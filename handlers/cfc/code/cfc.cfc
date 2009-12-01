@@ -5,12 +5,14 @@ component extends="CFPage" accessors="true" {
 	property string entityname;
 	property name="output" type="boolean" default="false";
 	property name="persistent" type="boolean" default="false";
+	property name="format";
 
 	public function init(){
 		
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		This.setExtension('cfc');
-		This.setOutput(FALSE); 
+		This.setOutput(FALSE);
+		This.setFormat('cfscript'); 
 		
 		variables.constructorArray = ArrayNew(1);
 		variables.functionArray = ArrayNew(1);
