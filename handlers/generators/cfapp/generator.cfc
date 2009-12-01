@@ -540,7 +540,7 @@ component{
 				
 				}
 				
-				else if (config.skipUI(columnName)){
+				else if (config.isMagicField(columnName)){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
 				}
@@ -642,7 +642,7 @@ component{
 				view.AppendBody('		<cfset #fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true) />');
 				view.AppendBody('		<cfset #entityName#.set#fkEName#(#fkEName#) />');
 			}
-	    	else if (not config.skipUI(column.getName())){ 
+	    	else if (not config.isMagicField(column.getName())){ 
 	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(form.#column.getName()#)  />');
 	    	}
 	    }

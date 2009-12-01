@@ -31,6 +31,7 @@ component accessors="true"{
 	
 	
 	
+	
 	public function init(required string rootFilePath, required string rootCFCPath){
 	
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -52,6 +53,8 @@ component accessors="true"{
 		
 		This.setCreatedOnString("createdOn");
 		This.setUpdatedOnString("updatedOn");
+		This.setCreatedOnLabel("Created On");
+		This.setUpdatedOnLabel("Updated On");
 		
 		calculatePaths();
 		
@@ -79,7 +82,7 @@ component accessors="true"{
 		This.setCssRelativePath(FS & ReplaceNoCase(This.getCSSFilePath(), webroot, "", "once"));
 	}
 	
-	public boolean function skipUI(required string columnName){
+	public boolean function isMagicField(required string columnName){
 		if ((CompareNoCase(arguments.columnName, This.getCreatedOnString()) eq 0) OR
 			(CompareNoCase(arguments.columnName, This.getUpdatedOnString()) eq 0)){
 			return TRUE;
@@ -89,6 +92,8 @@ component accessors="true"{
 		}
 	
 	}
+	
+	
 	
 	public string function toXML(){
 		var str = createObject("java", "java.lang.StringBuilder").init();
