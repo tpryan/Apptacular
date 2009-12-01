@@ -27,10 +27,10 @@
 
 	<!-- Define Handlers-->
 	<handlers>		
-		<handler id="generate" type="CFM" filename="generate.cfm" />
-		<handler id="editDB" type="CFM" filename="editDBHandler.cfm" />
-		<handler id="editConfig" type="CFM" filename="editConfigHandler.cfm" />
-		<handler id="purge" type="CFM" filename="purge.cfm" />
+		<handler id="generate" type="CFM" filename="handlerGenerate.cfm" />
+		<handler id="editDB" type="CFM" filename="handlerEditDB.cfm" />
+		<handler id="editConfig" type="CFM" filename="handlerEditConfig.cfm" />
+		<handler id="purge" type="CFM" filename="handlerPurge.cfm" />
 	</handlers>
 
 </application>
