@@ -384,7 +384,21 @@ component{
 				ct.AppendBody('			<td>##YesNoFormat(#entityName#.get#columns[i].getName()#())##</td>');
 
 				
-				}	
+			}
+			else if (compareNoCase(columns[i].getuitype(), "date") eq 0){
+					
+		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#columns[i].getName()#(),"#config.getDateFormat()#" )##</td>');
+
+				
+			}
+			else if (compareNoCase(columns[i].getuitype(), "datetime") eq 0){
+					
+		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#columns[i].getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#columns[i].getName()#(),"#config.getTimeFormat()#" )##</td>');
+
+				
+			}		
+			
+				
 			else{
 				ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
 			}
@@ -443,7 +457,25 @@ component{
 					ct.AppendBody('		</tr>');
 
 				
-				}	
+			}
+			else if (compareNoCase(column.getuitype(), "date") eq 0){
+					
+					ct.AppendBody('		<tr>');
+		 			ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )##</td>');
+					ct.AppendBody('		</tr>');
+
+				
+			}
+			else if (compareNoCase(column.getuitype(), "datetime") eq 0){
+					
+					ct.AppendBody('		<tr>');
+		 			ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#column.getName()#(),"#config.getTimeFormat()#" )##</td>');
+					ct.AppendBody('		</tr>');
+
+				
+			}		
 				
 			else{
 		 		ct.AppendBody('		<tr>');
@@ -542,7 +574,19 @@ component{
 				
 				else if (config.isMagicField(columnName)){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
-	 				ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
+	 				
+				
+					if (compareNoCase(column.getuitype(), "date") eq 0){
+				 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )##</td>');
+					}
+					else if (compareNoCase(column.getuitype(), "datetime") eq 0){
+				 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#column.getName()#(),"#config.getTimeFormat()#" )##</td>');
+					}
+					else{
+						ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
+					}		
+				
+				
 				}
 				else if (column.getisForeignKey()){
 					var fkTable = datasource.getTable(column.getForeignKeyTable());

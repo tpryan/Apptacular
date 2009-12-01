@@ -29,6 +29,9 @@ component accessors="true"{
 	property name="createdOnString";
 	property name="updatedOnString";
 	
+	property name="dateformat";
+	property name="timeformat";
+	
 	
 	
 	
@@ -53,8 +56,6 @@ component accessors="true"{
 		
 		This.setCreatedOnString("createdOn");
 		This.setUpdatedOnString("updatedOn");
-		This.setCreatedOnLabel("Created On");
-		This.setUpdatedOnLabel("Updated On");
 		
 		calculatePaths();
 		
@@ -64,6 +65,10 @@ component accessors="true"{
 		This.setCreateServices(true);
 		This.setCreateEntities(true);
 		This.setCFCFormat("cfscript");
+		
+		This.setDateFormat("mm/dd/yyyy");
+		
+		This.setTimeFormat("h:mm tt");
 			
     	return This;
     }
