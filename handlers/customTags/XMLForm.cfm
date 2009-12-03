@@ -10,6 +10,7 @@
 	<cfset allowed['datasource'] = "displayName" />
 	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,softdelete" />
 	<cfset allowed['column'] = "displayName,uiType" />
+	<cfset allowed['config'] = "" />
 	
 	<cfif structKeyExists(form, "submit")>
 	
@@ -55,7 +56,7 @@
 			<input type="hidden" name="fileToEdit" value="#fileToEdit#" /> 	
 			<table>
 			<cfloop array="#keys#" index="key" >
-				<cfif ListFindNoCase(allowed[XMLRoot], key)>
+				<cfif len(allowed[XMLRoot]) eq 0 OR ListFindNoCase(allowed[XMLRoot], key)>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td><input name="#key#" type="text" id="#key#" value="#XML[XMLRoot][key]['XMLText']#" /></td>			

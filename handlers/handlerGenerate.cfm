@@ -49,9 +49,14 @@
 	TickCount = EndTimer - StartTimer;
 	TickCount = TickCount / 1000;
 	
+	
+	
 
 </cfscript>
 
+<!--- reset application --->
+<cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "?reset_app" />
+<cfhttp url="#script_Path#" timeout="0" />
 
 <cfheader name="Content-Type" value="text/xml">
 <response status="success" showresponse="true">

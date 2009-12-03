@@ -75,6 +75,9 @@
 	<cfdirectory action="delete" directory="#path#" />
 </cfloop>
 
+<!--- reset application --->
+<cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "?reset_app" />
+<cfhttp url="#script_Path#" timeout="0" />
 
 	
 
