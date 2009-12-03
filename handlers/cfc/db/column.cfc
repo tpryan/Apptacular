@@ -11,6 +11,7 @@ component accessors="true" extends="dbItem"
 	property name="ormType";
 	property name="dataType";
 	property name="uiType";
+	property name="Type";
 	
 	public string function toXML(){
 		return objectToXML("column");

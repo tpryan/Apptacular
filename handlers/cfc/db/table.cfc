@@ -88,6 +88,7 @@ component accessors="true" extends="dbItem"
 			column.setName(LCase(columns.column_name[i]));
 			column.setDisplayName(capitalize(columns.column_name[i]));
 			column.setColumn(columns.column_name[i]);
+			column.setType(mappings.getType(columns.type_name[i]));
 			column.setOrmType(mappings.getOrmType(columns.type_name[i]));
 			column.setUIType(mappings.getUIType(columns.type_name[i]));
 			column.setDataType(columns.type_name[i]);

@@ -62,14 +62,15 @@
 </cfoutput>
 
 <cf_XMLForm fileToEdit="#tablePath#" message="#message#" />
+<cf_XMLColumnsForm tablePathToEdit="#path#" />
 
-<h2>Edit Columns</h2>
+<!---<h2>Edit Columns</h2>
 <ul>
 <cfoutput query="columns">
 	<cfset fileName = directory & fs & name />
 	<li><a href="editColumn.cfm?path=#URLEncodedFormat(fileName)#">#ListFirst(name, ".")#</a></li>
 
 </cfoutput>
-</ul>
+</ul>--->
 
 </cf_pageWrapper>

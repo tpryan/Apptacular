@@ -4,6 +4,36 @@ component
 	public function init(){
 		variables.datatypes = {};
 		
+		datatypes['int']['type'] = "numeric";
+		datatypes['integer']['type'] = "numeric";
+		datatypes['tinyint']['type'] = "numeric";
+		datatypes['INT UNSIGNED']['type'] = "numeric";
+		datatypes['smallint']['type'] = "numeric";
+		datatypes['number']['type'] = "numeric";
+		datatypes['decimal']['type'] = "numeric";
+	
+		datatypes['varchar']['type'] = "string";
+		datatypes['varchar2']['type'] = "string";
+		datatypes['enum']['type'] = "string";
+		datatypes['char']['type'] = "string";
+		
+		datatypes['text']['type'] = "string";
+	
+		datatypes['boolean']['type'] = "boolean";
+		datatypes['yes_no']['type'] = "boolean";
+		datatypes['true_false']['type'] = "boolean";
+	
+		datatypes['date']['type'] = "date";
+		datatypes['time']['type'] = "date";
+		datatypes['timestamp']['type'] = "date";
+		datatypes['datetime']['type'] = "date";
+	
+		datatypes['clob']['type'] = "clob";
+		datatypes['blob']['type'] = "blob";
+		
+		
+		
+		
 		datatypes['int']['ormType'] = "integer";
 		datatypes['integer']['ormType'] = "integer";
 		datatypes['tinyint']['ormType'] = "integer";
@@ -65,6 +95,10 @@ component
 
 	public string function getOrmType(required string datatype){
 		return datatypes[arguments.datatype]['ormType'];
+	}
+	
+	public string function getType(required string datatype){
+		return datatypes[arguments.datatype]['Type'];
 	}
 	
 	public string function getUIType(required string datatype){

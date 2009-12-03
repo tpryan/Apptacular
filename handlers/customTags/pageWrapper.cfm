@@ -11,11 +11,11 @@
 	}
 	td{
 		padding-right: 10px;
-		border-bottom: 1px dotted #999;	
+		//border-bottom: 1px dotted #999;	
 	}	
 	body{
 		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
-		font-size: 90%;
+		font-size: 80%;
 	}
 	h1 {
 		font-size: 120%;
@@ -44,7 +44,9 @@
 		text-align: right;
 	}
 	
-	input[type="text"] { width: 400px; }		
+	input[type="text"] { width: 400px; height: 11px; font-size: 11px; }
+	#columns input[type="text"] { width: 110px; }
+			
 	
 </style>
 </head>

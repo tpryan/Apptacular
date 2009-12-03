@@ -120,7 +120,8 @@ component{
 	       	
 	       	property = New apptacular.handlers.cfc.code.property();
 	       	property.setName(column.getName());
-			property.setType(column.getOrmType());
+			property.setType(column.getType());
+			property.setORMType(column.getOrmType());
 	       	
 			if (not column.isColumnSameAsColumnName()){
 				property.setColumn(column.getColumn());
@@ -136,6 +137,7 @@ component{
 	       	}	
 	       	else if (column.getisForeignKey()){
 				var fTable = dataSource.getTable(column.getForeignKeyTable());
+				property.setType("");
 				property.setOrmType("");
 	       		property.setName(fTable.getEntityName());
 	       		property.setFieldtype('many-to-one');
