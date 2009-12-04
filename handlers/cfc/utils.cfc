@@ -12,6 +12,11 @@
 		var webroot = ExpandPath("/");
 		results = replace(arguments.path, webroot, "", "one");
 		results = replace(results, "/", ".", "all");
+		
+		if (compare(right(results, 1), ".") eq 0){
+			results = Left(results, len(results) -1);
+		}
+		
 		return results;
 	}	
 

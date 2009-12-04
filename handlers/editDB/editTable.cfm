@@ -42,16 +42,16 @@
 	<table class="breadcrumb">
 		<tr>
 			<cfif len(breadcrumbStruct.previous)>
-				<td id="prev">&larr;<a href="editTable.cfm?path=#URLEncodedFormat(breadcrumbStruct.previous)#">Edit <strong>#ListLast(breadcrumbStruct.previous, FS)#</strong></a></td>
+				<td id="prev"><a href="editTable.cfm?path=#URLEncodedFormat(breadcrumbStruct.previous)#">&larr;<strong>#ListLast(breadcrumbStruct.previous, FS)#</strong></a></td>
 			<cfelse>
 				<td id="prev"></td>
 			</cfif>
 			
 			
-			<td>&uarr;<a href="editDatasource.cfm?datasourcepath=#URLEncodedFormat(datasourcePath)#">Edit <strong>#ListLast(datasourcePath, FS)#</strong>&uarr;</a></td>
+			<td><a href="editDatasource.cfm?datasourcepath=#URLEncodedFormat(datasourcePath)#">&uarr;<strong>#ListLast(datasourcePath, FS)#</strong>&uarr;</a></td>
 			
 			<cfif len(breadcrumbStruct.next)>
-				<td id="next"><a href="editTable.cfm?path=#URLEncodedFormat(breadcrumbStruct.next)#">Edit <strong>#ListLast(breadcrumbStruct.next, FS)#</strong>&rarr;</a></td>
+				<td id="next"><a href="editTable.cfm?path=#URLEncodedFormat(breadcrumbStruct.next)#"><strong>#ListLast(breadcrumbStruct.next, FS)#</strong>&rarr;</a></td>
 			<cfelse>
 				<td id="next"></td>
 			</cfif>		

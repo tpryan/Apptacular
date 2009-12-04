@@ -79,17 +79,18 @@
 <cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
-	
-
 <cfheader name="Content-Type" value="text/xml">
-<response status="success" showresponse="true">
-	<ide>
+<cfoutput> 
+<response showresponse="true"> 
+	<ide > 
 		<dialog width="600" height="400" />
-			<body>
-				<![CDATA[
-				<cfoutput>#extrafilesList.recordCount# extraneous files deleted<br />
-				#emptyDirs.recordCount# empty directories deleted<br /></cfoutput>
-				]]>
+			<body> 
+				<![CDATA[ 
+				<cf_pageWrapper>
+					<cfoutput><p>#extrafilesList.recordCount# extraneous files deleted<br />
+				#emptyDirs.recordCount# empty directories deleted</p></cfoutput>
+				</cf_pageWrapper>
+			 	]]> 
 			</body>
 		<commands>
 			<command name="refreshproject">
@@ -97,6 +98,8 @@
 					<param key="projectname" value="<cfoutput>#rootFilePath#</cfoutput>" />
 				</params>
 			</command>
-		</commands>
-	</ide>
-</response>
+		</commands>	 
+	</ide> 
+</response> 
+</cfoutput>
+	

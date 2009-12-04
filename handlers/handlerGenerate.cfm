@@ -34,6 +34,7 @@
 	
 	dbConfig.writeConfig(datamodel);
 	
+	
 	//process both default and file version of config
 	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
 	config.overwriteFromDisk();
@@ -59,13 +60,16 @@
 <cfhttp url="#script_Path#" timeout="0" />
 
 <cfheader name="Content-Type" value="text/xml">
-<response status="success" showresponse="true">
-	<ide>
+<cfoutput> 
+<response showresponse="true"> 
+	<ide > 
 		<dialog width="600" height="400" />
-			<body>
-				<![CDATA[
-				<cfoutput>#generator.fileCount()# Files Generated in #TickCount# seconds, even using Evaluate()</cfoutput>
-				]]>
+			<body> 
+				<![CDATA[ 
+				<cf_pageWrapper>
+					<cfoutput><p>#generator.fileCount()# Files Generated in #TickCount# seconds, even using Evaluate()</p></cfoutput>				
+				</cf_pageWrapper>
+			 	]]> 
 			</body>
 		<commands>
 			<command name="refreshproject">
@@ -73,7 +77,7 @@
 					<param key="projectname" value="<cfoutput>#rootFilePath#</cfoutput>" />
 				</params>
 			</command>
-		</commands>
-	</ide>
-</response>	
-
+		</commands>	 
+	</ide> 
+</response> 
+</cfoutput>
