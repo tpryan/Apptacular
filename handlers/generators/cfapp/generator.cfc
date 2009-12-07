@@ -47,7 +47,8 @@ component{
 				ArrayAppend(files, ORMCFC);
 			
 			}
-			if (config.getCreateViews()){
+
+			if (config.getCreateViews() and tables[i].hasPrimaryKey()){
 				
 				var ViewListCustomTag = createViewListCustomTag(tables[i], config.getCustomTagFilePath());
 				ArrayAppend(files, ViewListCustomTag);

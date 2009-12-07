@@ -15,7 +15,8 @@ component accessors="true" extends="dbItem"
 	property name="isView" type="boolean";
 	property name="columns" type="column[]"; 
 	property name="columnsStruct" type="struct";
-	property name="references" type="reference[]";  
+	property name="references" type="reference[]";
+	property name="joinedTables" type="array";  
 	
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();
@@ -46,6 +47,7 @@ component accessors="true" extends="dbItem"
 		This.setIsJoinTable(FALSE);
 		This.setSoftDelete(FALSE);
 		This.setHasJoinTable(FALSE);
+		This.setjoinedTables(ArrayNew(1));
 	
 	}
 	
@@ -57,6 +59,8 @@ component accessors="true" extends="dbItem"
 		
 		dbinfo.setType("index");
 		var	indicies = dbinfo.send().getResult();
+		
+		
 		
 		This.setIsReferencedAsForeignKey(foreignKeys.recordCount > 0 );
 		
@@ -82,6 +86,11 @@ component accessors="true" extends="dbItem"
 		var i = 0;
 		var columnArray = arrayNew(1);
 		var columnStruct = structNew();
+		var referencedTables = structNew();
+		
+		
+		
+		
 		
 		for (i=1; i <= columns.recordCount; i++){
 			var column = New column();
@@ -98,6 +107,10 @@ component accessors="true" extends="dbItem"
 			column.setForeignKeyTable(columns.referenced_primarykey_table[i]);
 			column.setLength(columns.column_size[i]);
 			
+			//Count number of referenced tables.
+			if (CompareNoCase(columns.referenced_primarykey_table[i], "N/A")){
+				referencedTables[columns.referenced_primarykey_table[i]] = "";
+			}		
 			columnArray[columns.ordinal_position[i]] = column;
 			columnStruct[column.getName()] = column;
 			
@@ -108,11 +121,23 @@ component accessors="true" extends="dbItem"
 			
 			if (column.getIsForeignKey()){
 				This.setHasForeignKeys(TRUE);
-			}	
+			}
+			
 			
 		}
+		
+		if (ArrayLen(structKeyArray(referencedTables)) gt 1){
+			This.setIsJoinTable(TRUE);
+			This.setJoinedTables(structKeyArray(referencedTables));
+		}
+		
+		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
+	}
+	
+	public boolean function hasPrimaryKey(){
+		return (Not isNull(This.getIdentity()));
 	}
 	
 	public string function toXML(){

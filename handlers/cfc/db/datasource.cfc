@@ -23,8 +23,10 @@ component accessors="true" extends="dbItem"
 	
 	private void function populateTables(){
 		var i = 0;
+		var j = 0;
 		var tablesArray = ArrayNew(1);
 		var tablesStruct = StructNew();
+		var tablesStructKey = ArrayNew(1);
 		dbinfo.setType("tables");
 		var tables = dbinfo.send().getResult();
 		
@@ -47,9 +49,30 @@ component accessors="true" extends="dbItem"
 			else{
 				table.setIsView(false);
 			}
-			arrayAppend(tablesArray, table);
 			tablesStruct[table.getName()] = table;
 		}
+		
+		//check for join tables.
+		tablesStructKeys = StructKeyArray(tablesStruct);
+		
+		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
+			var joinedTables = tablesStruct[tablesStructKeys[i]].getJoinedTables();
+			
+			if (ArrayLen(joinedTables) gt 0){
+				for (j=1; j <= ArrayLen(tablesStructKeys); j++){
+					var tempTable = tablesStruct[tablesStructKeys[j]];
+					temptable.setHasJoinTable(TRUE);
+					tablesStruct[tablesStructKeys[j]] = tempTable;
+				}
+			}
+		}
+		
+		// poppulate array
+		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
+			ArrayAppend(tablesArray, tablesStruct[tablesStructKeys[i]]);
+		}
+		
+		
 		This.setTables(tablesArray);
 		This.setTablesStruct(tablesStruct);
 		

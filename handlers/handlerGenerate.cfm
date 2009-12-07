@@ -32,6 +32,8 @@
 	dbConfig = New cfc.db.dbConfig(dbConfigPath);
 	datamodel= dbConfig.overwriteConfig(db);
 	
+	
+	
 	dbConfig.writeConfig(datamodel);
 	
 	
