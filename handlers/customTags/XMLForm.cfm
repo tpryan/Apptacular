@@ -8,7 +8,7 @@
 	
 	<cfset allowed = structNew() />
 	<cfset allowed['datasource'] = "displayName" />
-	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,softdelete" />
+	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,createInterface" />
 	<cfset allowed['column'] = "displayName,uiType" />
 	<cfset allowed['config'] = "" />
 	
@@ -38,15 +38,6 @@
 	<cfset XMLRoot = StructKeyArray(XML)[1] />
 	<cfset Keys = StructKeyArray(XML[XMLRoot]) />
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<cfoutput>
 		<h1>Edit #XMLRoot#</h1>
 		<cfif len(message)>
@@ -59,7 +50,14 @@
 				<cfif len(allowed[XMLRoot]) eq 0 OR ListFindNoCase(allowed[XMLRoot], key)>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
-						<td><input name="#key#" type="text" id="#key#" value="#XML[XMLRoot][key]['XMLText']#" /></td>			
+						<td>
+							<input name="#key#" type="text" id="#key#" value="#XML[XMLRoot][key]['XMLText']#" />
+							<cfif FindNoCase("createInterface", key) AND 
+									IsBoolean(XML[XMLRoot]['isJoinTable']['XMLText']) AND
+											XML[XMLRoot]['isJoinTable']['XMLText']>
+							(Join Table)
+							</cfif>				
+						</td>			
 					</tr>
 				</cfif>
 			</cfloop>

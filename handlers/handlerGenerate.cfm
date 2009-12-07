@@ -61,25 +61,23 @@
 <cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
+
+<cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm" />
+<cfset messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#" />
+<cfset messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions />
+
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 
-<response showresponse="true"> 
-	<ide > 
-		<dialog width="600" height="400" />
-			<body> 
-				<![CDATA[ 
-				<cf_pageWrapper>
-					<cfoutput><p>#generator.fileCount()# Files Generated in #TickCount# seconds, even using Evaluate()</p></cfoutput>				
-				</cf_pageWrapper>
-			 	]]> 
-			</body>
+<response showresponse="true">
+	<ide url="#messagesURL#" > 
+		<dialog width="655" height="600" />
 		<commands>
 			<command name="refreshproject">
 				<params>
 					<param key="projectname" value="<cfoutput>#rootFilePath#</cfoutput>" />
 				</params>
 			</command>
-		</commands>	 
+		</commands>	  
 	</ide> 
 </response> 
 </cfoutput>

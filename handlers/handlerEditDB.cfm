@@ -19,7 +19,7 @@
 <cfoutput> 
 <response showresponse="true"> 
 	<ide url="#handlerURL#?datasourcePath=#schemaPath#" > 
-		<dialog width="655" height="600" /> 
+		<dialog width="655" height="700" /> 
 	</ide> 
 </response> 
 </cfoutput>

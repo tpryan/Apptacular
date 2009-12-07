@@ -79,19 +79,15 @@
 <cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
+<cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm" />
+<cfset messagesOptions = "?type=purge&amp;fileCount=#extrafilesList.recordCount#&amp;dirCount=#emptyDirs.recordCount#" />
+<cfset messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions />
+
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 
 <response showresponse="true"> 
-	<ide > 
-		<dialog width="600" height="400" />
-			<body> 
-				<![CDATA[ 
-				<cf_pageWrapper>
-					<cfoutput><p>#extrafilesList.recordCount# extraneous files deleted<br />
-				#emptyDirs.recordCount# empty directories deleted</p></cfoutput>
-				</cf_pageWrapper>
-			 	]]> 
-			</body>
+	<ide url="#messagesURL#" > 
+		<dialog width="655" height="600" />
 		<commands>
 			<command name="refreshproject">
 				<params>
