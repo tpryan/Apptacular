@@ -59,9 +59,12 @@ component accessors="true" extends="dbItem"
 			var joinedTables = tablesStruct[tablesStructKeys[i]].getJoinedTables();
 			
 			if (ArrayLen(joinedTables) gt 0){
+				var joinTableName = tablesStruct[tablesStructKeys[i]].getName();
+			
 				for (j=1; j <= ArrayLen(tablesStructKeys); j++){
 					var tempTable = tablesStruct[tablesStructKeys[j]];
 					temptable.setHasJoinTable(TRUE);
+					temptable.addJoinTable(joinTableName);
 					tablesStruct[tablesStructKeys[j]] = tempTable;
 				}
 			}

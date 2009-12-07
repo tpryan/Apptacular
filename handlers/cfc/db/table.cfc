@@ -16,7 +16,9 @@ component accessors="true" extends="dbItem"
 	property name="columns" type="column[]"; 
 	property name="columnsStruct" type="struct";
 	property name="references" type="reference[]";
-	property name="joinedTables" type="array";  
+	property name="joinedTables" type="array";
+	property name="joinTables" type="array";
+	property name="createInterface" type="boolean";     
 	
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();
@@ -47,7 +49,9 @@ component accessors="true" extends="dbItem"
 		This.setIsJoinTable(FALSE);
 		This.setSoftDelete(FALSE);
 		This.setHasJoinTable(FALSE);
+		This.setJoinTables(ArrayNew(1));
 		This.setjoinedTables(ArrayNew(1));
+		This.setCreateInterface(TRUE);
 	
 	}
 	
@@ -128,6 +132,7 @@ component accessors="true" extends="dbItem"
 		
 		if (ArrayLen(structKeyArray(referencedTables)) gt 1){
 			This.setIsJoinTable(TRUE);
+			This.setCreateInterface(FALSE);
 			This.setJoinedTables(structKeyArray(referencedTables));
 		}
 		
@@ -150,6 +155,23 @@ component accessors="true" extends="dbItem"
 	
 	public table function getColumn(required string columnName){
 		return This.getColumnsStruct()[arguments.columnName];
+	}
+	
+	public void function addJoinTable(required string joinTable){
+		var joinTables = This.getJoinTables();
+		ArrayAppend(joinTables, arguments.joinTable);
+		This.setJoinTables(joinTables);
+	}
+	
+	public string function getOtherJoinTable(required string joinTable){
+		var i = 0;
+		var joinedTables = This.getJoinedTables();
+		
+		for (i = 1; i <= arraylen(joinedTables); i++){
+			if (CompareNoCase(joinedTables[i], arguments.joinTable) neq 0){
+				return joinedTables[i];
+			}	
+		}
 	}
 	
 	

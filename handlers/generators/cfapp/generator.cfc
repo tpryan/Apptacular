@@ -28,6 +28,8 @@ component{
 		if (config.getCreateViews()){
 			copyCSS();
 			copyForeignKeyCustomTag();
+			copyManyToManyCustomTag();
+			copyManyToManyReaderCustomTag();
 			
 			var index = createIndex(datasource, config.getRootFilePath());
 			ArrayAppend(files, index);
@@ -40,7 +42,7 @@ component{
 		
 		for (i=1; i <= ArrayLen(tables); i++){
 			
-			if (config.getCreateEntities()){
+			if (config.getCreateEntities() and tables[i].getCreateInterface()){
 			
 				var ORMCFC = createORMCFC(tables[i], config.getEntityFilePath());
 				ORMCFC.setFormat(config.getCFCFormat());
@@ -48,7 +50,7 @@ component{
 			
 			}
 
-			if (config.getCreateViews() and tables[i].hasPrimaryKey()){
+			if (config.getCreateViews() and tables[i].getCreateInterface()){
 				
 				var ViewListCustomTag = createViewListCustomTag(tables[i], config.getCustomTagFilePath());
 				ArrayAppend(files, ViewListCustomTag);
@@ -63,7 +65,7 @@ component{
 				ArrayAppend(files, View);
 				
 			}
-			if (config.getCreateServices()){
+			if (config.getCreateServices() and tables[i].getCreateInterface()){
 				
 				var ORMServiceCFC = createORMServiceCFC(tables[i], config.getServiceFilePath(), config.getEntityCFCPath(), config.getServiceAccess());
 				ORMServiceCFC.setFormat(config.getCFCFormat());
@@ -84,6 +86,8 @@ component{
 		
 		ArrayAppend(result,config.getCSSFilePath() & variables.FS & "screen.css");
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm");
+		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManySelector.cfm");
+		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManyReader.cfm");
 		return result;
 	}
 	
@@ -101,6 +105,7 @@ component{
 	public any function createORMCFC(required any table, required string path){
 		var i = 0;
 		var j = 0;
+		var k = 0;
 	    var fileLocation = path;
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
@@ -112,6 +117,8 @@ component{
 		    cfc.setTable(table.getName());
 		    cfc.setEntityname(table.getEntityName());
 	   	}
+		
+		
 	    
 		var columns = table.getColumns();
 	
@@ -156,17 +163,51 @@ component{
 		if (not isNull(references)){
 		
 			for (j=1; j <= ArrayLen(references); j++){
+				
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
+				var joinTables = table.getJoinTables();
 				
-				property = New apptacular.handlers.cfc.code.property();
-				property.setName(foreignTable.getPlural());
-		   		property.setFieldtype('one-to-many');
-		   		property.setFkcolumn(ref.getforeignKey());
-		   		property.setCFC(foreignTable.getEntityName());
-		   		property.setCascade("all-delete-orphan");
-				property.setSingularname(foreignTable.getEntityName());
-		   		cfc.AddProperty(property);
+				if (ListFindNoCase(ArrayToList(joinTables),foreignTable.getName()) ){
+					//Handle Many-to-manys
+					otherJoinTable = datasource.getTable(foreignTable.getOtherJoinTable(table.getName()));		
+					foreignColumns = foreignTable.getColumns();
+					
+					
+					
+					property = New apptacular.handlers.cfc.code.property();
+					property.setName(otherJoinTable.getPlural());
+			   		property.setFieldtype('many-to-many');
+					property.setCFC(otherJoinTable.getEntityName());
+					property.setLinkTable(foreignTable.getName());
+					
+					for (k=1; k <= ArrayLen(foreignColumns); k++){
+						if (CompareNoCase(foreignColumns[k].getForeignKeyTable(),table.getName()) eq 0){
+							property.setFKColumn(foreignColumns[k].getColumn());
+						}
+						else if (CompareNoCase(foreignColumns[k].getForeignKeyTable(),otherJoinTable.getName()) eq 0){
+							property.setInverseJoinColumn(foreignColumns[k].getColumn());
+						}
+					
+					}
+					
+			   		property.setLazy(true);
+					property.setSingularname(otherJoinTable.getEntityName());
+			   		cfc.AddProperty(property);
+				
+				}
+				else{
+				
+					//Handle Typical OneToManys
+					property = New apptacular.handlers.cfc.code.property();
+					property.setName(foreignTable.getPlural());
+			   		property.setFieldtype('one-to-many');
+			   		property.setFkcolumn(ref.getforeignKey());
+			   		property.setCFC(foreignTable.getEntityName());
+			   		property.setCascade("all-delete-orphan");
+					property.setSingularname(foreignTable.getEntityName());
+			   		cfc.AddProperty(property);
+				}
 			}
 	   	}
 		
@@ -181,6 +222,7 @@ component{
 		func.AddOperationScript('			variables[getIDName()] = JavaCast("Null", "");');
 		func.AddOperationScript('		}');
 		cfc.addFunction(func);
+		
 		
 		
 		return cfc;
@@ -488,22 +530,27 @@ component{
 			}
 		}
 		
+		if (table.getHasJoinTable()){
+			var joinTables = table.getJoinTables();
+			for (i = 1; i <= ArrayLen(joinTables); i++){
+				var joinTable = dataSource.getTable(joinTables[i]);
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				ct.AppendBody('		<tr>');
+				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
+				ct.AppendBody('			<td><cf_manyToManyReader  entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  /></td>');
+				ct.AppendBody('		</tr>');
+			
+			}
+		
+		}
+		
 		
 		ct.AppendBody('	</tbody>');
 		ct.AppendBody('</table>');
 		
 		
-		var references = table.getReferences();
-	   	
-		if (not isNull(references)){
 		
-			for (j=1; j <= ArrayLen(references); j++){
-				var ref = references[j];
-				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
-				ct.AppendBody('<h3>#foreignTable.getDisplayPlural()#</h3> ');
-				ct.AppendBody('<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
-			}
-	   	}
 		
 		
 		
@@ -600,7 +647,7 @@ component{
 					ct.AppendBody('			</cfif>');
 					
 					
-					ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getEntityName()#:</label></th>');
+					ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##"  /></td>');	
 				}
 				else{
@@ -612,6 +659,23 @@ component{
 			}
 			
 		}
+		
+		if (table.getHasJoinTable()){
+			var joinTables = table.getJoinTables();
+			for (i = 1; i <= ArrayLen(joinTables); i++){
+				var joinTable = dataSource.getTable(joinTables[i]);
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				ct.AppendBody('		<tr>');
+				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
+				ct.AppendBody('			<td><cf_manyToManySelector name="#otherJoinTable.getPlural()#" entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  /></td>');
+				ct.AppendBody('		</tr>');
+			
+			}
+		
+		}
+		
+		
 		ct.AppendBody('		<tr>');
 		ct.AppendBody('			<th />');
 		ct.AppendBody('			<td><input name="save" type="submit" value="Save" /></td>');
@@ -659,7 +723,27 @@ component{
 		view.AppendBody('	<cfcase value="read">');
 	    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
 	    view.AppendBody('		<cf_#entityName#Read #entityName# = "###entityName###" /> ');
-	    view.AppendBody('	</cfcase>');
+	    
+		
+		
+		var references = table.getReferences();
+	   	
+		if (not isNull(references)){
+		
+			for (j=1; j <= ArrayLen(references); j++){
+				var ref = references[j];
+				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
+				
+				if (not foreignTable.getIsJoinTable()){
+					view.AppendBody('');
+					view.AppendBody('		<h3>#foreignTable.getDisplayPlural()#</h3> ');
+					view.AppendBody('		<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
+				}
+			}
+	   	}
+		
+		
+		view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    view.AppendBody('	<cfcase value="edit">');
 	    view.AppendBody('		<cfif url.#identity# eq 0>');
@@ -693,6 +777,34 @@ component{
 	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(form.#column.getName()#)  />');
 	    	}
 	    }
+		
+		if (table.getHasJoinTable()){
+			var joinTables = table.getJoinTables();
+			for (i = 1; i <= ArrayLen(joinTables); i++){
+				var joinTable = dataSource.getTable(joinTables[i]);
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+				view.AppendBody('');
+				view.AppendBody('		<cfset #entityName#.set#otherJoinTable.getPlural()#([]) />');
+				view.AppendBody('		<cfloop list="##form.#otherJoinTable.getPlural()###" index="id">');
+				view.AppendBody('			<cfset #otherJoinTable.getEntityName()# = entityLoad("#otherJoinTable.getEntityName()#", id, true) />');
+				view.AppendBody('			<cfset #entityName#.add#otherJoinTable.getEntityName()#(#otherJoinTable.getEntityName()#) />');
+				view.AppendBody('		</cfloop>');
+				
+			
+			}
+		
+		}
+		
+		
+		
+		
+		
+		
+		
+			
+			
+		
+		
 	    view.AppendBody('		<cfset EntitySave(#entityName#) />');
 	    view.AppendBody('		<cfset ORMFlush() />');
 	    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
@@ -723,8 +835,10 @@ component{
 	    
 	   	for (i= 1; i <= ArrayLen(tables); i++){
 			table = tables[i];
-	    	index.AppendBody('	<li><a href="#table.getEntityName()#.cfm">#table.getDisplayName()#</a></li>');
-	    }
+	    	if (table.getCreateInterface()){
+				index.AppendBody('	<li><a href="#table.getEntityName()#.cfm">#table.getDisplayName()#</a></li>');
+	    	}
+		}
 	    
 	    
 	    index.AppendBody('</ul>');
@@ -882,6 +996,20 @@ component{
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/cfapp/storage/foreignKeySelector.cfm");
 		var newCT = config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm";
+		FileCopy(origCT, newCT);
+	}
+	
+	public void function copyManyToManyCustomTag(){
+		conditionallyCreateDirectory(config.getCustomTagFilePath());
+		var origCT = ExpandPath("generators/cfapp/storage/manyToManySelector.cfm");
+		var newCT = config.getCustomTagFilePath() & variables.FS & "manyToManySelector.cfm";
+		FileCopy(origCT, newCT);
+	}
+	
+	public void function copyManyToManyReaderCustomTag(){
+		conditionallyCreateDirectory(config.getCustomTagFilePath());
+		var origCT = ExpandPath("generators/cfapp/storage/manyToManyReader.cfm");
+		var newCT = config.getCustomTagFilePath() & variables.FS & "manyToManyReader.cfm";
 		FileCopy(origCT, newCT);
 	}
 

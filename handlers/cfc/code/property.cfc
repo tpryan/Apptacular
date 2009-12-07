@@ -14,6 +14,9 @@ component accessors="true" {
 	property name="cascade";
 	property name="collectiontype";
 	property name="singularName";
+	property name="linktable";
+	property name="InverseJoinColumn";
+	property name="lazy" type="boolean";
 	
 	
 	public string function getCFML(){
@@ -71,6 +74,18 @@ component accessors="true" {
        	
        	if (len(This.getSingularName())){
        		result = ListAppend(result, 'SingularName="#This.getSingularName()#"', " ");
+       	}
+		
+		if (len(This.getlinktable())){
+       		result = ListAppend(result, 'linktable="#This.getlinktable()#"', " ");
+       	}
+		
+		if (len(This.getInverseJoinColumn())){
+       		result = ListAppend(result, 'InverseJoinColumn="#This.getInverseJoinColumn()#"', " ");
+       	}
+		
+		if (len(This.getlazy())){
+       		result = ListAppend(result, 'lazy="#This.getlazy()#"', " ");
        	}
        	
 		result = result & ' />';
@@ -134,6 +149,18 @@ component accessors="true" {
        	
        	if (len(This.getSingularName())){
        		result = ListAppend(result, 'SingularName="#This.getSingularName()#"', " ");
+       	}
+		
+		if (len(This.getlinktable())){
+       		result = ListAppend(result, 'linktable="#This.getlinktable()#"', " ");
+       	}
+		
+		if (len(This.getInverseJoinColumn())){
+       		result = ListAppend(result, 'InverseJoinColumn="#This.getInverseJoinColumn()#"', " ");
+       	}
+		
+		if (len(This.getlazy())){
+       		result = ListAppend(result, 'lazy="#This.getlazy()#"', " ");
        	}
        	
 		result = result & ';';
