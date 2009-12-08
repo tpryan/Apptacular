@@ -123,8 +123,17 @@ component
 		var keys = StructKeyArray(XML[arguments.ObjectType]);
 		var i = 0;
 		
+		try{
 		for (i=1;i <= arraylen(keys); i++){
 			Evaluate("newObject.set#keys[i]#(XML[arguments.ObjectType][keys[i]]['XMLText'])");
+		}
+		
+		}
+		catch(any e){
+			writeDump(keys);
+			writeDump(newObject);
+			writeDump(e);
+			abort;
 		}
 		
 		return newObject;

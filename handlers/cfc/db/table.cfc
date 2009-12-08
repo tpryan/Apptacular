@@ -130,7 +130,13 @@ component accessors="true" extends="dbItem"
 			
 		}
 		
-		if (ArrayLen(structKeyArray(referencedTables)) gt 1){
+		var refArray = structKeyArray(referencedTables);
+		if (ArrayLen(refArray) eq 2 AND
+			(CompareNoCase(This.getName(), "#refArray[1]#to#refArray[2]#") eq 0 OR 
+				CompareNoCase(This.getName(), "#refArray[2]#to#refArray[1]#") eq 0)
+			)
+		
+		{
 			This.setIsJoinTable(TRUE);
 			This.setCreateInterface(FALSE);
 			This.setJoinedTables(structKeyArray(referencedTables));

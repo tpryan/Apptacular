@@ -8,7 +8,7 @@
 	
 	<cfset allowed = structNew() />
 	<cfset allowed['datasource'] = "displayName" />
-	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,createInterface" />
+	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,createInterface,IsJoinTable" />
 	<cfset allowed['column'] = "displayName,uiType" />
 	<cfset allowed['config'] = "" />
 	

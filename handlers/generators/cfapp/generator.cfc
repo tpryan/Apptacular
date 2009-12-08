@@ -784,11 +784,14 @@ component{
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
 				view.AppendBody('');
-				view.AppendBody('		<cfset #entityName#.set#otherJoinTable.getPlural()#([]) />');
-				view.AppendBody('		<cfloop list="##form.#otherJoinTable.getPlural()###" index="id">');
-				view.AppendBody('			<cfset #otherJoinTable.getEntityName()# = entityLoad("#otherJoinTable.getEntityName()#", id, true) />');
-				view.AppendBody('			<cfset #entityName#.add#otherJoinTable.getEntityName()#(#otherJoinTable.getEntityName()#) />');
-				view.AppendBody('		</cfloop>');
+				view.AppendBody('		<cfif structKeyExists(form, "#otherJoinTable.getPlural()#")>');
+				view.AppendBody('			<cfset #entityName#.set#otherJoinTable.getPlural()#([]) />');
+				view.AppendBody('			<cfloop list="##form.#otherJoinTable.getPlural()###" index="id">');
+				view.AppendBody('				<cfset #otherJoinTable.getEntityName()# = entityLoad("#otherJoinTable.getEntityName()#", id, true) />');
+				view.AppendBody('				<cfset #entityName#.add#otherJoinTable.getEntityName()#(#otherJoinTable.getEntityName()#) />');
+				view.AppendBody('			</cfloop>');
+				view.AppendBody('		</cfif>');
+				view.AppendBody('');
 				
 			
 			}

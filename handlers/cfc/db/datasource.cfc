@@ -53,22 +53,25 @@ component accessors="true" extends="dbItem"
 		}
 		
 		//check for join tables.
-		tablesStructKeys = StructKeyArray(tablesStruct);
+		var tablesStructKeys = StructKeyArray(tablesStruct);
 		
 		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
-			var joinedTables = tablesStruct[tablesStructKeys[i]].getJoinedTables();
+			var localTable = tablesStruct[tablesStructKeys[i]];
+			var joinedTables = localTable.getJoinedTables();
 			
-			if (ArrayLen(joinedTables) gt 0){
-				var joinTableName = tablesStruct[tablesStructKeys[i]].getName();
-			
-				for (j=1; j <= ArrayLen(tablesStructKeys); j++){
-					var tempTable = tablesStruct[tablesStructKeys[j]];
+			if (ArrayLen(joinedTables) gt 0 AND localTable.getIsJoinTable()){
+				var joinTable = tablesStruct[tablesStructKeys[i]];
+				var joinTableName = joinTable.getName();
+					
+				for (j=1; j <= ArrayLen(joinedTables); j++){
+					var tempTable = tablesStruct[joinedTables[j]];
 					temptable.setHasJoinTable(TRUE);
 					temptable.addJoinTable(joinTableName);
-					tablesStruct[tablesStructKeys[j]] = tempTable;
+					tablesStruct[joinedTables[j]] = tempTable;
 				}
 			}
 		}
+		
 		
 		// poppulate array
 		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
