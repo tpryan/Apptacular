@@ -9,6 +9,8 @@ td{
 body{
 	font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 90%;
+	padding: 10px;
+	margin: 0 10px;
 }
 .alert{
 	font-weight: bold;
