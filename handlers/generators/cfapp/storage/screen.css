@@ -1,17 +1,37 @@
 th {
 	text-align: left;
 	padding-right: 10px;
+	font-weight: bold;
 }
 td{
 	padding-right: 10px;
 	border-bottom: 1px dotted #999;	
 }	
 body{
-	font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
+	font-family:  Calibri, Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 90%;
 	padding: 10px;
 	margin: 0 10px;
+	background-color: #D8DAD9;
+	background-image: url(appgrad.jpg);
+	background-repeat: repeat-x;
 }
+
+h1, h2, h3, th{
+	color: #2A587A;	
+	
+}
+
+a{
+		color:#333333;
+	}
+	a:visited{
+		color: #1A3B52;
+	}		
+	a:hover{
+		color: #4698D3;
+	}	
+
 .alert{
 	font-weight: bold;
 	color: red;
@@ -20,7 +40,9 @@ body{
 	padding: 1px;
 	}
 	
-form td{ border: 0;}	
+form td{ border: 0;}
+
+td p {padding: 0; margin: 0;}	
 
 .subreadpage{
 	font-size: 80%;
@@ -34,3 +56,12 @@ form td{ border: 0;}
 .subreadpage table{
 	margin-top: 0;
 }
+
+.crudlink{
+	font-size: 85%;
+	padding-right: 2px;
+	border-left: 1px dotted #CCC;
+}
+
+input[type="text"] { 	width: 400px; }
+select { 	width: 400px; }

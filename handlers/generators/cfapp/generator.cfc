@@ -30,6 +30,7 @@ component{
 			copyForeignKeyCustomTag();
 			copyManyToManyCustomTag();
 			copyManyToManyReaderCustomTag();
+			copyGradient();
 			
 			var index = createIndex(datasource, config.getRootFilePath());
 			ArrayAppend(files, index);
@@ -85,9 +86,11 @@ component{
 		}
 		
 		ArrayAppend(result,config.getCSSFilePath() & variables.FS & "screen.css");
+		ArrayAppend(result,config.getCSSFilePath() & variables.FS & "appgrad.jpg");
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm");
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManySelector.cfm");
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManyReader.cfm");
+		
 		return result;
 	}
 	
@@ -390,7 +393,7 @@ component{
 		ct.AppendBody('<cfelse>');
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
-		ct.AppendBody('	<p><a href="#EntityName#.cfm?method=edit">New</a></p>');	
+		
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<thead>');
 		ct.AppendBody('		<tr>');
@@ -409,7 +412,20 @@ component{
 				ct.AppendBody('			<th>#columns[i].getDisplayName()#</th>');
 			}
 			
+			
 		}
+		if (table.getHasJoinTable()){
+			var joinTables = table.getJoinTables();
+			for (i = 1; i <= ArrayLen(joinTables); i++){
+				var joinTable = dataSource.getTable(joinTables[i]);
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
+			
+			}
+		
+		}		
+		
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</thead>');
 		
@@ -449,9 +465,22 @@ component{
 			}
 		}
 		
-		ct.AppendBody('			<td><a href="#entityName#.cfm?method=read&#identity#=###entityName#.get#identity#()##">Read</a></td>');
-		ct.AppendBody('			<td><a href="#entityName#.cfm?method=edit&#identity#=###entityName#.get#identity#()##">Edit</a></td>');
-		ct.AppendBody('			<td><a href="#entityName#.cfm?method=delete_process&#identity#=###entityName#.get#identity#()##" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
+		
+		if (table.getHasJoinTable()){
+			var joinTables = table.getJoinTables();
+			for (i = 1; i <= ArrayLen(joinTables); i++){
+				var joinTable = dataSource.getTable(joinTables[i]);
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				ct.AppendBody('			<td><cf_manyToManyReader  entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  /></td>');
+			
+			}
+		
+		}
+		
+		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=read&#identity#=###entityName#.get#identity#()##">Read</a></td>');
+		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=edit&#identity#=###entityName#.get#identity#()##">Edit</a></td>');
+		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=delete_process&#identity#=###entityName#.get#identity#()##" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</cfloop>');
 		ct.AppendBody('	</cfoutput>');
@@ -477,7 +506,6 @@ component{
 		ct.addAttribute("class", 'string', false, "readpage");
 		ct.AppendBody('<cfset #EntityName# = attributes.#EntityName# /> ');
 		ct.AppendBody('<cfoutput>');
-		ct.AppendBody('<p class="breadcrumb"><a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a></p>');
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<tbody>');
 		
@@ -580,7 +608,7 @@ component{
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
 		ct.AppendBody('<cfoutput>');
-		ct.AppendBody('<p><a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a></p>');
+		
 		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html">');
 		
 		ct.AppendBody('	<table>');
@@ -609,14 +637,14 @@ component{
 				}
 				else if (compareNoCase(uitype, "text") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
-	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" /></td>');
+	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" skin="Silver" /></td>');
 				}
 				
 				else if (compareNoCase(uitype, "boolean") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>');
-					ct.AppendBody('				<label for="#columnName#true"><input type="radio" name="#columnName#" <cfif ###EntityName#.get#columnName#()##>checked="checked"</cfif> id="#columnName#true" value="1">Yes</label>');
-					ct.AppendBody('				<label for="#columnName#false"><input type="radio" name="#columnName#" <cfif NOT ###EntityName#.get#columnName#()##>checked="checked"</cfif> id="#columnName#false" value="0">No</label>');
+					ct.AppendBody('				<label for="#columnName#true"><input type="radio" name="#columnName#" <cfif isBoolean(#EntityName#.get#columnName#()) AND #EntityName#.get#columnName#()>checked="checked"</cfif> id="#columnName#true" value="1">Yes</label>');
+					ct.AppendBody('				<label for="#columnName#false"><input type="radio" name="#columnName#" <cfif isBoolean(#EntityName#.get#columnName#()) AND NOT #EntityName#.get#columnName#()>checked="checked"</cfif> id="#columnName#false" value="0">No</label>');
 					ct.AppendBody('			</td>');
 
 				
@@ -708,13 +736,15 @@ component{
 		view.AppendBody('<cf_pageWrapper>');
 		view.AppendBody();
 	   	view.AppendBody('<h2>#displayName#</h2>');
-		view.AppendBody('<cfoutput><p><a href="index.cfm">Main</a> / <a href="##cgi.script_name##">#displayName# List</a></cfoutput>');
 		view.AppendBody();
 	    view.AppendBody('<cfswitch expression="##url.method##" >');
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
 	    view.AppendBody('		<cfset #entityName#Array = entityLoad("' & entityName  & '") />');
-	    
+		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
+		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
+		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
+		view.AppendBody('		</p></cfoutput>');	
 		
 		view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" /> ');
 	    view.AppendBody('	</cfcase>');
@@ -722,7 +752,14 @@ component{
 	    
 		view.AppendBody('	<cfcase value="read">');
 	    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
-	    view.AppendBody('		<cf_#entityName#Read #entityName# = "###entityName###" /> ');
+	    
+		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
+		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
+		view.AppendBody('			<a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a> /');
+		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
+		view.AppendBody('		</p></cfoutput>');	
+		
+		view.AppendBody('		<cf_#entityName#Read #entityName# = "###entityName###" /> ');
 	    
 		
 		
@@ -751,6 +788,13 @@ component{
 	    view.AppendBody('		<cfelse>');
 	    view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
 	    view.AppendBody('		</cfif>');
+		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
+		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
+		view.AppendBody('		<cfif url.#identity# neq 0>');
+	    view.AppendBody('			<a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
+	    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
+		view.AppendBody('		</cfif>');
+		view.AppendBody('		</p></cfoutput>');	
 		view.AppendBody();
 	    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
 	    view.AppendBody('	</cfcase>');
@@ -992,6 +1036,13 @@ component{
 		conditionallyCreateDirectory(config.getCSSFilePath());
 		var origCSS = ExpandPath("generators/cfapp/storage/screen.css");
 		var newCSS = config.getCSSFilePath() & variables.FS & "screen.css";
+		FileCopy(origCSS, newCSS);
+	}
+	
+	public void function copyGradient(){
+		conditionallyCreateDirectory(config.getCSSFilePath());
+		var origCSS = ExpandPath("generators/cfapp/storage/appgrad.jpg");
+		var newCSS = config.getCSSFilePath() & variables.FS & "appgrad.jpg";
 		FileCopy(origCSS, newCSS);
 	}
 	

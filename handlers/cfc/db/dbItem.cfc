@@ -24,6 +24,7 @@ component
 		StructDelete(props, "mappings");
 		StructDelete(props, "references");
 		StructDelete(props, "joinedTables");
+		StructDelete(props, "joinTables");
 		
 		StructDelete(props, "columns");
 		StructDelete(props, "columnsStruct");
