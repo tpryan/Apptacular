@@ -27,20 +27,27 @@
 	
 	rootCFCPath = utils.findCFCPathFromFilePath(rootFilePath);
 
-	//process both DB and file version of schema
-	db = New cfc.db.datasource(dsName);
-	dbConfig = New cfc.db.dbConfig(dbConfigPath);
-	datamodel= dbConfig.overwriteConfig(db);
-	
-	
-	
-	dbConfig.writeConfig(datamodel);
-	
-	
+
 	//process both default and file version of config
 	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
 	config.overwriteFromDisk();
 	config.writeToDisk();
+
+	//process both DB and file version of schema
+	db = New cfc.db.datasource(dsName);
+	dbConfig = New cfc.db.dbConfig(dbConfigPath);
+	
+	if (config.getOverwriteDataModel()){
+		datamodel= dbConfig.overwriteConfig(db);
+	}
+	else{
+		datamodel= db;
+	}
+	
+	dbConfig.writeConfig(datamodel);
+	
+	
+	
 	
 	
 	// Fire up the generator 

@@ -39,6 +39,18 @@ component{
 			ArrayAppend(files, pageWrapper);
 		}
 		
+		if (config.getCreateLogin()){
+			
+			var authCFC = createAuthenticationService(config.getServiceFilePath());
+			ArrayAppend(files, authCFC);
+			
+			var login = createlogin(config.getRootFilePath());
+			ArrayAppend(files, login);
+			
+			copyLoginCustomTag();
+			
+		}
+		
 		var tables = datasource.getTables();
 		
 		for (i=1; i <= ArrayLen(tables); i++){
@@ -90,6 +102,8 @@ component{
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm");
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManySelector.cfm");
 		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManyReader.cfm");
+		ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "loginForm.cfm");
+		
 		
 		return result;
 	}
@@ -339,6 +353,86 @@ component{
 		return cfc;
 	}
 	
+	public any function createAuthenticationService(required string path){
+	
+		var cfc  = New apptacular.handlers.cfc.code.cfc();
+	    cfc.setName("authenticationService");
+	    cfc.setFileLocation(path);
+		
+		
+		
+		var username = New apptacular.handlers.cfc.code.Argument();
+		username.setName('username');
+		username.setRequired(true);
+		username.setType('string');
+		
+		var password = New apptacular.handlers.cfc.code.Argument();
+		password.setName('password');
+		password.setRequired(true);
+		password.setType('string');
+		
+		
+		
+		var auth= New apptacular.handlers.cfc.code.function();
+		auth.setAccess(config.getServiceAccess());
+		auth.setReturnType("boolean");
+		auth.AddArgument(username);
+		auth.AddArgument(password);
+		auth.setName('authenticate');
+		
+		auth.AddOperationScript('		if (arguments.username eq arguments.password){');
+		auth.AddOperationScript('				return true;');
+		auth.AddOperationScript('		}');
+		auth.AddOperationScript('		else{');
+		auth.AddOperationScript('				return false;');
+		auth.AddOperationScript('		}');
+
+		auth.AddOperation('		<cfif arguments.username eq arguments.password >');
+		auth.AddOperation('				<cfreturn true />');
+		auth.AddOperation('		<cfelse>');
+		auth.AddOperation('				<cfreturn false />');
+		auth.AddOperation('		</cfif> ');
+
+		
+		cfc.addFunction(auth);
+		
+		return cfc;
+	}
+	
+	public any function createLogin(required string path){
+		var i=0;
+	    
+	    var login  =  New apptacular.handlers.cfc.code.CFPage("login", path);  
+	    
+		login.AppendBody('<cfsetting showdebugoutput="false" />');
+		login.AppendBody('<cfparam name="form.username" default="" type="string" /> ');
+
+		login.AppendBody('<cfset message = "" />');
+		login.AppendBody('<cfif structKeyExists(form, "login")>');
+		login.AppendBody('	<cfset authService = New #config.getServiceCFCPath()#.AuthenticationService() />');
+		login.AppendBody('	<cfset isAuthed = authService.authenticate(form.username, form.password) />');
+		login.AppendBody('');	
+		login.AppendBody('	<cfif isAuthed>');
+		login.AppendBody('		<cfset Session.loggedOn = true />');
+		login.AppendBody('		<cfset session.username = form.username />');
+		login.AppendBody('		');
+		login.AppendBody('		<cflocation url="##cgi.script_name##" addtoken="false"  />');
+		login.AppendBody('	<cfelse>');
+		login.AppendBody('		<cfset message = "Not Authenticated" />');
+		login.AppendBody('	</cfif>');
+		login.AppendBody('');	
+		login.AppendBody('</cfif>');
+		login.AppendBody('');	
+		login.AppendBody('<cf_pageWrapper>');
+		login.AppendBody('<h2>Login</h2>');
+		login.AppendBody('<cf_loginForm username="##form.username##" message="##message##" />');
+		login.AppendBody('</cf_pageWrapper>');
+		
+		return login ;
+	
+	
+	}
+	
 	public any function createAppCFC(required any datasource, required string path){
 		
 	    var dbname = arguments.datasource.getName();
@@ -354,26 +448,59 @@ component{
 		appCFC.addApplicationProperty('ormsettings.eventHandler', "#config.getEntityCFCPath()#.eventHandler") ;
 		
 		
-		var func= New apptacular.handlers.cfc.code.function();
-		func.setName('onRequestStart');
-		func.setAccess("public");
-		func.setReturnType("boolean");
+		var onRequestStart= New apptacular.handlers.cfc.code.function();
+		onRequestStart.setName('onRequestStart');
+		onRequestStart.setAccess("public");
+		onRequestStart.setReturnType("boolean");
+		onRequestStart.setReturnResult('true');
 
-		func.AddOperation('		<cfif structKeyExists(url, "reset_app")>');
-		func.AddOperation('			<cfset ApplicationStop() />');
-		func.AddOperation('			<cfset location(cgi.script_name, false) />');
-		func.AddOperation('		</cfif>');
-		func.AddOperationScript('		if (structKeyExists(url, "reset_app")){');
-		func.AddOperationScript('			ApplicationStop();');
-		func.AddOperationScript('			location(cgi.script_name, false);');
-		func.AddOperationScript('		}');
+		onRequestStart.AddOperation('		<cfif structKeyExists(url, "reset_app")>');
+		onRequestStart.AddOperation('			<cfset ApplicationStop() />');
+		onRequestStart.AddOperation('			<cfset location(cgi.script_name, false) />');
+		onRequestStart.AddOperation('		</cfif>');
+		onRequestStart.AddOperationScript('		if (structKeyExists(url, "reset_app")){');
+		onRequestStart.AddOperationScript('			ApplicationStop();');
+		onRequestStart.AddOperationScript('			location(cgi.script_name, false);');
+		onRequestStart.AddOperationScript('		}');
 
 
-		func.setReturnResult('true');
-		appCFC.addFunction(func);
 		
 		
-	    
+		
+		
+		
+		if (config.getCreateLogin()){
+			appCFC.addApplicationProperty('sessionManagement', true) ;
+		
+			var onSessionStart= New apptacular.handlers.cfc.code.function();
+			onSessionStart.setName('onSessionStart');
+			onSessionStart.setAccess("public");
+			onSessionStart.setReturnType("boolean");
+			onSessionStart.setReturnResult('true');
+
+			onSessionStart.AddOperation('		<cfset session.loggedOn = false />');
+			onSessionStart.AddOperation('		<cfset session.username = "" />');
+		
+			onSessionStart.AddOperationScript('		session.loggedOn = false;');
+			onSessionStart.AddOperationScript('		session.username = "";');
+			
+			appCFC.addFunction(onSessionStart);
+			
+			onRequestStart.AddOperation('		<cfif not session.loggedOn>');
+			onRequestStart.AddOperation('			<cfinclude template="login.cfm">');
+			onRequestStart.AddOperation('			<cfabort />');
+			onRequestStart.AddOperation('		</cfif>');
+			onRequestStart.AddOperationScript('		if (not session.loggedOn){');
+			onRequestStart.AddOperationScript('			include "login.cfm";');
+			onRequestStart.AddOperationScript('			abort;');
+			onRequestStart.AddOperationScript('		}');
+			
+			
+	    }
+		
+		
+		appCFC.addFunction(onRequestStart);
+		
 		return appCFC ;
 	}
 	
@@ -1050,6 +1177,13 @@ component{
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/cfapp/storage/foreignKeySelector.cfm");
 		var newCT = config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm";
+		FileCopy(origCT, newCT);
+	}
+	
+	public void function copyLoginCustomTag(){
+		conditionallyCreateDirectory(config.getCustomTagFilePath());
+		var origCT = ExpandPath("generators/cfapp/storage/loginForm.cfm");
+		var newCT = config.getCustomTagFilePath() & variables.FS & "loginForm.cfm";
 		FileCopy(origCT, newCT);
 	}
 	

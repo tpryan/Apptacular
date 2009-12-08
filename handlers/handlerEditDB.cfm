@@ -4,6 +4,7 @@
 	</cfif>
 
 
+
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "editDB/editDatasource.cfm" />
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />
 
@@ -11,7 +12,16 @@
 	XMLDoc = xmlParse(ideeventInfo);
 	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 	schemaPath = projectPath & "/.apptacular/schema";
+	
+	//Ensure that overwrites are respected.
+	configPath = projectPath & "/.apptacular/config.xml";
+	configXML = xmlParse(FileRead(configPath));
+	configXML.config.OverwriteDataModel.XMLText = TRUE;
+	FileWrite(configPath, configXML);
+	
 </cfscript>
+
+ 
 
 
 

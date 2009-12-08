@@ -17,7 +17,7 @@ body{
 	background-repeat: repeat-x;
 }
 
-h1, h2, h3, th{
+h1, h2, h3, th, label{
 	color: #2A587A;	
 	
 }
@@ -65,3 +65,10 @@ td p {padding: 0; margin: 0;}
 
 input[type="text"] { 	width: 400px; }
 select { 	width: 400px; }
+
+#login #message { font-weight: bold;}
+#login input { margin-bottom: 5px;}
+#login input[type="text"] { 	width: 150px; }
+#login input[type="password"] { 	width: 150px; }
+
+#login label {display:block; float: left; width: 80px;}

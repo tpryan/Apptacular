@@ -212,7 +212,7 @@ component accessors="true" {
 		results = results & generateCFMLLocalVariables();
 		results = results & operation;
 		
-		if (compareNoCase(This.getReturnType(), "void") neq 0){
+		if (len(This.getReturnResult()) gt 0 AND compareNoCase(This.getReturnType(), "void") neq 0){
 			results = results.concat('		<cfreturn #This.getReturnResult()# />' & variables.lineBreak);
 		}
 		
@@ -228,7 +228,7 @@ component accessors="true" {
 		results = results & generateCFScriptLocalVariables();
 		results = results & operationScript;
 		
-		if (compareNoCase(This.getReturnType(), "void") neq 0){
+		if (len(This.getReturnResult()) gt 0 AND compareNoCase(This.getReturnType(), "void") neq 0){
 			results = results.concat('		return #This.getReturnResult()#;' & variables.lineBreak);
 		}
 		

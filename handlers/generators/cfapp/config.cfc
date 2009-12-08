@@ -16,6 +16,8 @@ component accessors="true"{
 	property name="entityFolder";
 	property name="serviceFolder";
 	
+	property name="serviceCFCPath";
+	
 	property name="EntityCFCPath";
 	
 	property name="serviceAccess";
@@ -24,6 +26,7 @@ component accessors="true"{
 	property name="CreateServices" type="boolean";
 	property name="UseServices" type="boolean";
 	property name="CreateEntities" type="boolean";
+	property name="CreateLogin" type="boolean";
 	property name="CFCFormat";
 	
 	property name="createdOnString";
@@ -32,6 +35,7 @@ component accessors="true"{
 	property name="dateformat";
 	property name="timeformat";
 	
+	property name="OverwriteDataModel" type="boolean";
 	
 	
 	
@@ -64,7 +68,9 @@ component accessors="true"{
 		This.setCreateAppCFC(true);
 		This.setCreateServices(true);
 		This.setCreateEntities(true);
+		This.setCreateLogin(false);
 		This.setCFCFormat("cfscript");
+		This.setOverwriteDataModel(false);
 		
 		This.setDateFormat("mm/dd/yyyy");
 		
@@ -81,6 +87,7 @@ component accessors="true"{
 		
 		//Calculate CFC paths
 		This.setEntityCFCPath(This.getRootCFCPath() & "." & This.getEntityFolder());
+		This.setServiceCFCPath(This.getRootCFCPath() & "." & This.getServiceFolder());
 
 		//Calcualte Relative Paths
 		var webroot = expandPath("/");
@@ -139,7 +146,10 @@ component accessors="true"{
 	} 
 	
 	public string function writeToDisk(){
-		var FileToWrite = This.getRootFilePath() & ".apptacular/config.xml";
+		var DirToWrite = This.getRootFilePath() & ".apptacular";
+		var FileToWrite = DirToWrite & "/config.xml";
+		
+		conditionallyCreateDirectory(DirToWrite);
 		FileWrite(FileToWrite, This.toXML());
 	}
 	
@@ -160,6 +170,11 @@ component accessors="true"{
 		}
 		
 
+	}
+	private void function conditionallyCreateDirectory(required string path){
+		if(not directoryExists(path)){
+			DirectoryCreate(path);
+		}
 	}
 	
 }
