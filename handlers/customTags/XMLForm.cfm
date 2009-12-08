@@ -10,7 +10,13 @@
 	<cfset allowed['datasource'] = "displayName" />
 	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,createInterface,IsJoinTable" />
 	<cfset allowed['column'] = "displayName,uiType" />
-	<cfset allowed['config'] = "" />
+	<cfset allowed['config'] = "CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,<Misc>,serviceAccess,CFCFormat,<Formats>,dateformat,timeformat,<Magic Fields>,createdOnString,updatedOnString" />
+	
+	<cfset booleans['datasource'] = "" />
+	<cfset booleans['table'] = "createInterface,IsJoinTable" />
+	<cfset booleans['column'] = "" />
+	<cfset booleans['config'] = "CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel" />
+	
 	
 	<cfif structKeyExists(form, "submit")>
 	
@@ -36,7 +42,7 @@
 	<cfset fileToEdit = attributes.fileToEdit />
 	<cfset XML = XMLParse(FileRead(fileToEdit)) />
 	<cfset XMLRoot = StructKeyArray(XML)[1] />
-	<cfset Keys = StructKeyArray(XML[XMLRoot]) />
+	<cfset Keys = ListToArray(allowed[XMLRoot]) />
 	
 	<cfoutput>
 		<h1>Edit #XMLRoot#</h1>
@@ -46,20 +52,34 @@
 		<form action="" method="post">
 			<input type="hidden" name="fileToEdit" value="#fileToEdit#" /> 	
 			<table>
+			
 			<cfloop array="#keys#" index="key" >
-				<cfif len(allowed[XMLRoot]) eq 0 OR ListFindNoCase(allowed[XMLRoot], key)>
+				<cfif FindNoCase("<", key)>
+					<tr><th>&nbsp;</th></tr>	
+					<tr><th /><th><strong>#ReplaceList(key, "<,>,/", ",,")#</strong></th></tr>	
+					<cfcontinue />
+				
+				</cfif>
+				<cfif ListFindNoCase(booleans[XMLRoot], key)>
+					<tr>	
+						<th><label for="#key#">#key#</label></th>
+						<td>
+							<input name="#key#" type="radio" id="#key#true" value="true" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
+							<label for="#key#true">True</label>
+							<input name="#key#" type="radio" id="#key#false" value="false" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND NOT XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
+							<label for="#key#false">False</label>
+						</td>			
+					</tr>
+				<cfelse>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
 							<input name="#key#" type="text" id="#key#" value="#XML[XMLRoot][key]['XMLText']#" />
-							<cfif FindNoCase("createInterface", key) AND 
-									IsBoolean(XML[XMLRoot]['isJoinTable']['XMLText']) AND
-											XML[XMLRoot]['isJoinTable']['XMLText']>
-							(Join Table)
-							</cfif>				
 						</td>			
 					</tr>
 				</cfif>
+					
+				
 			</cfloop>
 				<tr>
 					<th />

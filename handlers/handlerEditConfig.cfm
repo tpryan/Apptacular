@@ -1,8 +1,7 @@
 <cfsetting showdebugoutput="FALSE" />
-<!---<cfif not structKeyExists(form, "ideeventInfo")>
+<cfif not structKeyExists(form, "ideeventInfo")>
 		<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
 	</cfif>
---->
 
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "editConfig/editconfig.cfm" />
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />

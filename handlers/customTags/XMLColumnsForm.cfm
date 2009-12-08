@@ -10,6 +10,7 @@
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");	
 		files = DirectoryList(path, true, "query", "*.xml");
 		allowedcolumns = "column,displayName,uiType";
+		uiList = "boolean,date,datetime,string,text";
 	</cfscript>
 	
 	<cfscript>
@@ -79,6 +80,15 @@
 				<cfloop list="#columns.columnList#" index="attribute">
 					<cfif attribute eq "column">
 						<td>#columns[attribute][columns.currentRow]#</td>
+					<cfelseif ListFindNoCase("uiType", attribute)>
+						<cfset value = columns[attribute][columns.currentRow] />
+						<td>
+							<select name="#attribute#" id="#attribute#">
+								<cfloop list="#uilist#" index="type">
+								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
+								</cfloop>
+							</select>
+						</td>			
 					<cfelse>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />

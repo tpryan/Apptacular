@@ -31,6 +31,7 @@
 	//process both default and file version of config
 	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
 	config.overwriteFromDisk();
+	config.calculatePaths();
 	config.writeToDisk();
 
 	//process both DB and file version of schema
