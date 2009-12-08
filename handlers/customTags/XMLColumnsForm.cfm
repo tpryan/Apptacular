@@ -81,9 +81,10 @@
 					<cfif attribute eq "column">
 						<td>#columns[attribute][columns.currentRow]#</td>
 					<cfelseif ListFindNoCase("uiType", attribute)>
+						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<select name="#attribute#" id="#attribute#">
+							<select name="#fieldname#" id="#attribute#">
 								<cfloop list="#uilist#" index="type">
 								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
 								</cfloop>
