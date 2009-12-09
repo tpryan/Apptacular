@@ -1,24 +1,26 @@
 component accessors="true" {
 	
-	property name="name";
-	property name="column";
-	property name="type";
-	property name="ormtype";
-	property name="length";
-	property name="fieldtype";
-	property name="generator";
-	property name="fkcolumn";
-	property name="cfc";
-	property name="missingRowIgnored" type="boolean" default="true";
-	property name="inverse" type="boolean" default="true";
-	property name="cascade";
-	property name="collectiontype";
-	property name="singularName";
-	property name="linktable";
-	property name="InverseJoinColumn";
-	property name="lazy" type="boolean";
+	property name="name" type="string" hint="See reference for cfproperty";
+	property name="column" type="string" hint="See reference for cfproperty";
+	property name="type" type="string" hint="See reference for cfproperty";
+	property name="ormtype" type="string"  hint="See reference for cfproperty";
+	property name="length" type="string"  hint="See reference for cfproperty";
+	property name="fieldtype" type="string"  hint="See reference for cfproperty";
+	property name="generator" type="string" hint="See reference for cfproperty";
+	property name="fkcolumn" type="string"  hint="See reference for cfproperty";
+	property name="cfc" type="string"  hint="See reference for cfproperty";
+	property name="missingRowIgnored" type="boolean" default="true" hint="See reference for cfproperty";
+	property name="inverse" type="boolean" default="true" hint="See reference for cfproperty";
+	property name="cascade" type="string" hint="See reference for cfproperty";
+	property name="collectiontype" type="string" hint="See reference for cfproperty";
+	property name="singularName" type="string" hint="See reference for cfproperty";
+	property name="linktable" type="string" hint="See reference for cfproperty";
+	property name="InverseJoinColumn" type="string" hint="See reference for cfproperty";
+	property name="lazy" type="boolean" hint="See reference for cfproperty";
 	
-	
+	/**
+		* @hint Returns the content of the property in CFML
+	*/
 	public string function getCFML(){
 		var result = "";
 		
@@ -93,7 +95,9 @@ component accessors="true" {
 	
 	}
 	
-	
+	/**
+		* @hint Returns the content of the property in CFScript
+	*/
 	public string function getCfScript(){
 		var result = "";
 		

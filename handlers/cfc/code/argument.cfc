@@ -1,16 +1,19 @@
-component accessors="true" {
+component displayname="argument" hint="A CFC representation of an argument for code creation"  accessors="true" {
 	
-	property name="name";
-	property name="type";
-	property name="required";
-	property name="defaultvalue";
-	property name="hint";
+	property name="name" type="string"  hint="The name of the argument to create ";
+	property name="type" type="string"  hint="The argument type.";
+	property name="required" type="boolean"  hint="Whether or not this argument is required.";
+	property name="defaultvalue" type="string"  hint="The value to set as default for the argument";
+	property name="hint" type="string" hint="The hint to add to the argument.";
 	
 	public function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		return This;
 	}
 	
+	/**
+		* @hint Returns the actual CFML code.
+	*/
 	public string function getCFML(){
 		var argCFML = '<cfargument';
 		
@@ -38,6 +41,9 @@ component accessors="true" {
 	
 	}
 	
+	/**
+		* @hint Returns the actual cfscript code.
+	*/
 	public string function getCFScript(){
 		var argCFML = '';
 		
@@ -59,6 +65,5 @@ component accessors="true" {
 		return argCFML;
 	
 	}
-
 
 }

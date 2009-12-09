@@ -1,8 +1,6 @@
-component extends="CFPage" accessors="true"
+component displayname="Custom Tag" hint="A cfc representation of a Custom tag for code generation." extends="CFPage" accessors="true"
 {
-	/**
-	* @hint Psuedo constructor, and all around nice function.
-	*/
+
 	public any function init(required string name, required string fileLocation){
 	
 		This.setExtension('cfm');
@@ -16,7 +14,6 @@ component extends="CFPage" accessors="true"
 		variables.attributes = CreateObject("java","java.lang.StringBuilder").Init();
 		variables.body = CreateObject("java","java.lang.StringBuilder").Init();
 		variables.footer = "</cfprocessingdirective>" & variables.NL & '<cfexit method="exitTag" />' & variables.NL ;
-	
 	
 	} 
 	
@@ -57,9 +54,5 @@ component extends="CFPage" accessors="true"
 
 		return results;
 	}	
-		
-
-		
-
 
 }

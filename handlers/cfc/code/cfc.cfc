@@ -1,11 +1,12 @@
-component extends="CFPage" accessors="true" {
-	property string extends;
-	property string implements;
-	property string table;
-	property string entityname;
-	property name="output" type="boolean" default="false";
-	property name="persistent" type="boolean" default="false";
-	property name="format";
+component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc for code creation." accessors="true" {
+	
+	property name="extends" type="string" hint="The cfc that the CFC created here extends.";
+	property name="implements" type="string" hint="The interface that the CFC created here implements.";
+	property name="table" type="string" hint="The table that this CFC models for ORM usage.";
+	property name="entityName" type="string" hint="The entityname that this CFC models for ORM usage.";
+	property name="output" type="boolean" default="false" hint="Whether or not this CFC should leak output.";
+	property name="persistent" type="boolean" default="false" hint="Whether or not this CFC should use ORM tools.";
+	property name="format" type="string" hint="CFML or CFScript";
 
 	public function init(){
 		
@@ -19,8 +20,11 @@ component extends="CFPage" accessors="true" {
 		variables.propertyArray = ArrayNew(1);
 		
 	}
-			
-	public string function generateCFMLHeader(){
+	
+	/**
+		* @hint Returns the CFC header in CFML.
+	*/		
+	private string function generateCFMLHeader(){
 		var header = '<cfcomponent';
 		
 		if (len(This.getExtends()) gt 0){
@@ -53,7 +57,10 @@ component extends="CFPage" accessors="true" {
 	
 	}
 	
-	public string function generateCFScriptHeader(){
+	/**
+		* @hint Returns the CFC header in CFscript.
+	*/	
+	private string function generateCFScriptHeader(){
 		var header = 'component';
 		
 		if (len(This.getExtends()) gt 0){
@@ -86,16 +93,25 @@ component extends="CFPage" accessors="true" {
 	
 	}
 	
-	public string function generateCFMLFooter(){
+	/**
+		* @hint Returns the CFC footer in CFML.
+	*/	
+	private string function generateCFMLFooter(){
 		var footer = '</cfcomponent>' & variables.lineBreak;
 		return footer;
 	}
 	
-	public string function generateCFScriptFooter(){
+	/**
+		* @hint Returns the CFC footer in CFScript.
+	*/	
+	private string function generateCFScriptFooter(){
 		var footer = '}' & variables.lineBreak;
 		return footer;
 	}
 	
+	/**
+		* @hint Returns the CFC properties in CFML.
+	*/	
 	private string function generateCFMLProperties(){
 		if (ArrayLen(variables.propertyArray) eq 0){
 			return "";
@@ -111,6 +127,9 @@ component extends="CFPage" accessors="true" {
 		return props;
 	}
 	
+	/**
+		* @hint Returns the CFC properties in CFScript.
+	*/
 	private string function generateCFScriptProperties(){
 		if (ArrayLen(variables.propertyArray) eq 0){
 			return "";
@@ -126,6 +145,9 @@ component extends="CFPage" accessors="true" {
 		return props;
 	}
 	
+	/**
+		* @hint Returns the CFC functions in CFML.
+	*/
 	private string function generateCFMLFunctions(){
 		var body = "";
 		
@@ -140,6 +162,9 @@ component extends="CFPage" accessors="true" {
 	
 	}
 	
+	/**
+		* @hint Returns the CFC functions in CFScript.
+	*/
 	private string function generateCFScriptFunctions(){
 		var body = "";
 		
@@ -152,16 +177,25 @@ component extends="CFPage" accessors="true" {
 	
 	}
 	
+	/**
+		* @hint Does nothing yet.
+	*/
 	private string function generateCFMLConstructor(){
 		return "";
 	
 	}
 	
+	/**
+		* @hint Does nothing yet.
+	*/
 	private string function generateCFScriptConstructor(){
 		return "";
 	
 	}
 	
+	/**
+		* @hint Returns the CFC in CFML.
+	*/
 	public string function getCFML(){
 		var results = "";
 
@@ -173,6 +207,9 @@ component extends="CFPage" accessors="true" {
 		return results;
 	}	
 	
+	/**
+		* @hint Returns the CFC in CFScript.
+	*/
 	public string function getCFScript(){
 		var results = "";
 
@@ -182,12 +219,18 @@ component extends="CFPage" accessors="true" {
 		results = results & generateCFScriptFooter();
 
 		return results;
-	}	
-	
+	}
+		
+	/**
+		* @hint Appends a function to the cfc.
+	*/
 	public void function addFunction(required functionObj){
 		ArrayAppend(variables.functionArray, arguments.functionObj);
 	}
 
+	/**
+		* @hint Appends a property to the cfc.
+	*/
 	public void function addProperty(required property property){
 		ArrayAppend(variables.propertyArray, arguments.property);
 	}

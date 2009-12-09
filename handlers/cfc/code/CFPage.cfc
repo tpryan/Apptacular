@@ -1,74 +1,79 @@
-<cfcomponent displayname="CFPage" hint="A cfc representation of a cfpage." accessors="true" >
-	<cfproperty name="name" hint="The name of the page" />
-	<cfproperty name="fileLocation" hint="File path of the page" />
-	<cfproperty name="extension" />
-	<cfproperty name="format" />
-	
-	<cfscript>
-		public CFPage function init(required string name, required string fileLocation){
-		
-			This.setExtension('cfm');
-			This.setFormat('cfml');
-			This.setName(arguments.Name);
-			This.setFileLocation(arguments.fileLocation);
-			variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
-			variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
-			variables.body = CreateObject("java","java.lang.StringBuilder").Init();
-			variables.bodyScript = CreateObject("java","java.lang.StringBuilder").Init();
-			
-			return This;
-		}
-	
-		public function appendBody(string bodyContent=""){
-			variables.body.append(arguments.bodyContent & variables.NL);
-		}
-		
-		public function appendBodyScript(string bodyContent=""){
-			variables.bodyScript.append(arguments.bodyContent & variables.NL);
-		}
-		
-		public string function getCFML(){
-			return variables.body;
-		}
-		
-		public string function getFileName(){
-			var FS = createObject("java", "java.lang.System").getProperty("file.separator");
-			if (CompareNoCase(right(This.getFileLocation(), 1),FS) eq 0){
-				return "#This.getFileLocation()##This.getName()#.#This.getExtension()#";
-			}
-			else{
-				return "#This.getFileLocation()##fs##This.getName()#.#This.getExtension()#";
-			}
-	
-			
-		}
-		
-		public void function write(){
-			conditionallyCreateDirectory(This.getFileLocation());
+component displayname="CFPage" hint="A cfc representation of a cfpage for code generation." accessors="true"{
+	property name="name" type="string" hint="The name of the page";
+	property name="fileLocation" type="string" hint="File path of the page";
+	property name="extension" type="string" hint="The file extension of the page";
+	property name="format" type="string" hint="CFML or CFScript";
 
-			if (CompareNoCase(This.getFormat(), "cfscript") eq 0)
-				fileWrite(getFileName(), Trim(getCFScript()));
-			else{
-				fileWrite(getFileName(), Trim(getCFML()));
-			}
+	public CFPage function init(required string name, required string fileLocation){
+	
+		This.setExtension('cfm');
+		This.setFormat('cfml');
+		This.setName(arguments.Name);
+		This.setFileLocation(arguments.fileLocation);
+		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
+		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		variables.body = CreateObject("java","java.lang.StringBuilder").Init();
+		variables.bodyScript = CreateObject("java","java.lang.StringBuilder").Init();
+		
+		return This;
+	}
+
+	/**
+		* @hint Adds CFML content to the page.
+	*/
+	public void function appendBody(string bodyContent=""){
+		variables.body.append(arguments.bodyContent & variables.NL);
+	}
+	
+	/**
+		* @hint Adds CFScript content to the page.
+	*/
+	public void function appendBodyScript(string bodyContent=""){
+		variables.bodyScript.append(arguments.bodyContent & variables.NL);
+	}
+	
+	/**
+		* @hint Returns the page content as CFML.
+	*/
+	public string function getCFML(){
+		return variables.body;
+	}
+	
+	/**
+		* @hint Adds all of the pieces together to get the fully qualified path of the file.
+	*/
+	public string function getFileName(){
+		var FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		if (CompareNoCase(right(This.getFileLocation(), 1),FS) eq 0){
+			return "#This.getFileLocation()##This.getName()#.#This.getExtension()#";
 		}
-		
-		
-	
-	</cfscript>
-	
-	
-	
-	
-	
-	<cffunction access="public" name="conditionallyCreateDirectory" output="false" returntype="void" description="Checks to see if a directory exists if it doesn't it creates it." >
-		<cfargument name="directory" type="string" required="yes" default="" hint="Driectory to create if it doesn't already exist." />
+		else{
+			return "#This.getFileLocation()##fs##This.getName()#.#This.getExtension()#";
+		}
 
-		<cfif not DirectoryExists(arguments.directory)>
-			<cfdirectory directory="#arguments.directory#" action="create" />
-		</cfif>
+		
+	}
+	
+	/**
+		* @hint Writes the file to disk.
+	*/
+	public void function write(){
+		conditionallyCreateDirectory(This.getFileLocation());
 
-	</cffunction>
+		if (CompareNoCase(This.getFormat(), "cfscript") eq 0)
+			fileWrite(getFileName(), Trim(getCFScript()));
+		else{
+			fileWrite(getFileName(), Trim(getCFML()));
+		}
+	}
 	
+	/**
+		* @hint Creates a directory if it doesn't exist.
+	*/
+	private void function conditionallyCreateDirectory(required string path){
+		if(not directoryExists(path)){
+			DirectoryCreate(path);
+		}
+	}
 	
-</cfcomponent>
+}

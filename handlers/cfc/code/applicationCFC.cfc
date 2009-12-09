@@ -1,4 +1,4 @@
-component extends="cfc" accessors="true" {
+component displayname="Application CFC" hint="A CFC representation of an Application.cfc" extends="cfc" accessors="true" {
 	
 	public applicationCFC function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -37,7 +37,7 @@ component extends="cfc" accessors="true" {
 
 
 	/**
-		* @hint Adds the code of a property to the CFC.
+		* @hint Generates the Application properties in CFML.
 	*/
 	public string function generateCFMLApplicationProperties(){
 		var props = variables.lineBreak;
@@ -60,6 +60,9 @@ component extends="cfc" accessors="true" {
 		
 	}
 
+	/**
+		* @hint Generates the Application properties in CFScript.
+	*/
 	public string function generateCFScriptApplicationProperties(){
 		var props = variables.lineBreak;
 		var i = 0;

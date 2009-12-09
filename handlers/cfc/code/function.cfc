@@ -1,11 +1,11 @@
-component accessors="true" {
+component displayname="function" hint="A CFC representation of an function for code creation" accessors="true" {
 
-	property name="name";
-	property name="output" type="boolean"  default="false";
-	property name="access";
-	property name="hint";
-	property name="returntype";
-	property name="ReturnResult";
+	property name="name" type="string" hint="The name of the function";
+	property name="output" type="boolean" default="false" hint="Whether or not this function should leak output.";
+	property name="access" type="string"  hint="Private, Package, Public, or Remote";
+	property name="hint"  type="string" hint="This hint to provide for this function";
+	property name="returntype"  type="string" hint="The type of the return value.";
+	property name="ReturnResult"  type="string" hint="The code to return from the function";
 	
 	
 	public function init(){
@@ -18,23 +18,38 @@ component accessors="true" {
 		return This;
 	}
 
+	/**
+		* @hint Appends an argument to the function.
+	*/
 	public void function addArgument(required argument argument){
 		ArrayAppend(variables.arguments, arguments.argument);
 	}
 	
+	/**
+		* @hint Appends the initialization of a local variable to the function.
+	*/
 	public void function AddLocalVariable(required string LocalVariable, string type="string", string value="", boolean quote=true){
 		ArrayAppend(variables.localVariables, Duplicate(arguments));
 	}
 	
+	/**
+		* @hint Adds a line of CFML to the function.
+	*/
 	public void function AddOperation(required string Operation){
 		variables.operation = variables.operation.append(arguments.operation & lineBreak);
 	}
 	
+	/**
+		* @hint Adds a line of CFScript to the function.
+	*/
 	public void function AddOperationScript(required string Operation){
 		variables.operationScript = variables.operationScript.append(arguments.operation & lineBreak);
 	}
 
-	public string function generateCFMLHeader(){
+	/**
+		* @hint Returns the content of the function declaration in CFML
+	*/
+	private string function generateCFMLHeader(){
 		var header = '<cffunction';
 		
 		if (len(This.getName()) gt 0){
@@ -58,7 +73,10 @@ component accessors="true" {
 		return header ;
 	}
 
-	public string function generateCFScriptHeader(){
+	/**
+		* @hint Returns the content of the function declaration in CFScript
+	*/
+	private string function generateCFScriptHeader(){
 		var header = '';
 		var IsPreFunction = false;
 		
@@ -96,14 +114,23 @@ component accessors="true" {
 		return header;
 	}
 	
+	/**
+		* @hint Returns the content of the function footer in CFML
+	*/
 	private string function generateCFMLFooter(){
 		return '	</cffunction>' & variables.lineBreak;
 	}
 	
+	/**
+		* @hint Returns the content of the function footer in CFScript
+	*/
 	private string function generateCFScriptFooter(){
 		return '	}' & variables.lineBreak ;
 	}
 	
+	/**
+		* @hint Returns the content of the arguments collection in CFML
+	*/
 	private string function generateCFMLArguments(){
 		var results ="";
 		var i = 0;
@@ -115,6 +142,9 @@ component accessors="true" {
 		return results;
 	}
 	
+	/**
+		* @hint Returns the content of the arguments collection in CFScript
+	*/
 	private string function generateCFScriptArguments(){
 		var results ="";
 		var i = 0;
@@ -128,6 +158,9 @@ component accessors="true" {
 		return results;
 	}
 	
+	/**
+		* @hint Returns the instatiation of local varaibles in CFML
+	*/
 	private string function generateCFMLLocalVariables(){
 		var results ="";
 		var temp="";
@@ -164,6 +197,9 @@ component accessors="true" {
 		return results;
 	}
 	
+	/**
+		* @hint Returns the instatiation of local varaibles in CFScript
+	*/
 	private string function generateCFScriptLocalVariables(){
 		var results ="";
 		var temp="";
@@ -204,6 +240,9 @@ component accessors="true" {
 		
 	}
 	
+	/**
+		* @hint Returns the content of the function in CFML
+	*/
 	public string function getCFML(){
 		var results="";
 
@@ -221,6 +260,9 @@ component accessors="true" {
 		return results;
 	}
 	
+	/**
+		* @hint Returns the content of the function in CFScript
+	*/
 	public string function getCFScript(){
 		var results="";
 
