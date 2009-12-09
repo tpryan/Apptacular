@@ -205,12 +205,23 @@ component{
 						else if (CompareNoCase(foreignColumns[k].getForeignKeyTable(),otherJoinTable.getName()) eq 0){
 							property.setInverseJoinColumn(foreignColumns[k].getColumn());
 						}
-					
 					}
 					
 			   		property.setLazy(true);
 					property.setSingularname(otherJoinTable.getEntityName());
 			   		cfc.AddProperty(property);
+					
+					var countFunc= New apptacular.handlers.cfc.code.function();
+					countFunc.setName("get#otherJoinTable.getEntityName()#Count");
+					countFunc.setAccess("public");
+					countFunc.setReturnType('numeric');
+					countFunc.AddOperation('		<cfset var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''" />');
+					countFunc.AddOperation('		<cfset var result = ormExecuteQuery(hql)[1] />');	
+					countFunc.AddOperationScript('		var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''";');
+					countFunc.AddOperationScript('		var result = ormExecuteQuery(hql)[1];');
+					countFunc.setReturnResult('result');
+					cfc.addFunction(countFunc);
+					
 				
 				}
 				else{
@@ -224,7 +235,22 @@ component{
 			   		property.setCascade("all-delete-orphan");
 					property.setSingularname(foreignTable.getEntityName());
 			   		cfc.AddProperty(property);
+					
+					var countFunc= New apptacular.handlers.cfc.code.function();
+					countFunc.setName("get#foreignTable.getEntityName()#Count");
+					countFunc.setAccess("public");
+					countFunc.setReturnType('numeric');
+					countFunc.AddOperation('		<cfset var hql = "select #table.getEntityName()#.#foreignTable.getPlural()#.size as #foreignTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''" />');
+					countFunc.AddOperation('		<cfset var result = ormExecuteQuery(hql)[1] />');	
+					countFunc.AddOperationScript('		var hql = "select #table.getEntityName()#.#foreignTable.getPlural()#.size as #foreignTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''";');
+					countFunc.AddOperationScript('		var result = ormExecuteQuery(hql)[1];');
+					countFunc.setReturnResult('result');
+					cfc.addFunction(countFunc);
+					
 				}
+				
+				
+				
 			}
 	   	}
 		
@@ -541,13 +567,28 @@ component{
 			
 			
 		}
+		
+		var references = table.getReferences();
+	   	
+		if (not isNull(references)){
+		
+			for (j=1; j <= ArrayLen(references); j++){
+				var ref = references[j];
+				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
+				
+				if (not foreignTable.getIsJoinTable()){
+					ct.AppendBody('			<th>#foreignTable.getEntityName()#Count</th>');
+				}
+			}
+	   	}
+		
 		if (table.getHasJoinTable()){
 			var joinTables = table.getJoinTables();
 			for (i = 1; i <= ArrayLen(joinTables); i++){
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
 			
-				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
+				ct.AppendBody('			<th>#otherJoinTable.getEntityName()#Count</th>');
 			
 			}
 		
@@ -592,6 +633,19 @@ component{
 			}
 		}
 		
+	   	
+		if (not isNull(references)){
+		
+			for (j=1; j <= ArrayLen(references); j++){
+				var ref = references[j];
+				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
+				
+				if (not foreignTable.getIsJoinTable()){
+					ct.AppendBody('			<td>###entityName#.get#foreignTable.getEntityName()#Count()##</td>');
+				}
+			}
+	   	}
+		
 		
 		if (table.getHasJoinTable()){
 			var joinTables = table.getJoinTables();
@@ -599,7 +653,7 @@ component{
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
 			
-				ct.AppendBody('			<td><cf_manyToManyReader  entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  /></td>');
+				ct.AppendBody('			<td>###entityName#.get#otherJoinTable.getEntityName()#Count()##</td>');
 			
 			}
 		
