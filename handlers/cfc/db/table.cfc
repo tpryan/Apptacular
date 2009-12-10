@@ -18,7 +18,8 @@ component accessors="true" extends="dbItem"
 	property name="references" type="reference[]";
 	property name="joinedTables" type="array";
 	property name="joinTables" type="array";
-	property name="createInterface" type="boolean";     
+	property name="createInterface" type="boolean";
+	property name="virtualcolumns" type="virtualcolumn[]";      
 	
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();
@@ -35,6 +36,9 @@ component accessors="true" extends="dbItem"
 		populateTable();
 		populateForeignKeys();
 		populateColumns();
+		
+		This.setVirtualcolumns(ArrayNew(1));
+		
 		
 		return This;
 	}
@@ -180,5 +184,9 @@ component accessors="true" extends="dbItem"
 		}
 	}
 	
-	
+	public void function addVirtualColumn(required virtualColumn virtualColumn){
+		var virtualColumns = This.getVirtualcolumns();
+		ArrayAppend(virtualColumns, virtualColumn);
+		This.setVirtualcolumns(virtualColumns);
+	}
 }

@@ -23,15 +23,16 @@
 
 <cfif thisTag.executionMode is "start">
 
-	<cfset HQL = "SELECT #identity#, #foreignKeylabel# FROM #entityname#" />
-	<cfset Entities = ORMExecuteQuery(HQL) />
+	<cfset Entities = EntityLoad(entityName) />
 	
 	
 	<cfoutput>
 	<select name="#name#" id="#name#" multiple="multiple">
 		<cfif not attributes.required><option value="0"></option></cfif>
 		<cfloop array="#entities#" index="entity">
-		<option value="#entity[1]#"<cfif structKeyExists(selectedStruct, entity[1] )> selected="selected"</cfif>>#entity[2]#</option>
+			<cfinvoke component="#entity#" method="get#identity#" returnvariable="id" />
+			<cfinvoke component="#entity#" method="get#foreignKeylabel#" returnvariable="fklabel" />
+			<option value="#id#"<cfif structKeyExists(selectedStruct, id)> selected="selected"</cfif>>#fklabel#</option>
 		</cfloop>
 	</select>
 	</cfoutput>

@@ -60,9 +60,9 @@ component
 		if (CompareNoCase(configCS, dbCS) neq 0 ){
 			newDataSource = reWriteObject(newDataSource, checksums[DSCSPath]['filePath'], "datasource");
 		}
+		StructDelete(checksums, DSCSPath);
 		
 		//check tables
-		var tableArray = ArrayNew(1);
 		var tableStruct = StructNew();
 		var tables = newDataSource.getTables();
 		
@@ -77,12 +77,12 @@ component
 				table = reWriteObject(table, checksums[tableCSPath]['filePath'], "table");
 			}
 			
+			StructDelete(checksums, tableCSPath);
+			
 			//check columns
 			var columnsArray = ArrayNew(1);
 			var columnsStruct = StructNew();
 			var columns = table.getColumns();
-			
-			
 			
 			for (j=1; j <= arraylen(columns); j++){
 				var column = columns[j];
@@ -96,26 +96,51 @@ component
 					if (CompareNoCase(configCS, dbCS) neq 0 ){
 						var column = reWriteObject(column, checksums[columnCSPath]['filePath'], "column");
 					}
+					
 				}
+				
+				StructDelete(checksums, columnCSPath);
+				
 				ArrayAppend(columnsArray, column);
 				columnsStruct[columnName] = column;
 				
 			}
+			
+			
+			
 			table.setColumns(columnsArray);
 			table.setColumnsStruct(columnsStruct);
 						
 			//add edited or unedited tables back to the datsource
-			ArrayAppend(tableArray, table);
 			tableStruct[tableName] = table;
 			
 		
 		}
-		newDataSource.setTables(tableArray);
-		newDataSource.setTablesStruct(tableStruct);
 		
+		//Process Virtual Columns
+		var VCKeys = StructKeyArray(checksums);
+		
+		for (i=1; i <= ArrayLen(VCKeys); i++){
+			var virtualColumn = New virtualColumn();
+			virtualColumn = reWriteObject(virtualColumn, checksums[VCKeys[i]]['filePath'], "virtualColumn");
+			var tableName = ListLast(GetDirectoryFromPath(checksums[VCKeys[i]]['filePath']), FS);
+			var table = tableStruct[tableName];
+			table.addVirtualColumn(virtualColumn);
+			tableStruct[tableName] = table;
+		}
+		
+		// poppulate array
+		var tablesStructKeys = StructKeyArray(tableStruct);
+		var tablesArray = ArrayNew(1);
+		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
+			ArrayAppend(tablesArray, tableStruct[tablesStructKeys[i]]);
+		}
+		newDataSource.setTables(tablesArray);
+		newDataSource.setTablesStruct(tableStruct);
 		
 		return newDataSource;
 	}
+	
 	
 	private any function reWriteObject(required any object, required string path, required string ObjectType){
 		var newObject = Duplicate(arguments.object);
@@ -130,7 +155,7 @@ component
 		
 		}
 		catch(any e){
-			writeDump(keys);
+			writeDump(keys[i]);
 			writeDump(newObject);
 			writeDump(e);
 			abort;
@@ -172,6 +197,7 @@ component
 			returnStruct[checksumArrayPath]['filePath'] = XMLConfigPath;
 			
 		}
+		
 		
 		return returnStruct;
 	}

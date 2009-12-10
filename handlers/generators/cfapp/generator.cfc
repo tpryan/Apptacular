@@ -134,8 +134,6 @@ component{
 		    cfc.setTable(table.getName());
 		    cfc.setEntityname(table.getEntityName());
 	   	}
-		
-		
 	    
 		var columns = table.getColumns();
 	
@@ -253,6 +251,20 @@ component{
 				
 			}
 	   	}
+		
+		var virtualColumns = table.getVirtualColumns();
+		
+		for (i=1; i <= ArrayLen(virtualColumns); i++){
+			vc = virtualColumns[i];
+			
+			vcGetter = New apptacular.handlers.cfc.code.function();
+			vcGetter.setName("get" & vc.getName());
+			vcGetter.setAccess("public");
+			vcGetter.setReturnType(vc.getType());
+			vcGetter.AddOperation('		#Trim(vc.getGetterCode())#');
+			vcGetter.AddOperationScript('		#Trim(vc.getGetterCode())#');
+			cfc.addFunction(vcGetter);
+		}
 		
 		var func= New apptacular.handlers.cfc.code.function();
 		func.setName('nullifyZeroID');
