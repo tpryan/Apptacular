@@ -54,7 +54,9 @@
 		SELECT 	*
 		FROM 	files
 		WHERE	name != '_table.xml'
+		AND		name not like  'vc_%'
 	</cfquery>
+	
 	
 	<cfscript>
 		columns = getColumnPropsQuery(path, allowedcolumns);
@@ -135,7 +137,8 @@
 		var qoq = new Query(); 
 		var queryString = "	SELECT  *  
                           	FROM  	resultSet
-							WHERE 	name != '_table.xml'"; 
+							WHERE 	name != '_table.xml'
+							AND		name not like  'vc_%'"; 
 		qoq.setAttributes(resultSet = files);  
 		qoq.SetDBType("query"); 
 		var columns = qoq.execute(sql=queryString).getResult(); 

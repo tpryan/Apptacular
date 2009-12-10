@@ -17,7 +17,9 @@
 	SELECT 	directory + '#FS#' + name as tablepath
 	FROM 	tables
 	WHERE	name != '_datasource.xml'
+	
 </cfquery>
+
 
 <cfset breadcrumbStruct = structNew() />
 <cfloop query="tables">
@@ -27,13 +29,22 @@
 	</cfif>
 </cfloop>
 
-
-
 <cfquery name="columns" dbtype="query">
 	SELECT 	*
 	FROM 	files
 	WHERE	name != '_table.xml'
+	AND		name not like  'vc_%'
 </cfquery>
+
+<cfquery name="virtualColumns" dbtype="query">
+	SELECT 	*
+	FROM 	files
+	WHERE	name != '_table.xml'
+	AND		name like  'vc_%'
+	AND		name not like '%apptacularTempNew%'
+</cfquery>
+
+
 
 <cf_pageWrapper>
 
@@ -62,15 +73,26 @@
 </cfoutput>
 
 <cf_XMLForm fileToEdit="#tablePath#" message="#message#" />
-<cf_XMLColumnsForm tablePathToEdit="#path#" />
-
-<!---<h2>Edit Columns</h2>
-<ul>
-<cfoutput query="columns">
-	<cfset fileName = directory & fs & name />
-	<li><a href="editColumn.cfm?path=#URLEncodedFormat(fileName)#">#ListFirst(name, ".")#</a></li>
-
+<cfoutput>
+<table>
+<tr>
+<td><cf_XMLColumnsForm tablePathToEdit="#path#" /></td>
+<td> 
+	<h2>Edit Virtual Columns</h2>
+	<table>
+		<tr><td><a href="editVirtualColumn.cfm?path=#path#">Add Virtual Column</a></td></tr>
+	
+    	<cfloop query="virtualColumns">
+			<cfset path = directory & FS & name />
+			<cfset vc = GetToken(GetToken(GetFileFromPath(path),1,"."), 2, "_")/>
+			<tr><td><a href="editVirtualColumn.cfm?path=#path#">#vc#</a> </td>
+			<td>(<a href="editVirtualColumn.cfm?path=#path#&amp;delete">Delete</a>)</td></tr>
+		</cfloop>
+    
+	</table>
+</td>
+</tr>
 </cfoutput>
-</ul>--->
+
 
 </cf_pageWrapper>

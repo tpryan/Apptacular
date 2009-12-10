@@ -11,12 +11,13 @@
 	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,createInterface,IsJoinTable" />
 	<cfset allowed['column'] = "displayName,uiType" />
 	<cfset allowed['config'] = "CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,<Misc>,serviceAccess,CFCFormat,<Formats>,dateformat,timeformat,<Magic Fields>,createdOnString,updatedOnString" />
+	<cfset allowed['virtualcolumn'] = "name,displayName,getterCode,type,uiType" />
 	
 	<cfset booleans['datasource'] = "" />
 	<cfset booleans['table'] = "createInterface,IsJoinTable" />
 	<cfset booleans['column'] = "" />
 	<cfset booleans['config'] = "CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel" />
-	
+	<cfset booleans['virtualcolumn'] = "" />
 	
 	<cfif structKeyExists(form, "submit")>
 	
@@ -31,7 +32,11 @@
 		<cfset Keys = StructKeyArray(XMLInfo) />
 		
 		<cfloop array="#keys#" index="key" >
-			<cfset XML[XMLRoot][key]['XMLText'] = XMLInfo[key] />
+			<cfif FindNoCase("code", key)>
+				<cfset XML[XMLRoot][key]['XmlCdata'] = XMLInfo[key] />
+			<cfelse>
+				<cfset XML[XMLRoot][key]['XMLText'] = Trim(XMLInfo[key]) />
+			</cfif>
 		</cfloop>
 		
 		<cfset FileWrite(fileToEdit,XML) />

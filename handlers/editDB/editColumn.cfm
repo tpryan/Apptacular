@@ -29,8 +29,6 @@
 </cfloop>
 
 
-
-
 <cf_pageWrapper>
 
 
@@ -39,7 +37,7 @@
 
 	<table class="breadcrumb">
 		<tr>
-			<cfif len(breadcrumbStruct.previous)>
+			<cfif structKeyExists(breadcrumbStruct, "previous") AND  len(breadcrumbStruct.previous)>
 				<td id="prev">&larr;<a href="editColumn.cfm?path=#URLEncodedFormat(breadcrumbStruct.previous)#">Edit <strong>#ListFirst(ListLast(breadcrumbStruct.previous, FS), ".")#</strong></a></td>
 			<cfelse>
 				<td id="prev"></td>
@@ -48,7 +46,7 @@
 			
 			<td>&uarr;<a href="editTable.cfm?path=#URLEncodedFormat(directory)#">Edit <strong>#ListLast(directory, FS)#</strong>&uarr;</a></td>
 			
-			<cfif len(breadcrumbStruct.next)>
+			<cfif structKeyExists(breadcrumbStruct, "next") AND len(breadcrumbStruct.next)>
 				<td id="next"><a href="editColumn.cfm?path=#URLEncodedFormat(breadcrumbStruct.next)#">Edit <strong>#ListFirst(ListLast(breadcrumbStruct.next, FS), ".")#</strong>&rarr;</a></td>
 			<cfelse>
 				<td id="next"></td>

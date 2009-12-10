@@ -11,7 +11,8 @@
 	}
 	td{
 		padding-right: 10px;
-		//border-bottom: 1px dotted #999;	
+		//border-bottom: 1px dotted #999;
+		vertical-align: top;	
 	}	
 	body{
 		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
