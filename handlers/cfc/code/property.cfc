@@ -17,6 +17,7 @@ component accessors="true" {
 	property name="linktable" type="string" hint="See reference for cfproperty";
 	property name="InverseJoinColumn" type="string" hint="See reference for cfproperty";
 	property name="lazy" type="boolean" hint="See reference for cfproperty";
+	property name="orderby" type="string" hint="See reference for cfproperty";
 	
 	/**
 		* @hint Returns the content of the property in CFML
@@ -88,6 +89,10 @@ component accessors="true" {
 		
 		if (len(This.getlazy())){
        		result = ListAppend(result, 'lazy="#This.getlazy()#"', " ");
+       	}
+		
+		if (len(This.getorderby())){
+       		result = ListAppend(result, 'orderby="#This.getorderby()#"', " ");
        	}
        	
 		result = result & ' />';
@@ -165,6 +170,10 @@ component accessors="true" {
 		
 		if (len(This.getlazy())){
        		result = ListAppend(result, 'lazy="#This.getlazy()#"', " ");
+       	}
+		
+		if (len(This.getorderby())){
+       		result = ListAppend(result, 'orderby="#This.getorderby()#"', " ");
        	}
        	
 		result = result & ';';

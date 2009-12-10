@@ -8,7 +8,7 @@
 	
 	<cfset allowed = structNew() />
 	<cfset allowed['datasource'] = "displayName" />
-	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,plural,createInterface,IsJoinTable" />
+	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable" />
 	<cfset allowed['column'] = "displayName,uiType" />
 	<cfset allowed['config'] = "CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,<Misc>,serviceAccess,CFCFormat,<Formats>,dateformat,timeformat,<Magic Fields>,createdOnString,updatedOnString" />
 	<cfset allowed['virtualcolumn'] = "name,displayName,getterCode,type,uiType" />

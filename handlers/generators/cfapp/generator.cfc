@@ -204,7 +204,7 @@ component{
 							property.setInverseJoinColumn(foreignColumns[k].getColumn());
 						}
 					}
-					
+					property.setOrderby(otherJoinTable.getOrderBy());
 			   		property.setLazy(true);
 					property.setSingularname(otherJoinTable.getEntityName());
 			   		cfc.AddProperty(property);
@@ -232,6 +232,7 @@ component{
 			   		property.setCFC(foreignTable.getEntityName());
 			   		property.setCascade("all-delete-orphan");
 					property.setSingularname(foreignTable.getEntityName());
+					property.setOrderby(foreignTable.getOrderBy());
 			   		cfc.AddProperty(property);
 					
 					var countFunc= New apptacular.handlers.cfc.code.function();
@@ -869,7 +870,7 @@ component{
 					
 					
 					ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
-	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##"  /></td>');	
+	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');	
 				}
 				else{
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
@@ -889,7 +890,7 @@ component{
 			
 				ct.AppendBody('		<tr>');
 				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
-				ct.AppendBody('			<td><cf_manyToManySelector name="#otherJoinTable.getPlural()#" entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  /></td>');
+				ct.AppendBody('			<td><cf_manyToManySelector name="#otherJoinTable.getPlural()#" entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  orderby="#otherJoinTable.getOrderby()#"  /></td>');
 				ct.AppendBody('		</tr>');
 			
 			}

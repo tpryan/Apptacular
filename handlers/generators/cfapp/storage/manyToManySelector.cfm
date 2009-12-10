@@ -6,6 +6,7 @@
 <cfparam name="attributes.foreignKeylabel" type="string" />
 <cfparam name="attributes.required" type="boolean" default="false" />
 <cfparam name="attributes.selected" type="array" default="#ArrayNew(1)#" />
+<cfparam name="attributes.orderby" type="string" default="" />
 
 <cfset name = attributes.name />
 <cfset entityName = attributes.entityName />
@@ -13,6 +14,7 @@
 <cfset foreignKeylabel = attributes.foreignKeylabel />
 <cfset required = attributes.required />
 <cfset selected = attributes.selected />
+<cfset orderby = attributes.orderby />
 
 
 <cfset selectedStruct = structNew() />
@@ -23,7 +25,7 @@
 
 <cfif thisTag.executionMode is "start">
 
-	<cfset Entities = EntityLoad(entityName) />
+	<cfset Entities = EntityLoad(entityName,{}, orderby) />
 	
 	
 	<cfoutput>

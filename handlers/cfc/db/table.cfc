@@ -19,7 +19,8 @@ component accessors="true" extends="dbItem"
 	property name="joinedTables" type="array";
 	property name="joinTables" type="array";
 	property name="createInterface" type="boolean";
-	property name="virtualcolumns" type="virtualcolumn[]";      
+	property name="virtualcolumns" type="virtualcolumn[]";
+	property name="orderby";      
 	
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();
@@ -123,8 +124,9 @@ component accessors="true" extends="dbItem"
 			columnStruct[column.getName()] = column;
 			
 			if (column.getisPrimaryKey()){
-				this.setIdentity(column.getName());
-				this.setForeignKeyLabel(LCase(columns.column_name[i+1]));
+				This.setIdentity(column.getName());
+				This.setForeignKeyLabel(LCase(columns.column_name[i+1]));
+				This.setOrderBy(column.getName() & " asc");
 			}
 			
 			if (column.getIsForeignKey()){
