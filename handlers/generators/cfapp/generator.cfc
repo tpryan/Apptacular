@@ -267,6 +267,7 @@ component{
 			cfc.addFunction(vcGetter);
 		}
 		
+		
 		var func= New apptacular.handlers.cfc.code.function();
 		func.setName('nullifyZeroID');
 		func.setAccess("public");
@@ -545,6 +546,7 @@ component{
 	
 	public any function createViewListCustomTag(required any table, required string path){
 	    var i = 0;
+		var columnCount = 3;
 		var fileLocation = path;
 		var fileName = table.getEntityName() & "List";
 		var identity = table.getIdentity();
@@ -552,7 +554,15 @@ component{
 		
 	    var ct  = New apptacular.handlers.cfc.code.customTag(fileName, fileLocation);
 		ct.addAttribute(table.getEntityName() & "Array", "array", true);
-			
+		ct.addAttribute("maxresults", "numeric", false, -1);
+		ct.addAttribute("offset", "numeric", false, -1);
+		
+		ct.AppendBody('<cfset #entityName#Count = ormExecuteQuery("select Count(*) from #entityName#")[1]  />');
+		ct.AppendBody('<cfset prevOffset = attributes.offset - attributes.maxresults />');
+		ct.AppendBody('<cfset nextOffset = attributes.offset + attributes.maxresults />');
+		ct.AppendBody('<cfset pages = Ceiling(#entityName#Count / attributes.maxresults) />');
+		ct.AppendBody('');
+		ct.AppendBody('');
 		ct.AppendBody('<cfset message = attributes.message /> ');
 		ct.AppendBody('<cfif CompareNoCase(message, "deleted") eq 0>');
 		ct.AppendBody('	<p class="alert">Record deleted</p>');
@@ -560,8 +570,11 @@ component{
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
 		
+		ct.AppendBody('<cfoutput>');
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<thead>');
+		
+		
 		ct.AppendBody('		<tr>');
 		
 		var columns = table.getColumns();
@@ -577,7 +590,7 @@ component{
 			else{
 				ct.AppendBody('			<th>#columns[i].getDisplayName()#</th>');
 			}
-			
+			columnCount++;
 			
 		}
 		
@@ -591,6 +604,7 @@ component{
 				
 				if (not foreignTable.getIsJoinTable()){
 					ct.AppendBody('			<th>#foreignTable.getEntityName()#Count</th>');
+					columnCount++;
 				}
 			}
 	   	}
@@ -602,6 +616,7 @@ component{
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
 			
 				ct.AppendBody('			<th>#otherJoinTable.getEntityName()#Count</th>');
+				columnCount++;
 			
 			}
 		
@@ -611,7 +626,7 @@ component{
 		ct.AppendBody('	</thead>');
 		
 		ct.AppendBody('	<tbody>');
-		ct.AppendBody('	<cfoutput>');
+		
 		ct.AppendBody('	<cfloop array="##attributes.#entityName#Array##" index="#entityName#">');
 		
 		ct.AppendBody('		<tr>');
@@ -677,10 +692,40 @@ component{
 		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=delete_process&#identity#=###entityName#.get#identity#()##" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</cfloop>');
-		ct.AppendBody('	</cfoutput>');
+		
+		ct.AppendBody('<cfif attributes.offset gt 0>');
+		ct.AppendBody('	<tr>');
+		ct.AppendBody('	<td colspan="#columnCount#">');
+		ct.AppendBody('		<table class="listnav">');
+		ct.AppendBody('			<tr>');
+		ct.AppendBody('				<td class="prev">');
+		ct.AppendBody('					<cfif prevOffset gte 0>');
+		ct.AppendBody('						<a href="?offset=##prevOffset##&amp;maxresults=##attributes.maxresults##">&larr; Prev</a>');
+		ct.AppendBody('					</cfif>');
+		ct.AppendBody('				</td>');
+		ct.AppendBody('				<td class="pages">');
+		ct.AppendBody('					<cfloop index="i" from="1" to="##pages##">');
+		ct.AppendBody('						<cfset offset = 0 + ((i -1) * attributes.maxresults) />');
+		ct.AppendBody('						<cfif offset eq attributes.offset>');
+		ct.AppendBody('							##i##');
+		ct.AppendBody('						<cfelse>');
+		ct.AppendBody('							<a href="?offset=##offset##&amp;maxresults=##attributes.maxresults##">##i##</a>');
+		ct.AppendBody('						</cfif>');
+		ct.AppendBody('					</cfloop>');
+		ct.AppendBody('				</td>');
+		ct.AppendBody('				<td class="next">');
+		ct.AppendBody('					<cfif nextOffset lt #entityname#Count>');
+		ct.AppendBody('					<a href="?offset=##nextOffset##&amp;maxresults=##attributes.maxresults##">Next &rarr;<a/>');
+		ct.AppendBody('					</cfif>');
+		ct.AppendBody('				</td>');
+		ct.AppendBody('			</tr>');
+		ct.AppendBody('		</table>');
+		ct.AppendBody('	</td>');
+		ct.AppendBody('	</tr>');
+		ct.AppendBody('</cfif>');
 		ct.AppendBody('	</tbody>');
 		
-		
+		ct.AppendBody('	</cfoutput>');
 		ct.AppendBody('</table>');
 	    
 	    return ct;
@@ -921,11 +966,14 @@ component{
 		var displayName = table.getDisplayName();
 		var identity = table.getIdentity();
 		var columns = table.getColumns();
+		var orderby = table.getorderby();
 		
 	    view.AppendBody('<cfsetting showdebugoutput="false" />');
 	    view.AppendBody('<cfparam name="url.method" type="string" default="list" />');
 	    view.AppendBody('<cfparam name="url.#identity#" type="numeric" default="0" />');
 	    view.AppendBody('<cfparam name="url.message" type="string" default="" />');
+		view.AppendBody('<cfparam name="url.offset" type="numeric" default="0" />');
+		view.AppendBody('<cfparam name="url.maxresults" type="numeric" default="10" />');
 	    view.AppendBody('<cfimport path="#arguments.entityCFCPath#.*" />');
 		view.AppendBody('<cf_pageWrapper>');
 		view.AppendBody();
@@ -934,13 +982,14 @@ component{
 	    view.AppendBody('<cfswitch expression="##url.method##" >');
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
-	    view.AppendBody('		<cfset #entityName#Array = entityLoad("' & entityName  & '") />');
+	    view.AppendBody('		<cfset #entityName#Array = entityLoad("#entityName#", {}, "#orderby#", {offset=url.offset, maxresults=url.maxresults} ) />');
+		
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
 		view.AppendBody('		</p></cfoutput>');	
 		
-		view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" /> ');
+		view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" /> ');
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    
@@ -954,8 +1003,6 @@ component{
 		view.AppendBody('		</p></cfoutput>');	
 		
 		view.AppendBody('		<cf_#entityName#Read #entityName# = "###entityName###" /> ');
-	    
-		
 		
 		var references = table.getReferences();
 	   	
@@ -1129,6 +1176,14 @@ component{
 	    cfc.setName(EntityName & "Service");
 	    cfc.setFileLocation(path);
 	    
+		//create Count Method
+		var func= New apptacular.handlers.cfc.code.function();
+		func.setName('count');
+		func.setAccess(arguments.access);
+		func.setReturnType("numeric");
+		func.setReturnResult('ormExecuteQuery("select Count(*) from #entityName#")[1]');
+		cfc.addFunction(func);
+		
 		//create list method
 		var func= New apptacular.handlers.cfc.code.function();
 		func.setName('list');
