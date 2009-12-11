@@ -13,7 +13,9 @@
 		padding-right: 10px;
 		//border-bottom: 1px dotted #999;
 		vertical-align: top;	
-	}	
+	}
+	
+		
 	body{
 		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
 		font-size: 80%;
@@ -59,12 +61,20 @@
 	a:hover{
 		color: #FFFFFF;
 		
+	}
+	#logo{
+		position: fixed;
+		bottom: 10px;
+		right: 10px;	
+		
 	}	
+	
 	
 </style>
 </head>
 <body>
 <cfelse>
+<img src ="/apptacular/handlers/logo.jpg" width="100" height="100" id="logo">
 </body>
 </html>
 </cfif>

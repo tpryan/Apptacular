@@ -70,5 +70,26 @@ select { 	width: 400px; }
 #login input { margin-bottom: 5px;}
 #login input[type="text"] { 	width: 150px; }
 #login input[type="password"] { 	width: 150px; }
-
 #login label {display:block; float: left; width: 80px;}
+
+.listnav{
+	width: 100%;
+}
+
+.listnav td{
+	border: 0;
+}
+
+.listnav .next{
+	width: 100px;
+	text-align: right;	
+}
+
+.listnav .prev{
+	width: 100px;
+	text-align: left;		
+}
+
+.listnav .pages{
+	text-align: center;		
+}
