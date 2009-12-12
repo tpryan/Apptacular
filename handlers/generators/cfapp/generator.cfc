@@ -693,7 +693,7 @@ component{
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</cfloop>');
 		
-		ct.AppendBody('<cfif attributes.offset gt 0>');
+		ct.AppendBody('<cfif attributes.offset gte 0>');
 		ct.AppendBody('	<tr>');
 		ct.AppendBody('	<td colspan="#columnCount#">');
 		ct.AppendBody('		<table class="listnav">');

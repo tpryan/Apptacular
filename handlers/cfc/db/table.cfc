@@ -136,12 +136,16 @@ component accessors="true" extends="dbItem"
 			
 		}
 		
+		//This is the logic that figures out if this is a join table.
 		var refArray = structKeyArray(referencedTables);
 		if (ArrayLen(refArray) eq 2 AND
 			(CompareNoCase(This.getName(), "#refArray[1]#to#refArray[2]#") eq 0 OR 
-				CompareNoCase(This.getName(), "#refArray[2]#to#refArray[1]#") eq 0)
+				CompareNoCase(This.getName(), "#refArray[2]#to#refArray[1]#") eq 0 OR
+					CompareNoCase(This.getName(), "#refArray[1]#_#refArray[2]#") eq 0 OR 
+						CompareNoCase(This.getName(), "#refArray[2]#_#refArray[1]#") eq 0 OR
+							CompareNoCase(This.getName(), "#refArray[1]##refArray[2]#") eq 0 OR 
+								CompareNoCase(This.getName(), "#refArray[2]##refArray[1]#") eq 0)
 			)
-		
 		{
 			This.setIsJoinTable(TRUE);
 			This.setCreateInterface(FALSE);
