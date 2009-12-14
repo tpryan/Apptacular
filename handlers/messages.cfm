@@ -9,6 +9,9 @@
 	<cfif FindNoCase("generated", url.type)>
 		<cfoutput><p><strong>#fileCount#</strong> Files Generated in <strong>#seconds#</strong> seconds, even using Evaluate()</p></cfoutput>				
 	</cfif>
+	<cfif FindNoCase("locked", url.type)>
+		<cfoutput><p>Application locked, unlock in the Application config to regenerate.</p></cfoutput>				
+	</cfif>
 	<cfif FindNoCase("purge", url.type)>
 		<cfoutput>
 			<p><strong>#fileCount# extraneous files deleted.</strong></p>

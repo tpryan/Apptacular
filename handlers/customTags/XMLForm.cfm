@@ -10,13 +10,13 @@
 	<cfset allowed['datasource'] = "displayName" />
 	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable" />
 	<cfset allowed['column'] = "displayName,uiType" />
-	<cfset allowed['config'] = "CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,<Misc>,serviceAccess,CFCFormat,<Formats>,dateformat,timeformat,<Magic Fields>,createdOnString,updatedOnString" />
+	<cfset allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,<Misc>,serviceAccess,CFCFormat,<Formats>,dateformat,timeformat,<Magic Fields>,createdOnString,updatedOnString" />
 	<cfset allowed['virtualcolumn'] = "name,displayName,getterCode,type,uiType" />
 	
 	<cfset booleans['datasource'] = "" />
 	<cfset booleans['table'] = "createInterface,IsJoinTable" />
 	<cfset booleans['column'] = "" />
-	<cfset booleans['config'] = "CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel" />
+	<cfset booleans['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel" />
 	<cfset booleans['virtualcolumn'] = "" />
 	
 	<cfif structKeyExists(form, "submit")>

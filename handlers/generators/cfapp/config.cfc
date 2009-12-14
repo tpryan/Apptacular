@@ -36,6 +36,7 @@ component accessors="true"{
 	property name="timeformat";
 	
 	property name="OverwriteDataModel" type="boolean";
+	property name="LockApplication" type="boolean";
 	
 	
 	
@@ -71,6 +72,7 @@ component accessors="true"{
 		This.setCreateLogin(false);
 		This.setCFCFormat("cfscript");
 		This.setOverwriteDataModel(false);
+		This.setLockApplication(false);
 		
 		This.setDateFormat("mm/dd/yyyy");
 		

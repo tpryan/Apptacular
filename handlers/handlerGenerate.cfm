@@ -52,13 +52,26 @@
 	
 	
 	// Fire up the generator 
-	generator = New generators.cfapp.generator(datamodel, config);
-	generator.generate();
-	generator.writeFiles();
+	if (config.getLockApplication()){
+		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
+		messagesOptions = "?type=locked";
+		messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions;
+	}
+	else{
+		generator = New generators.cfapp.generator(datamodel, config);
+		generator.generate();
+		generator.writeFiles();
+		
+		EndTimer = getTickCount();
+		TickCount = EndTimer - StartTimer;
+		TickCount = TickCount / 1000;
+		
+		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
+		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";
+		messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions;
+		
+	}
 	
-	EndTimer = getTickCount();
-	TickCount = EndTimer - StartTimer;
-	TickCount = TickCount / 1000;
 	
 	
 	
@@ -70,9 +83,7 @@
 <cfhttp url="#script_Path#" timeout="0" />
 
 
-<cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm" />
-<cfset messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#" />
-<cfset messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions />
+
 
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 

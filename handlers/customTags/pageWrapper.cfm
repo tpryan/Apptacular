@@ -52,7 +52,7 @@
 		text-align: right;
 	}
 	
-	input[type="text"] { width: 400px; height: 14px; font-size: 11px; }
+	input[type="text"] { width: 250px; height: 14px; font-size: 11px; }
 	#columns input[type="text"] { width: 110px; }
 	
 	a{
