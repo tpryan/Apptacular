@@ -1222,6 +1222,7 @@ component{
 	public any function createORMServiceCFC(required any table, required string path, required string EntityCFCPath, string access ="public"){
 		var i=0;
 		var EntityName = table.getEntityName();
+		var OrderBy = table.getOrderBy();
 		var cfcPath = EntityCFCPath;
 		var columns = table.getColumns();
 	    
@@ -1238,12 +1239,42 @@ component{
 		cfc.addFunction(func);
 		
 		//create list method
-		var func= New apptacular.handlers.cfc.code.function();
-		func.setName('list');
-		func.setAccess(arguments.access);
-		func.setReturnType("#cfcPath#.#EntityName#[]");
-		func.setReturnResult('EntityLoad("#EntityName#")');
-		cfc.addFunction(func);
+		var list= New apptacular.handlers.cfc.code.function();
+		list.setName('list');
+		list.setAccess(arguments.access);
+		list.setReturnType("#cfcPath#.#EntityName#[]");
+		list.setReturnResult('entityLoad("#entityName#", {}, "#orderby#", arguments)');
+		
+		list.AddOperation('		<cfif arguments.offset eq 0>');
+		list.AddOperation('			<cfset structDelete(arguments, "offset") />');		
+		list.AddOperation('		</cfif>');
+		list.AddOperation('		<cfif arguments.maxresults eq 0>');
+		list.AddOperation('			<cfset structDelete(arguments, "maxresults") />');		
+		list.AddOperation('		</cfif>');
+		
+		list.AddOperationScript('		if(arguments.offset eq 0){');
+		list.AddOperationScript('			structDelete(arguments, "offset");');		
+		list.AddOperationScript('		}');
+		list.AddOperationScript('		if(arguments.maxresults eq 0){');
+		list.AddOperationScript('			structDelete(arguments, "maxresults");');		
+		list.AddOperationScript('		}');
+		
+		var offset = New apptacular.handlers.cfc.code.Argument();
+		offset.setName('offset');
+		offset.setRequired(false);
+		offset.setType('numeric');
+		offset.setDefaultValue(0);
+		list.AddArgument(offset);
+		
+		var maxresults = New apptacular.handlers.cfc.code.Argument();
+		maxresults.setName('maxresults');
+		maxresults.setRequired(false);
+		maxresults.setType('numeric');
+		maxresults.setDefaultValue(0);
+		list.AddArgument(maxresults);
+		
+		
+		cfc.addFunction(list);
 		
 		//Create get method
 		var arg = New apptacular.handlers.cfc.code.Argument();
@@ -1287,49 +1318,92 @@ component{
 		cfc.addFunction(func);
 		
 		//Search Method
-		var func= New apptacular.handlers.cfc.code.function();
-		func.setName("search");
-		func.setAccess(arguments.access);
-		func.setReturnType("#cfcPath#.#EntityName#[]");
-		func.addLocalVariable("hqlString","string","FROM #EntityName# ");
-		func.addLocalVariable("whereClause","string","");
+		var search= New apptacular.handlers.cfc.code.function();
+		search.setName("search");
+		search.setAccess(arguments.access);
+		search.setReturnType("#cfcPath#.#EntityName#[]");
+		search.addLocalVariable("hqlString","string","FROM #EntityName# ");
+		search.addLocalVariable("whereClause","string","");
+		search.addLocalVariable("params","struct","Duplicate(arguments)", false);
 		
-		var arg = New apptacular.handlers.cfc.code.Argument();
-		arg.setName("q");
-		arg.setType("string");
-		arg.setDefaultValue("");
-		func.addArgument(arg);
+		var q = New apptacular.handlers.cfc.code.Argument();
+		q.setName("q");
+		q.setType("string");
+		q.setDefaultValue("");
+		search.addArgument(q);
+		
+		var offset = New apptacular.handlers.cfc.code.Argument();
+		offset.setName('offset');
+		offset.setRequired(false);
+		offset.setType('numeric');
+		offset.setDefaultValue(0);
+		search.AddArgument(offset);
+		
+		var maxresults = New apptacular.handlers.cfc.code.Argument();
+		maxresults.setName('maxresults');
+		maxresults.setRequired(false);
+		maxresults.setType('numeric');
+		maxresults.setDefaultValue(0);
+		search.AddArgument(maxresults);
+		
+		search.AddOperation('');
+		search.AddOperation('		<cfif params.offset eq 0>');
+		search.AddOperation('			<cfset structDelete(params, "offset") />');		
+		search.AddOperation('		</cfif>');
+		search.AddOperation('		<cfif params.maxresults eq 0>');
+		search.AddOperation('			<cfset structDelete(params, "maxresults") />');		
+		search.AddOperation('		</cfif>');
+		search.AddOperation('		<cfset structDelete(params, "q") />');
+		search.AddOperation('');		
+		
+		search.AddOperationScript('');
+		search.AddOperationScript('		if(params.offset eq 0){');
+		search.AddOperationScript('			structDelete(params, "offset");');		
+		search.AddOperationScript('		}');
+		search.AddOperationScript('		if(params.maxresults eq 0){');
+		search.AddOperationScript('			structDelete(params, "maxresults");');		
+		search.AddOperationScript('		}');
+		search.AddOperationScript('		structDelete(params, "q");');
+		search.AddOperationScript('');	
 		
 		
-		func.AddOperationScript('		if (len(arguments.q) gt 0){');		
-		func.AddOperation('		<cfif len(arguments.q) gt 0>');
+		
+		
+		
+		
+		search.AddOperationScript('		if (len(arguments.q) gt 0){');		
+		search.AddOperation('		<cfif len(arguments.q) gt 0>');
 		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i].getName();
 			
 			if (FindNoCase("char",columns[i].getDataType())){
-				func.AddOperationScript('			whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|"); 	  ');		
-				func.AddOperation('				<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
+				search.AddOperationScript('			whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|"); 	  ');		
+				search.AddOperation('				<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
 			}
 		}
 		
-		func.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
-		func.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');	
+		search.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
+		search.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');	
 		
-		func.AddOperationScript('		}');		
-		func.AddOperation('		</cfif>');
+		search.AddOperationScript('		}');		
+		search.AddOperation('		</cfif>');
 		
-		func.AddOperationScript('		if (len(whereClause) gt 0){');	
-		func.AddOperationScript('			hqlString = hqlString & " WHERE " & whereClause;');	
-		func.AddOperationScript('		}');	
+		search.AddOperationScript('		if (len(whereClause) gt 0){');	
+		search.AddOperationScript('			hqlString = hqlString & " WHERE " & whereClause;');	
+		search.AddOperationScript('		}');
 		
-		func.AddOperation('		<cfif len(whereClause) gt 0>');
-		func.AddOperation('			<cfset hqlString = hqlString & " WHERE " & whereClause />');
-		func.AddOperation('		</cfif>');
+		search.AddOperationScript('		hqlString = hqlString & " ORDER BY #OrderBy#";');	
 		
-		func.setReturnResult('ormExecuteQuery(hqlString)');
-		cfc.addFunction(func);		
+		search.AddOperation('		<cfif len(whereClause) gt 0>');
+		search.AddOperation('			<cfset hqlString = hqlString & " WHERE " & whereClause />');
+		search.AddOperation('		</cfif>');
+		
+		search.AddOperation('		<cfset hqlString = hqlString & " ORDER BY #OrderBy#" />');
+		
+		search.setReturnResult('ormExecuteQuery(hqlString, false, params)');
+		cfc.addFunction(search);		
 		
 		return cfc;
 	}    
