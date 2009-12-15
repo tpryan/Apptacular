@@ -22,7 +22,7 @@
 	
 	<cfoutput>
 	<select name="#name#" id="#name#">
-		<cfif not attributes.required><option value="0"></option></cfif>
+		<cfif not attributes.required><option></option></cfif>
 		<cfloop array="#entities#" index="entity">
 			<cfinvoke component="#entity#" method="get#identity#" returnvariable="id" />
 			<cfinvoke component="#entity#" method="get#foreignKeylabel#" returnvariable="fklabel" />

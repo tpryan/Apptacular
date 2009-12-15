@@ -18,6 +18,9 @@ component accessors="true" {
 	property name="InverseJoinColumn" type="string" hint="See reference for cfproperty";
 	property name="lazy" type="boolean" hint="See reference for cfproperty";
 	property name="orderby" type="string" hint="See reference for cfproperty";
+	property name="persistent" type="string" hint="See reference for cfproperty";
+	property name="setter" type="string" hint="See reference for cfproperty";
+	property name="getter" type="string" hint="See reference for cfproperty";
 	
 	/**
 		* @hint Returns the content of the property in CFML
@@ -93,6 +96,18 @@ component accessors="true" {
 		
 		if (len(This.getorderby())){
        		result = ListAppend(result, 'orderby="#This.getorderby()#"', " ");
+       	}
+		
+		if (len(This.getpersistent())){
+       		result = ListAppend(result, 'persistent="#This.getpersistent()#"', " ");
+       	}
+		
+		if (len(This.getgetter())){
+       		result = ListAppend(result, 'getter="#This.getgetter()#"', " ");
+       	}
+		
+		if (len(This.getsetter())){
+       		result = ListAppend(result, 'setter="#This.getsetter()#"', " ");
        	}
        	
 		result = result & ' />';
@@ -174,6 +189,18 @@ component accessors="true" {
 		
 		if (len(This.getorderby())){
        		result = ListAppend(result, 'orderby="#This.getorderby()#"', " ");
+       	}
+		
+		if (len(This.getpersistent())){
+       		result = ListAppend(result, 'persistent="#This.getpersistent()#"', " ");
+       	}
+		
+		if (len(This.getgetter())){
+       		result = ListAppend(result, 'getter="#This.getgetter()#"', " ");
+       	}
+		
+		if (len(This.getsetter())){
+       		result = ListAppend(result, 'setter="#This.getsetter()#"', " ");
        	}
        	
 		result = result & ';';

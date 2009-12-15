@@ -130,13 +130,21 @@ component{
 	    cfc.setFileLocation(fileLocation);
 	   	cfc.setPersistent(true);
 		
+		// Create Init
+		var init= New apptacular.handlers.cfc.code.function();
+		init.setName('init');
+		init.setAccess("public");
+		init.setReturnType(table.getEntityName());
+		init.setReturnResult('This');
+		
+		
 		if (not table.isEntitySameAsTableName()){
 		    cfc.setTable(table.getName());
 		    cfc.setEntityname(table.getEntityName());
 	   	}
 	    
 		var columns = table.getColumns();
-	
+		
 		for (i=1; i <= ArrayLen(columns); i++){
 	        column = columns[i];
 			
@@ -253,6 +261,7 @@ component{
 			}
 	   	}
 		
+		//Handle virtual columns
 		var virtualColumns = table.getVirtualColumns();
 		
 		for (i=1; i <= ArrayLen(virtualColumns); i++){
@@ -265,9 +274,22 @@ component{
 			vcGetter.AddOperation('		#Trim(vc.getGetterCode())#');
 			vcGetter.AddOperationScript('		#Trim(vc.getGetterCode())#');
 			cfc.addFunction(vcGetter);
+			
+			//Add virtual column to properties list
+			var property = New apptacular.handlers.cfc.code.property();
+	       	property.setName(vc.getName());
+			property.setType(vc.getType());
+			property.setPersistent(false);
+			property.setSetter(false);
+			cfc.AddProperty(property);
+			
+			//Add initialization to start up for object.
+			init.addOperation('		<cfset variables.#vc.getName()# = This.get#vc.getName()#() />');
+			init.AddOperationScript('		variables.#vc.getName()# = This.get#vc.getName()#();');
+			
 		}
 		
-		
+		//NullifyZeroID is for use with Remote services.
 		var func= New apptacular.handlers.cfc.code.function();
 		func.setName('nullifyZeroID');
 		func.setAccess("public");
@@ -281,6 +303,86 @@ component{
 		cfc.addFunction(func);
 		
 		
+		//Add populate function
+		var populate= New apptacular.handlers.cfc.code.function();
+		populate.setName('populate');
+		populate.setAccess("public");
+		populate.setReturnType(table.getEntityName());
+		populate.setReturnResult("This");
+		
+		var arg = New apptacular.handlers.cfc.code.Argument();
+		arg.setName('formStruct');
+		arg.setRequired(true);
+		arg.setType('struct');
+		populate.AddArgument(arg);
+		
+		for (i= 1; i <= ArrayLen(columns); i++){
+			column = columns[i];
+			
+			if(column.getIsPrimaryKey()){
+	    		populate.AddOperation('		<cfif StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# gt 0>');
+				populate.AddOperation('			<cfset This = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true) />');
+				populate.AddOperation('		</cfif>');
+				
+				populate.AddOperationScript('		if (StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# > 0){');
+	    		populate.AddOperationScript('			This = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true);');
+				populate.AddOperationScript('		}');
+	    	}
+			else if (column.getisForeignKey()){
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				fkEName = fkTable.getentityName();
+				populate.AddOperation('		<cfset #fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true) />');
+				populate.AddOperation('		<cfset This.set#fkEName#(#fkEName#) />');
+				
+				populate.AddOperationScript('		#fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true);');
+				populate.AddOperationScript('		This.set#fkEName#(#fkEName#);');
+			}
+	    	else if (not config.isMagicField(column.getName())){ 
+				populate.AddOperation('		<cfif StructKeyExists(arguments.formstruct, "#column.getName()#")>');
+	    		populate.AddOperation('			<cfset This.set#column.getName()#(arguments.formstruct.#column.getName()#)  />');
+				populate.AddOperation('		</cfif>');
+				
+				populate.AddOperationScript('		if (StructKeyExists(arguments.formstruct, "#column.getName()#")){');
+	    		populate.AddOperationScript('			this.set#column.getName()#(arguments.formstruct.#column.getName()#);');
+				populate.AddOperationScript('		}');
+	    	}
+	    }
+		
+		if (table.getHasJoinTable()){
+			var joinTables = table.getJoinTables();
+			for (i = 1; i <= ArrayLen(joinTables); i++){
+				var joinTable = dataSource.getTable(joinTables[i]);
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+				populate.AddOperation('');
+				populate.AddOperation('		<!--- Handle many-to-many relationships for table #otherJoinTable.getEntityName()# --->');
+				populate.AddOperation('		<cfif structKeyExists(formstruct, "#otherJoinTable.getPlural()#")>');
+				populate.AddOperation('			<cfset This.set#otherJoinTable.getPlural()#([]) />');
+				populate.AddOperation('			<cfloop list="##formstruct.#otherJoinTable.getPlural()###" index="id">');
+				populate.AddOperation('				<cfset #otherJoinTable.getEntityName()# = entityLoad("#otherJoinTable.getEntityName()#", id, true) />');
+				populate.AddOperation('				<cfset This.add#otherJoinTable.getEntityName()#(#otherJoinTable.getEntityName()#) />');
+				populate.AddOperation('			</cfloop>');
+				populate.AddOperation('		</cfif>');
+				
+				populate.AddOperationScript('');
+				populate.AddOperationScript('		//Handle many-to-many relationships for table #otherJoinTable.getEntityName()#');
+				populate.AddOperationScript('		if (structKeyExists(arguments.formstruct, "#otherJoinTable.getPlural()#")){');
+				populate.AddOperationScript('			This.set#otherJoinTable.getPlural()#([]);');
+				populate.AddOperationScript('			if (ListLen(arguments.formstruct.#otherJoinTable.getPlural()#) gt 0){');
+				populate.AddOperationScript('				for (i = 1; i <= ListLen(arguments.formstruct.#otherJoinTable.getPlural()#); i++ ){');
+				populate.AddOperationScript('					var id = ListGetAt(arguments.formstruct.#otherJoinTable.getPlural()#, i);');			
+				populate.AddOperationScript('					var #otherJoinTable.getEntityName()# = entityLoad("#otherJoinTable.getEntityName()#", id, true);');
+				populate.AddOperationScript('					This.add#otherJoinTable.getEntityName()#(#otherJoinTable.getEntityName()#);');
+				populate.AddOperationScript('				}');
+				populate.AddOperationScript('			}');
+				populate.AddOperationScript('		}');
+			}
+		
+		}
+		
+		cfc.addFunction(populate);
+		
+		//Add init at the end, so any changes can be made through out this code.
+		cfc.addFunction(init);
 		
 		return cfc;
 	}
@@ -1042,57 +1144,8 @@ component{
 		view.AppendBody();
 	    view.AppendBody('	<cfcase value="edit_process">');
 	    
-	    
-	    for (i= 1; i <= ArrayLen(columns); i++){
-			column = columns[i];
-	    	if(column.getIsPrimaryKey()){
-	    		view.AppendBody('		<cfif form.#column.getName()# gt 0>');
-				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", form.#column.getName()#, true) />');
-	    		view.AppendBody('		<cfelse>');
-				view.AppendBody('			<cfset #entityName# = EntityNew("' & entityName  & '") />');
-				view.AppendBody('		</cfif>');
-	    	}
-			else if (column.getisForeignKey()){
-				var fkTable = datasource.getTable(column.getForeignKeyTable());
-				fkEName = fkTable.getentityName();
-				view.AppendBody('		<cfset #fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true) />');
-				view.AppendBody('		<cfset #entityName#.set#fkEName#(#fkEName#) />');
-			}
-	    	else if (not config.isMagicField(column.getName())){ 
-	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(form.#column.getName()#)  />');
-	    	}
-	    }
-		
-		if (table.getHasJoinTable()){
-			var joinTables = table.getJoinTables();
-			for (i = 1; i <= ArrayLen(joinTables); i++){
-				var joinTable = dataSource.getTable(joinTables[i]);
-				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
-				view.AppendBody('');
-				view.AppendBody('		<cfif structKeyExists(form, "#otherJoinTable.getPlural()#")>');
-				view.AppendBody('			<cfset #entityName#.set#otherJoinTable.getPlural()#([]) />');
-				view.AppendBody('			<cfloop list="##form.#otherJoinTable.getPlural()###" index="id">');
-				view.AppendBody('				<cfset #otherJoinTable.getEntityName()# = entityLoad("#otherJoinTable.getEntityName()#", id, true) />');
-				view.AppendBody('				<cfset #entityName#.add#otherJoinTable.getEntityName()#(#otherJoinTable.getEntityName()#) />');
-				view.AppendBody('			</cfloop>');
-				view.AppendBody('		</cfif>');
-				view.AppendBody('');
-				
-			
-			}
-		
-		}
-		
-		
-		
-		
-		
-		
-		
-			
-			
-		
-		
+		view.AppendBody('		<cfset #entityName# = EntityNew("#entityName#") />');
+		view.AppendBody('		<cfset #entityName# = #entityName#.populate(form) />');
 	    view.AppendBody('		<cfset EntitySave(#entityName#) />');
 	    view.AppendBody('		<cfset ORMFlush() />');
 	    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
