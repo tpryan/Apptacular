@@ -85,6 +85,7 @@
 <cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
+
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 
 <response showresponse="true">

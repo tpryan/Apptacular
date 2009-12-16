@@ -38,9 +38,6 @@
 	generator.generate();
 	filesGenerated = generator.getAllGeneratedFilePaths();
 	
-	
-	
-	
 	filesList = DirectoryList(rootFilePath, true, "query");
 	
 </cfscript>	
