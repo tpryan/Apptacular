@@ -271,8 +271,15 @@ component{
 			vcGetter.setName("get" & vc.getName());
 			vcGetter.setAccess("public");
 			vcGetter.setReturnType(vc.getType());
-			vcGetter.AddOperation('		#Trim(vc.getGetterCode())#');
-			vcGetter.AddOperationScript('		#Trim(vc.getGetterCode())#');
+			
+			
+			var code = vc.getGetterCode();
+			for (j=1; j <= ListLen(code, linebreak); j++){
+				var codeLine = ListGetAt(code, j, linebreak);
+				vcGetter.AddOperation('		#codeLine#');
+				vcGetter.AddOperationScript('		#codeLine#');
+			}
+			
 			cfc.addFunction(vcGetter);
 			
 			//Add virtual column to properties list

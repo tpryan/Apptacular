@@ -19,6 +19,12 @@
 	<cfset booleans['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel" />
 	<cfset booleans['virtualcolumn'] = "" />
 	
+	<cfset textareas['datasource'] = "" />
+	<cfset textareas['table'] = "" />
+	<cfset textareas['column'] = "" />
+	<cfset textareas['config'] = "" />
+	<cfset textareas['virtualcolumn'] = "getterCode" />
+	
 	<cfif structKeyExists(form, "submit")>
 	
 		<cfset XMLInfo = Duplicate(form) />
@@ -75,6 +81,13 @@
 							<label for="#key#false">False</label>
 						</td>			
 					</tr>
+				<cfelseif ListFindNoCase(textareas[XMLRoot], key)>
+					<tr>	
+						<th><label for="#key#">#key#</label></th>
+						<td>
+							<textarea name="#key#">#XML[XMLRoot][key]['XMLText']#</textarea>
+						</td>			
+					</tr>	
 				<cfelse>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>

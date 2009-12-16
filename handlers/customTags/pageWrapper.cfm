@@ -52,7 +52,8 @@
 		text-align: right;
 	}
 	
-	input[type="text"] { width: 250px; height: 14px; font-size: 11px; }
+	input[type="text"] { width: 350px; height: 14px; font-size: 11px; }
+	textarea{ width: 350px; height: 140px; font-size: 11px; }
 	#columns input[type="text"] { width: 110px; }
 	
 	a{
