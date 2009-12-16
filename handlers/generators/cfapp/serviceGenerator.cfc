@@ -6,6 +6,7 @@ component  extends="codeGenerator"
 		var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    cfc.setName("authenticationService");
 	    cfc.setFileLocation(variables.config.getServiceFilePath());
+		cfc.setFormat(variables.config.getCFCFormat());
 		
 		var username = New apptacular.handlers.cfc.code.Argument();
 		username.setName('username');

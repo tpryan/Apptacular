@@ -2,7 +2,7 @@ component{
 
 	public generator function init(required any datasource, required any config, 
 			required ormGenerator ormGenerator, required viewGenerator viewGenerator, 
-			required serviceGenerator serviceGenerator){
+			required serviceGenerator serviceGenerator, required testGenerator testGenerator){
 			
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
@@ -13,6 +13,7 @@ component{
 		variables.ormGenerator = arguments.ormGenerator;
 		variables.viewGenerator = arguments.viewGenerator;
 		variables.serviceGenerator = arguments.serviceGenerator;
+		variables.testGenerator = arguments.testGenerator;
 				
 		return This;
 	}
@@ -55,6 +56,11 @@ component{
 			}
 		}
 		
+		if (config.getCreateTests()){
+			testIndex = testGenerator.createIndexTestCFC();
+			ArrayAppend(files, testIndex);
+		}
+		
 		//Only generate login service if we are generating services
 		if (config.getCreateServices() AND config.getCreateLogin()){
 			var authCFC = serviceGenerator.createAuthenticationService();
@@ -94,6 +100,11 @@ component{
 			
 			}
 			
+			//Handles unit tests for tables.
+			if (config.getCreateTests() and table.getCreateInterface()){
+				testview = testGenerator.createViewsTestCFC(table);
+				ArrayAppend(files, testview);
+			}
 		}
 		
 	

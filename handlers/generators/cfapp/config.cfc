@@ -1,6 +1,6 @@
 component accessors="true"{
 	
-	
+	property name="rootURL";
 	property name="rootFilePath";
 	property name="rootCFCPath";
 	
@@ -8,6 +8,7 @@ component accessors="true"{
 	property name="entityFilePath";
 	property name="serviceFilePath";
 	property name="cssFilePath";
+	property name="testFilePath";
 	
 	property name="cssRelativePath";
 	
@@ -15,10 +16,13 @@ component accessors="true"{
 	property name="customTagFolder";
 	property name="entityFolder";
 	property name="serviceFolder";
+	property name="testFolder";
+	
+	property name="mxunitCFCPath";
 	
 	property name="serviceCFCPath";
-	
 	property name="EntityCFCPath";
+	property name="testCFCPath";
 	
 	property name="serviceAccess";
 	property name="CreateViews" type="boolean";
@@ -27,6 +31,7 @@ component accessors="true"{
 	property name="UseServices" type="boolean";
 	property name="CreateEntities" type="boolean";
 	property name="CreateLogin" type="boolean";
+	property name="CreateTests" type="boolean";
 	property name="CFCFormat";
 	
 	property name="createdOnString";
@@ -52,12 +57,16 @@ component accessors="true"{
 			This.setRootFilePath(arguments.rootFilePath);
 		}
 		
+		This.setRootUrl(calculateRootURL());
+		
 		This.setRootCFCPath(arguments.rootCFCPath);
+		This.setMXunitCFCPath("mxunit");
 		
 		This.setcustomTagFolder("customTags");
 		This.setEntityFolder("cfc");
 		This.setServiceFolder("services");
 		This.setCSSFolder("css");
+		This.setTestFolder("test");
 		
 		This.setCreatedOnString("createdOn");
 		This.setUpdatedOnString("updatedOn");
@@ -70,6 +79,7 @@ component accessors="true"{
 		This.setCreateServices(true);
 		This.setCreateEntities(true);
 		This.setCreateLogin(false);
+		This.setCreateTests(true);
 		This.setCFCFormat("cfscript");
 		This.setOverwriteDataModel(false);
 		This.setLockApplication(false);
@@ -81,15 +91,31 @@ component accessors="true"{
     	return This;
     }
 	
+	private string function calculateRootURL(){
+		var webroot = ExpandPath("/");
+		var rootRelativePath = Replace(This.getRootFilePath(), webroot, "", "one");
+		
+		if (compare(Right(rootRelativePath, 1), "/") eq 0 OR 
+			compare(Right(rootRelativePath, 1), "\") eq 0 ){
+			rootRelativePath = Left(rootRelativePath, Len(rootRelativePath)-1);
+		}
+		
+		var result = "http://" & cgi.server_name & "/" & rootRelativePath;
+		
+		return result;
+	}
+	
 	public void function calculatePaths(){
 		This.setcustomTagFilePath(This.getRootFilePath() & This.getcustomTagFolder());
 		This.setEntityFilePath(This.getRootFilePath() & This.getEntityFolder());
 		This.setServiceFilePath(This.getRootFilePath() & This.getServiceFolder());
 		This.setCSSFilePath(This.getRootFilePath() & This.getCSSFolder());
+		This.setTestFilePath(This.getRootFilePath() & This.getTestFolder());
 		
 		//Calculate CFC paths
 		This.setEntityCFCPath(This.getRootCFCPath() & "." & This.getEntityFolder());
 		This.setServiceCFCPath(This.getRootCFCPath() & "." & This.getServiceFolder());
+		This.setTestCFCPath(This.getRootCFCPath() & "." & This.getTestFolder());
 
 		//Calcualte Relative Paths
 		var webroot = expandPath("/");

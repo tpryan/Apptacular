@@ -56,8 +56,9 @@
 		ormGenerator = new generators.cfapp.ormGenerator(datamodel, config);
 		viewGenerator = new generators.cfapp.viewGenerator(datamodel, config);
 		serviceGenerator = new generators.cfapp.serviceGenerator(datamodel, config);
+		testGenerator = new generators.cfapp.testGenerator(datamodel, config);
 
-		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator);
+		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, testGenerator);
 		generator.generate();
 		generator.writeFiles();
 		
