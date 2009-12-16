@@ -581,7 +581,6 @@ component{
 	    var fileLocation = arguments.path;
 	    
 	    var appCFC  =  New apptacular.handlers.cfc.code.applicationCFC();
-	    appCFC.setName('Application') ;
 	    appCFC.setFileLocation(fileLocation) ;
 	    appCFC.addApplicationProperty('name', dbname) ;
 	    appCFC.addApplicationProperty('ormenabled', true) ;

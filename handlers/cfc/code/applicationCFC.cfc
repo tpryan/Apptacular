@@ -3,6 +3,7 @@ component displayname="Application CFC" hint="A CFC representation of an Applica
 	public applicationCFC function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		
+		This.setName("Application"); 
 		This.setOutput(FALSE); 
 		This.setExtension('cfc');
 		This.setFormat('cfscript');
