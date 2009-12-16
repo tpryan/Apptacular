@@ -7,7 +7,7 @@
 		<echo message="Testing ant in this environment. " />
 	</target>
 
-	<target name="build" depends="build.clean,build.copy.files,build.zip" description="All of the stuff surrounding creating a clean copy of the build" />
+	<target name="build" depends="build.clean,build.copy.files,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
 
 	<target name="build.clean">
 		<echo message="Cleaning Build Space"/>
@@ -35,7 +35,25 @@
 	
 	<target name="build.zip" description="Creates a zip file of the build.">
 		<echo message="Creating Zip File"/>
-		<zip destfile="${package.dir}\${app.name}.zip" basedir="${build.dir}"/>
+		<zip destfile="${package.dir}/${app.name}.zip" basedir="${build.dir}"/>
+	</target>
+	
+	<target name="build.packagefordropbox" description="Creates a zip of SQL, extension and pdfs.">
+		<echo message="Collecting Files"/>
+		<copy todir="${package.dir}/apptacularExtensionAndSQL/sql" preservelastmodified="true">
+			<fileset dir="${package.dir}/sql">
+				<exclude name='**/.DS_Store'/>
+			</fileset>	
+		</copy>
+		
+		<copy todir="${package.dir}/apptacularExtensionAndSQL/" preservelastmodified="true" file="${package.dir}/${app.name}.zip" />
+	
+		<echo message="Zipping and publishing"/>
+		<zip destfile="${dropbox.dir}/apptacularExtensionAndSQL.zip" basedir="${package.dir}/apptacularExtensionAndSQL/"/>
+	
+		<echo message="Cleaning up."/>
+		<delete dir='${package.dir}/apptacularExtensionAndSQL/' />
+	
 	</target>
 
 
