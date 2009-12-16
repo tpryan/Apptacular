@@ -76,7 +76,7 @@
 </cfloop>
 
 <!--- reset application --->
-<cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
+<cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
 <cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm" />

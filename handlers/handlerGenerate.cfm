@@ -20,7 +20,6 @@
 		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 		dbConfigPath = rootFilePath & FS & ".apptacular/schema/";
 		dsName = DirectoryList(dbConfigPath, false, "name")[1];
-		
 	}
 
 	StartTimer = getTickCount();
@@ -58,7 +57,11 @@
 		messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions;
 	}
 	else{
-		generator = New generators.cfapp.generator(datamodel, config);
+		ormGenerator = new generators.cfapp.ormGenerator(datamodel, config);
+		viewGenerator = new generators.cfapp.viewGenerator(datamodel, config);
+		serviceGenerator = new generators.cfapp.serviceGenerator(datamodel, config);
+
+		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator);
 		generator.generate();
 		generator.writeFiles();
 		
@@ -79,11 +82,8 @@
 </cfscript>
 
 <!--- reset application --->
-<cfset script_path = "http://" & cgi.script_name & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
+<cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
-
-
-
 
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 
