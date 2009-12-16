@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="test.ant" name="Apptacular" basedir=".">
+	
+	<property file="settings.properties"/>
+	
+	<target name="test.ant" description="Exports the script of the database ">
+		<echo message="Testing ant in this environment. " />
+	</target>
+
+	<target name="build" depends="build.clean,build.copy.files,build.zip" description="All of the stuff surrounding creating a clean copy of the build" />
+
+	<target name="build.clean">
+		<echo message="Cleaning Build Space"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="build.copy.files" description="Create a gitless version of the source code.">
+		<echo message="Copying Files to Build Location"/>
+		<copy todir="${build.dir}" preservelastmodified="true">
+			<fileset dir="${dev.dir}">
+				<exclude name='.gitignore'/>
+				<exclude name='.git/**'/>
+				<exclude name='settings.xml'/>
+				<exclude name='settings.properties'/>
+				<exclude name='.project'/>
+				<exclude name='.settings'/>
+				<exclude name='build.xml'/>
+				<exclude name='**/.DS_Store'/>
+			</fileset>	
+		</copy>
+		<echo message="Clearing out extraneous files."/>
+		<delete file='${build.dir}/.settings' />
+		<delete dir='${build.dir}/handlers/test' />
+	</target>
+	
+	<target name="build.zip" description="Creates a zip file of the build.">
+		<echo message="Creating Zip File"/>
+		<zip destfile="${package.dir}\${app.name}.zip" basedir="${build.dir}"/>
+	</target>
+
+
+	
+</project>	
