@@ -103,30 +103,31 @@ component  extends="codeGenerator"
 		cfc.addFunction(list);
 		
 		//Create get method
-		var arg = New apptacular.handlers.cfc.code.Argument();
-		arg.setName('id');
-		arg.setRequired(true);
-		arg.setType('numeric');
-		var func= New apptacular.handlers.cfc.code.function();
-		func.setName('get');
-		func.setAccess(access);
-		func.setReturnType('any');
-		func.AddArgument(arg);
+		var id = New apptacular.handlers.cfc.code.Argument();
+		id.setName('id');
+		id.setRequired(true);
+		id.setType('numeric');
 		
-		func.setReturnResult('EntityLoad("#EntityName#", arguments.id, true)');
-		cfc.addFunction(func);
+		var get= New apptacular.handlers.cfc.code.function();
+		get.setName('get');
+		get.setAccess(access);
+		get.setReturnType("#cfcPath#.#EntityName#");
+		get.AddArgument(id);
+		
+		get.setReturnResult('EntityLoad("#EntityName#", arguments.id, true)');
+		cfc.addFunction(get);
 		
 		//Update Method
-		var arg = New apptacular.handlers.cfc.code.Argument();
-		arg.setName("#EntityName#");
-		arg.setRequired(true);
-		arg.setType("any");
+		var entity = New apptacular.handlers.cfc.code.Argument();
+		entity.setName("#EntityName#");
+		entity.setRequired(true);
+		entity.setType("any");
 		
 		var func= New apptacular.handlers.cfc.code.function();
 		func.setName("update");
 		func.setAccess(access);
 		func.setReturnType("void");
-		func.AddArgument(arg);
+		func.AddArgument(entity);
 		func.AddOperation('		<cfset arguments.#EntityName#.nullifyZeroID() />');
 		func.AddOperation('		<cfset EntitySave(arguments.#EntityName#) />');
 		func.AddOperationScript('		arguments.#EntityName#.nullifyZeroID();');
@@ -138,7 +139,7 @@ component  extends="codeGenerator"
 		func.setName("destroy");
 		func.setAccess(access);
 		func.setReturnType("void");
-		func.AddArgument(arg);
+		func.AddArgument(entity);
 		func.AddOperation('		<cfset EntityDelete(arguments.#EntityName#) />');
 		func.AddOperationScript('		EntityDelete(arguments.#EntityName#);');		
 		cfc.addFunction(func);
@@ -172,6 +173,7 @@ component  extends="codeGenerator"
 		maxresults.setDefaultValue(0);
 		search.AddArgument(maxresults);
 		
+		// handle manipulating the input arguments to be appropriate to pass to entityLoad
 		search.AddOperation('');
 		search.AddOperation('		<cfif params.offset eq 0>');
 		search.AddOperation('			<cfset structDelete(params, "offset") />');		
@@ -181,7 +183,6 @@ component  extends="codeGenerator"
 		search.AddOperation('		</cfif>');
 		search.AddOperation('		<cfset structDelete(params, "q") />');
 		search.AddOperation('');		
-		
 		search.AddOperationScript('');
 		search.AddOperationScript('		if(params.offset eq 0){');
 		search.AddOperationScript('			structDelete(params, "offset");');		
@@ -192,14 +193,9 @@ component  extends="codeGenerator"
 		search.AddOperationScript('		structDelete(params, "q");');
 		search.AddOperationScript('');	
 		
-		
-		
-		
-		
-		
-		search.AddOperationScript('		if (len(arguments.q) gt 0){');		
+		//Build the where clause
 		search.AddOperation('		<cfif len(arguments.q) gt 0>');
-		
+		search.AddOperationScript('		if (len(arguments.q) gt 0){');		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i].getName();
@@ -210,24 +206,24 @@ component  extends="codeGenerator"
 			}
 		}
 		
-		search.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
-		search.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');	
-		
-		search.AddOperationScript('		}');		
+		search.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');			
 		search.AddOperation('		</cfif>');
+		search.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
+		search.AddOperationScript('		}');
 		
+		//Add Where Clause
 		search.AddOperationScript('		if (len(whereClause) gt 0){');	
 		search.AddOperationScript('			hqlString = hqlString & " WHERE " & whereClause;');	
 		search.AddOperationScript('		}');
-		
-		search.AddOperationScript('		hqlString = hqlString & " ORDER BY #OrderBy#";');	
-		
 		search.AddOperation('		<cfif len(whereClause) gt 0>');
 		search.AddOperation('			<cfset hqlString = hqlString & " WHERE " & whereClause />');
 		search.AddOperation('		</cfif>');
 		
+		//Add order by
+		search.AddOperationScript('		hqlString = hqlString & " ORDER BY #OrderBy#";');	
 		search.AddOperation('		<cfset hqlString = hqlString & " ORDER BY #OrderBy#" />');
 		
+		//Execute and return
 		search.setReturnResult('ormExecuteQuery(hqlString, false, params)');
 		cfc.addFunction(search);		
 		
