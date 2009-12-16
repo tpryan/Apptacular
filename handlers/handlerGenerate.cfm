@@ -46,10 +46,6 @@
 	
 	dbConfig.writeConfig(datamodel);
 	
-	
-	
-	
-	
 	// Fire up the generator 
 	if (config.getLockApplication()){
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
