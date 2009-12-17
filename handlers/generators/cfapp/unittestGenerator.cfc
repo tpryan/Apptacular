@@ -124,13 +124,21 @@ component  extends="codeGenerator"
 
 
 		//Create Create Test
-		var create = createSimpleCreateUnitTest(table);
+		var create = createSimpleCreateOrDeleteUnitTest(table);
 		testEntity.addFunction(create);
 
 		//Create Read Test
 		var read = createSimpleReadUnitTest(table);
 		testEntity.addFunction(read);
 		
+		//Create Update Test
+		var update = createSimpleUpdateUnitTest(table);
+		testEntity.addFunction(update);
+		
+		
+		//Create Delete Test
+		var delete = createSimpleCreateOrDeleteUnitTest(table, "Delete");
+		testEntity.addFunction(delete);
 		
 
 		return testEntity;
@@ -156,6 +164,60 @@ component  extends="codeGenerator"
 		return runner;
 	}
 	
+	private any function createSimpleUpdateUnitTest(required any table){
+		var i = 0;
+		var id = discoverValidId(table);
+		var entityName = table.getEntityName();
+		var tableName = table.getName();
+		var identity = table.getIdentity();
+		var dsname = variables.datasource.getName();
+		var columns = table.getColumns();
+		var update= New apptacular.handlers.cfc.code.function();
+		update.setReturnType("void");
+		update.setName("testUpdate");
+	
+	
+	
+		update.addLineBreak();
+		update.AddOperation('			<cftransaction action="begin">');
+		update.AddOperationScript('		transaction action="begin"{');	
+		update.addSimpleSet('var #entityName# = EntityLoad("#entityName#", #id#, true)', 3);
+		
+		
+		//Convert all of these columns to dummy data.
+		for (i=1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
+			
+			if (column.getIsForeignKey()){
+				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
+				var ftIdentity = foreignTable.getIdentity();
+				var ftEntityName = foreignTable.getEntityName();
+				var ftid = discoverValidId(foreignTable);
+				
+				update.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+				
+			}
+			else if (column.getisPrimaryKey() ){ 
+			
+			}
+			else if (not config.isMagicField(column.getName())){
+				update.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column.getType())#")', 3); 
+			}
+		}
+		update.addSimpleSet("EntitySave(#entityName#)",3);
+		
+		update.addLineBreak();
+		update.addSimpleComment("Make it go away!", 3);
+		update.addSimpleSet('transactionRollback()', 3);
+		
+		update.AddOperation('		</cftransaction>');
+		update.AddOperationScript('		};');
+		
+		update.addLineBreak();
+		
+	
+		return update;
+	}
 	
 	private any function createSimpleReadUnitTest(required any table){
 		var i = 0;
@@ -210,7 +272,7 @@ component  extends="codeGenerator"
 		return read;
 	}
 	
-	private any function createSimpleCreateUnitTest(required any table){
+	private any function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
 		var i = 0;
 		var entityName = table.getEntityName();
 		var tableName = table.getName();
@@ -219,23 +281,21 @@ component  extends="codeGenerator"
 		var columns = table.getColumns();
 		var read= New apptacular.handlers.cfc.code.function();
 		read.setReturnType("void");
-		read.setName("testCreate");
+		read.setName("test#arguments.type#");
 		
 		read.addLocalVariable("fromHQL");
-		//var hql = "FROM #tableName# WHERE #identity# = #id#";
 		
 		
-		read.AddOperation('');
+		read.addLineBreak();
 		read.AddOperation('			<cftransaction action="begin">');
-		read.AddOperation('				<cfset var #entityName# = EntityNew("#entityName#") />');
-		read.AddOperation('');
-		
-		read.AddOperationScript('');
-		read.AddOperationScript('		transaction action="begin"{');	
-		read.AddOperationScript('			var #entityName# = EntityNew("#entityName#");');
+		read.AddOperationScript('		transaction action="begin"{');
 		
 		
+		read.addLineBreak();
+		read.addSimpleComment("See if we can create an object", 3);
+		read.addSimpleSet('var #entityName# = EntityNew("#entityName#")', 3); 
 		
+		//Generate dummy content for all of those columns.
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
@@ -245,32 +305,38 @@ component  extends="codeGenerator"
 				var ftEntityName = foreignTable.getEntityName();
 				var ftid = discoverValidId(foreignTable);
 				
-				read.AddOperation('			<cfset #entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true)) />');
-				
-				read.AddOperationScript('			#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true));');
+				read.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
 				
 			}
 			else if (column.getisPrimaryKey() ){ 
 			
 			}
-			else if (not config.isMagicField(column.getName())){ 
-				read.AddOperation('			<cfset #entityName#.set#column.getName()#("#getDummyData(column.getType())#") />');
-				read.AddOperationScript('			#entityName#.set#column.getName()#("#getDummyData(column.getType())#");');
+			else if (not config.isMagicField(column.getName())){
+				read.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column.getType())#")', 3); 
 			}
 		}
 		
-		read.AddOperation('			<cfset EntitySave(#entityName#) />');
-		read.AddOperation('			<cfset transactionRollback() />');
+		read.addSimpleSet("EntitySave(#entityName#)",3);
+		
+		if(FindNoCase("delete", arguments.type)){
+			read.addLineBreak();
+			read.addSimpleComment("Now see if we can delete it. ", 3);
+			read.addSimpleSet('var #entityName#Copy = EntityLoad("#entityName#", #entityName#.get#Identity#(), true)', 3);
+			read.addSimpleSet('EntityDelete(#entityName#Copy)', 3);
+			
+		
+		}
+
+		read.addLineBreak();
+		read.addSimpleComment("Make it go away!", 3);
+		read.addSimpleSet('transactionRollback()', 3);
+		
 		read.AddOperation('		</cftransaction>');
-		read.AddOperation('');
-		
-		read.AddOperationScript('			EntitySave(#entityName#);');
-		read.AddOperationScript('			transactionRollback();');
 		read.AddOperationScript('		};');
-		read.AddOperationScript('');
 		
-		read.AddOperation('');
-		read.AddOperationScript('');
+		read.addLineBreak();
+		
+		
 	
 		return read;
 	}
