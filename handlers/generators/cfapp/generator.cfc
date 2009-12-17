@@ -2,7 +2,7 @@ component{
 
 	public generator function init(required any datasource, required any config, 
 			required ormGenerator ormGenerator, required viewGenerator viewGenerator, 
-			required serviceGenerator serviceGenerator, required testGenerator testGenerator){
+			required serviceGenerator serviceGenerator, required unittestGenerator unittestGenerator){
 			
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
@@ -13,7 +13,7 @@ component{
 		variables.ormGenerator = arguments.ormGenerator;
 		variables.viewGenerator = arguments.viewGenerator;
 		variables.serviceGenerator = arguments.serviceGenerator;
-		variables.testGenerator = arguments.testGenerator;
+		variables.unittestGenerator = arguments.unittestGenerator;
 				
 		return This;
 	}
@@ -57,7 +57,7 @@ component{
 		}
 		
 		if (config.getCreateTests()){
-			testIndex = testGenerator.createIndexTestCFC();
+			testIndex = unittestGenerator.createIndexTestCFC();
 			ArrayAppend(files, testIndex);
 		}
 		
@@ -102,7 +102,7 @@ component{
 			
 			//Handles unit tests for tables.
 			if (config.getCreateTests() and table.getCreateInterface()){
-				testview = testGenerator.createViewsTestCFC(table);
+				testview = unittestGenerator.createViewsTestCFC(table);
 				ArrayAppend(files, testview);
 			}
 		}
