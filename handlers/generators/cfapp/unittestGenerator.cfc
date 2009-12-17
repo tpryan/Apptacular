@@ -123,12 +123,19 @@ component  extends="codeGenerator"
 		testEntity.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
 
 
+		//Create Create Test
+		var create = createSimpleCreateUnitTest(table);
+		testEntity.addFunction(create);
+
 		//Create Read Test
 		var read = createSimpleReadUnitTest(table);
 		testEntity.addFunction(read);
+		
+		
 
 		return testEntity;
 	}	
+	
 	public any function createRemoteFacade(){
 	
 		var facade  = New apptacular.handlers.cfc.code.cfc();
@@ -186,14 +193,81 @@ component  extends="codeGenerator"
 			
 			if (column.getIsForeignKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
-				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#foreignTable.getEntityName()#().get#foreignTable.getIdentity()#()) />');
-				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#foreignTable.getEntityName()#().get#foreignTable.getIdentity()#());');
+				var ftIdentity = foreignTable.getIdentity();
+				var ftEntityName = foreignTable.getEntityName();
+				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#()) />');
+				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#());');
 			}
 			else{
 				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#()) />');
 				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#());');
 			}
 		}
+		
+		read.AddOperation('');
+		read.AddOperationScript('');
+	
+		return read;
+	}
+	
+	private any function createSimpleCreateUnitTest(required any table){
+		var i = 0;
+		var entityName = table.getEntityName();
+		var tableName = table.getName();
+		var identity = table.getIdentity();
+		var dsname = variables.datasource.getName();
+		var columns = table.getColumns();
+		var read= New apptacular.handlers.cfc.code.function();
+		read.setReturnType("void");
+		read.setName("testCreate");
+		
+		read.addLocalVariable("fromHQL");
+		//var hql = "FROM #tableName# WHERE #identity# = #id#";
+		
+		
+		read.AddOperation('');
+		read.AddOperation('			<cftransaction action="begin">');
+		read.AddOperation('				<cfset var #entityName# = EntityNew("#entityName#") />');
+		read.AddOperation('');
+		
+		read.AddOperationScript('');
+		read.AddOperationScript('		transaction action="begin"{');	
+		read.AddOperationScript('			var #entityName# = EntityNew("#entityName#");');
+		
+		
+		
+		for (i=1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
+			
+			if (column.getIsForeignKey()){
+				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
+				var ftIdentity = foreignTable.getIdentity();
+				var ftEntityName = foreignTable.getEntityName();
+				var ftid = discoverValidId(foreignTable);
+				
+				read.AddOperation('			<cfset #entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true)) />');
+				
+				read.AddOperationScript('			#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true));');
+				
+			}
+			else if (column.getisPrimaryKey() ){ 
+			
+			}
+			else if (not config.isMagicField(column.getName())){ 
+				read.AddOperation('			<cfset #entityName#.set#column.getName()#("#getDummyData(column.getType())#") />');
+				read.AddOperationScript('			#entityName#.set#column.getName()#("#getDummyData(column.getType())#");');
+			}
+		}
+		
+		read.AddOperation('			<cfset EntitySave(#entityName#) />');
+		read.AddOperation('			<cfset transactionRollback() />');
+		read.AddOperation('		</cftransaction>');
+		read.AddOperation('');
+		
+		read.AddOperationScript('			EntitySave(#entityName#);');
+		read.AddOperationScript('			transactionRollback();');
+		read.AddOperationScript('		};');
+		read.AddOperationScript('');
 		
 		read.AddOperation('');
 		read.AddOperationScript('');
@@ -229,5 +303,19 @@ component  extends="codeGenerator"
 	
 		return returns200;
 	}
+	
+	private any function getDummyData(required string type){
+	
+		var dummy = structNew();
+		dummy['string'] = "Test String";
+		dummy['numeric'] = 1;
+		dummy['boolean'] = true;
+		dummy['date'] = CreateDate(2000, 1, 1);
+		dummy['datetime'] = CreateDateTime(2000, 1, 1, 0, 0, 0);
+		
+		return dummy[arguments.type];
+	}
+	
+	
 
 }
