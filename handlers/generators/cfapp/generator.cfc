@@ -121,6 +121,9 @@ component{
 			
 			HttpAntRunner = unittestGenerator.createHttpAntRunner();
 			ArrayAppend(files, HttpAntRunner);
+			
+			GlobalTest = unittestGenerator.createGlobalTest();
+			ArrayAppend(files, GlobalTest);
 		}
 	
 	}

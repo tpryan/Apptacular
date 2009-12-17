@@ -104,6 +104,24 @@ component  extends="codeGenerator"
 		return testView;
 	}
 	
+	public any function createGlobalTest(){
+		
+		var testGlobal  = New apptacular.handlers.cfc.code.cfc();
+	    testGlobal.setName("testGlobal");
+	    testGlobal.setFileLocation(variables.config.getTestFilePath() & fs & "_" );
+		testGlobal.setFormat(variables.config.getCFCFormat());
+		testGlobal.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
+		
+		
+		var isAppWorking= New apptacular.handlers.cfc.code.function();
+		isAppWorking.setReturnType("void");
+		isAppWorking.setName("testIsApplicationWorking");
+		
+		isAppWorking.addSimpleSet('AssertTrue(IsDefined("application"), "This occur might occur because you have not pointed your ColdFusion Builder project to the remotefacade.cfc in this project.")', 2);
+		testGlobal.addFunction(isAppWorking);
+		return testGlobal;
+	}
+	
 	private any function discoverValidId(table){
 		//Crazy, but use a query to get a valid record to implement in this call.
 		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
