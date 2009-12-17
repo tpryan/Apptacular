@@ -33,6 +33,47 @@ component displayname="function" hint="A CFC representation of an function for c
 	}
 	
 	/**
+		* @hint Adds a simple variable set to both the CFML and script of the function.
+	*/
+	public void function AddSimpleSet(required string Operation, numeric tabs=0 ){
+		var tab = "	";
+		var tabString = "";
+		var i=0;
+		
+		for (i = 1;i <= arguments.tabs; i++){
+			tabString = tabString & tab;
+		}
+		
+		AddOperation(tabString & "<cfset" & trim(arguments.Operation)  & " />");
+		AddOperationScript(tabString & trim(arguments.Operation)  & ";");
+	}
+	
+	
+	/**
+		* @hint Adds a simple comment to both the CFML and script of the function.
+	*/
+	public void function AddSimpleComment(required string comment, numeric tabs=0 ){
+		var tab = "	";
+		var tabString = "";
+		var i=0;
+		
+		for (i = 1;i <= arguments.tabs; i++){
+			tabString = tabString & tab;
+		}
+		
+		AddOperation(tabString & "<!--- " & trim(arguments.comment)  & " --->");
+		AddOperationScript(tabString & "// " & trim(arguments.comment));
+	}
+	
+	/**
+		* @hint Adds a line break to both the CFML and script of the function.
+	*/
+	public void function AddLineBreak(){
+		AddOperation('');
+		AddOperationScript('');
+	}
+	
+	/**
 		* @hint Adds a line of CFML to the function.
 	*/
 	public void function AddOperation(required string Operation){
