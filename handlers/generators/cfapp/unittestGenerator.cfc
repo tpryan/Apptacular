@@ -1,7 +1,7 @@
 component  extends="codeGenerator"
 {
 	
-	public any function createIndexTestCFC(){
+	public any function createIndexTest(){
 		
 		var indexURL = variables.config.getRootURL() & "/index.cfm";
 		
@@ -68,7 +68,7 @@ component  extends="codeGenerator"
 		return testIndex;
 	}
 	
-	public any function createViewsTestCFC(required any table){
+	public any function createViewsTest(required any table){
 		var entityName = table.getEntityName();
 		var baseurl = variables.config.getRootURL() & "/#entityName#.cfm";
 		
@@ -88,10 +88,7 @@ component  extends="codeGenerator"
 		var newreturns200=createSimple200UnitTest(newURL, "testNewReturns200"); 
 		testView.addFunction(newreturns200);
 		
-		//Crazy, but use a query to get a valid record to implement in this call.
-		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
-		qry.setSQL("select #table.getIdentity()# as id from #table.getName()#");
-		var id = qry.execute().getResult().id;
+		var id = discoverValidId(table);
 		
 		// Add basic 200 test for read
 		var readURL = baseurl & "?method=read&" & table.getIdentity() & "=" & id ;
@@ -107,6 +104,31 @@ component  extends="codeGenerator"
 		return testView;
 	}
 	
+	private any function discoverValidId(table){
+		//Crazy, but use a query to get a valid record to implement in this call.
+		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
+		qry.setSQL("select #table.getIdentity()# as id from #table.getName()#");
+		var id = qry.execute().getResult().id;
+		return id;		
+	}
+	
+	public any function createEntityTest(required any table){
+		var entityName = table.getEntityName();
+		var columns = table.getColumns();
+
+		var testEntity  = New apptacular.handlers.cfc.code.cfc();
+	    testEntity.setName("test#entityName#");
+	    testEntity.setFileLocation(variables.config.getTestFilePath() & fs & "entity");
+		testEntity.setFormat(variables.config.getCFCFormat());
+		testEntity.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
+
+
+		//Create Read Test
+		var read = createSimpleReadUnitTest(table);
+		testEntity.addFunction(read);
+
+		return testEntity;
+	}	
 	public any function createRemoteFacade(){
 	
 		var facade  = New apptacular.handlers.cfc.code.cfc();
@@ -125,6 +147,58 @@ component  extends="codeGenerator"
 		runner.setFormat(variables.config.getCFCFormat());
 		runner.setExtends(variables.config.getMXUNITCFCPAth() & ".runner.HttpAntRunner");
 		return runner;
+	}
+	
+	
+	private any function createSimpleReadUnitTest(required any table){
+		var i = 0;
+		var id = discoverValidId(table);
+		var entityName = table.getEntityName();
+		var tableName = table.getName();
+		var identity = table.getIdentity();
+		var dsname = variables.datasource.getName();
+		var columns = table.getColumns();
+		var read= New apptacular.handlers.cfc.code.function();
+		read.setReturnType("void");
+		read.setName("testRead");
+		read.addLocalVariable("fromQuery");
+		var sql = "SELECT * FROM #tableName# WHERE #identity# = #id#";
+		
+		
+		read.AddOperation('');
+		read.AddOperation('		<cfquery name="fromQuery" datasource="#dsname#">');
+		read.AddOperation('			#sql#');
+		read.AddOperation('		</cfquery">');
+		read.AddOperation('');
+		read.AddOperation('		<cfset var #entityName# = EntityLoad("#entityName#", #id#, true) />');
+		
+		read.AddOperation('');
+		read.AddOperationScript('');
+		read.AddOperationScript('		var qry = new Query(datasource="#dsname#");');
+		read.AddOperationScript('		qry.setSQL("#sql#");');
+		read.AddOperationScript('		fromQuery = qry.execute().getResult();');
+		read.AddOperationScript('');
+		read.AddOperationScript('		var #entityName# = EntityLoad("#entityName#", #id#, true);');
+		read.AddOperationScript('');
+		
+		for (i=1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
+			
+			if (column.getIsForeignKey()){
+				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
+				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#foreignTable.getEntityName()#().get#foreignTable.getIdentity()#()) />');
+				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#foreignTable.getEntityName()#().get#foreignTable.getIdentity()#());');
+			}
+			else{
+				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#()) />');
+				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#());');
+			}
+		}
+		
+		read.AddOperation('');
+		read.AddOperationScript('');
+	
+		return read;
 	}
 	
 	private any function createSimple200UnitTest(required string targetURL, string name="testReturns200"){

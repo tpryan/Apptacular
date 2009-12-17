@@ -57,7 +57,7 @@ component{
 			
 			//Only generate the unit tests if were are generating the views.
 			if (config.getCreateTests()){
-				testIndex = unittestGenerator.createIndexTestCFC();
+				testIndex = unittestGenerator.createIndexTest();
 				ArrayAppend(files, testIndex);
 			}
 			
@@ -106,8 +106,11 @@ component{
 			
 			//Handles unit tests for tables.
 			if (config.getCreateTests() and table.getCreateInterface()){
-				testview = unittestGenerator.createViewsTestCFC(table);
+				testview = unittestGenerator.createViewsTest(table);
 				ArrayAppend(files, testview);
+				
+				testEntity = unittestGenerator.createEntityTest(table);
+				ArrayAppend(files, testEntity);
 			}
 		}
 		
