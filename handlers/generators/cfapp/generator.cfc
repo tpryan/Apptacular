@@ -54,12 +54,16 @@ component{
 				viewGenerator.copyLoginCustomTag();
 				
 			}
+			
+			//Only generate the unit tests if were are generating the views.
+			if (config.getCreateTests()){
+				testIndex = unittestGenerator.createIndexTestCFC();
+				ArrayAppend(files, testIndex);
+			}
+			
 		}
 		
-		if (config.getCreateTests()){
-			testIndex = unittestGenerator.createIndexTestCFC();
-			ArrayAppend(files, testIndex);
-		}
+		
 		
 		//Only generate login service if we are generating services
 		if (config.getCreateServices() AND config.getCreateLogin()){
@@ -107,6 +111,14 @@ component{
 			}
 		}
 		
+		//Generate a extended pieces to compensate for Application coupling to ORM 
+		if (config.getCreateTests()){
+			remoteFacade = unittestGenerator.createRemoteFacade();
+			ArrayAppend(files, remoteFacade);
+			
+			HttpAntRunner = unittestGenerator.createHttpAntRunner();
+			ArrayAppend(files, HttpAntRunner);
+		}
 	
 	}
 	
