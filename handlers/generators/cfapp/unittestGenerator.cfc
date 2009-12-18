@@ -122,14 +122,6 @@ component  extends="codeGenerator"
 		return testGlobal;
 	}
 	
-	private any function discoverValidId(table){
-		//Crazy, but use a query to get a valid record to implement in this call.
-		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
-		qry.setSQL("select #table.getIdentity()# as id from #table.getName()#");
-		var id = qry.execute().getResult().id;
-		return id;		
-	}
-	
 	public any function createEntityTest(required any table){
 		var entityName = table.getEntityName();
 		var columns = table.getColumns();
@@ -179,6 +171,21 @@ component  extends="codeGenerator"
 	    runner.setFileLocation(variables.config.getTestFilePath());
 		runner.setFormat(variables.config.getCFCFormat());
 		runner.setExtends(variables.config.getMXUNITCFCPAth() & ".runner.HttpAntRunner");
+		return runner;
+	}
+	
+	public any function createDirectoryRunner(){
+		var runner = New apptacular.handlers.cfc.code.cfpage("runner", variables.config.getTestFilePath());
+		runner.appendBody('<cfparam name="url.output" type="string" default="extjs" />');
+		runner.appendBody('');
+		runner.appendBody('<cfinvoke component="#variables.config.getMXUNITCFCPAth()#.runner.DirectoryTestSuite"   ');
+		runner.appendBody('          method="run"  ');
+		runner.appendBody('          directory="##expandPath(''.'')##"   ');
+		runner.appendBody('          recurse="true"   ');
+		runner.appendBody('          returnvariable="results" />  ');
+		runner.appendBody('		  ');
+		runner.appendBody('<cfoutput> ##results.getResultsOutput(url.output)## </cfoutput> ');
+		
 		return runner;
 	}
 	
@@ -400,6 +407,12 @@ component  extends="codeGenerator"
 		return dummy[arguments.type];
 	}
 	
-	
+	private any function discoverValidId(table){
+		//Crazy, but use a query to get a valid record to implement in this call.
+		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
+		qry.setSQL("select #table.getIdentity()# as id from #table.getName()#");
+		var id = qry.execute().getResult().id;
+		return id;		
+	}
 
 }
