@@ -189,6 +189,34 @@ component  extends="codeGenerator"
 		return runner;
 	}
 	
+	public any function createAntRunner(){
+		var runner = New apptacular.handlers.cfc.code.build();
+		
+		runner.setProjectName(variables.datasource.getName());
+		runner.setProjectDefault("test");
+		runner.setFileLocation(variables.config.getTestFilePath());
+		
+		runner.addProperty("mxunit.jar", variables.config.getMXUnitFilePath() & "/ant/lib/mxunit-ant-java5.jar");
+		runner.addProperty("test.dir", variables.config.getTestFilePath());
+		runner.addProperty("runner.cfc", variables.config.getTestRelativePath() & "/HttpAntRunner.cfc");
+		runner.addProperty("server", cgi.server_name);
+		runner.addProperty("cfc.path", variables.config.getTestCFCPath());
+		
+		runner.appendBody('');
+		runner.appendBody('	<target name="test" description="Run a dir of tests recursively">');
+		runner.appendBody('');
+		runner.appendBody('		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />');
+		runner.appendBody('		');
+		runner.appendBody('		<mxunittask server="${server}" defaultrunner="${runner.cfc}">');
+		runner.appendBody('			<directory path="${test.dir}" recurse="true" componentPath="${cfc.path}" />');
+		runner.appendBody('		</mxunittask>');
+		runner.appendBody('');
+		runner.appendBody('	</target>');
+
+		
+		return runner;
+	}
+	
 	private any function createSimpleUpdateUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);

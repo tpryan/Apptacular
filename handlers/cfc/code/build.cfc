@@ -23,7 +23,7 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 	}
 	
 	public void function addProperty(required string name, required string value){
-		var prop = '<property name="#arguments.name#" value="#arguments.value#" />';
+		var prop = '	<property name="#arguments.name#" value="#arguments.value#" />';
 		ArrayAppend(variables.properties, prop);
 	}
 	
@@ -51,12 +51,14 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 		variables.header.append('<?xml version="1.0" encoding="UTF-8"?>' & variables.NL);
 		variables.header.append('<project name="#This.getProjectName()#"');
 		
-		if (len(This.getProjectDefault() gt 0)){
+		
+		if (len(This.getProjectDefault()) gt 0){
 			variables.header.append(' default="#This.getProjectDefault()#"');
 			
 		}
 		
 		variables.header.append(' basedir=".">' & variables.NL);
+		variables.header.append(variables.NL);
 		return header;
 	}
 	

@@ -4,22 +4,29 @@ component accessors="true"{
 	property name="rootFilePath";
 	property name="rootCFCPath";
 	
+	
+	//File paths
 	property name="customTagFilePath";
 	property name="entityFilePath";
 	property name="serviceFilePath";
 	property name="cssFilePath";
 	property name="testFilePath";
+	property name="mxunitFilePath";
 	
+	//Relative Paths
 	property name="cssRelativePath";
+	property name="rootRelativePath";
+	property name="testRelativePath";
 	
+	//Folders
 	property name="cssFolder";
 	property name="customTagFolder";
 	property name="entityFolder";
 	property name="serviceFolder";
 	property name="testFolder";
 	
+	//CFC paths	
 	property name="mxunitCFCPath";
-	
 	property name="serviceCFCPath";
 	property name="EntityCFCPath";
 	property name="testCFCPath";
@@ -61,6 +68,7 @@ component accessors="true"{
 		
 		This.setRootCFCPath(arguments.rootCFCPath);
 		This.setMXunitCFCPath("mxunit");
+		This.setMXUnitFilePath(calculateMXUnitFilePath());
 		
 		This.setcustomTagFolder("customTags");
 		This.setEntityFolder("cfc");
@@ -105,6 +113,20 @@ component accessors="true"{
 		return result;
 	}
 	
+	private string function calculateMXUnitFilePath(){
+		var webroot = ExpandPath("/");
+		var mxunitRelativePath = Replace( This.getMXunitCFCPath(), ".", variables.FS, "all" );
+		var result = webroot & mxunitRelativePath;
+		
+		if (compare(Right(result, 1), "/") eq 0 OR 
+			compare(Right(result, 1), "\") eq 0 ){
+			result = Left(result, Len(result)-1);
+		}
+		
+		
+		return result;
+	}
+	
 	public void function calculatePaths(){
 		This.setcustomTagFilePath(This.getRootFilePath() & This.getcustomTagFolder());
 		This.setEntityFilePath(This.getRootFilePath() & This.getEntityFolder());
@@ -119,7 +141,9 @@ component accessors="true"{
 
 		//Calcualte Relative Paths
 		var webroot = expandPath("/");
+		This.setRootRelativePath(FS & ReplaceNoCase(This.getRootFilePath(), webroot, "", "once"));
 		This.setCssRelativePath(FS & ReplaceNoCase(This.getCSSFilePath(), webroot, "", "once"));
+		This.setTestRelativePath(FS & ReplaceNoCase(This.getTestFilePath(), webroot, "", "once"));
 	}
 	
 	public boolean function isMagicField(required string columnName){

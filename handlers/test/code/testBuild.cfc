@@ -33,6 +33,21 @@ component extends="mxunit.framework.TestCase"{
 		
     }
 	
+	public void function testProjectDefaultIsOptional(){
+    	var build  =  New apptacular.handlers.cfc.code.build();
+		build.setFileLocation(variables.testDir);
+		build.write();
+		
+		var createdContent = FileRead(build.getFileName());
+		AssertTrue(IsXML(createdContent));
+		var XML = XMLParse(createdContent);
+		debug(XML);
+		AssertTrue(FileExists(build.getFileName()));
+		AssertTrue(IsXML(FileRead(build.getFileName())));
+		AssertFalse(StructKeyExists(XML.project.XMLAttributes, "default"));
+		
+    }
+	
 	public void function testAddProperty(){
     	var build  =  New apptacular.handlers.cfc.code.build();
 		build.setFileLocation(variables.testDir);

@@ -128,6 +128,9 @@ component{
 			GlobalTest = unittestGenerator.createGlobalTest();
 			ArrayAppend(files, GlobalTest);
 			
+			antRunner = unittestGenerator.createAntRunner();
+			ArrayAppend(files, antRunner);
+			
 			
 		}
 	
