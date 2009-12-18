@@ -4,6 +4,8 @@ component accessors="true"{
 	property name="rootFilePath";
 	property name="rootCFCPath";
 	
+	//URLS
+	property name="testURL";
 	
 	//File paths
 	property name="customTagFilePath";
@@ -144,6 +146,9 @@ component accessors="true"{
 		This.setRootRelativePath(FS & ReplaceNoCase(This.getRootFilePath(), webroot, "", "once"));
 		This.setCssRelativePath(FS & ReplaceNoCase(This.getCSSFilePath(), webroot, "", "once"));
 		This.setTestRelativePath(FS & ReplaceNoCase(This.getTestFilePath(), webroot, "", "once"));
+		
+		//Calculate urls
+		This.setTestURL(This.getRootURL() & "/" & This.getTestFolder());
 	}
 	
 	public boolean function isMagicField(required string columnName){

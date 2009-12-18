@@ -117,7 +117,7 @@ component  extends="codeGenerator"
 		isAppWorking.setReturnType("void");
 		isAppWorking.setName("testIsApplicationWorking");
 		
-		isAppWorking.addSimpleSet('AssertTrue(IsDefined("application"), "This occur might occur because you have not pointed your ColdFusion Builder project to the remotefacade.cfc in this project.")', 2);
+		isAppWorking.addSimpleSet('AssertTrue(IsDefined("application"), "This occur might occur because you have not pointed your ColdFusion Builder project to the remotefacade.cfc (#config.getTestURL()#/remoteFacade.cfc)in this project.")', 2);
 		testGlobal.addFunction(isAppWorking);
 		return testGlobal;
 	}
