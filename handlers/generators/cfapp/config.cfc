@@ -87,7 +87,7 @@ component accessors="true"{
 		This.setCreateServices(true);
 		This.setCreateEntities(true);
 		This.setCreateLogin(false);
-		This.setCreateTests(true);
+		This.setCreateTests(false);
 		This.setCFCFormat("cfscript");
 		This.setOverwriteDataModel(false);
 		This.setLockApplication(false);
