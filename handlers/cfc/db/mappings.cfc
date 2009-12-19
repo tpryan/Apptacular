@@ -4,89 +4,89 @@ component
 	public function init(){
 		variables.datatypes = {};
 		
-		datatypes['int']['type'] = "numeric";
-		datatypes['integer']['type'] = "numeric";
-		datatypes['tinyint']['type'] = "numeric";
-		datatypes['INT UNSIGNED']['type'] = "numeric";
-		datatypes['smallint']['type'] = "numeric";
+		var defaultinteger = {type="numeric",ormtype="integer",uitype="string"};
+		var defaultstring = {type="string",ormtype="string",uitype="string"};
+		
+		//Various Integers
+		datatypes['int'] = defaultinteger;
+		datatypes['integer'] = defaultinteger;
+		datatypes['tinyint'] = defaultinteger;
+		datatypes['smallint'] = defaultinteger;
+		datatypes['INT UNSIGNED'] = defaultinteger;
+		datatypes['SMALLINT UNSIGNED'] = defaultinteger;
+		datatypes['TINYINT UNSIGNED'] = defaultinteger;
+		datatypes['MEDIUMINT UNSIGNED'] = defaultinteger;
+		
+		//various strings
+		datatypes['varchar'] = defaultstring;
+		datatypes['varchar2'] = defaultstring;
+		datatypes['enum'] = defaultstring;
+		datatypes['set'] = defaultstring;
+		
+		
+		//numerics
 		datatypes['number']['type'] = "numeric";
+		datatypes['number']['ormType'] = "big_decimal";
+		datatypes['number']['uiType'] = "string";
+		
 		datatypes['decimal']['type'] = "numeric";
+		datatypes['decimal']['ormType'] = "long";
+		datatypes['decimal']['uiType'] = "string";
 	
-		datatypes['varchar']['type'] = "string";
-		datatypes['varchar2']['type'] = "string";
-		datatypes['enum']['type'] = "string";
+	
+		//Chars text other strings
 		datatypes['char']['type'] = "string";
+		datatypes['char']['ormType'] = "character";
+		datatypes['char']['uiType'] = "string";		
 		
 		datatypes['text']['type'] = "string";
-	
-		datatypes['boolean']['type'] = "boolean";
-		datatypes['yes_no']['type'] = "boolean";
-		datatypes['true_false']['type'] = "boolean";
-	
-		datatypes['date']['type'] = "date";
-		datatypes['time']['type'] = "date";
-		datatypes['timestamp']['type'] = "date";
-		datatypes['datetime']['type'] = "date";
-	
-		datatypes['clob']['type'] = "clob";
-		datatypes['blob']['type'] = "blob";
-		
-		
-		
-		
-		datatypes['int']['ormType'] = "integer";
-		datatypes['integer']['ormType'] = "integer";
-		datatypes['tinyint']['ormType'] = "integer";
-		datatypes['INT UNSIGNED']['ormType'] = "integer";
-		datatypes['smallint']['ormType'] = "short";
-		datatypes['number']['ormType'] = "big_decimal";
-		datatypes['decimal']['ormType'] = "long";
-	
-		datatypes['varchar']['ormType'] = "string";
-		datatypes['varchar2']['ormType'] = "string";
-		datatypes['enum']['ormType'] = "string";
-		datatypes['char']['ormType'] = "character";
-		
 		datatypes['text']['ormType'] = "text";
-	
-		datatypes['boolean']['ormType'] = "boolean";
-		datatypes['yes_no']['ormType'] = "yes_no";
-		datatypes['true_false']['ormType'] = "true_false";
-	
-		datatypes['date']['ormType'] = "date";
-		datatypes['time']['ormType'] = "time";
-		datatypes['timestamp']['ormType'] = "timestamp";
-		datatypes['datetime']['ormType'] = "timestamp";
-	
-		datatypes['clob']['ormType'] = "clob";
-		datatypes['blob']['ormType'] = "blob";
-		
-		datatypes['int']['uiType'] = "string";
-		datatypes['integer']['uiType'] = "string";
-		datatypes['INT UNSIGNED']['uiType'] = "string";
-		datatypes['smallint']['uiType'] = "string";
-		datatypes['number']['uiType'] = "string";
-		datatypes['decimal']['uiType'] = "string";
-		datatypes['tinyint']['uiType'] = "string";
-	
-		datatypes['varchar']['uiType'] = "string";
-		datatypes['varchar2']['uiType'] = "string";
-		datatypes['char']['uiType'] = "string";
-		datatypes['enum']['uitype'] = "string";
 		datatypes['text']['uiType'] = "text";
-		
 	
+	
+		//Various Booleans
+		datatypes['boolean']['type'] = "boolean";
+		datatypes['boolean']['ormType'] = "boolean";
 		datatypes['boolean']['uiType'] = "boolean";
+
+		datatypes['yes_no']['type'] = "boolean";
+		datatypes['yes_no']['ormType'] = "yes_no";
 		datatypes['yes_no']['uiType'] = "boolean";
+
+		datatypes['true_false']['type'] = "boolean";
+		datatypes['true_false']['ormType'] = "true_false";
 		datatypes['true_false']['uiType'] = "boolean";
-	
-		datatypes['date']['uiType'] = "date";
-		datatypes['time']['uiType'] = "time";
-		datatypes['timestamp']['uiType'] = "datetime";
-		datatypes['datetime']['uiType'] = "datetime";
-	
+		
+		//various ob's
+		datatypes['clob']['type'] = "clob";
+		datatypes['clob']['ormType'] = "clob";
 		datatypes['clob']['uiType'] = "clob";
+		
+		datatypes['blob']['type'] = "blob";
+		datatypes['blob']['ormType'] = "blob";
 		datatypes['blob']['uiType'] = "blob";
+		
+		
+		//various dates
+		datatypes['date']['type'] = "date";
+		datatypes['date']['ormType'] = "date";
+		datatypes['date']['uiType'] = "date";
+		
+		datatypes['time']['type'] = "date";
+		datatypes['time']['ormType'] = "time";
+		datatypes['time']['uiType'] = "time";
+		
+		datatypes['timestamp']['type'] = "date";
+		datatypes['timestamp']['ormType'] = "timestamp";
+		datatypes['timestamp']['uiType'] = "datetime";
+		
+		datatypes['datetime']['type'] = "date";
+		datatypes['datetime']['ormType'] = "timestamp";
+		datatypes['datetime']['uiType'] = "datetime";
+		
+		datatypes['year']['type'] = "integer";
+		datatypes['year']['ormType'] = "integer";
+		datatypes['year']['uiType'] = "string";
 		
 		
 			
