@@ -143,9 +143,10 @@ component accessors="true"{
 
 		//Calcualte Relative Paths
 		var webroot = expandPath("/");
-		This.setRootRelativePath(FS & ReplaceNoCase(This.getRootFilePath(), webroot, "", "once"));
-		This.setCssRelativePath(FS & ReplaceNoCase(This.getCSSFilePath(), webroot, "", "once"));
-		This.setTestRelativePath(FS & ReplaceNoCase(This.getTestFilePath(), webroot, "", "once"));
+		
+		This.setRootRelativePath("/" & Replace(ReplaceNoCase(This.getRootFilePath(), webroot, "", "once"),"\", "/", "all" ));
+		This.setCssRelativePath("/" & Replace(ReplaceNoCase(This.getCSSFilePath(), webroot, "", "once"),"\", "/", "all" ));
+		This.setTestRelativePath("/" & Replace(ReplaceNoCase(This.getTestFilePath(), webroot, "", "once"),"\", "/", "all" ));
 		
 		//Calculate urls
 		This.setTestURL(This.getRootURL() & "/" & This.getTestFolder());
