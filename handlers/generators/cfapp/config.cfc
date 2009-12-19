@@ -66,7 +66,7 @@ component accessors="true"{
 			This.setRootFilePath(arguments.rootFilePath);
 		}
 		
-		This.setRootUrl(calculateRootURL());
+		This.setRootUrl(calculateURL(This.getRootFilePath(), ExpandPath("/")));
 		
 		This.setRootCFCPath(arguments.rootCFCPath);
 		This.setMXunitCFCPath("mxunit");
@@ -101,17 +101,18 @@ component accessors="true"{
     	return This;
     }
 	
-	private string function calculateRootURL(){
-		var webroot = ExpandPath("/");
-		var rootRelativePath = Replace(This.getRootFilePath(), webroot, "", "one");
+	private string function calculateURL(required string path, required string webroot){
+		var rootRelativePath = Replace(arguments.path, arguments.webroot, "", "one");
 		
 		if (compare(Right(rootRelativePath, 1), "/") eq 0 OR 
 			compare(Right(rootRelativePath, 1), "\") eq 0 ){
 			rootRelativePath = Left(rootRelativePath, Len(rootRelativePath)-1);
 		}
-		
-		var result = "http://" & cgi.server_name & "/" & rootRelativePath;
-		
+			
+		var result = cgi.server_name & "/" & rootRelativePath;
+		result = ReplaceList(result, "//,\","/,");
+		result = "http://" & result;
+
 		return result;
 	}
 	
@@ -149,7 +150,8 @@ component accessors="true"{
 		This.setTestRelativePath("/" & Replace(ReplaceNoCase(This.getTestFilePath(), webroot, "", "once"),"\", "/", "all" ));
 		
 		//Calculate urls
-		This.setTestURL(This.getRootURL() & "/" & This.getTestFolder());
+		This.setTestURL(calculateURL(This.getTestFilePath(), ExpandPath("/")));
+		
 	}
 	
 	public boolean function isMagicField(required string columnName){
