@@ -27,8 +27,7 @@ component extends="codeGenerator"{
 		var columns = table.getColumns();
 		
 		for (i=1; i <= ArrayLen(columns); i++){
-	        column = columns[i];
-			
+	        var column = columns[i];
 	       	
 	       	property = New apptacular.handlers.cfc.code.property();
 	       	property.setName(column.getName());
@@ -49,10 +48,20 @@ component extends="codeGenerator"{
 	       	}	
 	       	else if (column.getisForeignKey()){
 				var fTable = dataSource.getTable(column.getForeignKeyTable());
+				
+				if (table.getForeignTableCount(fTable.getName()) gt 1){
+					property.setName(column.getName());
+					property.setInsert(false);
+					property.setUpdate(false);
+				}	
+				else{
+					property.setName(fTable.getEntityName());
+				}
+				
+				
 				property.setType("");
 				property.setOrmType("");
-	       		property.setName(fTable.getEntityName());
-	       		property.setFieldtype('many-to-one');
+				property.setFieldtype('many-to-one');
 	       		property.setFkcolumn(column.getForeignKey());
 	       		property.setCFC(fTable.getEntityName());
 	       		property.setInverse(true);
@@ -76,8 +85,6 @@ component extends="codeGenerator"{
 					//Handle Many-to-manys
 					otherJoinTable = datasource.getTable(foreignTable.getOtherJoinTable(table.getName()));		
 					foreignColumns = foreignTable.getColumns();
-					
-					
 					
 					property = New apptacular.handlers.cfc.code.property();
 					property.setName(otherJoinTable.getPlural());
@@ -113,9 +120,19 @@ component extends="codeGenerator"{
 				}
 				else{
 				
+				
 					//Handle Typical OneToManys
-					property = New apptacular.handlers.cfc.code.property();
-					property.setName(foreignTable.getPlural());
+					var property = New apptacular.handlers.cfc.code.property();
+					
+					if (table.getReferenceCount(foreignTable.getName()) gt 1){
+						property.setName(foreignTable.getPlural() & ref.getforeignKey());
+						
+					}
+					else{
+						property.setName(foreignTable.getPlural());
+					}
+					
+					
 			   		property.setFieldtype('one-to-many');
 			   		property.setFkcolumn(ref.getforeignKey());
 			   		property.setCFC(foreignTable.getEntityName());
@@ -125,7 +142,15 @@ component extends="codeGenerator"{
 			   		cfc.AddProperty(property);
 					
 					var countFunc= New apptacular.handlers.cfc.code.function();
-					countFunc.setName("get#foreignTable.getEntityName()#Count");
+					
+					if (table.getReferenceCount(foreignTable.getName()) gt 1){
+						countFunc.setName("get#foreignTable.getEntityName()##ref.getforeignKey()#Count");
+					}
+					else{
+						countFunc.setName("get#foreignTable.getEntityName()#Count");
+					}
+					
+					
 					countFunc.setAccess("public");
 					countFunc.setReturnType('numeric');
 					countFunc.AddOperation('		<cfset var hql = "select #table.getEntityName()#.#foreignTable.getPlural()#.size as #foreignTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''" />');

@@ -16,10 +16,13 @@ component accessors="true" extends="dbItem"
 	property name="columns" type="column[]"; 
 	property name="columnsStruct" type="struct";
 	property name="references" type="reference[]";
+	property name="referenceCounts" type="struct";
 	property name="joinedTables" type="array";
 	property name="joinTables" type="array";
 	property name="createInterface" type="boolean";
 	property name="virtualcolumns" type="virtualcolumn[]";
+	property name="foreignTables" type="struct";
+	
 	property name="orderby";      
 	
 	public function init(required string name, required string datasource){
@@ -37,8 +40,8 @@ component accessors="true" extends="dbItem"
 		populateTable();
 		populateForeignKeys();
 		populateColumns();
-		
-		This.setVirtualcolumns(ArrayNew(1));
+		populateForeignTables(); 
+		populateReferenceCounts();
 		
 		
 		return This;
@@ -56,6 +59,9 @@ component accessors="true" extends="dbItem"
 		This.setHasJoinTable(FALSE);
 		This.setJoinTables(ArrayNew(1));
 		This.setjoinedTables(ArrayNew(1));
+		This.setVirtualcolumns(ArrayNew(1));
+		This.setForeignTables(structNew());
+		This.setreferenceCounts(structNew());
 		This.setCreateInterface(TRUE);
 	
 	}
@@ -116,6 +122,13 @@ component accessors="true" extends="dbItem"
 			column.setForeignKeyTable(columns.referenced_primarykey_table[i]);
 			column.setLength(columns.column_size[i]);
 			
+			
+			if (CompareNoCase(column.getForeignKeyTable(), "N/A") eq 0){
+				column.setForeignKeyTable(JavaCast('null', ''));
+			}	
+			
+				
+			
 			//Count number of referenced tables.
 			if (CompareNoCase(columns.referenced_primarykey_table[i], "N/A")){
 				referencedTables[columns.referenced_primarykey_table[i]] = "";
@@ -155,6 +168,92 @@ component accessors="true" extends="dbItem"
 		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
+	}
+	
+	public numeric function getForeignTableCount(required string tablename){
+		var ft = This.getForeignTables();
+		return ft[arguments.tablename];
+		
+	}
+	
+	private void function populateForeignTables(){
+		
+		var columns = This.getColumns();
+		var i = 0;
+		
+		
+		for (i = 1; i <= ArrayLen(columns); i++){
+			column = columns[i];
+			if (len(column.getForeignKeyTable())){
+				var ft = This.getForeignTables();
+			
+				if (not structKeyExists(ft, column.getForeignKeyTable())){
+					ft[column.getForeignKeyTable()] = 0;
+				}
+				
+				ft[column.getForeignKeyTable()] = ft[column.getForeignKeyTable()] + 1;
+				
+				
+				This.setForeignTables(Duplicate(ft));
+			
+			
+			}
+		
+		}
+	
+	}
+	
+	public numeric function getReferenceCount(required string tablename){
+		var refCounts = This.getReferenceCounts();
+		try{
+		var result = refCounts[arguments.tablename];
+		}
+		catch(any e){
+	
+			writeDump(This);
+			abort;
+		}
+		return result;
+		
+	}
+	
+	private void function populateReferenceCounts(){
+		var refs = This.getReferences();
+		var refCounts = This.getReferenceCounts();
+		var i = 0;
+		
+		
+		if (isDefined("refs")){
+			for (i = 1; i <= ArrayLen(refs); i++){
+				ref = refs[i];
+				
+				if (not structKeyExists(refCounts, ref.getForeignKeyTable())){
+					refCounts[ref.getForeignKeyTable()] = 0;
+				}
+				
+				refCounts[ref.getForeignKeyTable()] = refCounts[ref.getForeignKeyTable()] + 1;
+				
+			}
+		}
+		This.setReferenceCounts(Duplicate(refCounts));
+	
+		
+	}
+	
+	public boolean function isProperTable(){
+		
+		var identity = This.getIdentity();
+		
+		if (not isDefined("identity")){
+			return false;
+		}
+		
+		if (len(This.getIdentity() gt 0)){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
 	public boolean function hasPrimaryKey(){

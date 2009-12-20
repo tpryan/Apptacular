@@ -21,6 +21,8 @@ component accessors="true" {
 	property name="persistent" type="string" hint="See reference for cfproperty";
 	property name="setter" type="string" hint="See reference for cfproperty";
 	property name="getter" type="string" hint="See reference for cfproperty";
+	property name="insert" type="string" hint="See reference for cfproperty";
+	property name="update" type="string" hint="See reference for cfproperty";
 	
 	/**
 		* @hint Returns the content of the property in CFML
@@ -108,6 +110,14 @@ component accessors="true" {
 		
 		if (len(This.getsetter())){
        		result = ListAppend(result, 'setter="#This.getsetter()#"', " ");
+       	}
+		
+		if (len(This.getInsert())){
+       		result = ListAppend(result, 'insert="#This.getInsert()#"', " ");
+       	}
+		
+		if (len(This.getUpdate())){
+       		result = ListAppend(result, 'update="#This.getUpdate()#"', " ");
        	}
        	
 		result = result & ' />';
@@ -201,6 +211,14 @@ component accessors="true" {
 		
 		if (len(This.getsetter())){
        		result = ListAppend(result, 'setter="#This.getsetter()#"', " ");
+       	}
+		
+		if (len(This.getInsert())){
+       		result = ListAppend(result, 'insert="#This.getInsert()#"', " ");
+       	}
+		
+		if (len(This.getUpdate())){
+       		result = ListAppend(result, 'update="#This.getUpdate()#"', " ");
        	}
        	
 		result = result & ';';

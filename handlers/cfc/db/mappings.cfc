@@ -60,7 +60,7 @@ component
 		//various ob's
 		datatypes['clob']['type'] = "clob";
 		datatypes['clob']['ormType'] = "clob";
-		datatypes['clob']['uiType'] = "clob";
+		datatypes['clob']['uiType'] = "text";
 		
 		datatypes['blob']['type'] = "blob";
 		datatypes['blob']['ormType'] = "blob";
@@ -84,7 +84,7 @@ component
 		datatypes['datetime']['ormType'] = "timestamp";
 		datatypes['datetime']['uiType'] = "datetime";
 		
-		datatypes['year']['type'] = "integer";
+		datatypes['year']['type'] = "numeric";
 		datatypes['year']['ormType'] = "integer";
 		datatypes['year']['uiType'] = "string";
 		

@@ -431,6 +431,7 @@ component  extends="codeGenerator"
 		dummy['boolean'] = true;
 		dummy['date'] = CreateDate(2000, 1, 1);
 		dummy['datetime'] = CreateDateTime(2000, 1, 1, 0, 0, 0);
+		dummy['blob'] = ImageNew();
 		
 		return dummy[arguments.type];
 	}

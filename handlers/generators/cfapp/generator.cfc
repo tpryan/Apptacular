@@ -75,44 +75,47 @@ component{
 		for (i=1; i <= ArrayLen(tables); i++){
 			var table = tables[i];
 			
-			//Handle ORM Entities for tables.
-			if (config.getCreateEntities() and table.getCreateInterface()){
-				var ORMCFC = ormGenerator.createORMCFC(table);
-				ArrayAppend(files, ORMCFC);
-			}
+			if (table.isProperTable()){
+			
+				//Handle ORM Entities for tables.
+				if (config.getCreateEntities() and table.getCreateInterface()){
+					var ORMCFC = ormGenerator.createORMCFC(table);
+					ArrayAppend(files, ORMCFC);
+				}
 
-			//Handle Views for tables.
-			if (config.getCreateViews() and table.getCreateInterface()){
-				var ViewListCustomTag = viewGenerator.createViewListCustomTag(table);
-				ArrayAppend(files, ViewListCustomTag);
+				//Handle Views for tables.
+				if (config.getCreateViews() and table.getCreateInterface()){
+					var ViewListCustomTag = viewGenerator.createViewListCustomTag(table);
+					ArrayAppend(files, ViewListCustomTag);
+					
+					var ViewReadCustomTag = viewGenerator.createViewReadCustomTag(table);
+					ArrayAppend(files, ViewReadCustomTag);
+					
+					var ViewEditCustomTag = viewGenerator.createViewEditCustomTag(table);
+					ArrayAppend(files, ViewEditCustomTag);
+					
+					var View = viewGenerator.createView(table);
+					ArrayAppend(files, View);
+				}
 				
-				var ViewReadCustomTag = viewGenerator.createViewReadCustomTag(table);
-				ArrayAppend(files, ViewReadCustomTag);
+				//Handles Services for tables.
+				if (config.getCreateServices() and table.getCreateInterface()){
+					
+					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
+					ArrayAppend(files, ORMServiceCFC);
 				
-				var ViewEditCustomTag = viewGenerator.createViewEditCustomTag(table);
-				ArrayAppend(files, ViewEditCustomTag);
-				
-				var View = viewGenerator.createView(table);
-				ArrayAppend(files, View);
-			}
+				}
 			
-			//Handles Services for tables.
-			if (config.getCreateServices() and table.getCreateInterface()){
-				
-				var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
-				ArrayAppend(files, ORMServiceCFC);
-			
-			}
-			
-			//Handles unit tests for tables.
-			if (config.getCreateTests() and table.getCreateInterface()){
-				testview = unittestGenerator.createViewsTest(table);
-				ArrayAppend(files, testview);
-				
-				testEntity = unittestGenerator.createEntityTest(table);
-				ArrayAppend(files, testEntity);
-			}
-		}
+				//Handles unit tests for tables.
+				if (config.getCreateTests() and table.getCreateInterface()){
+					testview = unittestGenerator.createViewsTest(table);
+					ArrayAppend(files, testview);
+					
+					testEntity = unittestGenerator.createEntityTest(table);
+					ArrayAppend(files, testEntity);
+				}
+			}//IsProperTable?	
+		}//for loop
 		
 		//Generate a extended pieces to compensate for Application coupling to ORM 
 		if (config.getCreateTests()){
@@ -130,7 +133,6 @@ component{
 			
 			antRunner = unittestGenerator.createAntRunner();
 			ArrayAppend(files, antRunner);
-			
 			
 		}
 	
