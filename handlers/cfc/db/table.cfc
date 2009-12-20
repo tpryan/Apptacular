@@ -42,7 +42,7 @@ component accessors="true" extends="dbItem"
 		populateColumns();
 		populateForeignTables(); 
 		populateReferenceCounts();
-		
+		calculateForeignKeyLabel();
 		
 		return This;
 	}
@@ -63,6 +63,7 @@ component accessors="true" extends="dbItem"
 		This.setForeignTables(structNew());
 		This.setreferenceCounts(structNew());
 		This.setCreateInterface(TRUE);
+		
 	
 	}
 	
@@ -138,7 +139,6 @@ component accessors="true" extends="dbItem"
 			
 			if (column.getisPrimaryKey()){
 				This.setIdentity(column.getName());
-				This.setForeignKeyLabel(LCase(columns.column_name[i+1]));
 				This.setOrderBy(column.getName() & " asc");
 			}
 			
@@ -168,6 +168,25 @@ component accessors="true" extends="dbItem"
 		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
+	}
+	
+	public void function calculateForeignKeyLabel(){
+		var result = "";
+		var columns = This.getColumns();
+		var i  = 0;
+		
+		for (i=1; i <= ArrayLen(columns); i++){
+			if(columns[i].getisPrimaryKey() and not columns[i+1].getisForeignKey()){
+				result = columns[i+1].getName();
+				break;
+			}
+			else{
+				result = columns[i].getName();
+				break;
+			}
+		}
+		
+		This.setForeignKeyLabel(result);
 	}
 	
 	public numeric function getForeignTableCount(required string tablename){

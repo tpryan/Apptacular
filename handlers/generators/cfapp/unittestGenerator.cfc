@@ -80,24 +80,24 @@ component  extends="codeGenerator"
 		
 		// Add basic 200 test for list
 		var listURL = baseurl;
-		var listreturns200=createSimple200UnitTest(listURL, "testListReturns200"); 
+		var listreturns200=createSimple200UnitTest(listURL, "testListReturns200", entityName, "list"); 
 		testView.addFunction(listreturns200);
 		
 		// Add basic 200 test for new
 		var newURL = baseurl & "?method=edit";
-		var newreturns200=createSimple200UnitTest(newURL, "testNewReturns200"); 
+		var newreturns200=createSimple200UnitTest(newURL, "testNewReturns200", entityName, "new"); 
 		testView.addFunction(newreturns200);
 		
 		var id = discoverValidId(table);
 		
 		// Add basic 200 test for read
 		var readURL = baseurl & "?method=read&" & table.getIdentity() & "=" & id ;
-		var readreturns200=createSimple200UnitTest(readURL, "testReadReturns200"); 
+		var readreturns200=createSimple200UnitTest(readURL, "testReadReturns200", entityName, "read"); 
 		testView.addFunction(readreturns200);
 		
 		// Add basic 200 test for edit
 		var editURL = baseurl & "?method=edit&" & table.getIdentity() & "=" & id ;
-		var editreturns200=createSimple200UnitTest(editURL, "testEditReturns200"); 
+		var editreturns200=createSimple200UnitTest(editURL, "testEditReturns200", entityName, "edit"); 
 		testView.addFunction(editreturns200);
 	
 	
@@ -310,12 +310,14 @@ component  extends="codeGenerator"
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
-				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#()) />');
-				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#());');
+				read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#())', 2);
+				read.AddLineBreak();
 			}
 			else{
-				read.AddOperation('		<cfset assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#()) />');
-				read.AddOperationScript('		assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#());');
+				read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
+				read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#())', 3);
+				read.EndSimpleIF(2);
+				read.AddLineBreak();
 			}
 		}
 		
@@ -394,7 +396,7 @@ component  extends="codeGenerator"
 		return read;
 	}
 	
-	private any function createSimple200UnitTest(required string targetURL, string name="testReturns200"){
+	private any function createSimple200UnitTest(required string targetURL, string name="testReturns200", string entityName="", string operation=""){
 		var returns200= New apptacular.handlers.cfc.code.function();
 		returns200.setAccess("public");
 		returns200.setReturnType("void");
@@ -416,7 +418,7 @@ component  extends="codeGenerator"
 		returns200.AddOperationScript('		if (not FindNoCase("200", cfhttp.statusCode)){');
 		returns200.AddOperationScript('			debug(urlToTest);');
 		returns200.AddOperationScript('			debug(cfhttp);');
-		returns200.AddOperationScript('			fail("Simple HTTP Calls to view should work.");');
+		returns200.AddOperationScript('			fail("Simple HTTP Calls to #arguments.entityName# #arguments.operation# should work.");');
 		returns200.AddOperationScript('		}');
 		returns200.AddOperationScript('');
 	

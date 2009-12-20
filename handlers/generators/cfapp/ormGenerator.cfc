@@ -62,7 +62,7 @@ component extends="codeGenerator"{
 				property.setType("");
 				property.setOrmType("");
 				property.setFieldtype('many-to-one');
-	       		property.setFkcolumn(column.getForeignKey());
+	       		property.setFkcolumn(column.getName());
 	       		property.setCFC(fTable.getEntityName());
 	       		property.setInverse(true);
 	       		property.SetmissingRowIgnored(true);

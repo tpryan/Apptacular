@@ -48,6 +48,32 @@ component displayname="function" hint="A CFC representation of an function for c
 		AddOperationScript(tabString & trim(arguments.Operation)  & ";");
 	}
 	
+	public void function StartSimpleIF(required string conditional, numeric tabs=0 ){
+		var tab = "	";
+		var tabString = "";
+		var i=0;
+		
+		for (i = 1;i <= arguments.tabs; i++){
+			tabString = tabString & tab;
+		}
+		
+		AddOperation(tabString & "<cfif " & trim(arguments.conditional)  & ">");
+		AddOperationScript(tabString & "if (" & trim(arguments.conditional)  & "){");
+	}
+	
+	public void function EndSimpleIF(numeric tabs=0 ){
+		var tab = "	";
+		var tabString = "";
+		var i=0;
+		
+		for (i = 1;i <= arguments.tabs; i++){
+			tabString = tabString & tab;
+		}
+		
+		AddOperation(tabString & "</cfif>");
+		AddOperationScript(tabString & "}");
+	}
+	
 	
 	/**
 		* @hint Adds a simple comment to both the CFML and script of the function.
