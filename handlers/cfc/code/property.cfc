@@ -67,6 +67,10 @@ component accessors="true" {
        	if (len(This.getmissingRowIgnored())){
        		result = ListAppend(result, 'missingRowIgnored="#This.getmissingRowIgnored()#"', " ") ; 
        	}
+		
+		if (len(This.getLength())){
+       		result = ListAppend(result, 'length="#This.getLength()#"', " ") ; 
+       	}
        	
        	if (len(This.getinverse())){
        		result = ListAppend(result, 'inverse="#This.getinverse()#"', " ") ; 
@@ -167,6 +171,10 @@ component accessors="true" {
        	
        	if (len(This.getmissingRowIgnored())){
        		result = ListAppend(result, 'missingRowIgnored="#This.getmissingRowIgnored()#"', " ") ; 
+       	}
+		
+		if (len(This.getLength())){
+       		result = ListAppend(result, 'length="#This.getLength()#"', " ") ; 
        	}
        	
        	if (len(This.getinverse())){

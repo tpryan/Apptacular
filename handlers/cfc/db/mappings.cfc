@@ -30,13 +30,13 @@ component
 		datatypes['number']['uiType'] = "string";
 		
 		datatypes['decimal']['type'] = "numeric";
-		datatypes['decimal']['ormType'] = "long";
+		datatypes['decimal']['ormType'] = "float";
 		datatypes['decimal']['uiType'] = "string";
 	
 	
 		//Chars text other strings
 		datatypes['char']['type'] = "string";
-		datatypes['char']['ormType'] = "character";
+		datatypes['char']['ormType'] = "string";
 		datatypes['char']['uiType'] = "string";		
 		
 		datatypes['text']['type'] = "string";
@@ -62,9 +62,9 @@ component
 		datatypes['clob']['ormType'] = "clob";
 		datatypes['clob']['uiType'] = "text";
 		
-		datatypes['blob']['type'] = "blob";
-		datatypes['blob']['ormType'] = "blob";
-		datatypes['blob']['uiType'] = "blob";
+		datatypes['blob']['type'] = "binary";
+		datatypes['blob']['ormType'] = "binary";
+		datatypes['blob']['uiType'] = "binary";
 		
 		
 		//various dates

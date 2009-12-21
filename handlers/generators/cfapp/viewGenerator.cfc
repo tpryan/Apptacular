@@ -36,15 +36,15 @@ component extends="codeGenerator"{
 		var columns = table.getColumns();
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
 			
-			if (columns[i].getIsForeignKey()){
-				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
+			if (column.getIsForeignKey()){
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				ct.AppendBody('			<th>#fkTable.getDisplayName()#</th>');
 			}
 			
-			
 			else{
-				ct.AppendBody('			<th>#columns[i].getDisplayName()#</th>');
+				ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 			}
 			columnCount++;
 			
@@ -58,8 +58,20 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
+				
+				
 				if (not foreignTable.getIsJoinTable()){
-					ct.AppendBody('			<th>#foreignTable.getEntityName()#Count</th>');
+					
+					if (table.getReferenceCount(foreignTable.getName()) gt 1){
+						ct.AppendBody('			<th>#foreignTable.getEntityName()##ref.getforeignKey()#Count</th>');
+						
+					}
+					else{
+						ct.AppendBody('			<th>#foreignTable.getEntityName()#Count</th>');
+					}
+					
+					
+				
 					columnCount++;
 				}
 			}
@@ -88,6 +100,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('		<tr>');
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
+			var column = columns[1];
 		 	if (columns[i].getIsForeignKey()){
 				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
 				ct.AppendBody('			<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
@@ -125,7 +138,18 @@ component extends="codeGenerator"{
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
 				if (not foreignTable.getIsJoinTable()){
-					ct.AppendBody('			<td>###entityName#.get#foreignTable.getEntityName()#Count()##</td>');
+				
+				
+					if (table.getReferenceCount(foreignTable.getName()) gt 1){
+						ct.AppendBody('			<th>###entityName#.get#foreignTable.getEntityName()##ref.getforeignKey()#Count()##</th>');
+						
+					}
+					else{
+						ct.AppendBody('			<th>###entityName#.get#foreignTable.getEntityName()#Count()##</th>');
+					}
+				
+				
+					
 				}
 			}
 	   	}

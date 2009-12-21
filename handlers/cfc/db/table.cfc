@@ -224,15 +224,13 @@ component accessors="true" extends="dbItem"
 	
 	public numeric function getReferenceCount(required string tablename){
 		var refCounts = This.getReferenceCounts();
-		try{
-		var result = refCounts[arguments.tablename];
+		
+		if(StructKeyExists(refCounts, arguments.tablename)){
+			return refCounts[arguments.tablename];
 		}
-		catch(any e){
-	
-			writeDump(This);
-			abort;
+		else{
+			return 0;
 		}
-		return result;
 		
 	}
 	
@@ -255,6 +253,7 @@ component accessors="true" extends="dbItem"
 			}
 		}
 		This.setReferenceCounts(Duplicate(refCounts));
+	
 	
 		
 	}

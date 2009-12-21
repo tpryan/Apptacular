@@ -41,6 +41,7 @@ component extends="codeGenerator"{
 	       	if (column.getLength() gt 0){
 	       		property.setLength(column.getLength());
 	       	}
+			
 	       	
 	       	if (column.getIsPrimaryKey()){
 	       		property.setFieldtype('id');
@@ -142,22 +143,29 @@ component extends="codeGenerator"{
 			   		cfc.AddProperty(property);
 					
 					var countFunc= New apptacular.handlers.cfc.code.function();
-					
-					if (table.getReferenceCount(foreignTable.getName()) gt 1){
-						countFunc.setName("get#foreignTable.getEntityName()##ref.getforeignKey()#Count");
-					}
-					else{
-						countFunc.setName("get#foreignTable.getEntityName()#Count");
-					}
-					
-					
 					countFunc.setAccess("public");
 					countFunc.setReturnType('numeric');
-					countFunc.AddOperation('		<cfset var hql = "select #table.getEntityName()#.#foreignTable.getPlural()#.size as #foreignTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''" />');
-					countFunc.AddOperation('		<cfset var result = ormExecuteQuery(hql)[1] />');	
-					countFunc.AddOperationScript('		var hql = "select #table.getEntityName()#.#foreignTable.getPlural()#.size as #foreignTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''";');
-					countFunc.AddOperationScript('		var result = ormExecuteQuery(hql)[1];');
 					countFunc.setReturnResult('result');
+					
+					var ftEntityName = foreignTable.getEntityName();
+					var ftPlural = foreignTable.getPlural();
+					var entityName = table.getEntityName();
+					var id = table.getIdentity();
+					
+					if (table.getReferenceCount(foreignTable.getName()) gt 1){
+						countFunc.setName("get#ftEntityName##ref.getforeignKey()#Count");
+						var selectString = "#ftPlural##ref.getforeignKey()#.size";
+					
+					}
+					else{
+						countFunc.setName("get#ftEntityName#Count");
+						var selectString = "#foreignTable.getPlural()#.size";
+					
+					}
+					
+					countFunc.AddSimpleSet('var hql = "select #selectString# from #entityName# #entityName# where #entityName#.#id# = ''##This.get#id#()##''"',2);
+					countFunc.AddSimpleSet("var result = ormExecuteQuery(hql)[1]",2);
+					
 					cfc.addFunction(countFunc);
 					
 				}

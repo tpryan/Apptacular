@@ -247,7 +247,15 @@ component  extends="codeGenerator"
 				var ftEntityName = foreignTable.getEntityName();
 				var ftid = discoverValidId(foreignTable);
 				
-				update.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+				
+				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
+					update.addSimpleSet('#entityName#.set#column.getName()#(EntityLoad("#ftEntityName#", #ftid#, true))', 3);  
+				}
+				else{
+					update.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+				}
+				
+				
 				
 			}
 			else if (column.getisPrimaryKey() ){ 
@@ -310,15 +318,50 @@ component  extends="codeGenerator"
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
-				read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#())', 2);
+				
+				read.AddSimpleComment("Need to test if #column.getName()# is null that we don't try and test an empty string versus null", 2);
+				
+				
+				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
+					read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
+					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#().get#ftIdentity#())', 3);
+				}
+				else{
+					read.StartSimpleIF('not IsNull(#entityName#.get#ftEntityName#())',2);
+					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#())', 3);
+				}
+				
+				
+				read.EndSimpleIF(2);
+				read.StartSimpleElse(2);
+				read.AddSimpleSet('assertTrue(Len(fromQuery.#column.getColumn()#) eq 0)', 3);	
+				read.EndSimpleIF(2);
 				read.AddLineBreak();
+				
 			}
 			else{
+				read.AddSimpleComment("Need to test if #column.getName()# is null that we don't try and test an empty string versus null", 2);
 				read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
-				read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#())', 3);
+				
+				if (column.getOrmType() eq "binary"){
+					read.AddSimpleSet('assertEquals(toBase64(fromQuery.#column.getColumn()#), toBase64(#entityName#.get#column.getName()#()))', 3);
+					
+				}
+				else if (column.getDataType() eq "year"){
+					read.AddSimpleSet('assertEquals(Year(fromQuery.#column.getColumn()#), #entityName#.get#column.getName()#())', 3);
+					
+				}
+				else{
+					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#())', 3);	
+				}
+				read.EndSimpleIF(2);
+				read.StartSimpleElse(2);
+				read.AddSimpleSet('assertTrue(Len(fromQuery.#column.getColumn()#) eq 0)', 3);	
 				read.EndSimpleIF(2);
 				read.AddLineBreak();
 			}
+			
+			
 		}
 		
 		read.AddOperation('');
@@ -360,7 +403,15 @@ component  extends="codeGenerator"
 				var ftEntityName = foreignTable.getEntityName();
 				var ftid = discoverValidId(foreignTable);
 				
-				read.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+				
+				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
+					read.addSimpleSet('#entityName#.set#column.getName()#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+				}
+				else{
+					read.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+				}
+				
+				
 				
 			}
 			else if (column.getisPrimaryKey() ){ 
@@ -433,7 +484,7 @@ component  extends="codeGenerator"
 		dummy['boolean'] = true;
 		dummy['date'] = CreateDate(2000, 1, 1);
 		dummy['datetime'] = CreateDateTime(2000, 1, 1, 0, 0, 0);
-		dummy['blob'] = ImageNew();
+		dummy['binary'] = "##ImageGetBlob(ImageNew('#config.getCSSFilePath()##fs#appgrad.jpg'))##";
 		
 		return dummy[arguments.type];
 	}
