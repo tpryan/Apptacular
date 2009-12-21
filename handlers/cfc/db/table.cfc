@@ -191,7 +191,16 @@ component accessors="true" extends="dbItem"
 	
 	public numeric function getForeignTableCount(required string tablename){
 		var ft = This.getForeignTables();
-		return ft[arguments.tablename];
+		
+		
+		if(StructKeyExists(ft, arguments.tablename)){
+			return ft[arguments.tablename];
+		}
+		else{
+			return 0;
+		}
+		
+		
 		
 	}
 	

@@ -40,7 +40,17 @@ component extends="codeGenerator"{
 			
 			if (column.getIsForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
-				ct.AppendBody('			<th>#fkTable.getDisplayName()#</th>');
+				
+				if (table.getForeignTableCount(fkTable.getName()) gt 1){
+					ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+				}	
+				else{
+					ct.AppendBody('			<th>#fkTable.getDisplayName()#</th>');
+				}
+				
+				
+				
+				
 			}
 			
 			else{
@@ -62,7 +72,7 @@ component extends="codeGenerator"{
 				
 				if (not foreignTable.getIsJoinTable()){
 					
-					if (table.getReferenceCount(foreignTable.getName()) gt 1){
+					if (table.getForeignTableCount(foreignTable.getName()) gt 1){
 						ct.AppendBody('			<th>#foreignTable.getEntityName()##ref.getforeignKey()#Count</th>');
 						
 					}
@@ -99,11 +109,37 @@ component extends="codeGenerator"{
 		
 		ct.AppendBody('		<tr>');
 		
+		
+		
 		for (i = 1; i <= ArrayLen(columns); i++){
-			var column = columns[1];
-		 	if (columns[i].getIsForeignKey()){
-				var fkTable = datasource.getTable(columns[i].getForeignKeyTable());
-				ct.AppendBody('			<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+			var column = columns[i];
+			
+		 	if (column.getIsForeignKey()){
+			
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				var page = "#fkTable.getEntityName()#.cfm";
+				var method ="?method=read";
+				var idString = "&amp;#fkTable.getIdentity()#";
+			
+				
+				
+				if (table.getForeignTableCount(fkTable.getName()) gt 1){
+					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
+					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+					ct.AppendBody('			<cfelse>');
+					ct.AppendBody('				<td></td>');
+					ct.AppendBody('			</cfif>');
+				}	
+				else{
+					ct.AppendBody('			<cfif not isNull(#EntityName#.get#fkTable.getEntityName()#())>');
+					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+					ct.AppendBody('			<cfelse>');
+					ct.AppendBody('				<td></td>');
+					ct.AppendBody('			</cfif>');
+					
+					
+				}
+			
 			}
 			else if (compareNoCase(columns[i].getuitype(), "boolean") eq 0){
 					
@@ -123,8 +159,6 @@ component extends="codeGenerator"{
 
 				
 			}		
-			
-				
 			else{
 				ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
 			}
@@ -234,11 +268,31 @@ component extends="codeGenerator"{
 		 	
 			if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
-			
+				
 				ct.AppendBody('		<tr>');
-		 		ct.AppendBody('			<th>#fkTable.getEntityName()#</th>');
-				ct.AppendBody('			<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+				if (table.getForeignTableCount(fkTable.getName()) gt 1){
+					
+					
+					ct.AppendBody('			<th>#column.getName()#</th>');
+					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
+					ct.AppendBody('				<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+					ct.AppendBody('			<cfelse>');
+					ct.AppendBody('				<td></td>');
+					ct.AppendBody('			</cfif>');
+					
+				}	
+				else{
+					ct.AppendBody('			<th>#fkTable.getEntityName()#</th>');
+					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
+					ct.AppendBody('				<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+					ct.AppendBody('			<cfelse>');
+					ct.AppendBody('				<td></td>');
+					ct.AppendBody('			</cfif>');
+					
+					
+				}
 				ct.AppendBody('		</tr>');
+			
 			
 				}
 			else if (compareNoCase(column.getuitype(), "boolean") eq 0){

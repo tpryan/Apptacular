@@ -456,7 +456,7 @@ component  extends="codeGenerator"
 		returns200.addLocalVariable("urlToTest","string", "#arguments.targetURL#");
 	
 		returns200.AddOperation('');
-		returns200.AddOperation('		<cfhttp url="##urlToTest##" timeout="5" />');
+		returns200.AddOperation('		<cfhttp url="##urlToTest##" timeout="20" />');
 		returns200.AddOperation('		<cfif not FindNoCase("200", cfhttp.statusCode)>');
 		returns200.AddOperation('			<cfset debug(urlToTest) />');
 		returns200.AddOperation('			<cfset debug(cfhttp) />');
