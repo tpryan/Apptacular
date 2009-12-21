@@ -431,6 +431,9 @@ component extends="codeGenerator"{
 	    appCFC.addApplicationProperty('datasource', dbname) ;
 	    appCFC.addApplicationProperty("customTagPaths", "ExpandPath('#config.getCustomTagFolder()#/')", false) ;
 		appCFC.addApplicationProperty('ormsettings.eventHandler', "#config.getEntityCFCPath()#.eventHandler") ;
+		if (config.getLogSQL()){
+			appCFC.addApplicationProperty('ormsettings.logSQL', true) ;
+		}
 		
 		
 		var onRequestStart= New apptacular.handlers.cfc.code.function();

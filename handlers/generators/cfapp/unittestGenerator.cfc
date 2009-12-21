@@ -456,7 +456,7 @@ component  extends="codeGenerator"
 		returns200.addLocalVariable("urlToTest","string", "#arguments.targetURL#");
 	
 		returns200.AddOperation('');
-		returns200.AddOperation('		<cfhttp url="##urlToTest##" timeout="20" />');
+		returns200.AddOperation('		<cfhttp url="##urlToTest##" timeout="30" />');
 		returns200.AddOperation('		<cfif not FindNoCase("200", cfhttp.statusCode)>');
 		returns200.AddOperation('			<cfset debug(urlToTest) />');
 		returns200.AddOperation('			<cfset debug(cfhttp) />');
@@ -464,7 +464,7 @@ component  extends="codeGenerator"
 		returns200.AddOperation('		</cfif>');
 		returns200.AddOperation('');
 		returns200.AddOperationScript('');
-		returns200.AddOperationScript('		var httpObj = new http(url="##urlToTest##", timeout="5" );');
+		returns200.AddOperationScript('		var httpObj = new http(url="##urlToTest##", timeout="30" );');
 		returns200.AddOperationScript('		cfhttp = httpObj.send().getPrefix();');
 		returns200.AddOperationScript('		if (not FindNoCase("200", cfhttp.statusCode)){');
 		returns200.AddOperationScript('			debug(urlToTest);');

@@ -122,7 +122,7 @@ component extends="codeGenerator"{
 				var idString = "&amp;#fkTable.getIdentity()#";
 			
 				
-				
+				ct.AppendBody("'			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
 					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
@@ -136,10 +136,14 @@ component extends="codeGenerator"{
 					ct.AppendBody('			<cfelse>');
 					ct.AppendBody('				<td></td>');
 					ct.AppendBody('			</cfif>');
-					
-					
 				}
 			
+			}
+			else if (compareNoCase(columns[i].getuitype(), "binary") eq 0){
+					
+				ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
+
+				
 			}
 			else if (compareNoCase(columns[i].getuitype(), "boolean") eq 0){
 					
@@ -268,14 +272,18 @@ component extends="codeGenerator"{
 		 	
 			if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				var page = "#fkTable.getEntityName()#.cfm";
+				var method ="?method=read";
+				var idString = "&amp;#fkTable.getIdentity()#";
 				
 				ct.AppendBody('		<tr>');
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
 					
 					
 					ct.AppendBody('			<th>#column.getName()#</th>');
+					ct.AppendBody("'		<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
-					ct.AppendBody('				<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
 					ct.AppendBody('			<cfelse>');
 					ct.AppendBody('				<td></td>');
 					ct.AppendBody('			</cfif>');
@@ -283,18 +291,33 @@ component extends="codeGenerator"{
 				}	
 				else{
 					ct.AppendBody('			<th>#fkTable.getEntityName()#</th>');
-					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
-					ct.AppendBody('				<td><a href="#fkTable.getEntityName()#.cfm?method=read&amp;#fkTable.getIdentity()#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
+					ct.AppendBody("'		<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
+					ct.AppendBody('			<cfif not isNull(#EntityName#.get#fkTable.getEntityName()#())>');
+					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
 					ct.AppendBody('			<cfelse>');
 					ct.AppendBody('				<td></td>');
 					ct.AppendBody('			</cfif>');
 					
 					
 				}
+				
+				
+				
+				
+				
 				ct.AppendBody('		</tr>');
 			
 			
-				}
+			}
+			else if (compareNoCase(columns[i].getuitype(), "binary") eq 0){
+				ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 		ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
+				ct.AppendBody('		</tr>');	
+
+				
+			}
+			
 			else if (compareNoCase(column.getuitype(), "boolean") eq 0){
 					
 					ct.AppendBody('		<tr>');
@@ -413,6 +436,11 @@ component extends="codeGenerator"{
 	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" skin="Silver" /></td>');
 				}
 				
+				else if (compareNoCase(uitype, "binary") eq 0){
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
+	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
+				}
+				
 				else if (compareNoCase(uitype, "boolean") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>');
@@ -441,15 +469,47 @@ component extends="codeGenerator"{
 				}
 				else if (column.getisForeignKey()){
 					var fkTable = datasource.getTable(column.getForeignKeyTable());
-					ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0>');
-					ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
-					ct.AppendBody('			<cfelse>');
-					ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = #EntityName#.get#fkTable.getEntityName()#().get#columnName#() />');
-					ct.AppendBody('			</cfif>');
 					
 					
-					ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
-	 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');	
+					ct.AppendBody('		<tr>');
+					if (table.getForeignTableCount(fkTable.getName()) gt 1){
+						
+						
+						
+						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
+						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
+						ct.AppendBody('			<cfelse>');
+						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
+						ct.AppendBody('			</cfif>');
+						
+						
+						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
+		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
+						
+						
+						
+					}	
+					else{
+						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
+						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
+						ct.AppendBody('			<cfelse>');
+						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = #EntityName#.get#fkTable.getEntityName()#().get#FKTable.getIdentity()#() />');
+						ct.AppendBody('			</cfif>');
+						
+						
+						ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
+		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');
+						
+						
+					}
+					
+					
+					
+					
+					
+					
+					
+						
 				}
 				else{
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
@@ -541,7 +601,7 @@ component extends="codeGenerator"{
 		
 		var references = table.getReferences();
 	   	
-		if (not isNull(references)){
+		if (not isNull(references) AND config.getWireOneToManyinViews()){
 		
 			for (j=1; j <= ArrayLen(references); j++){
 				var ref = references[j];
@@ -549,8 +609,9 @@ component extends="codeGenerator"{
 				
 				if (not foreignTable.getIsJoinTable()){
 					view.AppendBody('');
-					view.AppendBody('		<h3>#foreignTable.getDisplayPlural()#</h3> ');
-					view.AppendBody('		<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
+					view.AppendBody('			<h3>#foreignTable.getDisplayPlural()#</h3> ');
+					view.AppendBody('			<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
+					view.AppendBody('');
 				}
 			}
 	   	}

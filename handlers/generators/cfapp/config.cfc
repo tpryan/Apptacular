@@ -41,6 +41,9 @@ component accessors="true"{
 	property name="CreateEntities" type="boolean";
 	property name="CreateLogin" type="boolean";
 	property name="CreateTests" type="boolean";
+	property name="WireOneToManyinViews" type="boolean";
+	property name="LogSQL" type="boolean";
+	
 	property name="CFCFormat";
 	
 	property name="createdOnString";
@@ -93,6 +96,8 @@ component accessors="true"{
 		This.setCFCFormat("cfscript");
 		This.setOverwriteDataModel(false);
 		This.setLockApplication(false);
+		This.setWireOneToManyinViews(true);
+		This.setLogSQL(true);
 		
 		This.setDateFormat("mm/dd/yyyy");
 		
