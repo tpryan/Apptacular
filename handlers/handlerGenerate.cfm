@@ -26,15 +26,22 @@
 	
 	rootCFCPath = utils.findCFCPathFromFilePath(rootFilePath);
 
+	//process DB version of schema
+	db = New cfc.db.datasource(dsName);
 
 	//process both default and file version of config
 	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
+	
+	//make sure that large existing apps don't wire one-to-many relationships
+	if (db.calculateHighestRowCount() gt 1000){
+		config.setWireOneToManyinViews(false);
+	}
+	
 	config.overwriteFromDisk();
 	config.calculatePaths();
 	config.writeToDisk();
 
-	//process both DB and file version of schema
-	db = New cfc.db.datasource(dsName);
+	//process file version of schema
 	dbConfig = New cfc.db.dbConfig(dbConfigPath);
 	
 	if (config.getOverwriteDataModel()){

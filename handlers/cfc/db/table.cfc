@@ -18,7 +18,7 @@ component accessors="true" extends="dbItem"
 	
 	property name="columns" type="column[]" hint="An array of all of the columns in the table.";
 	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";
-	
+	property name="rowcount" type="numeric" hint="The number of records in the table.";
 	
 	
 	property name="joinedTables" type="array" hint="An array of all of the joined tables that referenced this table if isJoinTable is true";
@@ -57,6 +57,8 @@ component accessors="true" extends="dbItem"
 	public array function getArray(){
 		return columns;
 	}
+	
+	
 	
 	private void function populateTable(){
 		

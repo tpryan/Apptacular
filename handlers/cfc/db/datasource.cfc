@@ -42,6 +42,7 @@ component accessors="true" extends="dbItem"
 		
 		for (i=1; i <= tables.recordCount; i++){
 			var table = New table(tables.table_name[i], This.getName());
+			table.setrowcount(calculateRowCount(tables.table_name[i]));
 			
 			if (CompareNoCase(tables.table_type[i], "view") eq 0){
 				table.setIsView(true);
@@ -82,6 +83,30 @@ component accessors="true" extends="dbItem"
 		This.setTables(tablesArray);
 		This.setTablesStruct(tablesStruct);
 		
+	}
+	
+	public numeric function calculateRowCount(required string tableName){
+		var SQL = "SELECT count(*) as rowcount FROM #arguments.tableName#";
+		
+		var qry = new Query(datasource=This.getName());
+		qry.setSQL(SQL);
+		var rowcount = qry.execute().getResult().rowCount;
+		return rowcount;
+	}
+	
+	public numeric function calculateHighestRowCount(){
+		var tables = This.getTables();
+		var rowCountArray = ArrayNew(1);
+		
+		for (i=1; i <= ArrayLen(tables); i++){
+			var table = tables[i];
+			ArrayAppend(rowCountArray, table.getRowCount());
+		}
+		
+		ArraySort(rowCountArray, "numeric", "desc");		
+		
+		
+		return rowCountArray[1];
 	}
 	
 	public void function populateDatasource(){
