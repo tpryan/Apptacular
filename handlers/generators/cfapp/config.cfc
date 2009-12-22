@@ -1,59 +1,60 @@
 component accessors="true"{
 	
-	property name="rootURL";
-	property name="rootFilePath";
-	property name="rootCFCPath";
+	property name="rootURL" hint="The url that corresponds to the rootFilePath";		
+	property name="rootFilePath" hint="The root directory under which all Apptacular files will be written.";
+	property name="rootCFCPath" hint="The CFC format path that corresponds to the rootFilePath";
+	property name="rootRelativePath" hint="The relative url (server omitted) that corresponds to the rootURL";			
 	
 	//URLS
-	property name="testURL";
+	property name="testURL" hint="The url that corresponds to the testFilePath";		
 	
 	//File paths
-	property name="customTagFilePath";
-	property name="entityFilePath";
-	property name="serviceFilePath";
-	property name="cssFilePath";
-	property name="testFilePath";
-	property name="mxunitFilePath";
+	property name="customTagFilePath" hint="The directory under the root where the custom tags will be written. [Computed from rootURL and customTagFolder]";
+	property name="entityFilePath" hint="The directory under the root where the entity CFCs will be written. [Computed from rootURL and entityTagFolder]";
+	property name="serviceFilePath" hint="The directory under the root where the service CFCs will be written. [Computed from rootURL and serviceFolder]";
+	property name="cssFilePath" hint="The directory under the root where the css files and accompanying images will be written. [Computed from rootURL and cssFolder]";
+	property name="testFilePath" hint="The directory under the root where the test cases will be written. [Computed from rootURL and testFolder]";
+	property name="mxunitFilePath" hint="The directory where the MXUnit files will be found.";
 	
 	//Relative Paths
-	property name="cssRelativePath";
-	property name="rootRelativePath";
-	property name="testRelativePath";
+	property name="cssRelativePath" hint="The relative url (server omitted) that corresponds to the cssFilePath. [Computed from cssFilePath]";		
+	property name="testRelativePath" hint="The relative url (server omitted) that corresponds to the testFilePath. [Computed from testFilePath]";	
 	
 	//Folders
-	property name="cssFolder";
-	property name="customTagFolder";
-	property name="entityFolder";
-	property name="serviceFolder";
-	property name="testFolder";
+	
+	property name="customTagFolder" hint="The subfolder under the root where the custom tags will be written.";
+	property name="entityFolder" hint="The subfolder under the root where the entity CFCs will be written.";
+	property name="serviceFolder" hint="The subfolder under the root where the service CFCs will be written.";
+	property name="cssFolder" hint="The subfolder under the root where the css files and accompanying images will be written.";
+	property name="testFolder" hint="The subfolder under the root where the test cases will be written.";
 	
 	//CFC paths	
-	property name="mxunitCFCPath";
-	property name="serviceCFCPath";
-	property name="EntityCFCPath";
-	property name="testCFCPath";
+	property name="EntityCFCPath" hint="The CFC format path that corresponds to the entityFilePath";	
+	property name="serviceCFCPath" hint="The CFC format path that corresponds to the serviceFilePath";	
+	property name="testCFCPath" hint="The CFC format path that corresponds to the testFilePath";	
+	property name="mxunitCFCPath" hint="The CFC Path where the MXUnit files will be found.";
 	
-	property name="serviceAccess";
-	property name="CreateViews" type="boolean";
-	property name="CreateAppCFC" type="boolean";
-	property name="CreateServices" type="boolean";
-	property name="UseServices" type="boolean";
-	property name="CreateEntities" type="boolean";
-	property name="CreateLogin" type="boolean";
-	property name="CreateTests" type="boolean";
-	property name="WireOneToManyinViews" type="boolean";
-	property name="LogSQL" type="boolean";
+	property name="serviceAccess" hint="Whether or not your services to be accessible or not. [Options: public, remote]";
+	property name="CreateViews" type="boolean" hint="Whether or not Apptacular should create view files (index.cfm, plus tabname.cfm, and custom tags.)";
+	property name="CreateAppCFC" type="boolean" hint="Whether or not Apptacular should create a Application.cfc";
+	property name="CreateServices" type="boolean" hint="Whether or not Apptacular should create services";
+	property name="UseServices" type="boolean" hint="Whether or not Apptacular should use services in lieu of Entity functions [Not implemented yet]";
+	property name="CreateEntities" type="boolean"  hint="Whether or not Apptacular should create entity files";
+	property name="CreateLogin" type="boolean" hint="Whether or not Apptacular should wire up login framework.";
+	property name="CreateTests" type="boolean" hint="Whether or not Apptacular should write default unit tests.";
+	property name="WireOneToManyinViews" type="boolean" hint="Whether or not Apptacular should write out oneToMany interfaces in view. Good to turn off if you have tables with 1000's of records wired to a oneToMany.";
+	property name="LogSQL" type="boolean" hint="Whether or not generated application should log Hibernate SQL operations to the console.";
 	
-	property name="CFCFormat";
+	property name="CFCFormat" hint="Whether or not your CFCs are all CFML or all CFScript. [Options: CFML, CFSCRIPT]";
 	
-	property name="createdOnString";
-	property name="updatedOnString";
+	property name="createdOnString" hint="The magic string for DateTime of object creation";
+	property name="updatedOnString" hint="The magic string for DateTime of object last update";
 	
-	property name="dateformat";
-	property name="timeformat";
+	property name="dateformat" hint="The format in which to display dates in views.";
+	property name="timeformat" hint="The format in which to display times in views.";
 	
-	property name="OverwriteDataModel" type="boolean";
-	property name="LockApplication" type="boolean";
+	property name="OverwriteDataModel" type="boolean" hint="Setting this to true will allow config XML to become authoritative. Don't do this until you are mostly done messing around with model.";
+	property name="LockApplication" type="boolean" hint="Setting this to true will prevent any new files from being written or modified by the Apptacular extension";
 	
 	
 	
