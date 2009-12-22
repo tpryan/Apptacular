@@ -211,7 +211,7 @@ component accessors="true" extends="dbItem"
 		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
-			column = columns[i];
+			var column = columns[i];
 			if (len(column.getForeignKeyTable())){
 				var ft = This.getForeignTables();
 			
@@ -251,7 +251,7 @@ component accessors="true" extends="dbItem"
 		
 		if (isDefined("refs")){
 			for (i = 1; i <= ArrayLen(refs); i++){
-				ref = refs[i];
+				var ref = refs[i];
 				
 				if (not structKeyExists(refCounts, ref.getForeignKeyTable())){
 					refCounts[ref.getForeignKeyTable()] = 0;

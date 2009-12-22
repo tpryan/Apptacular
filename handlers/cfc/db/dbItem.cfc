@@ -32,7 +32,9 @@ component
 		StructDelete(props, "tables");
 		StructDelete(props, "tablesStruct");
 		
-		StructDelete(props, "virtualcolumns");
+		StructDelete(props, "REF");
+		StructDelete(props, "referenceCounts");
+		StructDelete(props, "foreignTables");
 		
 		var keys = StructKeyArray(props);
 		ArraySort(keys, "textnocase");

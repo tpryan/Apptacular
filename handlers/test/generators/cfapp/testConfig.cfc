@@ -45,6 +45,25 @@ component extends="mxunit.framework.TestCase"{
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
 	
+	public void function testAllPropertiesDocumented(){
+    	var metaData = GetComponentMetaData("apptacular.handlers.generators.cfapp.config");
+		var props = metaData.properties;
+		var i = 0;
+		var missing = [];
+		
+		for (i = 1; i <= ArrayLen(props); i++){
+			if (not StructKeyExists(props[i], "hint")){
+				ArrayAppend(missing, props[i].name);
+			}
+		}
+		
+		if (ArrayLen(missing) > 0){
+			debug(missing);
+			fail("Missing Documentation for #arrayLen(missing)# settings. See debug for list.");
+			
+		}
+		
+    }
 
 }
   
