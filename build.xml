@@ -56,6 +56,25 @@
 	
 	</target>
 
+	<target name="test" depends="test.apptacular,test.apps" />
 
+	<target name="test.apptacular">
+		<echo message="Running Apptacular Tests"/>
+		
+		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />
+		
+		<mxunittask server="${server}" defaultrunner="${runner.app.cfc}" haltonerror="true" verbose="true">
+			<directory path="${test.app.dir}" recurse="true" componentPath="${cfc.app.path}" />
+		</mxunittask>
+	</target>
+	
+	<target name="test.apps">
+		<echo message="Running BlogDemo Tests"/>
+		<ant antfile="${webroot}/BlogDemo/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Running Sakila Tests"/>
+		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
+	
+	</target>	
 	
 </project>	

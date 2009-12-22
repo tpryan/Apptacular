@@ -207,7 +207,7 @@ component  extends="codeGenerator"
 		runner.appendBody('');
 		runner.appendBody('		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />');
 		runner.appendBody('		');
-		runner.appendBody('		<mxunittask server="${server}" defaultrunner="${runner.cfc}">');
+		runner.appendBody('		<mxunittask server="${server}" defaultrunner="${runner.cfc}" haltonerror="true" verbose="true">');
 		runner.appendBody('			<directory path="${test.dir}" recurse="true" componentPath="${cfc.path}" />');
 		runner.appendBody('		</mxunittask>');
 		runner.appendBody('');
