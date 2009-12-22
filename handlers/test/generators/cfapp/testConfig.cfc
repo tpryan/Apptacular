@@ -17,7 +17,7 @@ component extends="mxunit.framework.TestCase"{
 		var expectedURL = "http://#cgi.server_name#/apptacular";
 		var FilePath = 'c:\inetpub\wwwroot\Apptacular\';
 		var cfcPath = "apptacular";	
-		var webroot = 'c:\inetpub\wwwroot\';
+		var webroot = 'c:\Inetpub\wwwroot\';
 		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
@@ -39,7 +39,7 @@ component extends="mxunit.framework.TestCase"{
 		var expectedURL = "http://#cgi.server_name#/apptacular";
 		var FilePath = 'c:\inetpub\wwwroot\Apptacular';
 		var cfcPath = "apptacular";	
-		var webroot = 'c:\inetpub\wwwroot';
+		var webroot = 'c:\Inetpub\wwwroot';
 		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	

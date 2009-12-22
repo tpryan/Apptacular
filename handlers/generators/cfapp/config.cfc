@@ -108,7 +108,7 @@ component accessors="true"{
     }
 	
 	private string function calculateURL(required string path, required string webroot){
-		var rootRelativePath = Replace(arguments.path, arguments.webroot, "", "one");
+		var rootRelativePath = ReplaceNoCase(arguments.path, arguments.webroot, "", "one");
 		
 		if (compare(Right(rootRelativePath, 1), "/") eq 0 OR 
 			compare(Right(rootRelativePath, 1), "\") eq 0 ){

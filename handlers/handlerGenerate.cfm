@@ -6,17 +6,23 @@
 
 <cfscript>
 	utils = New cfc.utils();
-	xmldoc = XMLParse(ideeventInfo);  
+	xmldoc = XMLParse(ideeventInfo); 
+	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator"); 
 	
 	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
+		
+	
 		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
-		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value & "/";
+		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value;
+		if (right(rootFilePath, 1) neq FS){
+			rootFilePath = rootFilePath & FS;
+		}
+		
 		dbConfigPath = rootFilePath & ".apptacular/schema";  
 	}
 	//handle input from the project view
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
-		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 		dbConfigPath = rootFilePath & FS & ".apptacular/schema/";
 		dsName = DirectoryList(dbConfigPath, false, "name")[1];

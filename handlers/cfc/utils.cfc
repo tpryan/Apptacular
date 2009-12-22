@@ -2,16 +2,23 @@
 
 	<cfscript>	
 	
-	public function init(){
-    	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");	
+	public function init(string webroot=""){
+    	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		
+		if (len(arguments.webroot) gt 0){
+			variables.webroot= arguments.webroot;
+		
+		}
+		else{
+			variables.webroot= ExpandPath("/");
+		}	
     	return This;
     }
 	
 	public string function findCFCPathFromFilePath(string path){
 		var results = "";
-		var webroot = ExpandPath("/");
-		results = replace(arguments.path, webroot, "", "one");
-		results = replace(results, "/", ".", "all");
+		results = replaceNoCase(arguments.path, webroot, "", "one");
+		results = replaceList(results, "/,\", ".,.");
 		
 		if (compare(right(results, 1), ".") eq 0){
 			results = Left(results, len(results) -1);

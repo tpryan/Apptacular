@@ -32,6 +32,11 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	*/
 	public string function getFileName(){
 		var FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		
+		if (FindNoCase("ram://", This.getFileLocation())){
+			FS = "/";
+		}
+		
 		if (CompareNoCase(right(This.getFileLocation(), 1),FS) eq 0){
 			return "#This.getFileLocation()##This.getName()#.#This.getExtension()#";
 		}
