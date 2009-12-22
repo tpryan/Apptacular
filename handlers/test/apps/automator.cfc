@@ -15,7 +15,7 @@
 		
 		
 		<cfscript>
-			var targeturl = "http://" & cgi.server_name & "/apptacular/handlers/handlerGenerate.cfm";
+			var targeturl = "http://" & cgi.server_name & "/apptacular/handlers/handlerGenerate.cfm?createTests=true";
 		</cfscript>
 		
 		<cfhttp url="#targeturl#" timeout="300" method="post" >

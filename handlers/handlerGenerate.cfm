@@ -37,6 +37,15 @@
 		config.setWireOneToManyinViews(false);
 	}
 	
+	//sort through any url parameters here, used in automation and testing
+	urlkeys = StructKeyArray(url);
+	
+	for (i=1; i <= arraylen(urlkeys); i++){
+		if (structKeyExists(config, "set#urlkeys[i]#")){
+			evaluate("config.set#urlkeys[i]#(#url[urlkeys[i]]#)");
+		}
+	}
+	
 	config.overwriteFromDisk();
 	config.calculatePaths();
 	config.writeToDisk();
