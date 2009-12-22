@@ -72,7 +72,7 @@
 
 </cfoutput>
 
-<cf_XMLForm fileToEdit="#tablePath#" message="#message#" />
+<cf_XMLForm fileToEdit="#tablePath#" message="#message#" cfcreference="apptacular.handlers.cfc.db.table" /> 
 <cfoutput>
 <table>
 <tr>

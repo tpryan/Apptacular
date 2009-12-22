@@ -82,7 +82,7 @@
 
 </cfoutput>
 
-<cf_XMLForm fileToEdit="#path#" message="#message#" />
+<cf_XMLForm fileToEdit="#path#" message="#message#"  cfcreference="apptacular.handlers.cfc.db.virtualcolumn" />
 
 
 </cf_pageWrapper>

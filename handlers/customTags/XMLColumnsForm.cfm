@@ -4,13 +4,15 @@
 	<cfparam name="attributes.tablePathToEdit" type="string" />
 	<cfparam name="attributes.message" type="string" default="" />
 	
+	<cfset tooltips = generateToolTips("apptacular.handlers.cfc.db.column") />
+	
 	<cfscript>
 		message = attributes.message;
 		path = attributes.tablePathToEdit;
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");	
 		files = DirectoryList(path, true, "query", "*.xml");
 		allowedcolumns = "column,displayName,uiType";
-		uiList = "boolean,date,datetime,string,text";
+		uiList = "boolean,date,datetime,string,picture,text";
 	</cfscript>
 	
 	<cfscript>
@@ -86,16 +88,16 @@
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<select name="#fieldname#" id="#attribute#">
+							<cfselect name="#fieldname#" id="#attribute#"  tooltip="#getToolTip(attribute)#">
 								<cfloop list="#uilist#" index="type">
 								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
 								</cfloop>
-							</select>
+							</cfselect>
 						</td>			
 					<cfelse>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
-						<td><input name="#fieldname#" type="text" value="#value#" /></td>
+						<td><cfinput name="#fieldname#" type="text" value="#value#"  tooltip="#getToolTip(attribute)#" /></td>
 					</cfif>
 				</cfloop>
 				
@@ -162,6 +164,34 @@
 		
 	
 		return result;
+	}
+	
+	public struct function generateToolTips(string cfcreference =""){
+		var i =  0;
+		var result = StructNew();
+		if (len(arguments.cfcreference) < 1){
+			return result;
+		}
+		var metaData = GetComponentMetaData(arguments.cfcreference);
+		var props = metaData.properties;
+		
+		
+		for(i=1; i <= ArrayLen(props); i++){
+			result[props[i]['name']] = props[i]['hint'];
+		}
+	
+		return result;
+	}
+
+	
+
+	public string function getToolTip(required string name){
+		if(structKeyExists(variables.toolTips, arguments.name)){
+			return variables.toolTips[arguments.name];
+		}
+		else{
+			return "";
+		}
 	}
 
 </cfscript>

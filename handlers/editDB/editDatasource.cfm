@@ -31,7 +31,7 @@
 
 <cf_pageWrapper>
 
-<cf_XMLForm fileToEdit="#path#" message="#message#" />
+<cf_XMLForm fileToEdit="#path#" message="#message#"   cfcreference="apptacular.handlers.cfc.db.datasource" />
 
 
 <h2>Edit Tables</h2>
