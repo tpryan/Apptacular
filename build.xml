@@ -18,10 +18,11 @@
 		<echo message="Copying Files to Build Location"/>
 		<copy todir="${build.dir}" preservelastmodified="true">
 			<fileset dir="${dev.dir}">
-				<exclude name='.gitignore'/>
+				<exclude name='**/.gitignore'/>
 				<exclude name='.git/**'/>
 				<exclude name='settings.xml'/>
 				<exclude name='settings.properties'/>
+				<exclude name='/handlers/test/**'/>
 				<exclude name='.project'/>
 				<exclude name='.settings'/>
 				<exclude name='build.xml'/>
