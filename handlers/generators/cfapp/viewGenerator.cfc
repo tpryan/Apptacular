@@ -145,6 +145,13 @@ component extends="codeGenerator"{
 
 				
 			}
+			
+			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0){
+					
+				ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
+
+				
+			}
 			else if (compareNoCase(columns[i].getuitype(), "boolean") eq 0){
 					
 				ct.AppendBody('			<td>##YesNoFormat(#entityName#.get#columns[i].getName()#())##</td>');
@@ -318,6 +325,26 @@ component extends="codeGenerator"{
 				
 			}
 			
+			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0){
+				ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 		ct.AppendBody('			<td>');
+				ct.AppendBody('				<cftry>');
+				ct.AppendBody('				<td>');
+				ct.AppendBody('					<cfcatch>');
+				ct.AppendBody('						<cfif FindNoCase("ColdFusion was unable to create an image",cfcatch.message)>');
+				ct.AppendBody('							[Unsupported image]');
+				ct.AppendBody('						<cfelse>');	
+				ct.AppendBody('							<cfrethrow />');		
+				ct.AppendBody('						</cfif>');		
+				ct.AppendBody('					</cfcatch>');
+				ct.AppendBody('				</cftry>');	
+				ct.AppendBody('			</td>');
+				ct.AppendBody('		</tr>');	
+
+				
+			}
+			
 			else if (compareNoCase(column.getuitype(), "boolean") eq 0){
 					
 					ct.AppendBody('		<tr>');
@@ -437,6 +464,11 @@ component extends="codeGenerator"{
 				}
 				
 				else if (compareNoCase(uitype, "binary") eq 0){
+					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
+	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
+				}
+				
+				else if (compareNoCase(uitype, "picture") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
 				}
