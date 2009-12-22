@@ -1,29 +1,36 @@
 component accessors="true" extends="dbItem"  
 {
-	property name="name";
-	property name="displayName";
-	property name="entityName";
-	property name="identity";
-	property name="plural";
-	property name="displayPlural";
-	property name="ForeignKeyLabel";
-	property name="isReferencedAsForeignKey" type="boolean";
-	property name="isJoinTable" type="boolean";
-	property name="softDelete" type="boolean";   
-	property name="hasJoinTable" type="boolean";   
-	property name="hasForeignKeys" type="boolean";   
-	property name="isView" type="boolean";
-	property name="columns" type="column[]"; 
-	property name="columnsStruct" type="struct";
-	property name="references" type="reference[]";
-	property name="referenceCounts" type="struct";
-	property name="joinedTables" type="array";
-	property name="joinTables" type="array";
-	property name="createInterface" type="boolean";
-	property name="virtualcolumns" type="virtualcolumn[]";
-	property name="foreignTables" type="struct";
+	property name="name" hint="The real name of the table in the database.";
+	property name="displayName" hint="A pretty name, not at all like 'tbl_author_active'";
+	property name="entityName" hint="A code friendly name of the object usefull when your table is named 'tbl_author_active'";
+	property name="identity" hint="The unique identifier of the table.";
+	property name="plural"  hint="The plural of the entityname, used in relationships";
+	property name="displayPlural" hint="The pretty name of the plural.";
+	property name="ForeignKeyLabel" hint="The column to be used as a reference in related object ui.";
+	property name="isReferencedAsForeignKey" type="boolean" hint="Whether or not this table is referenced by another table's foreign key.";
+	property name="isJoinTable" type="boolean" hint="Whether or not this table is the join table of a many to many relationship";
+	property name="softDelete" type="boolean" hint="Whether or not this table should be deactivated instead of deleted [not yet implemented ]";  
+	property name="hasJoinTable" type="boolean" hint="Whether or not this table has a join table in a many to many relationship";  
+	property name="hasForeignKeys" type="boolean" hint="Whether or not this table has foreign keys";  
+	property name="isView" type="boolean" hint="It's not a table, it's a view!";
+	property name="orderby" hint="The column to order all refernece to these objects."; 
+	property name="createInterface" type="boolean" hint="Whether or not this table should have interfaces built for it. ";  
 	
-	property name="orderby";      
+	property name="columns" type="column[]" hint="An array of all of the columns in the table.";
+	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";
+	
+	
+	
+	property name="joinedTables" type="array" hint="An array of all of the joined tables that referenced this table if isJoinTable is true";
+	property name="joinTables" type="array" hint="An array of all of the join tables that referenced this table if hasJoinTable is true";
+	
+	
+	property name="references" type="reference[]" hint="An array of references to other tables if isReferencedAsForeignKey is true.";
+	property name="referenceCounts" type="struct" hint="A structure of the number of times each referenced table is referenced.";
+	property name="virtualcolumns" type="virtualcolumn[]" hint="An array of virtual columns.";
+	property name="foreignTables" type="struct"  hint="An structure of all of the foreign tables to this table if has ForeignKeys is true.";
+	
+	
 	
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();

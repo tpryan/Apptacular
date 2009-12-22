@@ -1,17 +1,17 @@
 component accessors="true" extends="dbItem"  
 {
-	property name="name";
-	property name="displayName";
-	property name="column";
-	property name="length";
-	property name="isForeignKey" type="boolean"; 
-	property name="isPrimaryKey" type="boolean";
-	property name="foreignKey";
-	property name="foreignKeyTable";
-	property name="ormType";
-	property name="dataType";
-	property name="uiType";
-	property name="Type";
+	property name="name" hint="The code name of the property to represent this column.";
+	property name="displayName" hint="A pretty name, not at all like 'varchar_author_is_active'";
+	property name="column" hint="The real name of the column in the database.";
+	property name="length" hint="The length of the column";
+	property name="isForeignKey" type="boolean" hint="Is this column a foreign key. ";
+	property name="isPrimaryKey" type="boolean" hint="Is this column a primary key, um isn't that a little obvious? ";
+	property name="foreignKey" hint="The primary key of the foreign key table." ;
+	property name="foreignKeyTable" hint="The foreign key table." ;
+	property name="ormType" hint="The ormtype" ;
+	property name="dataType" hint="The type as presented by cfdbinfo" ;
+	property name="uiType" hint="The type to generate ui's for." ;
+	property name="Type" hint="The ColdFusion datatype" ;
 	
 	public string function toXML(){
 		return objectToXML("column");

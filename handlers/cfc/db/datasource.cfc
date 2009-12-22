@@ -1,11 +1,11 @@
 component accessors="true" extends="dbItem"  
 {
-	property name="name";
-	property name="displayName";
-	property name="engine";
-	property name="version";
-	property name="tables" type="table[]";
-	property name="tablesStruct" type="struct";  
+	property name="name" hint="Name of the ColdFusion Datasource to use.";
+	property name="displayName" hint="A pretty name, not at all like 'db_blog1_mysql'";
+	property name="engine"  hint="The database engine.";
+	property name="version" hint="The database version.";
+	property name="tables" type="table[]" hint="An array of all of the tables in the datasource.";
+	property name="tablesStruct" type="struct" hint="An structure of all of the tables in the datasource."; 
 	
 	public function init(required string datasource){
 		variables.dbinfo = New dbinfo();
