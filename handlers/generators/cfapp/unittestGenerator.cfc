@@ -351,6 +351,10 @@ component  extends="codeGenerator"
 					read.AddSimpleSet('assertEquals(Year(fromQuery.#column.getColumn()#), #entityName#.get#column.getName()#())', 3);
 					
 				}
+				else if (column.getDataType() eq "bit"){
+					read.AddSimpleSet('assertEquals(YesNoFormat(fromQuery.#column.getColumn()#), YesNoFormat(#entityName#.get#column.getName()#()))', 3);
+					
+				}
 				else{
 					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#())', 3);	
 				}
@@ -481,6 +485,7 @@ component  extends="codeGenerator"
 		var dummy = structNew();
 		dummy['string'] = "Test String";
 		dummy['numeric'] = 1;
+		dummy['integer'] = 1;
 		dummy['boolean'] = true;
 		dummy['date'] = CreateDate(2000, 1, 1);
 		dummy['datetime'] = CreateDateTime(2000, 1, 1, 0, 0, 0);

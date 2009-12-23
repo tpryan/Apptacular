@@ -116,7 +116,8 @@ component accessors="true"{
 		}
 			
 		var result = cgi.server_name & "/" & rootRelativePath;
-		result = ReplaceList(result, "//,\","/,");
+		result = Replace(result, "\","/", "all");
+		result = Replace(result, "//","/", "all");
 		result = "http://" & result;
 
 		return result;

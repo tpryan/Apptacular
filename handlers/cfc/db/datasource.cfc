@@ -12,6 +12,8 @@ component accessors="true" extends="dbItem"
 		dbinfo.setDatasource(arguments.datasource);
 		
 		
+		variables.excludedTableList = generateExcludedTables();
+		
 		This.setName(arguments.datasource);
 		This.setDisplayName(arguments.datasource);
 	
@@ -34,10 +36,17 @@ component accessors="true" extends="dbItem"
 		var qoq = new Query(); 
 		var queryString = "	SELECT  	*  
                           	FROM  		resultSet
-							WHERE table_type != 'SYSTEM TABLE'"; 
+							WHERE table_type != 'SYSTEM TABLE'
+							AND table_name not in(#PreserveSingleQuotes(variables.excludedTableList)#)"; 
 		qoq.setAttributes(resultSet = tables);  
 		qoq.SetDBType("query"); 
 		tables = qoq.execute(sql=queryString).getResult(); 
+		
+		excludedTableList = "";
+		for (i = 1; i <= tables.recordCount; i++){
+			excludedTableList = ListAppend(excludedTableList, "'#tables.table_name[i]#'");
+		
+		}
 		
 		
 		for (i=1; i <= tables.recordCount; i++){
@@ -86,12 +95,12 @@ component accessors="true" extends="dbItem"
 	}
 	
 	public numeric function calculateRowCount(required string tableName){
-		var SQL = "SELECT count(*) as rowcount FROM #arguments.tableName#";
+		var SQL = "SELECT count(*) as countOfRows FROM #arguments.tableName#";
 		
 		var qry = new Query(datasource=This.getName());
 		qry.setSQL(SQL);
-		var rowcount = qry.execute().getResult().rowCount;
-		return rowcount;
+		var countOfRows = qry.execute().getResult().countOfRows;
+		return countOfRows;
 	}
 	
 	public numeric function calculateHighestRowCount(){
@@ -126,5 +135,69 @@ component accessors="true" extends="dbItem"
 		return objectToXML("datasource");
 	} 
 	
+	private string function generateExcludedTables(){
+		var excludedTableList = "'CHECK_CONSTRAINTS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES',";
+		excludedTableList = excludedTableList & "'COLUMNS','CONSTRAINT_COLUMN_USAGE','CONSTRAINT_TABLE_USAGE','DOMAIN_CONSTRAINTS','DOMAINS','KEY_COLUMN_USAGE',";
+		excludedTableList = excludedTableList & "'PARAMETERS','REFERENTIAL_CONSTRAINTS','ROUTINE_COLUMNS','ROUTINES','SCHEMATA','TABLE_CONSTRAINTS',";
+		excludedTableList = excludedTableList & "'TABLE_PRIVILEGES','TABLES','VIEW_COLUMN_USAGE','VIEW_TABLE_USAGE','VIEWS','all_columns','all_objects',";
+		excludedTableList = excludedTableList & "'all_parameters','all_sql_modules','all_views','allocation_units','assemblies','assembly_files',";
+		excludedTableList = excludedTableList & "'assembly_modules','assembly_references','assembly_types','asymmetric_keys','backup_devices','certificates',";
+		excludedTableList = excludedTableList & "'check_constraints','column_type_usages','column_xml_schema_collection_usages','columns','computed_columns',";
+		excludedTableList = excludedTableList & "'configurations','conversation_endpoints','conversation_groups','credentials','crypt_properties','data_spaces',";
+		excludedTableList = excludedTableList & "'database_files','database_mirroring','database_mirroring_endpoints','database_permissions',";
+		excludedTableList = excludedTableList & "'database_principal_aliases','database_principals','database_recovery_status','database_role_members',";
+		excludedTableList = excludedTableList & "'databases','default_constraints','destination_data_spaces','dm_broker_activated_tasks','dm_broker_connections',";
+		excludedTableList = excludedTableList & "'dm_broker_forwarded_messages','dm_broker_queue_monitors','dm_clr_appdomains','dm_clr_loaded_assemblies',";
+		excludedTableList = excludedTableList & "'dm_clr_properties','dm_clr_tasks','dm_db_file_space_usage','dm_db_index_usage_stats',";
+		excludedTableList = excludedTableList & "'dm_db_mirroring_connections','dm_db_missing_index_details','dm_db_missing_index_group_stats',";
+		excludedTableList = excludedTableList & "'dm_db_missing_index_groups','dm_db_partition_stats','dm_db_session_space_usage','dm_db_task_space_usage',";
+		excludedTableList = excludedTableList & "'dm_exec_background_job_queue','dm_exec_background_job_queue_stats','dm_exec_cached_plans',";
+		excludedTableList = excludedTableList & "'dm_exec_connections','dm_exec_query_memory_grants','dm_exec_query_optimizer_info',";
+		excludedTableList = excludedTableList & "'dm_exec_query_resource_semaphores','dm_exec_query_stats','dm_exec_query_transformation_stats',";
+		excludedTableList = excludedTableList & "'dm_exec_requests','dm_exec_sessions','dm_fts_active_catalogs','dm_fts_index_population',";
+		excludedTableList = excludedTableList & "'dm_fts_memory_buffers','dm_fts_memory_pools','dm_fts_population_ranges','dm_io_backup_tapes',";
+		excludedTableList = excludedTableList & "'dm_io_cluster_shared_drives','dm_io_pending_io_requests','dm_os_buffer_descriptors','dm_os_child_instances',";
+		excludedTableList = excludedTableList & "'dm_os_cluster_nodes','dm_os_hosts','dm_os_latch_stats','dm_os_loaded_modules','dm_os_memory_allocations',";
+		excludedTableList = excludedTableList & "'dm_os_memory_cache_clock_hands','dm_os_memory_cache_counters','dm_os_memory_cache_entries',";
+		excludedTableList = excludedTableList & "'dm_os_memory_cache_hash_tables','dm_os_memory_clerks','dm_os_memory_objects','dm_os_memory_pools',";
+		excludedTableList = excludedTableList & "'dm_os_performance_counters','dm_os_ring_buffers','dm_os_schedulers','dm_os_stacks','dm_os_sublatches',";
+		excludedTableList = excludedTableList & "'dm_os_sys_info','dm_os_tasks','dm_os_threads','dm_os_virtual_address_dump','dm_os_wait_stats',";
+		excludedTableList = excludedTableList & "'dm_os_waiting_tasks','dm_os_worker_local_storage','dm_os_workers','dm_qn_subscriptions',";
+		excludedTableList = excludedTableList & "'dm_repl_articles','dm_repl_schemas','dm_repl_tranhash','dm_repl_traninfo',";
+		excludedTableList = excludedTableList & "'dm_tran_active_snapshot_database_transactions','dm_tran_active_transactions',";
+		excludedTableList = excludedTableList & "'dm_tran_current_snapshot','dm_tran_current_transaction','dm_tran_database_transactions',";
+		excludedTableList = excludedTableList & "'dm_tran_locks','dm_tran_session_transactions','dm_tran_top_version_generators',";
+		excludedTableList = excludedTableList & "'dm_tran_transactions_snapshot','dm_tran_version_store','endpoint_webmethods','endpoints',";
+		excludedTableList = excludedTableList & "'event_notification_event_types','event_notifications','events','extended_procedures',";
+		excludedTableList = excludedTableList & "'extended_properties','filegroups','foreign_key_columns','foreign_keys','fulltext_catalogs',";
+		excludedTableList = excludedTableList & "'fulltext_document_types','fulltext_index_catalog_usages','fulltext_index_columns','fulltext_indexes',";
+		excludedTableList = excludedTableList & "'fulltext_languages','http_endpoints','identity_columns','index_columns','indexes','internal_tables',";
+		excludedTableList = excludedTableList & "'key_constraints','key_encryptions','linked_logins','login_token','master_files','master_key_passwords',";
+		excludedTableList = excludedTableList & "'message_type_xml_schema_collection_usages','messages','module_assembly_usages',";
+		excludedTableList = excludedTableList & "'numbered_procedure_parameters','numbered_procedures','objects','openkeys','parameter_type_usages',";
+		excludedTableList = excludedTableList & "'parameter_xml_schema_collection_usages','parameters','partition_functions','partition_parameters',";
+		excludedTableList = excludedTableList & "'partition_range_values','partition_schemes','partitions','plan_guides','procedures','remote_logins',";
+		excludedTableList = excludedTableList & "'remote_service_bindings','routes','schemas','securable_classes','server_assembly_modules',";
+		excludedTableList = excludedTableList & "'server_event_notifications','server_events','server_permissions','server_principals','server_role_members',";
+		excludedTableList = excludedTableList & "'server_sql_modules','server_trigger_events','server_triggers','servers','service_broker_endpoints',";
+		excludedTableList = excludedTableList & "'service_contract_message_usages','service_contract_usages','service_contracts','service_message_types',";
+		excludedTableList = excludedTableList & "'service_queue_usages','service_queues','services','soap_endpoints','sql_dependencies','sql_logins',";
+		excludedTableList = excludedTableList & "'sql_modules','stats','stats_columns','symmetric_keys','synonyms','syscacheobjects','syscharsets',";
+		excludedTableList = excludedTableList & "'syscolumns','syscomments','sysconfigures','sysconstraints','syscurconfigs','sysdatabases','sysdepends',";
+		excludedTableList = excludedTableList & "'sysdevices','sysfilegroups','sysfiles','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys',";
+		excludedTableList = excludedTableList & "'syslanguages','syslockinfo','syslogins','sysmembers','sysmessages','sysobjects','sysoledbusers',";
+		excludedTableList = excludedTableList & "'sysopentapes','sysperfinfo','syspermissions','sysprocesses','sysprotects','sysreferences',";
+		excludedTableList = excludedTableList & "'sysremotelogins','syssegments','sysservers','system_columns','system_components_surface_area_configuration',";
+		excludedTableList = excludedTableList & "'system_internals_allocation_units','system_internals_partition_columns','system_internals_partitions',";
+		excludedTableList = excludedTableList & "'system_objects','system_parameters','system_sql_modules','system_views','systypes','sysusers','tables',";
+		excludedTableList = excludedTableList & "'tcp_endpoints','trace_categories','trace_columns','trace_event_bindings','trace_events',";
+		excludedTableList = excludedTableList & "'trace_subclass_values','traces','transmission_queue','trigger_events','triggers',";
+		excludedTableList = excludedTableList & "'type_assembly_usages','types','user_token','via_endpoints','views','xml_indexes',";
+		excludedTableList = excludedTableList & "'xml_schema_attributes','xml_schema_collections','xml_schema_component_placements',";
+		excludedTableList = excludedTableList & "'xml_schema_components','xml_schema_elements','xml_schema_facets','xml_schema_model_groups',";
+		excludedTableList = excludedTableList & "'xml_schema_namespaces','xml_schema_types','xml_schema_wildcard_namespaces','xml_schema_wildcards'";
+	
+		return excludedTableList;
+	}
 	
 }

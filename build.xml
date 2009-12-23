@@ -72,6 +72,9 @@
 		<echo message="Running BlogDemo Tests"/>
 		<ant antfile="${webroot}/BlogDemo/test/build.xml" inheritAll="false"/>
 		
+		<echo message="Running BlogDemoMSSQL Tests"/>
+				<ant antfile="${webroot}/BlogDemoMSSQL/test/build.xml" inheritAll="false"/>
+		
 		<echo message="Running Sakila Tests"/>
 		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
 	
