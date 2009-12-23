@@ -6,31 +6,7 @@
 	<cfparam name="attributes.cfcreference" type="string" default="" />
 	
 	<cfset message = attributes.message />
-	
 	<cfset tooltips = generateToolTips(attributes.cfcreference) />
-	
-	<cfset allowed = structNew() />
-	<cfset allowed['datasource'] = "displayName" />
-	<cfset allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable" />
-	<cfset allowed['column'] = "displayName,uiType" />
-	<cfset allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,">
-	<cfset allowed['config'] = allowed['config'] & "<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder," />
-	<cfset allowed['config'] = allowed['config'] & "<Misc>,serviceAccess,CFCFormat,WireOneToManyinViews,LogSQL,<Formats>,dateformat,timeformat," />
-	<cfset allowed['config'] = allowed['config'] & "<Magic Fields>,createdOnString,updatedOnString," />
-	<cfset allowed['config'] = allowed['config'] & "<MXUnit Settings>,CreateTests,MXUnitFilePath,testFolder" />
-	<cfset allowed['virtualcolumn'] = "name,displayName,getterCode,type,uiType" />
-	
-	<cfset booleans['datasource'] = "" />
-	<cfset booleans['table'] = "createInterface,IsJoinTable" />
-	<cfset booleans['column'] = "" />
-	<cfset booleans['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel,CreateTests,WireOneToManyinViews,LogSQL" />
-	<cfset booleans['virtualcolumn'] = "" />
-	
-	<cfset textareas['datasource'] = "" />
-	<cfset textareas['table'] = "" />
-	<cfset textareas['column'] = "" />
-	<cfset textareas['config'] = "" />
-	<cfset textareas['virtualcolumn'] = "getterCode" />
 	
 	<cfif structKeyExists(form, "submit")>
 	
@@ -60,7 +36,10 @@
 	<cfset fileToEdit = attributes.fileToEdit />
 	<cfset XML = XMLParse(FileRead(fileToEdit)) />
 	<cfset XMLRoot = StructKeyArray(XML)[1] />
-	<cfset Keys = ListToArray(allowed[XMLRoot]) />
+	
+	<cfset editor = new apptacular.handlers.cfc.editor(XMLRoot) />
+	<cfset keys = editor.getAllowedList() />
+	
 	
 	<cfoutput>
 		<h1>Edit #XMLRoot#</h1>
@@ -71,14 +50,14 @@
 			<input type="hidden" name="fileToEdit" value="#fileToEdit#" /> 	
 			<table>
 			
-			<cfloop array="#keys#" index="key" >
+			<cfloop list="#keys#" index="key" >
 				<cfif FindNoCase("<", key)>
 					<tr><th>&nbsp;</th></tr>	
 					<tr><th /><th><strong>#ReplaceList(key, "<,>,/", ",,")#</strong></th></tr>	
 					<cfcontinue />
 				
 				</cfif>
-				<cfif ListFindNoCase(booleans[XMLRoot], key)>
+				<cfif editor.isBooleanUI(key)>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
@@ -90,7 +69,7 @@
 							</cftooltip>
 						</td>			
 					</tr>
-				<cfelseif ListFindNoCase(textareas[XMLRoot], key)>
+				<cfelseif editor.isTextAreaUI(key)>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>

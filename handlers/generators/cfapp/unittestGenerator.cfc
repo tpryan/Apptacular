@@ -197,7 +197,8 @@ component  extends="codeGenerator"
 		runner.setFileLocation(variables.config.getTestFilePath());
 		
 		runner.addProperty("mxunit.jar", variables.config.getMXUnitFilePath() & "/ant/lib/mxunit-ant-java5.jar");
-		runner.addProperty("test.dir", variables.config.getTestFilePath());
+		//This is a hack to make sure that CF doesn't even run any debugging while ANT tests are running.
+		runner.addProperty("test.dir", variables.config.getTestFilePath() & "&amp;_cf_nodebug=true");
 		runner.addProperty("runner.cfc", variables.config.getTestRelativePath() & "/HttpAntRunner.cfc");
 		runner.addProperty("server", cgi.server_name);
 		runner.addProperty("cfc.path", variables.config.getTestCFCPath());
