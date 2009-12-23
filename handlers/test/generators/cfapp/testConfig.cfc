@@ -45,6 +45,16 @@ component extends="mxunit.framework.TestCase"{
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
 	
+	public void function testCalculateURLWindowsPathsTestPath(){
+	
+		var expectedURL = "http://#cgi.server_name#/blogdemomssql/test";
+		var FilePath = 'c:\inetpub\wwwroot\blogdemomssql\test';
+		var cfcPath = "blogdemomssql.test";	
+		var webroot = 'c:\Inetpub\wwwroot';
+		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
+		makePublic(config,"calculateURL");
+	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
+    }
 	public void function testAllPropertiesDocumented(){
     	var metaData = GetComponentMetaData("apptacular.handlers.generators.cfapp.config");
 		var props = metaData.properties;

@@ -6,6 +6,7 @@ component
 		
 		var defaultinteger = {type="numeric",ormtype="integer",uitype="string"};
 		var defaultstring = {type="string",ormtype="string",uitype="string"};
+		var defaultnumeric = {type="numeric",ormtype="float",uitype="string"};
 		
 		//Various Integers
 		datatypes['int'] = defaultinteger;
@@ -16,8 +17,10 @@ component
 		datatypes['SMALLINT UNSIGNED'] = defaultinteger;
 		datatypes['TINYINT UNSIGNED'] = defaultinteger;
 		datatypes['MEDIUMINT UNSIGNED'] = defaultinteger;
+		datatypes['int identity'] = defaultinteger;
 		
 		//various strings
+		datatypes['nvarchar'] = defaultstring;
 		datatypes['varchar'] = defaultstring;
 		datatypes['varchar2'] = defaultstring;
 		datatypes['enum'] = defaultstring;
@@ -25,13 +28,9 @@ component
 		
 		
 		//numerics
-		datatypes['number']['type'] = "numeric";
-		datatypes['number']['ormType'] = "big_decimal";
-		datatypes['number']['uiType'] = "string";
-		
-		datatypes['decimal']['type'] = "numeric";
-		datatypes['decimal']['ormType'] = "float";
-		datatypes['decimal']['uiType'] = "string";
+		datatypes['number'] = defaultnumeric;
+		datatypes['decimal'] = defaultnumeric;
+		datatypes['numeric'] = defaultnumeric;
 	
 	
 		//Chars text other strings
@@ -56,6 +55,10 @@ component
 		datatypes['true_false']['type'] = "boolean";
 		datatypes['true_false']['ormType'] = "true_false";
 		datatypes['true_false']['uiType'] = "boolean";
+		
+		datatypes['bit']['type'] = "boolean";
+		datatypes['bit']['ormType'] = "boolean";
+		datatypes['bit']['uiType'] = "boolean";
 		
 		//various ob's
 		datatypes['clob']['type'] = "clob";

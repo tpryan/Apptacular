@@ -119,6 +119,8 @@ component accessors="true" extends="dbItem"
 		
 		for (i=1; i <= columns.recordCount; i++){
 			var column = New column();
+			
+			
 			column.setName(LCase(columns.column_name[i]));
 			column.setDisplayName(capitalize(columns.column_name[i]));
 			column.setColumn(columns.column_name[i]);
@@ -131,6 +133,7 @@ component accessors="true" extends="dbItem"
 			column.setForeignKey(columns.referenced_primarykey[i]);
 			column.setForeignKeyTable(columns.referenced_primarykey_table[i]);
 			column.setLength(columns.column_size[i]);
+			
 			
 			
 			if (CompareNoCase(column.getForeignKeyTable(), "N/A") eq 0){
