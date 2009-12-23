@@ -106,6 +106,7 @@ component accessors="true" extends="dbItem"
 	public numeric function calculateHighestRowCount(){
 		var tables = This.getTables();
 		var rowCountArray = ArrayNew(1);
+		var i = 0;
 		
 		for (i=1; i <= ArrayLen(tables); i++){
 			var table = tables[i];
