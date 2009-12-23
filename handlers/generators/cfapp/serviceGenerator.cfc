@@ -1,6 +1,12 @@
+/**
+	* @hint Generates anything that will be used as a service by the generated application
+*/
 component  extends="codeGenerator"
 {
 	
+	/**
+	* @hint Creates the Authentication service for use with config setting "createLogin"
+	*/
 	public any function createAuthenticationService(){
 	
 		var cfc  = New apptacular.handlers.cfc.code.cfc();
@@ -44,6 +50,9 @@ component  extends="codeGenerator"
 		return cfc;
 	}
 	
+	/**
+	* @hint Spins through all of the tables in the database and creates a service cfc for it. 
+	*/
 	public any function createORMServiceCFC(required any table){
 		var i=0;
 		var EntityName = table.getEntityName();

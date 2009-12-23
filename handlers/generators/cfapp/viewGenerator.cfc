@@ -1,3 +1,6 @@
+/**
+* @hint Creates an update test for ORM objects.
+*/
 component extends="codeGenerator"{
 
 	public any function createViewListCustomTag(required any table){

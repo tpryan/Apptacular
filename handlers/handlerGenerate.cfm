@@ -11,7 +11,6 @@
 	
 	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
-		
 	
 		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
 		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value;
@@ -35,7 +34,7 @@
 	//process DB version of schema
 	db = New cfc.db.datasource(dsName);
 
-	//process both default and file version of config
+	//process config default 
 	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
 	
 	//make sure that large existing apps don't wire one-to-many relationships
@@ -52,6 +51,7 @@
 		}
 	}
 	
+	//Handle Managing config back to the disk. 
 	config.overwriteFromDisk();
 	config.calculatePaths();
 	config.writeToDisk();
@@ -59,6 +59,7 @@
 	//process file version of schema
 	dbConfig = New cfc.db.dbConfig(dbConfigPath);
 	
+	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
 	}
@@ -66,6 +67,7 @@
 		datamodel= db;
 	}
 	
+	//write back to disk.
 	dbConfig.writeConfig(datamodel);
 	
 	// Fire up the generator 

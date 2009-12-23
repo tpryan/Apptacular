@@ -1,6 +1,11 @@
+/**
+* @hint Generates all code that has anything to do with MXUnit testing.  
+*/
 component  extends="codeGenerator"
 {
-	
+	/**
+	* @hint Creates the test for the application's index.cfm
+	*/
 	public any function createIndexTest(){
 		
 		var indexURL = variables.config.getRootURL() & "/index.cfm";
@@ -68,6 +73,9 @@ component  extends="codeGenerator"
 		return testIndex;
 	}
 	
+	/**
+	* @hint Spins through and creates a simple Returns200 for every view.
+	*/
 	public any function createViewsTest(required any table){
 		var entityName = table.getEntityName();
 		var baseurl = variables.config.getRootURL() & "/#entityName#.cfm";
@@ -104,6 +112,9 @@ component  extends="codeGenerator"
 		return testView;
 	}
 	
+	/**
+	* @hint Generates the test that makes sure that the application is correctly wired through RemoteFacade.cfc
+	*/
 	public any function createGlobalTest(){
 		
 		var testGlobal  = New apptacular.handlers.cfc.code.cfc();
@@ -122,6 +133,9 @@ component  extends="codeGenerator"
 		return testGlobal;
 	}
 	
+	/**
+	* @hint Creates a CRUD test for Entities.
+	*/
 	public any function createEntityTest(required any table){
 		var entityName = table.getEntityName();
 		var columns = table.getColumns();
@@ -154,6 +168,9 @@ component  extends="codeGenerator"
 		return testEntity;
 	}	
 	
+	/**
+	* @hint Creates the remote facade that wires the IDE runner through the application scope of the application. 
+	*/
 	public any function createRemoteFacade(){
 	
 		var facade  = New apptacular.handlers.cfc.code.cfc();
@@ -164,6 +181,9 @@ component  extends="codeGenerator"
 		return facade;
 	}
 	
+	/**
+	* @hint Creates an ant runner that wires the ant runner through the application scope of the application. 
+	*/
 	public any function createHttpAntRunner(){
 	
 		var runner  = New apptacular.handlers.cfc.code.cfc();
@@ -174,6 +194,9 @@ component  extends="codeGenerator"
 		return runner;
 	}
 	
+	/**
+	* @hint Creates a simple html runner for MXunit
+	*/
 	public any function createDirectoryRunner(){
 		var runner = New apptacular.handlers.cfc.code.cfpage("runner", variables.config.getTestFilePath());
 		runner.appendBody('<cfparam name="url.output" type="string" default="extjs" />');
@@ -189,6 +212,9 @@ component  extends="codeGenerator"
 		return runner;
 	}
 	
+	/**
+	* @hint Creates a simple ant runner for MXunit
+	*/
 	public any function createAntRunner(){
 		var runner = New apptacular.handlers.cfc.code.build();
 		
@@ -218,6 +244,9 @@ component  extends="codeGenerator"
 		return runner;
 	}
 	
+	/**
+	* @hint Creates an update test for ORM objects.
+	*/
 	private any function createSimpleUpdateUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);
@@ -229,8 +258,6 @@ component  extends="codeGenerator"
 		var update= New apptacular.handlers.cfc.code.function();
 		update.setReturnType("void");
 		update.setName("testUpdate");
-	
-	
 	
 		update.addLineBreak();
 		update.AddOperation('			<cftransaction action="begin">');
@@ -281,6 +308,9 @@ component  extends="codeGenerator"
 		return update;
 	}
 	
+	/**
+	* @hint Creates a read test for ORM objects.
+	*/
 	private any function createSimpleReadUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);
@@ -375,6 +405,9 @@ component  extends="codeGenerator"
 		return read;
 	}
 	
+	/**
+	* @hint Creates an Creates or Delete test for ORM objects.
+	*/
 	private any function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
 		var i = 0;
 		var entityName = table.getEntityName();
@@ -452,6 +485,9 @@ component  extends="codeGenerator"
 		return read;
 	}
 	
+	/**
+	* @hint Creates an simple 200 test for input url.
+	*/
 	private any function createSimple200UnitTest(required string targetURL, string name="testReturns200", string entityName="", string operation=""){
 		var returns200= New apptacular.handlers.cfc.code.function();
 		returns200.setAccess("public");
@@ -481,6 +517,9 @@ component  extends="codeGenerator"
 		return returns200;
 	}
 	
+	/**
+	* @hint Generates repeatable data for testing creates and updates.
+	*/
 	private any function getDummyData(required string type){
 	
 		var dummy = structNew();
@@ -495,6 +534,9 @@ component  extends="codeGenerator"
 		return dummy[arguments.type];
 	}
 	
+	/**
+	* @hint Searchs through a table to determine if there is a valid id to use for reads and updates. 
+	*/
 	private any function discoverValidId(table){
 		//Crazy, but use a query to get a valid record to implement in this call.
 		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);

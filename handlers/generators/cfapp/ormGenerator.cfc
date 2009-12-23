@@ -1,5 +1,9 @@
 component extends="codeGenerator"{
 
+
+	/**
+	* @hint Contains all the code it takes to generate orm/entity CFCs for every table in the database. 
+	*/
 	public any function createORMCFC(required any table){
 		var i = 0;
 		var j = 0;
@@ -308,6 +312,9 @@ component extends="codeGenerator"{
 		return cfc;
 	}
 	
+	/**
+	* @hint Generates the default event handlers for the application allowing magic columns to work.  
+	*/
 	public any function createEventHandler(required string path){
 	
 		var cfc  = New apptacular.handlers.cfc.code.cfc();
@@ -419,6 +426,9 @@ component extends="codeGenerator"{
 		return cfc;
 	}
 	
+	/**
+	* @hint Generates the ApplicationCFC
+	*/
 	public any function createAppCFC(){
 		
 	    var dbname = variables.datasource.getName();
