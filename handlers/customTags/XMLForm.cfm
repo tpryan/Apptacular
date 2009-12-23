@@ -43,6 +43,7 @@
 	
 	<cfoutput>
 		<h1>Edit #XMLRoot#</h1>
+		<p class="helplink"><a href="../doc/fields.cfm?item=#XMLRoot#">#CapFirst(XMLRoot)# Reference</a></p>
 		<cfif len(message)>
 			<p class="alert">#message#</p>
 		</cfif>
@@ -61,7 +62,7 @@
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
-							<cfTooltip tooltip="#getToolTip(key)#"> 
+							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000"> 
 							<input name="#key#" type="radio" id="#key#true" value="true" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
 							<label for="#key#true">True</label>
 							<input name="#key#" type="radio" id="#key#false" value="false" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND NOT XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
@@ -73,14 +74,18 @@
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
-							<cftextarea name="#key#" tooltip="#getToolTip(key)#" >#XML[XMLRoot][key]['XMLText']#</cftextarea>
+							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000">
+							<cftextarea name="#key#" >#XML[XMLRoot][key]['XMLText']#</cftextarea>
+							</cfToolTip>
 						</td>			
 					</tr>	
 				<cfelse>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
-							<cfinput name="#key#" type="text" id="#key#" tooltip="#getToolTip(key)#" value="#XML[XMLRoot][key]['XMLText']#" />
+							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000">
+							<cfinput name="#key#" type="text" id="#key#" value="#XML[XMLRoot][key]['XMLText']#" />
+							</cftooltip>
 						</td>			
 					</tr>
 				</cfif>
@@ -131,3 +136,31 @@
 		}
 	}
 </cfscript>
+
+<!---
+Capitalizes the first letter in each word.
+Made udf use strlen, rkc 3/12/02
+v2 by Sean Corfield.
+
+@param string      String to be modified. (Required)
+@return Returns a string. 
+@author Raymond Camden (ray@camdenfamily.com) 
+@version 2, March 9, 2007 
+--->
+<cffunction name="CapFirst" returntype="string" output="false">
+    <cfargument name="str" type="string" required="true" />
+    
+    <cfset var newstr = "" />
+    <cfset var word = "" />
+    <cfset var separator = "" />
+    
+    <cfloop index="word" list="#arguments.str#" delimiters=" ">
+        <cfset newstr = newstr & separator & UCase(left(word,1)) />
+        <cfif len(word) gt 1>
+            <cfset newstr = newstr & right(word,len(word)-1) />
+        </cfif>
+        <cfset separator = " " />
+    </cfloop>
+
+    <cfreturn newstr />
+</cffunction>

@@ -68,6 +68,7 @@
 	</cfscript>
 	
 	<h2>Edit Columns</h2>
+	<p class="helplink"><a href="../doc/fields.cfm?item=column">Column Reference</a></p>
 		<cfif len(message)>
 			<cfoutput><p class="alert">#message#</p></cfoutput>
 		</cfif>
@@ -89,16 +90,22 @@
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<cfselect name="#fieldname#" id="#attribute#"  tooltip="#getToolTip(attribute)#">
+							<cfTooltip tooltip="#getToolTip(attribute)#" showdelay="1000">
+							<cfselect name="#fieldname#" id="#attribute#">
 								<cfloop list="#uilist#" index="type">
 								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
 								</cfloop>
 							</cfselect>
+							</cftoolTip>
 						</td>			
 					<cfelse>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
-						<td><cfinput name="#fieldname#" type="text" value="#value#"  tooltip="#getToolTip(attribute)#" /></td>
+						<td>
+							<cfTooltip tooltip="#getToolTip(attribute)#" showdelay="1000">
+								<cfinput name="#fieldname#" type="text" value="#value#"  tooltip="#getToolTip(attribute)#" />
+							</cftoolTip>		
+						</td>
 					</cfif>
 				</cfloop>
 				

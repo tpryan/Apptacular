@@ -79,6 +79,7 @@
 <td><cf_XMLColumnsForm tablePathToEdit="#path#" /></td>
 <td> 
 	<h2>Edit Virtual Columns</h2>
+	<p class="helplink"><a href="../doc/fields.cfm?item=virtualcolumn">Virtual Column Reference</a></p>
 	<table>
 		<tr><td><a href="editVirtualColumn.cfm?path=#path#">Add Virtual Column</a></td></tr>
 	
