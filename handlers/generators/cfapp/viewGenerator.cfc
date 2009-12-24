@@ -35,8 +35,6 @@ component extends="codeGenerator"{
 		ct.AppendBody('<cfoutput>');
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<thead>');
-		
-		
 		ct.AppendBody('		<tr>');
 		
 		var columns = table.getColumns();
@@ -92,9 +90,7 @@ component extends="codeGenerator"{
 			
 				ct.AppendBody('			<th>#otherJoinTable.getEntityName()#Count</th>');
 				columnCount++;
-			
 			}
-		
 		}		
 		
 		ct.AppendBody('		</tr>');
@@ -113,7 +109,6 @@ component extends="codeGenerator"{
 				var page = "#fkTable.getEntityName()#.cfm";
 				var method ="?method=read";
 				var idString = "&amp;#fkTable.getIdentity()#";
-			
 				
 				ct.AppendBody("			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
@@ -179,7 +174,6 @@ component extends="codeGenerator"{
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
 				ct.AppendBody('			<td>###entityName#.get#otherJoinTable.getEntityName()#Count()##</td>');
 			}
-		
 		}
 		
 		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=read&#identity#=###entityName#.get#identity#()##">Read</a></td>');
@@ -247,7 +241,6 @@ component extends="codeGenerator"{
 		ct.AppendBody('<table>');
 		ct.AppendBody('	<tbody>');
 		
-		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
 		 	
@@ -259,8 +252,6 @@ component extends="codeGenerator"{
 				
 				ct.AppendBody('		<tr>');
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
-					
-					
 					ct.AppendBody('			<th>#column.getName()#</th>');
 					ct.AppendBody("'		<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
@@ -268,7 +259,6 @@ component extends="codeGenerator"{
 					ct.AppendBody('			<cfelse>');
 					ct.AppendBody('				<td></td>');
 					ct.AppendBody('			</cfif>');
-					
 				}	
 				else{
 					ct.AppendBody('			<th>#fkTable.getEntityName()#</th>');
@@ -278,33 +268,20 @@ component extends="codeGenerator"{
 					ct.AppendBody('			<cfelse>');
 					ct.AppendBody('				<td></td>');
 					ct.AppendBody('			</cfif>');
-					
-					
 				}
-				
-				
-				
-				
-				
 				ct.AppendBody('		</tr>');
-			
-			
 			}
 			else if (compareNoCase(columns[i].getuitype(), "binary") eq 0){
 				ct.AppendBody('		<tr>');
 		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 		 		ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
 				ct.AppendBody('		</tr>');	
-
-				
 			}
-			
 			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0){
 				ct.AppendBody('		<tr>');
 		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 		 		ct.AppendBody('			<td>');
 				ct.AppendBody('				<cftry>');
-				ct.AppendBody('				<td>');
 				ct.AppendBody('					<cfcatch>');
 				ct.AppendBody('						<cfif FindNoCase("ColdFusion was unable to create an image",cfcatch.message)>');
 				ct.AppendBody('							[Unsupported image]');
@@ -315,38 +292,25 @@ component extends="codeGenerator"{
 				ct.AppendBody('				</cftry>');	
 				ct.AppendBody('			</td>');
 				ct.AppendBody('		</tr>');	
-
-				
 			}
-			
 			else if (compareNoCase(column.getuitype(), "boolean") eq 0){
-					
-					ct.AppendBody('		<tr>');
-		 			ct.AppendBody('			<th>#column.getDisplayName()#</th>');
-		 			ct.AppendBody('			<td>##YesNoFormat(#EntityName#.get#column.getName()#())##</td>');
-					ct.AppendBody('		</tr>');
-
-				
+				ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 		ct.AppendBody('			<td>##YesNoFormat(#EntityName#.get#column.getName()#())##</td>');
+				ct.AppendBody('		</tr>');
 			}
 			else if (compareNoCase(column.getuitype(), "date") eq 0){
-					
-					ct.AppendBody('		<tr>');
-		 			ct.AppendBody('			<th>#column.getDisplayName()#</th>');
-		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )##</td>');
-					ct.AppendBody('		</tr>');
-
-				
+				ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )##</td>');
+				ct.AppendBody('		</tr>');
 			}
 			else if (compareNoCase(column.getuitype(), "datetime") eq 0){
-					
-					ct.AppendBody('		<tr>');
-		 			ct.AppendBody('			<th>#column.getDisplayName()#</th>');
-		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#column.getName()#(),"#config.getTimeFormat()#" )##</td>');
-					ct.AppendBody('		</tr>');
-
-				
+				ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#column.getName()#(),"#config.getTimeFormat()#" )##</td>');
+				ct.AppendBody('		</tr>');
 			}		
-				
 			else{
 		 		ct.AppendBody('		<tr>');
 		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
@@ -365,20 +329,12 @@ component extends="codeGenerator"{
 				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
 				ct.AppendBody('			<td><cf_manyToManyReader  entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  /></td>');
 				ct.AppendBody('		</tr>');
-			
 			}
-		
 		}
 		
 		
 		ct.AppendBody('	</tbody>');
 		ct.AppendBody('</table>');
-		
-		
-		
-		
-		
-		
 		ct.AppendBody('</cfoutput>');
 	    
 	    return ct;
@@ -397,7 +353,6 @@ component extends="codeGenerator"{
 		var columns = table.getColumns();
 		var identity = table.getIdentity(); 
 		
-		
 		ct.addAttribute(EntityName, 'any', true);
 		ct.addAttribute('message', 'string', false, "");
 		ct.AppendBody('<cfset #EntityName# = attributes.#EntityName# /> ');
@@ -408,18 +363,12 @@ component extends="codeGenerator"{
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
 		ct.AppendBody('<cfoutput>');
-		
 		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html">');
-		
 		ct.AppendBody('	<table>');
 		ct.AppendBody('	<tbody>');
 		
-		
-		
-		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
-		 	
 			columnName = column.getName();
 				
 	 		if (column.getIsPrimaryKey()){
@@ -439,31 +388,24 @@ component extends="codeGenerator"{
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td><cftextarea name="#columnName#"  id="#columnName#" value="###EntityName#.get#columnName#()##" richtext="true" toolbar="Basic" skin="Silver" /></td>');
 				}
-				
 				else if (compareNoCase(uitype, "binary") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
 				}
-				
 				else if (compareNoCase(uitype, "picture") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
 				}
-				
 				else if (compareNoCase(uitype, "boolean") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>');
 					ct.AppendBody('				<label for="#columnName#true"><input type="radio" name="#columnName#" <cfif isBoolean(#EntityName#.get#columnName#()) AND #EntityName#.get#columnName#()>checked="checked"</cfif> id="#columnName#true" value="1">Yes</label>');
 					ct.AppendBody('				<label for="#columnName#false"><input type="radio" name="#columnName#" <cfif isBoolean(#EntityName#.get#columnName#()) AND NOT #EntityName#.get#columnName#()>checked="checked"</cfif> id="#columnName#false" value="0">No</label>');
 					ct.AppendBody('			</td>');
-
-				
 				}
-				
 				else if (variables.config.isMagicField(columnName)){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				
-				
 					if (compareNoCase(column.getuitype(), "date") eq 0){
 				 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#column.getName()#(),"#config.getDateFormat()#" )##</td>');
 					}
@@ -473,8 +415,6 @@ component extends="codeGenerator"{
 					else{
 						ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
 					}		
-				
-				
 				}
 				else if (column.getisForeignKey()){
 					var fkTable = datasource.getTable(column.getForeignKeyTable());
@@ -482,21 +422,14 @@ component extends="codeGenerator"{
 					
 					ct.AppendBody('		<tr>');
 					if (table.getForeignTableCount(fkTable.getName()) gt 1){
-						
-						
-						
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
 						ct.AppendBody('			<cfelse>');
 						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
 						ct.AppendBody('			</cfif>');
-						
-						
 						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
 		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
-						
-						
-						
+
 					}	
 					else{
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
@@ -508,16 +441,7 @@ component extends="codeGenerator"{
 						
 						ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
 		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');
-						
-						
 					}
-					
-					
-					
-					
-					
-					
-					
 						
 				}
 				else{
@@ -527,9 +451,9 @@ component extends="codeGenerator"{
 				
 				ct.AppendBody('		</tr>');
 			}
-			
 		}
 		
+		//Wire up many to many relationships
 		if (table.getHasJoinTable()){
 			var joinTables = table.getJoinTables();
 			for (i = 1; i <= ArrayLen(joinTables); i++){
@@ -540,18 +464,13 @@ component extends="codeGenerator"{
 				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
 				ct.AppendBody('			<td><cf_manyToManySelector name="#otherJoinTable.getPlural()#" entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  orderby="#otherJoinTable.getOrderby()#"  /></td>');
 				ct.AppendBody('		</tr>');
-			
 			}
-		
 		}
-		
 		
 		ct.AppendBody('		<tr>');
 		ct.AppendBody('			<th />');
 		ct.AppendBody('			<td><input name="save" type="submit" value="Save" /></td>');
 		ct.AppendBody('		</tr>');
-		
-		
 		ct.AppendBody('	</tbody>');
 		ct.AppendBody('	</table>');
 		ct.AppendBody('</cfform>');
@@ -590,19 +509,16 @@ component extends="codeGenerator"{
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
 	    view.AppendBody('		<cfset #entityName#Array = entityLoad("#entityName#", {}, "#orderby#", {offset=url.offset, maxresults=url.maxresults} ) />');
-		
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
 		view.AppendBody('		</p></cfoutput>');	
-		
 		view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" /> ');
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    
 		view.AppendBody('	<cfcase value="read">');
 	    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
-	    
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a> /');
@@ -613,6 +529,7 @@ component extends="codeGenerator"{
 		
 		var references = table.getReferences();
 	   	
+		//Wire up references if we're going to do such things.
 		if (not isNull(references) AND config.getWireOneToManyinViews()){
 		
 			for (j=1; j <= ArrayLen(references); j++){
@@ -628,8 +545,9 @@ component extends="codeGenerator"{
 			}
 	   	}
 		
-		
 		view.AppendBody('	</cfcase>');
+		
+		
 		view.AppendBody();
 	    view.AppendBody('	<cfcase value="edit">');
 	    view.AppendBody('		<cfif url.#identity# eq 0>');
@@ -649,13 +567,11 @@ component extends="codeGenerator"{
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    view.AppendBody('	<cfcase value="edit_process">');
-	    
 		view.AppendBody('		<cfset #entityName# = EntityNew("#entityName#") />');
 		view.AppendBody('		<cfset #entityName# = #entityName#.populate(form) />');
 	    view.AppendBody('		<cfset EntitySave(#entityName#) />');
 	    view.AppendBody('		<cfset ORMFlush() />');
 	    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
-	    
 	    view.AppendBody('	</cfcase>');
 	    view.AppendBody();
 	    view.AppendBody('	<cfcase value="delete_process">');
@@ -692,12 +608,9 @@ component extends="codeGenerator"{
 	    	}
 		}
 	    
-	    
 	    index.AppendBody('</ul>');
 		index.AppendBody('</cf_pageWrapper>');
 		return index ;
-	
-	
 	}
 	
 	/**
@@ -708,7 +621,6 @@ component extends="codeGenerator"{
 		var path = variables.config.getCustomTagFilePath();
 		var csspath = variables.config.getCSSRelativePath();
 	    var wrapper  =  New apptacular.handlers.cfc.code.CFPage("pageWrapper", path);
-		  
 	    
 	    wrapper.AppendBody('<cfprocessingdirective suppresswhitespace="yes">');
 		wrapper.AppendBody('<cfif thisTag.executionMode is "start">');
@@ -717,8 +629,6 @@ component extends="codeGenerator"{
 		wrapper.AppendBody('<head>');
 		wrapper.AppendBody('<cfoutput><title>#datasource.getDisplayName()#</title></cfoutput>');
 		wrapper.AppendBody('<link rel="stylesheet" href="#csspath#/screen.css" type="text/css" media="screen"/>');
-
-		
 		wrapper.AppendBody('</head>');
 		wrapper.AppendBody('<body>');
 		wrapper.AppendBody('<h1>#variables.datasource.getDisplayName()#</h1>');
@@ -728,11 +638,7 @@ component extends="codeGenerator"{
 		wrapper.AppendBody('</cfif>');
 		wrapper.AppendBody('</cfprocessingdirective>');
 		
-		
-		
-	    
 		return wrapper ;
-	
 	
 	}
 	
@@ -746,7 +652,6 @@ component extends="codeGenerator"{
 	    
 		login.AppendBody('<cfsetting showdebugoutput="false" />');
 		login.AppendBody('<cfparam name="form.username" default="" type="string" /> ');
-
 		login.AppendBody('<cfset message = "" />');
 		login.AppendBody('<cfif structKeyExists(form, "login")>');
 		login.AppendBody('	<cfset authService = New #config.getServiceCFCPath()#.AuthenticationService() />');
@@ -769,11 +674,7 @@ component extends="codeGenerator"{
 		login.AppendBody('</cf_pageWrapper>');
 		
 		return login ;
-	
-	
 	}
-	
-	
 	
 	/**
 	* @hint Copying hard copy CSS file to CSS location 
@@ -787,9 +688,6 @@ component extends="codeGenerator"{
 		file.InsertFile(origCT);
 		return file;  
 	}
-	
-
-	
 
 	/**
 	* @hint Copying hard copy gradient image file file to CSS location 
@@ -803,7 +701,6 @@ component extends="codeGenerator"{
 		file.insertImage(origimage);
 		return file;  
 	}
-	
 	
 	/**
 	* @hint Copying hard copy Foreign Key Custom Tag file to Custom tag location 
@@ -844,7 +741,6 @@ component extends="codeGenerator"{
 		return file;  
 	}
 	
-	
 	/**
 	* @hint Copying hard copy Many to Many Custom Tag reader file to Custom tag location 
 	*/
@@ -857,6 +753,5 @@ component extends="codeGenerator"{
 		file.InsertFile(origCT);
 		return file; 
 	}
-
 
 }
