@@ -6,6 +6,9 @@
 
 
 <cf_pageWrapper>
+	<cfif FindNoCase("notanapplication", url.type)>
+		<cfoutput><p>Application is not an Apptacular application. You have to create from the RDS vew first.</p></cfoutput>				
+	</cfif>
 	<cfif FindNoCase("generated", url.type)>
 		<cfoutput><p><strong>#fileCount#</strong> Files Generated in <strong>#seconds#</strong> seconds, even using Evaluate()</p></cfoutput>				
 	</cfif>
