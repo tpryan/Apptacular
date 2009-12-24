@@ -5,7 +5,10 @@ component accessors="true" extends="dbItem"
 	property name="uiType" hint="The type to generate ui's for." ;
 	property name="Type" hint="The ColdFusion datatype" ;
 	property name="getterCode" hint="The code that goes in the getVirtualColumn method.";
-	
+
+	/**
+	 * @hint Converts virtualcolumn to XML for serialization
+	 */		
 	public string function toXML(){
 		return objectToXML("virtualcolumn");
 	} 

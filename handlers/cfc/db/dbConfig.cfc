@@ -1,5 +1,9 @@
 component 
 {
+
+	/**
+	 * @hint You know, an init. 
+	 */
 	public function init(required string path){
 		
 		variables.FS = createObject("java","java.lang.System").getProperty("file.separator");
@@ -12,6 +16,9 @@ component
 		}
 	}
 
+	/**
+	* @hint Writes configurations to disk. 
+	*/
 	public void function writeConfig(required datasource datasource){
 		var tables = arguments.datasource.getTables();
 		var i = 0;
@@ -38,6 +45,9 @@ component
 	
 	}
 	
+	/**
+	* @hint Rewrites all of the info in a datasource from the config files.
+	*/	
 	public datasource function overwriteConfig(required datasource datasource){
 
 		if (not directoryExists(variables.path)){
@@ -48,7 +58,6 @@ component
 		var j = 0;
 		var checksums = getChecksumInfoFromDisk();
 		var newDataSource = duplicate(arguments.datasource);
-		
 		
 		//check datasource
 		var datasourceName = newDataSource.getName(); 
@@ -106,8 +115,6 @@ component
 				
 			}
 			
-			
-			
 			table.setColumns(columnsArray);
 			table.setColumnsStruct(columnsStruct);
 						
@@ -141,7 +148,9 @@ component
 		return newDataSource;
 	}
 	
-	
+	/**
+	 * @hint Rewrites the content of a cfc based on file 
+	 */	
 	private any function reWriteObject(required any object, required string path, required string ObjectType){
 		var newObject = Duplicate(arguments.object);
 		var XML = XMLParse(FileRead(arguments.path));
@@ -164,12 +173,18 @@ component
 		return newObject;
 	}
 	
+	/**
+	* @hint Creates a directory if it doesn't exist.
+	*/	
 	private void function conditionallyCreateDirectory(required string path){
 		if(not directoryExists(path)){
 			DirectoryCreate(path);
 		}
 	}
 	
+	/**
+	* @hint Calculates a checksum for a file database xml file. 
+	*/
 	private struct function getChecksumInfoFromDisk(){
 		var i = 0;
 		var dirs = directoryList(variables.path, true, "query");
@@ -186,7 +201,6 @@ component
 		for (i = 1; i <= dirs.recordCount; i++){
 			var checksumArrayPath = ReplaceNoCase(dirs.directory[i], variables.path, "", "all");
 			
-			
 			if ( compareNoCase(left(dirs.name[i], 1), "_")){
 				checksumArrayPath = checksumArrayPath & variables.FS & getToken(dirs.name[i], 1, ".");
 			}
@@ -198,9 +212,7 @@ component
 			
 		}
 		
-		
 		return returnStruct;
 	}
-
 
 }

@@ -1,6 +1,12 @@
+/**
+ * @hint Hard codes all constant values for use in the application. 
+ */
 component 
 {
 
+	/**
+	 * @hint You know, an init. 
+	 */
 	public function init(){
 		variables.datatypes = {};
 		
@@ -69,7 +75,6 @@ component
 		datatypes['blob']['ormType'] = "binary";
 		datatypes['blob']['uiType'] = "binary";
 		
-		
 		//various dates
 		datatypes['date']['type'] = "date";
 		datatypes['date']['ormType'] = "date";
@@ -90,20 +95,27 @@ component
 		datatypes['year']['type'] = "numeric";
 		datatypes['year']['ormType'] = "integer";
 		datatypes['year']['uiType'] = "string";
-		
-		
 			
     	return This;
     }
 
+	/**
+	 * @hint gets the Ormtype for a given datatype
+	 */
 	public string function getOrmType(required string datatype){
 		return datatypes[arguments.datatype]['ormType'];
 	}
-	
+
+	/**
+	 * @hint gets the type for a given datatype
+	 */
 	public string function getType(required string datatype){
 		return datatypes[arguments.datatype]['Type'];
 	}
-	
+
+	/**
+	 * @hint gets the UItype for a given datatype
+	 */
 	public string function getUIType(required string datatype){
 		return datatypes[arguments.datatype]['UIType'];
 	}

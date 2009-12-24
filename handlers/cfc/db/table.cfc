@@ -1,3 +1,6 @@
+/**
+ * @hint Represent a table in the database.
+ */
 component accessors="true" extends="dbItem"  
 {
 	property name="name" hint="The real name of the table in the database.";
@@ -20,10 +23,8 @@ component accessors="true" extends="dbItem"
 	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";
 	property name="rowcount" type="numeric" hint="The number of records in the table.";
 	
-	
 	property name="joinedTables" type="array" hint="An array of all of the joined tables that referenced this table if isJoinTable is true";
 	property name="joinTables" type="array" hint="An array of all of the join tables that referenced this table if hasJoinTable is true";
-	
 	
 	property name="references" type="reference[]" hint="An array of references to other tables if isReferencedAsForeignKey is true.";
 	property name="referenceCounts" type="struct" hint="A structure of the number of times each referenced table is referenced.";
@@ -31,7 +32,9 @@ component accessors="true" extends="dbItem"
 	property name="foreignTables" type="struct"  hint="An structure of all of the foreign tables to this table if has ForeignKeys is true.";
 	
 	
-	
+	/**
+	 * @hint You know, an init. 
+	 */
 	public function init(required string name, required string datasource){
 		variables.mappings = New mappings();
 		variables.dbinfo = New dbinfo();
@@ -54,12 +57,10 @@ component accessors="true" extends="dbItem"
 		return This;
 	}
 	
-	public array function getArray(){
-		return columns;
-	}
 	
-	
-	
+	/**
+	 * @hint Fills all of the content in the table with defaults.
+	 */
 	private void function populateTable(){
 		
 		This.setHasForeignKeys(FALSE);
@@ -72,20 +73,19 @@ component accessors="true" extends="dbItem"
 		This.setForeignTables(structNew());
 		This.setreferenceCounts(structNew());
 		This.setCreateInterface(TRUE);
-		
 	
 	}
 	
+	/**
+	 * @hint Populates all of the details of Foreign keys relationships
+	 */
 	private void function populateForeignKeys(){
 		dbinfo.setType("foreignkeys");
 		var	foreignkeys = dbinfo.send().getResult();
-		
 		var i = 0;
 		
 		dbinfo.setType("index");
 		var	indicies = dbinfo.send().getResult();
-		
-		
 		
 		This.setIsReferencedAsForeignKey(foreignKeys.recordCount > 0 );
 		
@@ -103,7 +103,10 @@ component accessors="true" extends="dbItem"
 		
 	
 	}
-	
+
+	/**
+	 * @hint Populates the column information of the table.
+	 */	
 	private void function populateColumns(){
 		dbinfo.setType("columns");
 		
@@ -113,14 +116,8 @@ component accessors="true" extends="dbItem"
 		var columnStruct = structNew();
 		var referencedTables = structNew();
 		
-		
-		
-		
-		
 		for (i=1; i <= columns.recordCount; i++){
 			var column = New column();
-			
-			
 			column.setName(LCase(columns.column_name[i]));
 			column.setDisplayName(capitalize(columns.column_name[i]));
 			column.setColumn(columns.column_name[i]);
@@ -134,13 +131,9 @@ component accessors="true" extends="dbItem"
 			column.setForeignKeyTable(columns.referenced_primarykey_table[i]);
 			column.setLength(columns.column_size[i]);
 			
-			
-			
 			if (CompareNoCase(column.getForeignKeyTable(), "N/A") eq 0){
 				column.setForeignKeyTable(JavaCast('null', ''));
 			}	
-			
-				
 			
 			//Count number of referenced tables.
 			if (CompareNoCase(columns.referenced_primarykey_table[i], "N/A")){
@@ -157,7 +150,6 @@ component accessors="true" extends="dbItem"
 			if (column.getIsForeignKey()){
 				This.setHasForeignKeys(TRUE);
 			}
-			
 			
 		}
 		
@@ -177,11 +169,13 @@ component accessors="true" extends="dbItem"
 			This.setJoinedTables(structKeyArray(referencedTables));
 		}
 		
-		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
 	}
-	
+
+	/**
+	 * @hint Tries to determine what field should be the foreign key label.
+	 */	
 	public void function calculateForeignKeyLabel(){
 		var result = "";
 		var columns = This.getColumns();
@@ -200,10 +194,12 @@ component accessors="true" extends="dbItem"
 		
 		This.setForeignKeyLabel(result);
 	}
-	
+
+	/**
+	 * @hint Returns the number of times that a reference a foreign count
+	 */	
 	public numeric function getForeignTableCount(required string tablename){
 		var ft = This.getForeignTables();
-		
 		
 		if(StructKeyExists(ft, arguments.tablename)){
 			return ft[arguments.tablename];
@@ -212,15 +208,15 @@ component accessors="true" extends="dbItem"
 			return 0;
 		}
 		
-		
-		
 	}
-	
+
+	/**
+	 * @hint Populates all of the details of Foreign keys relationships
+	 */	
 	private void function populateForeignTables(){
 		
 		var columns = This.getColumns();
 		var i = 0;
-		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
@@ -232,17 +228,14 @@ component accessors="true" extends="dbItem"
 				}
 				
 				ft[column.getForeignKeyTable()] = ft[column.getForeignKeyTable()] + 1;
-				
-				
 				This.setForeignTables(Duplicate(ft));
-			
-			
 			}
-		
 		}
-	
 	}
 	
+	/**
+	 * @hint Returns the number of times that a table is referenced as a foreign key
+	 */	
 	public numeric function getReferenceCount(required string tablename){
 		var refCounts = This.getReferenceCounts();
 		
@@ -255,6 +248,9 @@ component accessors="true" extends="dbItem"
 		
 	}
 	
+	/**
+	 * @hint Populates all of the details of tables that reference this table as a foriegn key
+	 */	
 	private void function populateReferenceCounts(){
 		var refs = This.getReferences();
 		var refCounts = This.getReferenceCounts();
@@ -274,11 +270,12 @@ component accessors="true" extends="dbItem"
 			}
 		}
 		This.setReferenceCounts(Duplicate(refCounts));
-	
-	
 		
 	}
 	
+	/**
+	 * @hint Determines whether or not this table can be scaffolded.
+	 */	
 	public boolean function isProperTable(){
 		
 		var identity = This.getIdentity();
@@ -295,28 +292,46 @@ component accessors="true" extends="dbItem"
 		}
 	}
 	
+	/**
+	 * @hint Whether or not this table has a primary key
+	 */	
 	public boolean function hasPrimaryKey(){
 		return (Not isNull(This.getIdentity()));
 	}
 	
+	/**
+	 * @hint Converts table to XML for serialization
+	 */	
 	public string function toXML(){
 		return objectToXML("table");
 	} 
 	
+	/**
+	 * @hint Checks to see if entity name and the table name is the same to cut back on unnecessary code
+	 */	
 	public boolean function isEntitySameAsTableName(){
 		return (CompareNoCase(This.getName(), This.getEntityName()) eq 0);	
 	}
 	
+	/**
+	 * @hint Returns a column object from table with that name. 
+	 */	
 	public table function getColumn(required string columnName){
 		return This.getColumnsStruct()[arguments.columnName];
 	}
 	
+	/**
+	 * @hint Add a jointable relationship
+	 */	
 	public void function addJoinTable(required string joinTable){
 		var joinTables = This.getJoinTables();
 		ArrayAppend(joinTables, arguments.joinTable);
 		This.setJoinTables(joinTables);
 	}
 	
+	/**
+	 * @hint Gets the other table in a many to many join. 
+	 */	
 	public string function getOtherJoinTable(required string joinTable){
 		var i = 0;
 		var joinedTables = This.getJoinedTables();
@@ -328,6 +343,9 @@ component accessors="true" extends="dbItem"
 		}
 	}
 	
+	/**
+	 * @hint Adds a virtual column to the table.
+	 */	
 	public void function addVirtualColumn(required virtualColumn virtualColumn){
 		var virtualColumns = This.getVirtualcolumns();
 		ArrayAppend(virtualColumns, virtualColumn);

@@ -1,3 +1,6 @@
+/**
+ * @hint Represents a column in a table in a database. 
+ */	
 component accessors="true" extends="dbItem"  
 {
 	property name="name" hint="The code name of the property to represent this column.";
@@ -13,14 +16,18 @@ component accessors="true" extends="dbItem"
 	property name="uiType" hint="The type to generate ui's for." ;
 	property name="Type" hint="The ColdFusion datatype" ;
 	
+	/**
+	 * @hint Converts table to XML for serialization
+	 */	
 	public string function toXML(){
 		return objectToXML("column");
 	} 
 	
+	/**
+	 * @hint Checks to see if column property name and the column name is the same to cut back on unnecessary code
+	 */	
 	public boolean function isColumnSameAsColumnName(){
 		return (CompareNoCase(This.getName(), This.getColumn()) eq 0);	
 	}
-	
-	
 
 }

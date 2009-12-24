@@ -1,3 +1,6 @@
+/**
+ * @hint Represents a datasource. 
+ */
 component accessors="true" extends="dbItem"  
 {
 	property name="name" hint="Name of the ColdFusion Datasource to use.";
@@ -7,10 +10,12 @@ component accessors="true" extends="dbItem"
 	property name="tables" type="table[]" hint="An array of all of the tables in the datasource.";
 	property name="tablesStruct" type="struct" hint="An structure of all of the tables in the datasource."; 
 	
+	/**
+	 * @hint You know what this does.
+	 */	
 	public function init(required string datasource){
 		variables.dbinfo = New dbinfo();
 		dbinfo.setDatasource(arguments.datasource);
-		
 		
 		variables.excludedTableList = generateExcludedTables();
 		
@@ -22,7 +27,10 @@ component accessors="true" extends="dbItem"
 	
 		return This;
 	}
-	
+
+	/**
+	 * @hint Populate table information 
+	 */		
 	private void function populateTables(){
 		var i = 0;
 		var j = 0;
@@ -45,7 +53,6 @@ component accessors="true" extends="dbItem"
 		excludedTableList = "";
 		for (i = 1; i <= tables.recordCount; i++){
 			excludedTableList = ListAppend(excludedTableList, "'#tables.table_name[i]#'");
-		
 		}
 		
 		
@@ -82,18 +89,19 @@ component accessors="true" extends="dbItem"
 			}
 		}
 		
-		
 		// poppulate array
 		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
 			ArrayAppend(tablesArray, tablesStruct[tablesStructKeys[i]]);
 		}
-		
 		
 		This.setTables(tablesArray);
 		This.setTablesStruct(tablesStruct);
 		
 	}
 	
+	/**
+	 * @hint Counts rows for each table 
+	 */	
 	public numeric function calculateRowCount(required string tableName){
 		var SQL = "SELECT count(*) as countOfRows FROM #arguments.tableName#";
 		
@@ -103,6 +111,9 @@ component accessors="true" extends="dbItem"
 		return countOfRows;
 	}
 	
+	/**
+	 * @hint Calculates the highest row count in the database.
+	 */	
 	public numeric function calculateHighestRowCount(){
 		var tables = This.getTables();
 		var rowCountArray = ArrayNew(1);
@@ -115,27 +126,36 @@ component accessors="true" extends="dbItem"
 		
 		ArraySort(rowCountArray, "numeric", "desc");		
 		
-		
 		return rowCountArray[1];
 	}
 	
+	/**
+	 * @hint Pumps the CFC with info about the datasource. 
+	 */		
 	public void function populateDatasource(){
 		dbinfo.setType("version");
 		var version = dbinfo.send().getResult();
-		
 		This.setEngine(version.database_productname);
 		This.setVersion(version.database_version);
-		
 	}
-	
+
+	/**
+	 * @hint Returns a table object from datasource with that name. 
+	 */		
 	public table function getTable(required string tableName){
 		return This.getTablesStruct()[arguments.tableName];
 	}
-	
+
+	/**
+	 * @hint Converts table to XML for serialization
+	 */	
 	public string function toXML(){
 		return objectToXML("datasource");
 	} 
-	
+
+	/**
+	 * @hint Create a list of tables to not process.  Somehow pulled in via cfdbinfo in MSSQL
+	 */		
 	private string function generateExcludedTables(){
 		var excludedTableList = "'CHECK_CONSTRAINTS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES',";
 		excludedTableList = excludedTableList & "'COLUMNS','CONSTRAINT_COLUMN_USAGE','CONSTRAINT_TABLE_USAGE','DOMAIN_CONSTRAINTS','DOMAINS','KEY_COLUMN_USAGE',";
@@ -200,5 +220,4 @@ component accessors="true" extends="dbItem"
 	
 		return excludedTableList;
 	}
-	
 }
