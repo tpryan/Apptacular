@@ -43,11 +43,17 @@ component{
 		
 		//Create global application views.
 		if (config.getCreateViews()){
-			viewGenerator.copyCSS();
-			viewGenerator.copyForeignKeyCustomTag();
-			viewGenerator.copyManyToManyCustomTag();
-			viewGenerator.copyManyToManyReaderCustomTag();
-			viewGenerator.copyGradient();
+			
+			var css = viewGenerator.createCSS();
+			ArrayAppend(files, css);
+			var kfct = viewGenerator.createForeignKeyCustomTag();
+			ArrayAppend(files, kfct);
+			var mmct = viewGenerator.createManyToManyCustomTag();
+			ArrayAppend(files, mmct);
+			var mmrct = viewGenerator.createManyToManyReaderCustomTag();
+			ArrayAppend(files, mmrct);
+			var grad = viewGenerator.createGradient();
+			ArrayAppend(files, grad);
 			
 			var index = viewGenerator.createIndex();
 			ArrayAppend(files, index);
@@ -66,7 +72,7 @@ component{
 			
 			//Only generate the unit tests if were are generating the views.
 			if (config.getCreateTests()){
-				testIndex = unittestGenerator.createIndexTest();
+				var testIndex = unittestGenerator.createIndexTest();
 				ArrayAppend(files, testIndex);
 			}
 			
@@ -117,10 +123,10 @@ component{
 			
 				//Handles unit tests for tables.
 				if (config.getCreateTests() and table.getCreateInterface()){
-					testview = unittestGenerator.createViewsTest(table);
+					var testview = unittestGenerator.createViewsTest(table);
 					ArrayAppend(files, testview);
 					
-					testEntity = unittestGenerator.createEntityTest(table);
+					var testEntity = unittestGenerator.createEntityTest(table);
 					ArrayAppend(files, testEntity);
 				}
 			}//IsProperTable?	
@@ -128,19 +134,19 @@ component{
 		
 		//Generate extended unit testing pieces to compensate for Application coupling to ORM 
 		if (config.getCreateTests()){
-			remoteFacade = unittestGenerator.createRemoteFacade();
+			var remoteFacade = unittestGenerator.createRemoteFacade();
 			ArrayAppend(files, remoteFacade);
 			
-			HttpAntRunner = unittestGenerator.createHttpAntRunner();
+			var HttpAntRunner = unittestGenerator.createHttpAntRunner();
 			ArrayAppend(files, HttpAntRunner);
 			
-			directoryRunner = unittestGenerator.createDirectoryRunner();
+			var directoryRunner = unittestGenerator.createDirectoryRunner();
 			ArrayAppend(files, directoryRunner);
 			
-			GlobalTest = unittestGenerator.createGlobalTest();
+			var GlobalTest = unittestGenerator.createGlobalTest();
 			ArrayAppend(files, GlobalTest);
 			
-			antRunner = unittestGenerator.createAntRunner();
+			var antRunner = unittestGenerator.createAntRunner();
 			ArrayAppend(files, antRunner);
 			
 		}
@@ -157,20 +163,11 @@ component{
 			ArrayAppend(result, files[i].getFileName());
 		}
 		
-		if (config.getCreateViews()){
-			ArrayAppend(result,config.getCSSFilePath() & variables.FS & "screen.css");
-			ArrayAppend(result,config.getCSSFilePath() & variables.FS & "appgrad.jpg");
-			ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm");
-			ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManySelector.cfm");
-			ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "manyToManyReader.cfm");
-			ArrayAppend(result,config.getCustomTagFilePath() & variables.FS & "loginForm.cfm");
-		}
-		
 		return result;
 	}
 	
 	/**
-	* @hint Writs all of the files to disk. 
+	* @hint Writes all of the files to disk. 
 	*/
 	public void function writeFiles(){
 		var i = 0;

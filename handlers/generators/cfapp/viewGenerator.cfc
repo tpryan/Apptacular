@@ -47,18 +47,14 @@ component extends="codeGenerator"{
 			if (column.getIsForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				
+				//If the table is linked more then once, you'll have to set pretty names yourself
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
 					ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 				}	
 				else{
 					ct.AppendBody('			<th>#fkTable.getDisplayName()#</th>');
 				}
-				
-				
-				
-				
 			}
-			
 			else{
 				ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 			}
@@ -66,6 +62,7 @@ component extends="codeGenerator"{
 			
 		}
 		
+		//References are tables that have a foriegn key to this table.
 		var references = table.getReferences();
 	   	
 		if (not isNull(references)){
@@ -73,21 +70,15 @@ component extends="codeGenerator"{
 			for (j=1; j <= ArrayLen(references); j++){
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
-				
-				
-				
+
 				if (not foreignTable.getIsJoinTable()){
 					
 					if (table.getForeignTableCount(foreignTable.getName()) gt 1){
 						ct.AppendBody('			<th>#foreignTable.getEntityName()##ref.getforeignKey()#Count</th>');
-						
 					}
 					else{
 						ct.AppendBody('			<th>#foreignTable.getEntityName()#Count</th>');
 					}
-					
-					
-				
 					columnCount++;
 				}
 			}
@@ -108,14 +99,10 @@ component extends="codeGenerator"{
 		
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</thead>');
-		
 		ct.AppendBody('	<tbody>');
 		
 		ct.AppendBody('	<cfloop array="##attributes.#entityName#Array##" index="#entityName#">');
-		
 		ct.AppendBody('		<tr>');
-		
-		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
@@ -128,7 +115,7 @@ component extends="codeGenerator"{
 				var idString = "&amp;#fkTable.getIdentity()#";
 			
 				
-				ct.AppendBody("'			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
+				ct.AppendBody("			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
 					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
@@ -146,42 +133,27 @@ component extends="codeGenerator"{
 			
 			}
 			else if (compareNoCase(columns[i].getuitype(), "binary") eq 0){
-					
 				ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
-
-				
 			}
 			
 			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0){
-					
 				ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
-
-				
 			}
 			else if (compareNoCase(columns[i].getuitype(), "boolean") eq 0){
-					
 				ct.AppendBody('			<td>##YesNoFormat(#entityName#.get#columns[i].getName()#())##</td>');
-
-				
 			}
 			else if (compareNoCase(columns[i].getuitype(), "date") eq 0){
-					
-		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#columns[i].getName()#(),"#config.getDateFormat()#" )##</td>');
-
-				
+		 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#columns[i].getName()#(),"#config.getDateFormat()#" )##</td>');
 			}
 			else if (compareNoCase(columns[i].getuitype(), "datetime") eq 0){
-					
-		 			ct.AppendBody('			<td>##dateFormat(#EntityName#.get#columns[i].getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#columns[i].getName()#(),"#config.getTimeFormat()#" )##</td>');
-
-				
+		 		ct.AppendBody('			<td>##dateFormat(#EntityName#.get#columns[i].getName()#(),"#config.getDateFormat()#" )## ##timeFormat(#EntityName#.get#columns[i].getName()#(),"#config.getTimeFormat()#" )##</td>');
 			}		
 			else{
 				ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
 			}
 		}
 		
-	   	
+	   	//References are tables that have a foriegn key to this table.
 		if (not isNull(references)){
 		
 			for (j=1; j <= ArrayLen(references); j++){
@@ -189,31 +161,23 @@ component extends="codeGenerator"{
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
 				if (not foreignTable.getIsJoinTable()){
-				
-				
 					if (table.getReferenceCount(foreignTable.getName()) gt 1){
 						ct.AppendBody('			<th>###entityName#.get#foreignTable.getEntityName()##ref.getforeignKey()#Count()##</th>');
-						
 					}
 					else{
 						ct.AppendBody('			<th>###entityName#.get#foreignTable.getEntityName()#Count()##</th>');
 					}
-				
-				
-					
 				}
 			}
 	   	}
 		
-		
+		// Many to many links
 		if (table.getHasJoinTable()){
 			var joinTables = table.getJoinTables();
 			for (i = 1; i <= ArrayLen(joinTables); i++){
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
-			
 				ct.AppendBody('			<td>###entityName#.get#otherJoinTable.getEntityName()#Count()##</td>');
-			
 			}
 		
 		}
@@ -224,6 +188,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</cfloop>');
 		
+		//Generate paging details.
 		ct.AppendBody('<cfif attributes.offset gte 0>');
 		ct.AppendBody('	<tr>');
 		ct.AppendBody('	<td colspan="#columnCount#">');
@@ -808,64 +773,89 @@ component extends="codeGenerator"{
 	
 	}
 	
+	
+	
 	/**
 	* @hint Copying hard copy CSS file to CSS location 
 	*/
-	public void function copyCSS(){
-		conditionallyCreateDirectory(config.getCSSFilePath());
-		var origCSS = ExpandPath("generators/cfapp/storage/screen.css");
-		var newCSS = config.getCSSFilePath() & variables.FS & "screen.css";
-		FileCopy(origCSS, newCSS);
+	public apptacular.handlers.cfc.code.file function createCSS(){
+		var origCT = ExpandPath("generators/cfapp/storage/screen.css");
+		var file  =  New apptacular.handlers.cfc.code.file();
+		file.setFileLocation(variables.config.getCSSFilePath());
+		file.setName("screen");
+		file.setExtension("css"); 
+		file.InsertFile(origCT);
+		return file;  
 	}
+	
+
+	
 
 	/**
 	* @hint Copying hard copy gradient image file file to CSS location 
 	*/
-	public void function copyGradient(){
-		conditionallyCreateDirectory(config.getCSSFilePath());
-		var origCSS = ExpandPath("generators/cfapp/storage/appgrad.jpg");
-		var newCSS = config.getCSSFilePath() & variables.FS & "appgrad.jpg";
-		FileCopy(origCSS, newCSS);
+	public apptacular.handlers.cfc.code.image function createGradient(){
+		var origimage = ExpandPath("generators/cfapp/storage/appgrad.jpg");
+		var file  =  New apptacular.handlers.cfc.code.image();
+		file.setFileLocation(variables.config.getCSSFilePath());
+		file.setName("appgrad");
+		file.setExtension("jpg"); 
+		file.insertImage(origimage);
+		return file;  
 	}
+	
 	
 	/**
 	* @hint Copying hard copy Foreign Key Custom Tag file to Custom tag location 
 	*/
-	public void function copyForeignKeyCustomTag(){
-		conditionallyCreateDirectory(config.getCustomTagFilePath());
+	public apptacular.handlers.cfc.code.file function createForeignKeyCustomTag(){
 		var origCT = ExpandPath("generators/cfapp/storage/foreignKeySelector.cfm");
-		var newCT = config.getCustomTagFilePath() & variables.FS & "foreignKeySelector.cfm";
-		FileCopy(origCT, newCT);
+		var file  =  New apptacular.handlers.cfc.code.file();
+		file.setFileLocation(variables.config.getCustomTagFilePath());
+		file.setName("foreignKeySelector");
+		file.setExtension("cfm"); 
+		file.InsertFile(origCT);
+		return file;  
 	}
 	
 	/**
 	* @hint Copying hard copy Login Custom Tag file to Custom tag location 
 	*/
-	public void function copyLoginCustomTag(){
-		conditionallyCreateDirectory(config.getCustomTagFilePath());
+	public apptacular.handlers.cfc.code.file function createLoginCustomTag(){
 		var origCT = ExpandPath("generators/cfapp/storage/loginForm.cfm");
-		var newCT = config.getCustomTagFilePath() & variables.FS & "loginForm.cfm";
-		FileCopy(origCT, newCT);
+		var file  =  New apptacular.handlers.cfc.code.file();
+		file.setFileLocation(variables.config.getCustomTagFilePath());
+		file.setName("loginForm");
+		file.setExtension("cfm"); 
+		file.InsertFile(origCT);
+		return file;  
 	}
 	
 	/**
 	* @hint Copying hard copy Many to Many Custom Tag select interface file to Custom tag location 
 	*/
-	public void function copyManyToManyCustomTag(){
-		conditionallyCreateDirectory(config.getCustomTagFilePath());
+	public apptacular.handlers.cfc.code.file function createManyToManyCustomTag(){
 		var origCT = ExpandPath("generators/cfapp/storage/manyToManySelector.cfm");
-		var newCT = config.getCustomTagFilePath() & variables.FS & "manyToManySelector.cfm";
-		FileCopy(origCT, newCT);
+		var file  =  New apptacular.handlers.cfc.code.file();
+		file.setFileLocation(variables.config.getCustomTagFilePath());
+		file.setName("manyToManySelector");
+		file.setExtension("cfm"); 
+		file.InsertFile(origCT);
+		return file;  
 	}
+	
 	
 	/**
 	* @hint Copying hard copy Many to Many Custom Tag reader file to Custom tag location 
 	*/
-	public void function copyManyToManyReaderCustomTag(){
-		conditionallyCreateDirectory(config.getCustomTagFilePath());
+	public apptacular.handlers.cfc.code.file function createManyToManyReaderCustomTag(){
 		var origCT = ExpandPath("generators/cfapp/storage/manyToManyReader.cfm");
-		var newCT = config.getCustomTagFilePath() & variables.FS & "manyToManyReader.cfm";
-		FileCopy(origCT, newCT);
+		var file  =  New apptacular.handlers.cfc.code.file();
+		file.setFileLocation(variables.config.getCustomTagFilePath());
+		file.setName("manyToManyReader");
+		file.setExtension("cfm"); 
+		file.InsertFile(origCT);
+		return file; 
 	}
 
 
