@@ -1,7 +1,7 @@
 component displayname="file" hint="A cfc representation of any file" accessors="true"{
-	property name="name" type="string" hint="The name of the page";
-	property name="fileLocation" type="string" hint="File path of the page";
-	property name="extension" type="string" hint="The file extension of the page";
+	property name="name" type="string" hint="The name of the file";
+	property name="fileLocation" type="string" hint="Path of the folder containing the file.";
+	property name="extension" type="string" hint="The extension of the file.";
 
 	/**
 	* @hint The init that fires up all of this stuff. 

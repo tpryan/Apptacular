@@ -229,7 +229,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	/**
 		* @hint Appends a function to the cfc.
 	*/
-	public void function addFunction(required functionObj){
+	public void function addFunction(required any functionObj){
 		//Always add inits at the begining of the list.
 		if (compareNoCase(functionObj.getName(), "init") eq 0){
 			ArrayPrepend(variables.functionArray, arguments.functionObj);
@@ -245,8 +245,6 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	public void function addProperty(required property property){
 		ArrayAppend(variables.propertyArray, arguments.property);
 	}
-
-	
 
 
 }
