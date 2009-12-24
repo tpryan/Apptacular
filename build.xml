@@ -14,6 +14,7 @@
 	<target name="build.clean">
 		<echo message="Cleaning Build Space"/>
 		<delete dir="${build.dir}"/>
+		<delete dir="${package.dir}/sql"/>
 	</target>
 	
 	<target name="build.copy.files" description="Create a gitless version of the source code.">
@@ -33,6 +34,13 @@
 		<echo message="Clearing out extraneous files."/>
 		<delete file='${build.dir}/.settings' />
 		<delete dir='${build.dir}/handlers/test' />
+		
+		<echo message="Create SQL file"/>
+		<echo message="Moving SQL to the right spot"/>
+		<move todir="${package.dir}/sql">
+   			<fileset dir="${build.dir}/sql"/>
+  		</move>
+		
 	</target>
 	
 	<target name="build.zip" description="Creates a zip file of the build.">
@@ -80,6 +88,32 @@
 		<echo message="Running Sakila Tests"/>
 		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
 	
+	</target>	
+	
+	<target name="database.export.apptacular_blog" description="Exports scripto to create apptacular_blog database on MySQL">
+		<echo message="Getting apptacular_blog MySQL Dump" />
+		<exec executable="${mysql.mysqldump.exe}" spawn="false" dir="${mysql.dir}" output="${database.dir}apptacular_blog.sql">
+			<arg line="--database apptacular_blog"/>
+			<arg line="--tables"/>
+			<arg line="--verbose"/>
+			<arg line="--host ${database.host.local}"/>
+			<arg line="--user ${database.username.local}"/>
+			<arg line="--password=${database.password.local}"/>
+			<arg line="--no-create-db" />
+		</exec>
+	</target>
+	
+	<target name="database.export.apptacular_sakila" description="Exports scripto to create apptacular_blog database on MySQL">
+		<echo message="Getting apptacular_sakila MySQL Dump" />
+		<exec executable="${mysql.mysqldump.exe}" spawn="false" dir="${mysql.dir}" output="${database.dir}apptacular_sakila.sql">
+			<arg line="--database apptacular_sakila"/>
+			<arg line="--tables"/>
+			<arg line="--verbose"/>
+			<arg line="--host ${database.host.local}"/>
+			<arg line="--user ${database.username.local}"/>
+			<arg line="--password=${database.password.local}"/>
+			<arg line="--no-create-db" />
+		</exec>
 	</target>	
 	
 </project>	
