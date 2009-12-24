@@ -162,10 +162,10 @@ component extends="codeGenerator"{
 				
 				if (not foreignTable.getIsJoinTable()){
 					if (table.getReferenceCount(foreignTable.getName()) gt 1){
-						ct.AppendBody('			<th>###entityName#.get#foreignTable.getEntityName()##ref.getforeignKey()#Count()##</th>');
+						ct.AppendBody('			<td>###entityName#.get#foreignTable.getEntityName()##ref.getforeignKey()#Count()##</td>');
 					}
 					else{
-						ct.AppendBody('			<th>###entityName#.get#foreignTable.getEntityName()#Count()##</th>');
+						ct.AppendBody('			<td>###entityName#.get#foreignTable.getEntityName()#Count()##</td>');
 					}
 				}
 			}
