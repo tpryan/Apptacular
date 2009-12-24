@@ -1,3 +1,6 @@
+/**
+* @hint Manages the configuration of all of the options of an application.  
+*/
 component accessors="true"{
 	
 	property name="rootURL" hint="The url that corresponds to the rootFilePath";		
@@ -57,7 +60,9 @@ component accessors="true"{
 	property name="LockApplication" type="boolean" hint="Setting this to true will prevent any new files from being written or modified by the Apptacular extension";
 	
 	
-	
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public function init(required string rootFilePath, required string rootCFCPath){
 	
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -107,6 +112,9 @@ component accessors="true"{
     	return This;
     }
 	
+	/**
+	* @hint Calculates the url of file paths that are passed in. 
+	*/
 	private string function calculateURL(required string path, required string webroot){
 		var rootRelativePath = ReplaceNoCase(arguments.path, arguments.webroot, "", "one");
 		
@@ -123,6 +131,9 @@ component accessors="true"{
 		return result;
 	}
 	
+	/**
+	* @hint Computes the file path from the CFC path
+	*/
 	private string function calculateMXUnitFilePath(){
 		var webroot = ExpandPath("/");
 		var mxunitRelativePath = Replace( This.getMXunitCFCPath(), ".", variables.FS, "all" );
@@ -137,6 +148,9 @@ component accessors="true"{
 		return result;
 	}
 	
+	/**
+	* @hint Generates all of the paths that are not user configurable
+	*/
 	public void function calculatePaths(){
 		This.setcustomTagFilePath(This.getRootFilePath() & This.getcustomTagFolder());
 		This.setEntityFilePath(This.getRootFilePath() & This.getEntityFolder());
@@ -161,6 +175,9 @@ component accessors="true"{
 		
 	}
 	
+	/**
+	* @hint If the field name passed in is one of the magic column names. 
+	*/
 	public boolean function isMagicField(required string columnName){
 		if ((CompareNoCase(arguments.columnName, This.getCreatedOnString()) eq 0) OR
 			(CompareNoCase(arguments.columnName, This.getUpdatedOnString()) eq 0)){
@@ -169,26 +186,23 @@ component accessors="true"{
 		else{
 			return FALSE;
 		}
-	
 	}
 	
-	
-	
+	/**
+	* @hint Creates an XML representation of the configuration
+	*/
 	public string function toXML(){
 		var str = createObject("java", "java.lang.StringBuilder").init();
 		var NL = CreateObject("java", "java.lang.System").getProperty("line.separator");
 		var props = Duplicate(variables);
 		var i = 0;
-		
-		
+
 		StructDelete(props, "This");
 		StructDelete(props, "FS");
 		StructDelete(props, "NL");
 		
-		
 		var keys = StructKeyArray(props);
 		ArraySort(keys, "textnocase");
-		
 		
 		str.append('<?xml version="1.0" encoding="iso-8859-1"?>');
 		str.append(NL);
@@ -212,6 +226,9 @@ component accessors="true"{
 		return str.toString();
 	} 
 	
+	/**
+	* @hint Writes the configuration to an XML file.
+	*/
 	public string function writeToDisk(){
 		var DirToWrite = This.getRootFilePath() & ".apptacular";
 		var FileToWrite = DirToWrite & "/config.xml";
@@ -220,8 +237,10 @@ component accessors="true"{
 		FileWrite(FileToWrite, This.toXML());
 	}
 	
+	/**
+	* @hint Overwrites the configuration from the disk configuration
+	*/
 	public void function overwriteFromDisk(){
-		
 		
 		var FileToRead = This.getRootFilePath() & ".apptacular/config.xml";
 		
@@ -238,6 +257,10 @@ component accessors="true"{
 		
 
 	}
+	
+	/**
+	* @hint Creates a directory if it doesn't exist.
+	*/	
 	private void function conditionallyCreateDirectory(required string path){
 		if(not directoryExists(path)){
 			DirectoryCreate(path);

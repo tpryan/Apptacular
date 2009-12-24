@@ -3,6 +3,9 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	property name="fileLocation" type="string" hint="File path of the page";
 	property name="extension" type="string" hint="The file extension of the page";
 
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public build function init(){
 	
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -58,7 +61,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	
 	
 	/**
-		* @hint Creates a directory if it doesn't exist.
+	* @hint Creates a directory if it doesn't exist.
 	*/
 	private void function conditionallyCreateDirectory(required string path){
 		if(not directoryExists(path)){

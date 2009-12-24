@@ -1,8 +1,11 @@
 /**
-* @hint Creates an update test for ORM objects.
+* @hint Handles creating all of the views for generated application. 
 */
 component extends="codeGenerator"{
 
+	/**
+	* @hint Generates a list custom tag for a table. 
+	*/
 	public any function createViewListCustomTag(required any table){
 	    var i = 0;
 		var columnCount = 3;
@@ -259,6 +262,9 @@ component extends="codeGenerator"{
 	    return ct;
 	}
 	
+	/**
+	* @hint Generates a read custom tag for a table. 
+	*/
 	public any function createViewReadCustomTag(required any table){
 	    var i = 0;
 		var fileLocation = variables.config.getCustomTagFilePath();
@@ -413,6 +419,9 @@ component extends="codeGenerator"{
 	    return ct;
 	}
 	
+	/**
+	* @hint Generates a edit custom tag for a table. 
+	*/
 	public any function createViewEditCustomTag(required any table){
 		var i = 0;
 		var fileLocation = variables.config.getCustomTagFilePath();
@@ -586,6 +595,9 @@ component extends="codeGenerator"{
 	    return ct;
 	}
 	
+	/**
+	* @hint Generates a controller for a table to manage bouncing between CRUD states. 
+	*/
 	public any function createView(required any table){
 	    
 	    var i=0;
@@ -694,6 +706,9 @@ component extends="codeGenerator"{
 	    return view;
 	}
 	
+	/**
+	* @hint Generates a single index for all of the tables in the . 
+	*/
 	public any function createIndex(){
 		
 		var path = variables.config.getRootFilePath();
@@ -720,6 +735,9 @@ component extends="codeGenerator"{
 	
 	}
 	
+	/**
+	* @hint Creates a custom tag page wrapper. 
+	*/
 	public any function createPageWrapper(){
 	    
 		var path = variables.config.getCustomTagFilePath();
@@ -753,6 +771,9 @@ component extends="codeGenerator"{
 	
 	}
 	
+	/**
+	* @hint Creates the login page if the config setting createLogin is set to true
+	*/
 	public any function createLogin(){
 		var i=0;
 	    var path = variables.config.getRootFilePath();
@@ -787,13 +808,19 @@ component extends="codeGenerator"{
 	
 	}
 	
+	/**
+	* @hint Copying hard copy CSS file to CSS location 
+	*/
 	public void function copyCSS(){
 		conditionallyCreateDirectory(config.getCSSFilePath());
 		var origCSS = ExpandPath("generators/cfapp/storage/screen.css");
 		var newCSS = config.getCSSFilePath() & variables.FS & "screen.css";
 		FileCopy(origCSS, newCSS);
 	}
-	
+
+	/**
+	* @hint Copying hard copy gradient image file file to CSS location 
+	*/
 	public void function copyGradient(){
 		conditionallyCreateDirectory(config.getCSSFilePath());
 		var origCSS = ExpandPath("generators/cfapp/storage/appgrad.jpg");
@@ -801,6 +828,9 @@ component extends="codeGenerator"{
 		FileCopy(origCSS, newCSS);
 	}
 	
+	/**
+	* @hint Copying hard copy Foreign Key Custom Tag file to Custom tag location 
+	*/
 	public void function copyForeignKeyCustomTag(){
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/cfapp/storage/foreignKeySelector.cfm");
@@ -808,6 +838,9 @@ component extends="codeGenerator"{
 		FileCopy(origCT, newCT);
 	}
 	
+	/**
+	* @hint Copying hard copy Login Custom Tag file to Custom tag location 
+	*/
 	public void function copyLoginCustomTag(){
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/cfapp/storage/loginForm.cfm");
@@ -815,6 +848,9 @@ component extends="codeGenerator"{
 		FileCopy(origCT, newCT);
 	}
 	
+	/**
+	* @hint Copying hard copy Many to Many Custom Tag select interface file to Custom tag location 
+	*/
 	public void function copyManyToManyCustomTag(){
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/cfapp/storage/manyToManySelector.cfm");
@@ -822,6 +858,9 @@ component extends="codeGenerator"{
 		FileCopy(origCT, newCT);
 	}
 	
+	/**
+	* @hint Copying hard copy Many to Many Custom Tag reader file to Custom tag location 
+	*/
 	public void function copyManyToManyReaderCustomTag(){
 		conditionallyCreateDirectory(config.getCustomTagFilePath());
 		var origCT = ExpandPath("generators/cfapp/storage/manyToManyReader.cfm");

@@ -1,5 +1,7 @@
+/**
+* @hint Generates all code for ORM in the application
+*/
 component extends="codeGenerator"{
-
 
 	/**
 	* @hint Contains all the code it takes to generate orm/entity CFCs for every table in the database. 

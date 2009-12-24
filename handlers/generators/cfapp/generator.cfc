@@ -1,3 +1,6 @@
+/**
+* @hint The main generator file that marshalls all of the other files around. 
+*/
 component{
 
 	/**
