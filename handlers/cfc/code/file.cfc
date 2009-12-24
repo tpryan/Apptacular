@@ -61,6 +61,20 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	
 	
 	/**
+	* @hint Inserts the contents of a file into the generated file.
+	*/
+	public void function insertFile(required string filePath){
+		var file = FileOpen(arguments.filePath, "read"); 
+		
+		while(NOT FileisEOF(file)) { 
+			appendBody(FileReadLine(file));
+		} 
+		
+		FileClose(file); 
+	
+	}
+	
+	/**
 	* @hint Creates a directory if it doesn't exist.
 	*/
 	private void function conditionallyCreateDirectory(required string path){
