@@ -18,7 +18,7 @@ component extends="codeGenerator"{
 	   	cfc.setPersistent(true);
 		
 		// Create Init
-		var init= New apptacular.handlers.cfc.code.function();
+		var init= New apptacular.handlers.cfc.code.func();
 		init.setName('init');
 		init.setAccess("public");
 		init.setReturnType(table.getEntityName());
@@ -112,7 +112,7 @@ component extends="codeGenerator"{
 					property.setSingularname(otherJoinTable.getEntityName());
 			   		cfc.AddProperty(property);
 					
-					var countFunc= New apptacular.handlers.cfc.code.function();
+					var countFunc= New apptacular.handlers.cfc.code.func();
 					countFunc.setName("get#otherJoinTable.getEntityName()#Count");
 					countFunc.setAccess("public");
 					countFunc.setReturnType('numeric');
@@ -148,7 +148,7 @@ component extends="codeGenerator"{
 					property.setOrderby(foreignTable.getOrderBy());
 			   		cfc.AddProperty(property);
 					
-					var countFunc= New apptacular.handlers.cfc.code.function();
+					var countFunc= New apptacular.handlers.cfc.code.func();
 					countFunc.setAccess("public");
 					countFunc.setReturnType('numeric');
 					countFunc.setReturnResult('result');
@@ -187,7 +187,7 @@ component extends="codeGenerator"{
 		for (i=1; i <= ArrayLen(virtualColumns); i++){
 			vc = virtualColumns[i];
 			
-			vcGetter = New apptacular.handlers.cfc.code.function();
+			vcGetter = New apptacular.handlers.cfc.code.func();
 			vcGetter.setName("get" & vc.getName());
 			vcGetter.setAccess("public");
 			vcGetter.setReturnType(vc.getType());
@@ -217,7 +217,7 @@ component extends="codeGenerator"{
 		}
 		
 		//NullifyZeroID is for use with Remote services.
-		var func= New apptacular.handlers.cfc.code.function();
+		var func= New apptacular.handlers.cfc.code.func();
 		func.setName('nullifyZeroID');
 		func.setAccess("public");
 		func.setReturnType('void');
@@ -231,7 +231,7 @@ component extends="codeGenerator"{
 		
 		
 		//Add populate function
-		var populate= New apptacular.handlers.cfc.code.function();
+		var populate= New apptacular.handlers.cfc.code.func();
 		populate.setName('populate');
 		populate.setAccess("public");
 		populate.setReturnType(table.getEntityName());
@@ -340,42 +340,42 @@ component extends="codeGenerator"{
 		
 		
 		
-		var postD= New apptacular.handlers.cfc.code.function();
+		var postD= New apptacular.handlers.cfc.code.func();
 		postD.setAccess("public");
 		postD.setReturnType("void");
 		postD.AddArgument(EntityArg);
 		postD.setName('postDelete');
 		cfc.addFunction(postD);
 		
-		var postI= New apptacular.handlers.cfc.code.function();
+		var postI= New apptacular.handlers.cfc.code.func();
 		postI.setAccess("public");
 		postI.setReturnType("void");
 		postI.AddArgument(EntityArg);
 		postI.setName('postInsert');
 		cfc.addFunction(postI);
 		
-		var postL= New apptacular.handlers.cfc.code.function();
+		var postL= New apptacular.handlers.cfc.code.func();
 		postL.setAccess("public");
 		postL.setReturnType("void");
 		postL.AddArgument(EntityArg);
 		postL.setName('postLoad');
 		cfc.addFunction(postL);
 		
-		var postU= New apptacular.handlers.cfc.code.function();
+		var postU= New apptacular.handlers.cfc.code.func();
 		postU.setAccess("public");
 		postU.setReturnType("void");
 		postU.AddArgument(EntityArg);
 		postU.setName('postUpdate');
 		cfc.addFunction(postU);
 		
-		var preD= New apptacular.handlers.cfc.code.function();
+		var preD= New apptacular.handlers.cfc.code.func();
 		preD.setAccess("public");
 		preD.setReturnType("void");
 		preD.AddArgument(EntityArg);
 		preD.setName('preDelete');
 		cfc.addFunction(preD);
 		
-		var preI= New apptacular.handlers.cfc.code.function();
+		var preI= New apptacular.handlers.cfc.code.func();
 		preI.setAccess("public");
 		preI.setReturnType("void");
 		preI.AddArgument(EntityArg);
@@ -399,14 +399,14 @@ component extends="codeGenerator"{
 		
 		
 		
-		var preL= New apptacular.handlers.cfc.code.function();
+		var preL= New apptacular.handlers.cfc.code.func();
 		preL.setAccess("public");
 		preL.setReturnType("void");
 		preL.AddArgument(EntityArg);
 		preL.setName('preLoad');
 		cfc.addFunction(preL);
 		
-		var preU= New apptacular.handlers.cfc.code.function();
+		var preU= New apptacular.handlers.cfc.code.func();
 		preU.setAccess("public");
 		preU.setReturnType("void");
 		preU.AddArgument(EntityArg);
@@ -448,7 +448,7 @@ component extends="codeGenerator"{
 		}
 		
 		
-		var onRequestStart= New apptacular.handlers.cfc.code.function();
+		var onRequestStart= New apptacular.handlers.cfc.code.func();
 		onRequestStart.setName('onRequestStart');
 		onRequestStart.setAccess("public");
 		onRequestStart.setReturnType("boolean");
@@ -472,7 +472,7 @@ component extends="codeGenerator"{
 		if (config.getCreateLogin()){
 			appCFC.addApplicationProperty('sessionManagement', true) ;
 		
-			var onSessionStart= New apptacular.handlers.cfc.code.function();
+			var onSessionStart= New apptacular.handlers.cfc.code.func();
 			onSessionStart.setName('onSessionStart');
 			onSessionStart.setAccess("public");
 			onSessionStart.setReturnType("boolean");

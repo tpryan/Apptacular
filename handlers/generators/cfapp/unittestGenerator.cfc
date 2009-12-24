@@ -21,7 +21,7 @@ component  extends="codeGenerator"
 		testIndex.addFunction(returns200);
 		
 		//Test for loginstate
-		var loginTest= New apptacular.handlers.cfc.code.function();
+		var loginTest= New apptacular.handlers.cfc.code.func();
 		loginTest.setAccess("public");
 		loginTest.setReturnType("void");
 		loginTest.addLocalVariable("cfhttp","struct");
@@ -124,7 +124,7 @@ component  extends="codeGenerator"
 		testGlobal.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
 		
 		
-		var isAppWorking= New apptacular.handlers.cfc.code.function();
+		var isAppWorking= New apptacular.handlers.cfc.code.func();
 		isAppWorking.setReturnType("void");
 		isAppWorking.setName("testIsApplicationWorking");
 		
@@ -247,7 +247,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an update test for ORM objects.
 	*/
-	private apptacular.handlers.cfc.code.function function createSimpleUpdateUnitTest(required any table){
+	private apptacular.handlers.cfc.code.func function createSimpleUpdateUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);
 		var entityName = table.getEntityName();
@@ -255,7 +255,7 @@ component  extends="codeGenerator"
 		var identity = table.getIdentity();
 		var dsname = variables.datasource.getName();
 		var columns = table.getColumns();
-		var update= New apptacular.handlers.cfc.code.function();
+		var update= New apptacular.handlers.cfc.code.func();
 		update.setReturnType("void");
 		update.setName("testUpdate");
 	
@@ -311,7 +311,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates a read test for ORM objects.
 	*/
-	private apptacular.handlers.cfc.code.function function createSimpleReadUnitTest(required any table){
+	private apptacular.handlers.cfc.code.func function createSimpleReadUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);
 		var entityName = table.getEntityName();
@@ -319,7 +319,7 @@ component  extends="codeGenerator"
 		var identity = table.getIdentity();
 		var dsname = variables.datasource.getName();
 		var columns = table.getColumns();
-		var read= New apptacular.handlers.cfc.code.function();
+		var read= New apptacular.handlers.cfc.code.func();
 		read.setReturnType("void");
 		read.setName("testRead");
 		read.addLocalVariable("fromQuery");
@@ -408,14 +408,14 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an Creates or Delete test for ORM objects.
 	*/
-	private apptacular.handlers.cfc.code.function function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
+	private apptacular.handlers.cfc.code.func function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
 		var i = 0;
 		var entityName = table.getEntityName();
 		var tableName = table.getName();
 		var identity = table.getIdentity();
 		var dsname = variables.datasource.getName();
 		var columns = table.getColumns();
-		var read= New apptacular.handlers.cfc.code.function();
+		var read= New apptacular.handlers.cfc.code.func();
 		read.setReturnType("void");
 		read.setName("test#arguments.type#");
 		
@@ -488,8 +488,8 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an simple 200 test for input url.
 	*/
-	private apptacular.handlers.cfc.code.function function createSimple200UnitTest(required string targetURL, string name="testReturns200", string entityName="", string operation=""){
-		var returns200= New apptacular.handlers.cfc.code.function();
+	private apptacular.handlers.cfc.code.func function createSimple200UnitTest(required string targetURL, string name="testReturns200", string entityName="", string operation=""){
+		var returns200= New apptacular.handlers.cfc.code.func();
 		returns200.setAccess("public");
 		returns200.setReturnType("void");
 		returns200.setName(arguments.name);

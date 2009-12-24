@@ -24,7 +24,7 @@ component  extends="codeGenerator"
 		password.setRequired(true);
 		password.setType('string');
 		
-		var auth= New apptacular.handlers.cfc.code.function();
+		var auth= New apptacular.handlers.cfc.code.func();
 		auth.setAccess(config.getServiceAccess());
 		auth.setReturnType("boolean");
 		auth.AddArgument(username);
@@ -67,7 +67,7 @@ component  extends="codeGenerator"
 		cfc.setFormat(variables.config.getCFCFormat());
 	    
 		//create Count Method
-		var func= New apptacular.handlers.cfc.code.function();
+		var func= New apptacular.handlers.cfc.code.func();
 		func.setName('count');
 		func.setAccess(access);
 		func.setReturnType("numeric");
@@ -75,7 +75,7 @@ component  extends="codeGenerator"
 		cfc.addFunction(func);
 		
 		//create list method
-		var list= New apptacular.handlers.cfc.code.function();
+		var list= New apptacular.handlers.cfc.code.func();
 		list.setName('list');
 		list.setAccess(access);
 		list.setReturnType("#cfcPath#.#EntityName#[]");
@@ -118,7 +118,7 @@ component  extends="codeGenerator"
 		id.setRequired(true);
 		id.setType('numeric');
 		
-		var get= New apptacular.handlers.cfc.code.function();
+		var get= New apptacular.handlers.cfc.code.func();
 		get.setName('get');
 		get.setAccess(access);
 		get.setReturnType("#cfcPath#.#EntityName#");
@@ -133,7 +133,7 @@ component  extends="codeGenerator"
 		entity.setRequired(true);
 		entity.setType("any");
 		
-		var func= New apptacular.handlers.cfc.code.function();
+		var func= New apptacular.handlers.cfc.code.func();
 		func.setName("update");
 		func.setAccess(access);
 		func.setReturnType("void");
@@ -145,7 +145,7 @@ component  extends="codeGenerator"
 		cfc.addFunction(func);
 		
 		//Delete Method
-		var func= New apptacular.handlers.cfc.code.function();
+		var func= New apptacular.handlers.cfc.code.func();
 		func.setName("destroy");
 		func.setAccess(access);
 		func.setReturnType("void");
@@ -155,7 +155,7 @@ component  extends="codeGenerator"
 		cfc.addFunction(func);
 		
 		//Search Method
-		var search= New apptacular.handlers.cfc.code.function();
+		var search= New apptacular.handlers.cfc.code.func();
 		search.setName("search");
 		search.setAccess(access);
 		search.setReturnType("#cfcPath#.#EntityName#[]");
