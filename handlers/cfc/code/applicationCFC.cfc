@@ -1,5 +1,8 @@
 component displayname="Application CFC" hint="A CFC representation of an Application.cfc" extends="cfc" accessors="true" {
 	
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public applicationCFC function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		

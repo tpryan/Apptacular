@@ -1,7 +1,10 @@
 component displayname="Custom Tag" hint="A cfc representation of a Custom tag for code generation." extends="CFPage" accessors="true"
 {
 
-	public any function init(required string name, required string fileLocation){
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
+	public customTag function init(required string name, required string fileLocation){
 	
 		This.setExtension('cfm');
 		This.setName(arguments.Name);
@@ -15,6 +18,7 @@ component displayname="Custom Tag" hint="A cfc representation of a Custom tag fo
 		variables.body = CreateObject("java","java.lang.StringBuilder").Init();
 		variables.footer = "</cfprocessingdirective>" & variables.NL & '<cfexit method="exitTag" />' & variables.NL ;
 	
+		return This;
 	} 
 	
 	/**

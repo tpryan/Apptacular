@@ -25,6 +25,14 @@ component accessors="true" {
 	property name="update" type="string" hint="See reference for cfproperty";
 	
 	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
+	public property function init(){
+    		
+    	return This;
+    }
+	
+	/**
 		* @hint Returns the content of the property in CFML
 	*/
 	public string function getCFML(){

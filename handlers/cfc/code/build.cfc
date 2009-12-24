@@ -2,7 +2,9 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 	property name="projectname" type="string" hint="The name of the project.";
 	property name="projectdefault" type="string" hint="The default task to run of the project.";
 	
-
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public build function init(){
 		
 		This.setProjectname("");

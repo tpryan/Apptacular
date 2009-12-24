@@ -6,7 +6,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	/**
 	* @hint The init that fires up all of this stuff. 
 	*/
-	public build function init(){
+	public any function init(){
 	
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");

@@ -8,7 +8,7 @@ component displayname="function" hint="A CFC representation of an function for c
 	property name="ReturnResult"  type="string" hint="The code to return from the function";
 	
 	
-	public function init(){
+	public any function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.arguments = ArrayNew(1);
 		variables.localvariables = ArrayNew(1);

@@ -8,7 +8,11 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	property name="persistent" type="boolean" default="false" hint="Whether or not this CFC should use ORM tools.";
 	property name="format" type="string" hint="CFML or CFScript";
 
-	public function init(){
+	
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
+	public cfc function init(){
 		
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		This.setExtension('cfc');
@@ -19,6 +23,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		variables.functionArray = ArrayNew(1);
 		variables.propertyArray = ArrayNew(1);
 		
+		return This;
 	}
 	
 	/**

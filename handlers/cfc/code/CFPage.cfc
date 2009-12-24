@@ -1,6 +1,9 @@
 component displayname="CFPage" extends="file" hint="A cfc representation of a cfpage for code generation." accessors="true"{
 	property name="format" type="string" hint="CFML or CFScript";
 
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public CFPage function init(required string name, required string fileLocation){
 	
 		This.setExtension('cfm');
