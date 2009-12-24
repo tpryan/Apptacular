@@ -6,7 +6,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Contains all the code it takes to generate orm/entity CFCs for every table in the database. 
 	*/
-	public any function createORMCFC(required any table){
+	public apptacular.handlers.cfc.code.cfc function createORMCFC(required any table){
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -317,7 +317,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates the default event handlers for the application allowing magic columns to work.  
 	*/
-	public any function createEventHandler(required string path){
+	public apptacular.handlers.cfc.code.cfc function createEventHandler(required string path){
 	
 		var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    var fileLocation = variables.config.getEntityFilePath();
@@ -431,7 +431,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates the ApplicationCFC
 	*/
-	public any function createAppCFC(){
+	public apptacular.handlers.cfc.code.cfc function createAppCFC(){
 		
 	    var dbname = variables.datasource.getName();
 	    var fileLocation = variables.config.getRootFilePath();

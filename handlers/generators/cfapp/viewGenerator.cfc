@@ -6,7 +6,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates a list custom tag for a table. 
 	*/
-	public any function createViewListCustomTag(required any table){
+	public apptacular.handlers.cfc.code.customTag function createViewListCustomTag(required any table){
 	    var i = 0;
 		var columnCount = 3;
 		var fileLocation = variables.config.getCustomTagFilePath();
@@ -265,7 +265,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates a read custom tag for a table. 
 	*/
-	public any function createViewReadCustomTag(required any table){
+	public apptacular.handlers.cfc.code.customTag function createViewReadCustomTag(required any table){
 	    var i = 0;
 		var fileLocation = variables.config.getCustomTagFilePath();
 		var fileName = table.getEntityName() & "Read";
@@ -422,7 +422,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates a edit custom tag for a table. 
 	*/
-	public any function createViewEditCustomTag(required any table){
+	public apptacular.handlers.cfc.code.customTag function createViewEditCustomTag(required any table){
 		var i = 0;
 		var fileLocation = variables.config.getCustomTagFilePath();
 		var fileName = table.getEntityName() & "Edit"; 
@@ -598,7 +598,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates a controller for a table to manage bouncing between CRUD states. 
 	*/
-	public any function createView(required any table){
+	public apptacular.handlers.cfc.code.CFPage function createView(required any table){
 	    
 	    var i=0;
 		var fileLocation = variables.config.getRootFilePath();
@@ -709,7 +709,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Generates a single index for all of the tables in the . 
 	*/
-	public any function createIndex(){
+	public apptacular.handlers.cfc.code.CFPage function createIndex(){
 		
 		var path = variables.config.getRootFilePath();
 		var i=0;
@@ -738,7 +738,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Creates a custom tag page wrapper. 
 	*/
-	public any function createPageWrapper(){
+	public apptacular.handlers.cfc.code.CFPage function createPageWrapper(){
 	    
 		var path = variables.config.getCustomTagFilePath();
 		var csspath = variables.config.getCSSRelativePath();
@@ -774,7 +774,7 @@ component extends="codeGenerator"{
 	/**
 	* @hint Creates the login page if the config setting createLogin is set to true
 	*/
-	public any function createLogin(){
+	public apptacular.handlers.cfc.code.CFPage function createLogin(){
 		var i=0;
 	    var path = variables.config.getRootFilePath();
 	    var login  =  New apptacular.handlers.cfc.code.CFPage("login", path);  

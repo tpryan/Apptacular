@@ -6,7 +6,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates the test for the application's index.cfm
 	*/
-	public any function createIndexTest(){
+	public apptacular.handlers.cfc.code.cfc function createIndexTest(){
 		
 		var indexURL = variables.config.getRootURL() & "/index.cfm";
 		
@@ -76,7 +76,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Spins through and creates a simple Returns200 for every view.
 	*/
-	public any function createViewsTest(required any table){
+	public apptacular.handlers.cfc.code.cfc function createViewsTest(required any table){
 		var entityName = table.getEntityName();
 		var baseurl = variables.config.getRootURL() & "/#entityName#.cfm";
 		
@@ -115,7 +115,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Generates the test that makes sure that the application is correctly wired through RemoteFacade.cfc
 	*/
-	public any function createGlobalTest(){
+	public apptacular.handlers.cfc.code.cfc function createGlobalTest(){
 		
 		var testGlobal  = New apptacular.handlers.cfc.code.cfc();
 	    testGlobal.setName("testGlobal");
@@ -136,7 +136,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates a CRUD test for Entities.
 	*/
-	public any function createEntityTest(required any table){
+	public apptacular.handlers.cfc.code.cfc function createEntityTest(required any table){
 		var entityName = table.getEntityName();
 		var columns = table.getColumns();
 
@@ -171,7 +171,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates the remote facade that wires the IDE runner through the application scope of the application. 
 	*/
-	public any function createRemoteFacade(){
+	public apptacular.handlers.cfc.code.cfc function createRemoteFacade(){
 	
 		var facade  = New apptacular.handlers.cfc.code.cfc();
 	    facade.setName("remoteFacade");
@@ -184,7 +184,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an ant runner that wires the ant runner through the application scope of the application. 
 	*/
-	public any function createHttpAntRunner(){
+	public apptacular.handlers.cfc.code.cfc function createHttpAntRunner(){
 	
 		var runner  = New apptacular.handlers.cfc.code.cfc();
 	    runner.setName("HttpAntRunner");
@@ -197,7 +197,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates a simple html runner for MXunit
 	*/
-	public any function createDirectoryRunner(){
+	public apptacular.handlers.cfc.code.cfpage function createDirectoryRunner(){
 		var runner = New apptacular.handlers.cfc.code.cfpage("runner", variables.config.getTestFilePath());
 		runner.appendBody('<cfparam name="url.output" type="string" default="extjs" />');
 		runner.appendBody('');
@@ -215,7 +215,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates a simple ant runner for MXunit
 	*/
-	public any function createAntRunner(){
+	public apptacular.handlers.cfc.code.build function createAntRunner(){
 		var runner = New apptacular.handlers.cfc.code.build();
 		
 		runner.setProjectName(variables.datasource.getName());
@@ -247,7 +247,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an update test for ORM objects.
 	*/
-	private any function createSimpleUpdateUnitTest(required any table){
+	private apptacular.handlers.cfc.code.function function createSimpleUpdateUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);
 		var entityName = table.getEntityName();
@@ -311,7 +311,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates a read test for ORM objects.
 	*/
-	private any function createSimpleReadUnitTest(required any table){
+	private apptacular.handlers.cfc.code.function function createSimpleReadUnitTest(required any table){
 		var i = 0;
 		var id = discoverValidId(table);
 		var entityName = table.getEntityName();
@@ -408,7 +408,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an Creates or Delete test for ORM objects.
 	*/
-	private any function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
+	private apptacular.handlers.cfc.code.function function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
 		var i = 0;
 		var entityName = table.getEntityName();
 		var tableName = table.getName();
@@ -488,7 +488,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an simple 200 test for input url.
 	*/
-	private any function createSimple200UnitTest(required string targetURL, string name="testReturns200", string entityName="", string operation=""){
+	private apptacular.handlers.cfc.code.function function createSimple200UnitTest(required string targetURL, string name="testReturns200", string entityName="", string operation=""){
 		var returns200= New apptacular.handlers.cfc.code.function();
 		returns200.setAccess("public");
 		returns200.setReturnType("void");

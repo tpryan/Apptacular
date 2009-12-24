@@ -7,7 +7,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates the Authentication service for use with config setting "createLogin"
 	*/
-	public any function createAuthenticationService(){
+	public apptacular.handlers.cfc.code.cfc function createAuthenticationService(){
 	
 		var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    cfc.setName("authenticationService");
@@ -53,7 +53,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Spins through all of the tables in the database and creates a service cfc for it. 
 	*/
-	public any function createORMServiceCFC(required any table){
+	public apptacular.handlers.cfc.code.cfc function createORMServiceCFC(required any table){
 		var i=0;
 		var EntityName = table.getEntityName();
 		var OrderBy = table.getOrderBy();
