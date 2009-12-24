@@ -7,7 +7,9 @@ component displayname="function" hint="A CFC representation of an function for c
 	property name="returntype"  type="string" hint="The type of the return value.";
 	property name="ReturnResult"  type="string" hint="The code to return from the function";
 	
-	
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public func function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.arguments = ArrayNew(1);
