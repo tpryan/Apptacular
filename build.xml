@@ -6,6 +6,8 @@
 	<target name="test.ant" description="Exports the script of the database ">
 		<echo message="Testing ant in this environment. " />
 	</target>
+	
+	<target name="package" depends="test,build" />
 
 	<target name="build" depends="build.clean,build.copy.files,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
 
