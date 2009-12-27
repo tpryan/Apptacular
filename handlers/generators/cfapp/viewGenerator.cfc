@@ -485,7 +485,7 @@ component extends="codeGenerator"{
 	public apptacular.handlers.cfc.code.CFPage function createView(required any table){
 	    
 	    var i=0;
-		var fileLocation = variables.config.getRootFilePath();
+		var fileLocation = variables.config.getAppFilePath();
 	    var view  = New apptacular.handlers.cfc.code.CFPage(table.getEntityName(), fileLocation);
 		var entityCFCPath = variables.config.getEntityCFCPath();
 		var entityName = table.getEntityName();
@@ -592,7 +592,7 @@ component extends="codeGenerator"{
 	*/
 	public apptacular.handlers.cfc.code.CFPage function createIndex(){
 		
-		var path = variables.config.getRootFilePath();
+		var path = variables.config.getAppFilePath();
 		var i=0;
 		var tables = variables.datasource.getTables();
 	    
@@ -647,7 +647,7 @@ component extends="codeGenerator"{
 	*/
 	public apptacular.handlers.cfc.code.CFPage function createLogin(){
 		var i=0;
-	    var path = variables.config.getRootFilePath();
+	    var path = variables.config.getAppFilePath();
 	    var login  =  New apptacular.handlers.cfc.code.CFPage("login", path);  
 	    
 		login.AppendBody('<cfsetting showdebugoutput="false" />');

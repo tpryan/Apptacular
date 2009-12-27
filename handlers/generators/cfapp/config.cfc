@@ -17,6 +17,7 @@ component accessors="true"{
 	property name="serviceFilePath" hint="The directory under the root where the service CFCs will be written. [Computed from rootURL and serviceFolder]";
 	property name="cssFilePath" hint="The directory under the root where the css files and accompanying images will be written. [Computed from rootURL and cssFolder]";
 	property name="testFilePath" hint="The directory under the root where the test cases will be written. [Computed from rootURL and testFolder]";
+	property name="appFilePath" hint="The directory under the root where the application will be written. [Computed from rootURL and testFolder]";
 	property name="mxunitFilePath" hint="The directory where the MXUnit files will be found.";
 	
 	//Relative Paths
@@ -24,12 +25,12 @@ component accessors="true"{
 	property name="testRelativePath" hint="The relative url (server omitted) that corresponds to the testFilePath. [Computed from testFilePath]";	
 	
 	//Folders
-	
 	property name="customTagFolder" hint="The subfolder under the root where the custom tags will be written.";
 	property name="entityFolder" hint="The subfolder under the root where the entity CFCs will be written.";
 	property name="serviceFolder" hint="The subfolder under the root where the service CFCs will be written.";
 	property name="cssFolder" hint="The subfolder under the root where the css files and accompanying images will be written.";
 	property name="testFolder" hint="The subfolder under the root where the test cases will be written.";
+	property name="appFolder" hint="The subfolder under the root where the application files will be written.";
 	
 	//CFC paths	
 	property name="EntityCFCPath" hint="The CFC format path that corresponds to the entityFilePath";	
@@ -86,6 +87,7 @@ component accessors="true"{
 		This.setServiceFolder("services");
 		This.setCSSFolder("css");
 		This.setTestFolder("test");
+		This.setAppFolder("");
 		
 		This.setCreatedOnString("createdOn");
 		This.setUpdatedOnString("updatedOn");
@@ -157,6 +159,7 @@ component accessors="true"{
 		This.setServiceFilePath(This.getRootFilePath() & This.getServiceFolder());
 		This.setCSSFilePath(This.getRootFilePath() & This.getCSSFolder());
 		This.setTestFilePath(This.getRootFilePath() & This.getTestFolder());
+		This.setAppFilePath(This.getRootFilePath() & This.getAppFolder());
 		
 		//Calculate CFC paths
 		This.setEntityCFCPath(This.getRootCFCPath() & "." & This.getEntityFolder());

@@ -80,11 +80,17 @@
 						</td>			
 					</tr>	
 				<cfelse>
+					<cfif StructKeyExists(XML[XMLRoot], key)>
+						<cfset setting = XML[XMLRoot][key]['XMLText'] />
+					<cfelse>
+						<cfset setting = "" />
+					</cfif>
+					
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
 							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000">
-							<cfinput name="#key#" type="text" id="#key#" value="#XML[XMLRoot][key]['XMLText']#" />
+							<cfinput name="#key#" type="text" id="#key#" value="#setting#" />
 							</cftooltip>
 						</td>			
 					</tr>
