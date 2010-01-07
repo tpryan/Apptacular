@@ -12,6 +12,7 @@
 	
 	// get folders needed for these operations. 
 	rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
+	writeLog("Path to Purge: " & rootFilePath, "Apptacular");
 	dbConfigPath = rootFilePath & FS & ".apptacular/schema/";
 	
 	// get the cfc path from the schema files.
@@ -44,6 +45,7 @@
 	generator.generate();
 	filesGenerated = generator.getAllGeneratedFilePaths();
 	
+	
 	filesList = DirectoryList(rootFilePath, true, "query");
 	
 </cfscript>	
@@ -58,12 +60,12 @@
 	OR	 	name like '%.css'
 </cfquery>
 
+<!--- Lower here serves to ensure that we propertly purge files. --->
 <cfquery name="extrafilesList" dbtype="query">
 	SELECT 	path
 	FROM 	filesList
-	WHERE 	path not in (<cfqueryParam cfsqltype="cf_sql_varchar" list="true" value="#ArrayToList(filesGenerated)#" />)
+	WHERE 	LOWER(path) not in (<cfqueryParam cfsqltype="cf_sql_varchar" list="true" value="#Lcase(ArrayToList(filesGenerated))#" />)
 </cfquery>
-
 
 <!--- Delete Extra files --->
 <cfloop query="extrafilesList">
