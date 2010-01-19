@@ -454,20 +454,12 @@ component extends="codeGenerator"{
 		onRequestStart.setReturnType("boolean");
 		onRequestStart.setReturnResult('true');
 
-		onRequestStart.AddOperation('		<cfif structKeyExists(url, "reset_app")>');
-		onRequestStart.AddOperation('			<cfset ApplicationStop() />');
-		onRequestStart.AddOperation('			<cfset location(cgi.script_name, false) />');
-		onRequestStart.AddOperation('		</cfif>');
-		onRequestStart.AddOperationScript('		if (structKeyExists(url, "reset_app")){');
-		onRequestStart.AddOperationScript('			ApplicationStop();');
-		onRequestStart.AddOperationScript('			location(cgi.script_name, false);');
-		onRequestStart.AddOperationScript('		}');
-
-
-		
-		
-		
-		
+		onRequestStart.AddLineBreak();
+		onRequestStart.StartSimpleIF('structKeyExists(url, "reset_app")',2);
+		onRequestStart.AddSimpleSet('ApplicationStop()', 3);
+		onRequestStart.AddSimpleSet('location(cgi.script_name, false)', 3);
+		onRequestStart.EndSimpleIF(2);
+		onRequestStart.AddLineBreak();
 		
 		if (config.getCreateLogin()){
 			appCFC.addApplicationProperty('sessionManagement', true) ;
@@ -478,13 +470,15 @@ component extends="codeGenerator"{
 			onSessionStart.setReturnType("boolean");
 			onSessionStart.setReturnResult('true');
 
-			onSessionStart.AddOperation('		<cfset session.loggedOn = false />');
-			onSessionStart.AddOperation('		<cfset session.username = "" />');
-		
-			onSessionStart.AddOperationScript('		session.loggedOn = false;');
-			onSessionStart.AddOperationScript('		session.username = "";');
+			onSessionStart.AddSimpleSet('session.loggedOn = false', 2);
+			onSessionStart.AddSimpleSet('session.username = ""', 2);
 			
 			appCFC.addFunction(onSessionStart);
+			
+			onRequestStart.StartSimpleIF('structKeyExists(url, "logout")',2);
+			onRequestStart.AddSimpleSet('onSessionStart()', 3);
+			onRequestStart.EndSimpleIF(2);
+			onRequestStart.AddLineBreak();
 			
 			onRequestStart.AddOperation('		<cfif not session.loggedOn>');
 			onRequestStart.AddOperation('			<cfinclude template="login.cfm">');
@@ -494,6 +488,8 @@ component extends="codeGenerator"{
 			onRequestStart.AddOperationScript('			include "login.cfm";');
 			onRequestStart.AddOperationScript('			abort;');
 			onRequestStart.AddOperationScript('		}');
+			onRequestStart.AddLineBreak();
+			
 			
 			
 	    }
