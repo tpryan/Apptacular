@@ -62,21 +62,17 @@
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
-							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000"> 
 							<input name="#key#" type="radio" id="#key#true" value="true" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
 							<label for="#key#true">True</label>
 							<input name="#key#" type="radio" id="#key#false" value="false" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND NOT XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
 							<label for="#key#false">False</label>
-							</cftooltip>
 						</td>			
 					</tr>
 				<cfelseif editor.isTextAreaUI(key)>
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
-							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000">
 							<cftextarea name="#key#" >#XML[XMLRoot][key]['XMLText']#</cftextarea>
-							</cfToolTip>
 						</td>			
 					</tr>	
 				<cfelse>
@@ -89,9 +85,7 @@
 					<tr>	
 						<th><label for="#key#">#key#</label></th>
 						<td>
-							<cfTooltip tooltip="#getToolTip(key)#" showdelay="1000">
 							<cfinput name="#key#" type="text" id="#key#" value="#setting#" />
-							</cftooltip>
 						</td>			
 					</tr>
 				</cfif>

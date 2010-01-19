@@ -90,21 +90,17 @@
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<cfTooltip tooltip="#getToolTip(attribute)#" showdelay="4000">
 							<cfselect name="#fieldname#" id="#attribute#">
 								<cfloop list="#uilist#" index="type">
 								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
 								</cfloop>
 							</cfselect>
-							</cftoolTip>
 						</td>			
 					<cfelse>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<cfTooltip tooltip="#getToolTip(attribute)#" showdelay="4000">
-								<cfinput name="#fieldname#" type="text" value="#value#"   />
-							</cftoolTip>	
+							<cfinput name="#fieldname#" type="text" value="#value#"   />
 						</td>
 					</cfif>
 				</cfloop>
