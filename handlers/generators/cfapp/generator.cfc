@@ -66,7 +66,8 @@ component{
 				
 				var login = viewGenerator.createLogin();
 				ArrayAppend(files, login);
-				viewGenerator.createLoginCustomTag();
+				var loginCT = viewGenerator.createLoginCustomTag();
+				ArrayAppend(files, loginCT);
 				
 			}
 			
