@@ -17,7 +17,7 @@ component accessors="true"{
 		
 		var allowed = structNew();
 		allowed['datasource'] = "displayName";
-		allowed['table'] = "displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable";
+		allowed['table'] = "entityName,displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable";
 		allowed['column'] = "name,column,displayName,uiType";
 		allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,";
 		allowed['config'] = allowed['config'] & "<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,appFolder,";

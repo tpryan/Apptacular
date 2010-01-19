@@ -66,7 +66,7 @@ component{
 				
 				var login = viewGenerator.createLogin();
 				ArrayAppend(files, login);
-				viewGenerator.copyLoginCustomTag();
+				viewGenerator.createLoginCustomTag();
 				
 			}
 			
