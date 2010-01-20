@@ -330,7 +330,7 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint Returns a column object from table with that name. 
 	 */	
-	public table function getColumn(required string columnName){
+	public column function getColumn(required string columnName){
 		return This.getColumnsStruct()[arguments.columnName];
 	}
 	

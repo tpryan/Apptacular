@@ -87,6 +87,9 @@
 		
 		<echo message="Running Sakila Tests"/>
 		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Running AdventureWorks Tests"/>
+		<ant antfile="${webroot}/adventureworks/test/build.xml" inheritAll="false"/>
 	
 	</target>	
 	

@@ -540,7 +540,18 @@ component  extends="codeGenerator"
 	private any function discoverValidId(table){
 		//Crazy, but use a query to get a valid record to implement in this call.
 		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
-		qry.setSQL("select #table.getIdentity()# as id from #table.getName()#");
+		
+		//Slight tweak because I was running into case sensitivity issues.
+		var idColumn = table.getColumn(table.getIdentity());
+		
+		
+		if (Len(table.getschema()) > 0){
+			qry.setSQL("select #idColumn.getColumn()# as id from #table.getSchema()#.#table.getName()#");
+		}
+		else{
+			qry.setSQL("select #idColumn.getColumn()# as id from #table.getName()#");
+		}
+		
 		var id = qry.execute().getResult().id;
 		return id;		
 	}
