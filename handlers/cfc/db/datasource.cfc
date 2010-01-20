@@ -213,7 +213,19 @@ component accessors="true" extends="dbItem"
 		return tables;
 	}
 	
-	  
+	public array function getTablesOrdered(){
+		var tableList = StructKeyArray(variables.tablesStruct);
+		var i = 0;
+		ArraySort(tableList, "textnocase", "asc");
+	
+		var result = ArrayNew(1);
+		
+		for (i =1; i <= ArrayLen(tableList); i++){
+		 	ArrayAppend(result, variables.tablesStruct[tableList[i]]);
+		}
+	
+		return result;
+	}  
 
 	/**
 	 * @hint Create a list of tables to not process.  Somehow pulled in via cfdbinfo in MSSQL

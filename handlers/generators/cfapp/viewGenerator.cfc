@@ -547,39 +547,41 @@ component extends="codeGenerator"{
 		
 		view.AppendBody('	</cfcase>');
 		
-		
-		view.AppendBody();
-	    view.AppendBody('	<cfcase value="edit">');
-	    view.AppendBody('		<cfif url.#identity# eq 0>');
-	    view.AppendBody('			<cfset #entityName# = New ' & entityName  & '() />');
-	    view.AppendBody('		<cfelse>');
-	    view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
-	    view.AppendBody('		</cfif>');
-		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
-		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
-		view.AppendBody('		<cfif url.#identity# neq 0>');
-	    view.AppendBody('			<a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
-	    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
-		view.AppendBody('		</cfif>');
-		view.AppendBody('		</p></cfoutput>');	
-		view.AppendBody();
-	    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
-	    view.AppendBody('	</cfcase>');
-		view.AppendBody();
-	    view.AppendBody('	<cfcase value="edit_process">');
-		view.AppendBody('		<cfset #entityName# = EntityNew("#entityName#") />');
-		view.AppendBody('		<cfset #entityName# = #entityName#.populate(form) />');
-	    view.AppendBody('		<cfset EntitySave(#entityName#) />');
-	    view.AppendBody('		<cfset ORMFlush() />');
-	    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
-	    view.AppendBody('	</cfcase>');
-	    view.AppendBody();
-	    view.AppendBody('	<cfcase value="delete_process">');
-	    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
-	    view.AppendBody('		<cfset EntityDelete(#entityName#) />');
- 	    view.AppendBody('		<cfset ORMFlush() />');
-		view.AppendBody('		<cflocation url ="##cgi.script_name##?method=list&message=deleted" />');
-	    view.AppendBody('	</cfcase>');
+		//Remove views from editing
+		if (not table.getIsView()){
+			view.AppendBody();
+		    view.AppendBody('	<cfcase value="edit">');
+		    view.AppendBody('		<cfif url.#identity# eq 0>');
+		    view.AppendBody('			<cfset #entityName# = New ' & entityName  & '() />');
+		    view.AppendBody('		<cfelse>');
+		    view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+		    view.AppendBody('		</cfif>');
+			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
+			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
+			view.AppendBody('		<cfif url.#identity# neq 0>');
+		    view.AppendBody('			<a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
+		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
+			view.AppendBody('		</cfif>');
+			view.AppendBody('		</p></cfoutput>');	
+			view.AppendBody();
+		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
+		    view.AppendBody('	</cfcase>');
+			view.AppendBody();
+		    view.AppendBody('	<cfcase value="edit_process">');
+			view.AppendBody('		<cfset #entityName# = EntityNew("#entityName#") />');
+			view.AppendBody('		<cfset #entityName# = #entityName#.populate(form) />');
+		    view.AppendBody('		<cfset EntitySave(#entityName#) />');
+		    view.AppendBody('		<cfset ORMFlush() />');
+		    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
+		    view.AppendBody('	</cfcase>');
+		    view.AppendBody();
+		    view.AppendBody('	<cfcase value="delete_process">');
+		    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+		    view.AppendBody('		<cfset EntityDelete(#entityName#) />');
+	 	    view.AppendBody('		<cfset ORMFlush() />');
+			view.AppendBody('		<cflocation url ="##cgi.script_name##?method=list&message=deleted" />');
+		    view.AppendBody('	</cfcase>');
+		}	
 		view.AppendBody();   
 	    view.AppendBody('</cfswitch>');
 		view.AppendBody('</cf_pageWrapper>');
@@ -594,7 +596,7 @@ component extends="codeGenerator"{
 		
 		var path = variables.config.getAppFilePath();
 		var i=0;
-		var tables = variables.datasource.getTables();
+		var tables = variables.datasource.getTablesOrdered();
 	    
 	    var index  =  New apptacular.handlers.cfc.code.CFPage("index", path);  
 	    index.AppendBody('<cfsetting showdebugoutput="false" />');
@@ -603,7 +605,7 @@ component extends="codeGenerator"{
 	    
 	   	for (i= 1; i <= ArrayLen(tables); i++){
 			table = tables[i];
-	    	if (table.getCreateInterface()){
+	    	if (table.getCreateInterface() and table.IsProperTable()){
 				index.AppendBody('	<li><a href="#table.getEntityName()#.cfm">#table.getDisplayName()#</a></li>');
 	    	}
 		}

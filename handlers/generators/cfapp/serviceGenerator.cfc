@@ -127,32 +127,37 @@ component  extends="codeGenerator"
 		get.setReturnResult('EntityLoad("#EntityName#", arguments.id, true)');
 		cfc.addFunction(get);
 		
-		//Update Method
-		var entity = New apptacular.handlers.cfc.code.Argument();
-		entity.setName("#EntityName#");
-		entity.setRequired(true);
-		entity.setType("any");
+		//Remove views from editing
+		if (not table.getIsView()){
 		
-		var func= New apptacular.handlers.cfc.code.func();
-		func.setName("update");
-		func.setAccess(access);
-		func.setReturnType("void");
-		func.AddArgument(entity);
-		func.AddOperation('		<cfset arguments.#EntityName#.nullifyZeroID() />');
-		func.AddOperation('		<cfset EntitySave(arguments.#EntityName#) />');
-		func.AddOperationScript('		arguments.#EntityName#.nullifyZeroID();');
-		func.AddOperationScript('		EntitySave(arguments.#EntityName#);');		
-		cfc.addFunction(func);
+			//Update Method
+			var entity = New apptacular.handlers.cfc.code.Argument();
+			entity.setName("#EntityName#");
+			entity.setRequired(true);
+			entity.setType("any");
+			
+			var func= New apptacular.handlers.cfc.code.func();
+			func.setName("update");
+			func.setAccess(access);
+			func.setReturnType("void");
+			func.AddArgument(entity);
+			func.AddOperation('		<cfset arguments.#EntityName#.nullifyZeroID() />');
+			func.AddOperation('		<cfset EntitySave(arguments.#EntityName#) />');
+			func.AddOperationScript('		arguments.#EntityName#.nullifyZeroID();');
+			func.AddOperationScript('		EntitySave(arguments.#EntityName#);');		
+			cfc.addFunction(func);
+			
+			//Delete Method
+			var func= New apptacular.handlers.cfc.code.func();
+			func.setName("destroy");
+			func.setAccess(access);
+			func.setReturnType("void");
+			func.AddArgument(entity);
+			func.AddOperation('		<cfset EntityDelete(arguments.#EntityName#) />');
+			func.AddOperationScript('		EntityDelete(arguments.#EntityName#);');		
+			cfc.addFunction(func);
 		
-		//Delete Method
-		var func= New apptacular.handlers.cfc.code.func();
-		func.setName("destroy");
-		func.setAccess(access);
-		func.setReturnType("void");
-		func.AddArgument(entity);
-		func.AddOperation('		<cfset EntityDelete(arguments.#EntityName#) />');
-		func.AddOperationScript('		EntityDelete(arguments.#EntityName#);');		
-		cfc.addFunction(func);
+		}	
 		
 		//Search Method
 		var search= New apptacular.handlers.cfc.code.func();

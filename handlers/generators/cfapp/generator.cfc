@@ -101,18 +101,24 @@ component{
 
 				//Handle Views for tables.
 				if (config.getCreateViews() and table.getCreateInterface()){
+					
+					var View = viewGenerator.createView(table);
+					ArrayAppend(files, View);
+					
 					var ViewListCustomTag = viewGenerator.createViewListCustomTag(table);
 					ArrayAppend(files, ViewListCustomTag);
 					
 					var ViewReadCustomTag = viewGenerator.createViewReadCustomTag(table);
 					ArrayAppend(files, ViewReadCustomTag);
 					
-					var ViewEditCustomTag = viewGenerator.createViewEditCustomTag(table);
-					ArrayAppend(files, ViewEditCustomTag);
-					
-					var View = viewGenerator.createView(table);
-					ArrayAppend(files, View);
+					if (not table.getIsView()){					
+						var ViewEditCustomTag = viewGenerator.createViewEditCustomTag(table);
+						ArrayAppend(files, ViewEditCustomTag);
+					}
 				}
+				
+				
+				
 				
 				//Handles Services for tables.
 				if (config.getCreateServices() and table.getCreateInterface()){
