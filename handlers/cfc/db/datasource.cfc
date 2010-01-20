@@ -22,8 +22,9 @@ component accessors="true" extends="dbItem"
 		This.setName(arguments.datasource);
 		This.setDisplayName(arguments.datasource);
 	
-		populateTables();
 		populateDatasource();
+		populateTables();
+		
 	
 		return This;
 	}
@@ -38,17 +39,7 @@ component accessors="true" extends="dbItem"
 		var tablesStruct = StructNew();
 		var tablesStructKey = ArrayNew(1);
 		dbinfo.setType("tables");
-		var tables = dbinfo.send().getResult();
-		
-		
-		var qoq = new Query(); 
-		var queryString = "	SELECT  	*  
-                          	FROM  		resultSet
-							WHERE table_type != 'SYSTEM TABLE'
-							AND table_name not in(#PreserveSingleQuotes(variables.excludedTableList)#)"; 
-		qoq.setAttributes(resultSet = tables);  
-		qoq.SetDBType("query"); 
-		tables = qoq.execute(sql=queryString).getResult(); 
+		var tables = getTablesFromDatabase();
 		
 		excludedTableList = "";
 		for (i = 1; i <= tables.recordCount; i++){
@@ -58,7 +49,11 @@ component accessors="true" extends="dbItem"
 		
 		for (i=1; i <= tables.recordCount; i++){
 			var table = New table(tables.table_name[i], This.getName());
-			table.setrowcount(calculateRowCount(tables.table_name[i]));
+			
+			
+			if(structKeyExists(tables, "table_owner")){
+				table.setSchema(tables.table_owner[i]);
+			}
 			
 			if (CompareNoCase(tables.table_type[i], "view") eq 0){
 				table.setIsView(true);
@@ -66,7 +61,11 @@ component accessors="true" extends="dbItem"
 			else{
 				table.setIsView(false);
 			}
+			
+			table.setrowcount(calculateRowCount(table));
+			
 			tablesStruct[table.getName()] = table;
+			
 		}
 		
 		//check for join tables.
@@ -102,12 +101,30 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint Counts rows for each table 
 	 */	
-	public numeric function calculateRowCount(required string tableName){
-		var SQL = "SELECT count(*) as countOfRows FROM #arguments.tableName#";
+	public numeric function calculateRowCount(required table table){
+		
+		if (Len(table.getschema()) > 0){
+			var SQL = "SELECT count(*) as countOfRows FROM #table.getSchema()#.#table.getName()#";	
+		}
+		else{
+			var SQL = "SELECT count(*) as countOfRows FROM #table.getName()#";
+		}
+		
+		
 		
 		var qry = new Query(datasource=This.getName());
 		qry.setSQL(SQL);
-		var countOfRows = qry.execute().getResult().countOfRows;
+		
+		try{
+			var countOfRows = qry.execute().getResult().countOfRows;
+			}
+			catch(any e){
+				
+				writeDump(variables.debugTables);
+				writeDump(e);
+				abort;
+			}
+		
 		return countOfRows;
 	}
 	
@@ -151,7 +168,52 @@ component accessors="true" extends="dbItem"
 	 */	
 	public string function toXML(){
 		return objectToXML("datasource");
-	} 
+	}
+	
+	public query function getTablesFromDatabase(){
+		
+		if (FindNoCase("Microsoft", This.getEngine())){
+			var tables = getTablesFromMSSQL();
+		}
+		else{
+			var tables = getTablesFromGeneric();
+		}
+	
+		return tables;
+	
+	}
+	
+	private query function getTablesFromMSSQL(){
+		var sptables = New storedProc();
+		var procResult = New storedProcResult();
+		sptables.setProcedure("sp_tables");
+		sptables.setDataSource(This.getName());
+		sptables.setDebug(true);
+		sptables.addProcResult(name="tables",resultset=1); 
+		
+		tables=sptables.execute().getprocResultSets().tables;
+		
+		variables.debugTables = tables; //delete me later.
+		
+		var qoq = new Query(); 
+		var queryString = "	SELECT  	*  
+                          	FROM  		resultSet
+							WHERE table_type != 'SYSTEM TABLE'
+							AND table_name not in(#PreserveSingleQuotes(variables.excludedTableList)#)"; 
+		qoq.setAttributes(resultSet = tables);  
+		qoq.SetDBType("query"); 
+		tables = qoq.execute(sql=queryString).getResult(); 
+	
+		return tables;
+	}
+	
+	private query function getTablesFromGeneric(){
+		dbinfo.setType("tables");
+		var tables = dbinfo.send().getResult();
+		return tables;
+	}
+	
+	  
 
 	/**
 	 * @hint Create a list of tables to not process.  Somehow pulled in via cfdbinfo in MSSQL

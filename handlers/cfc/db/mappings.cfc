@@ -13,6 +13,9 @@ component
 		var defaultinteger = {type="numeric",ormtype="integer",uitype="string"};
 		var defaultstring = {type="string",ormtype="string",uitype="string"};
 		var defaultnumeric = {type="numeric",ormtype="float",uitype="string"};
+		var defaulttext = {type="string",ormtype="text",uitype="text"};
+		var defaultchar = {type="string",ormtype="string",uitype="string"};
+		var defaultvalue = {type="string",ormtype="string",uitype="string"};
 		
 		//Various Integers
 		datatypes['int'] = defaultinteger;
@@ -24,6 +27,8 @@ component
 		datatypes['TINYINT UNSIGNED'] = defaultinteger;
 		datatypes['MEDIUMINT UNSIGNED'] = defaultinteger;
 		datatypes['int identity'] = defaultinteger;
+		datatypes['tinyint identity'] = defaultinteger;
+		datatypes['smallint identity'] = defaultinteger;
 		
 		//various strings
 		datatypes['nvarchar'] = defaultstring;
@@ -31,22 +36,26 @@ component
 		datatypes['varchar2'] = defaultstring;
 		datatypes['enum'] = defaultstring;
 		datatypes['set'] = defaultstring;
+		datatypes['sysname'] = defaultstring;
+		datatypes['name'] = defaultstring;
+		datatypes['uniqueidentifier'] = defaultstring;
 		
+		datatypes['default'] = defaultvalue;
 		
 		//numerics
 		datatypes['number'] = defaultnumeric;
 		datatypes['decimal'] = defaultnumeric;
 		datatypes['numeric'] = defaultnumeric;
+		datatypes['money'] = defaultnumeric;
 	
 	
 		//Chars text other strings
-		datatypes['char']['type'] = "string";
-		datatypes['char']['ormType'] = "string";
-		datatypes['char']['uiType'] = "string";		
+		datatypes['char'] = defaultchar;
+		datatypes['nchar'] = defaultchar;	
 		
-		datatypes['text']['type'] = "string";
-		datatypes['text']['ormType'] = "text";
-		datatypes['text']['uiType'] = "text";
+		datatypes['text'] = defaulttext;
+		datatypes['ntext'] = defaulttext;
+		datatypes['xml'] = defaulttext;
 	
 	
 		//Various Booleans
@@ -65,6 +74,10 @@ component
 		datatypes['bit']['type'] = "boolean";
 		datatypes['bit']['ormType'] = "boolean";
 		datatypes['bit']['uiType'] = "boolean";
+		
+		datatypes['flag']['type'] = "boolean";
+		datatypes['flag']['ormType'] = "boolean";
+		datatypes['flag']['uiType'] = "boolean";
 		
 		//various ob's
 		datatypes['clob']['type'] = "clob";
@@ -103,21 +116,45 @@ component
 	 * @hint gets the Ormtype for a given datatype
 	 */
 	public string function getOrmType(required string datatype){
-		return datatypes[arguments.datatype]['ormType'];
+		
+		if (structKeyExists(datatypes, arguments.datatype)){
+			var dataTypeInfo = datatypes[arguments.datatype];		
+		}
+		else{
+			var dataTypeInfo = datatypes['default'];
+		}
+		
+		return dataTypeInfo['ormType'];
 	}
 
 	/**
 	 * @hint gets the type for a given datatype
 	 */
 	public string function getType(required string datatype){
-		return datatypes[arguments.datatype]['Type'];
+		
+		if (structKeyExists(datatypes, arguments.datatype)){
+			var dataTypeInfo = datatypes[arguments.datatype];		
+		}
+		else{
+			var dataTypeInfo = datatypes['default'];
+		}
+		
+		return dataTypeInfo['Type'];
 	}
 
 	/**
 	 * @hint gets the UItype for a given datatype
 	 */
 	public string function getUIType(required string datatype){
-		return datatypes[arguments.datatype]['UIType'];
+		
+		if (structKeyExists(datatypes, arguments.datatype)){
+			var dataTypeInfo = datatypes[arguments.datatype];		
+		}
+		else{
+			var dataTypeInfo = datatypes['default'];
+		}
+		
+		return dataTypeInfo['UIType'];
 	}
 
 

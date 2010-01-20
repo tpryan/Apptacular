@@ -29,6 +29,12 @@ component extends="codeGenerator"{
 		    cfc.setTable(table.getName());
 		    cfc.setEntityname(table.getEntityName());
 	   	}
+		
+		if (len(table.getSchema() > 0)){
+		    cfc.setTable(table.getName());
+		    cfc.setEntityname(table.getEntityName());
+			cfc.setSchema(table.getSchema());
+	   	}
 	    
 		var columns = table.getColumns();
 		
@@ -49,7 +55,7 @@ component extends="codeGenerator"{
 	       	}
 			
 	       	
-	       	if (column.getIsPrimaryKey()){
+	       	if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
 	       		property.setFieldtype('id');
 	       		property.setGenerator('increment');
 	       	}	

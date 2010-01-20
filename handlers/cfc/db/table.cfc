@@ -18,6 +18,7 @@ component accessors="true" extends="dbItem"
 	property name="isView" type="boolean" hint="It's not a table, it's a view!";
 	property name="orderby" hint="The column to order all refernece to these objects."; 
 	property name="createInterface" type="boolean" hint="Whether or not this table should have interfaces built for it. ";  
+	property name="schema" hint="The schema that contains the table."; 
 	
 	property name="columns" type="column[]" hint="An array of all of the columns in the table.";
 	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";
@@ -116,12 +117,21 @@ component accessors="true" extends="dbItem"
 		var columnStruct = structNew();
 		var referencedTables = structNew();
 		
+		
 		for (i=1; i <= columns.recordCount; i++){
 			var column = New column();
 			column.setName(LCase(columns.column_name[i]));
 			column.setDisplayName(capitalize(columns.column_name[i]));
 			column.setColumn(columns.column_name[i]);
+			try{
 			column.setType(mappings.getType(columns.type_name[i]));
+			}
+			catch(any e){
+				writeDump(this);
+				writeDump(e);
+				abort;
+			}
+			
 			column.setOrmType(mappings.getOrmType(columns.type_name[i]));
 			column.setUIType(mappings.getUIType(columns.type_name[i]));
 			column.setDataType(columns.type_name[i]);
@@ -143,6 +153,10 @@ component accessors="true" extends="dbItem"
 			columnStruct[column.getName()] = column;
 			
 			if (column.getisPrimaryKey()){
+				This.setIdentity(column.getName());
+				This.setOrderBy(column.getName() & " asc");
+			}
+			else if(FindNoCase("identity", columns.type_name[i])){
 				This.setIdentity(column.getName());
 				This.setOrderBy(column.getName() & " asc");
 			}

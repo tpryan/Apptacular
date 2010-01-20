@@ -3,6 +3,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	property name="extends" type="string" hint="The cfc that the CFC created here extends.";
 	property name="implements" type="string" hint="The interface that the CFC created here implements.";
 	property name="table" type="string" hint="The table that this CFC models for ORM usage.";
+	property name="schema" type="string" hint="The schema in which the table that this CFC models for ORM usage resides.";
 	property name="entityName" type="string" hint="The entityname that this CFC models for ORM usage.";
 	property name="output" type="boolean" default="false" hint="Whether or not this CFC should leak output.";
 	property name="persistent" type="boolean" default="false" hint="Whether or not this CFC should use ORM tools.";
@@ -48,6 +49,10 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 			header = ListAppend(header, 'table="#This.getTable()#"', ' ') ;
 		}
 		
+		if (len(This.getSchema()) gt 0){
+			header = ListAppend(header, 'schema="#This.getSchema()#"', ' ') ;
+		}
+		
 		if (len(This.getEntityName()) gt 0){
 			header = ListAppend(header, 'entityName="#This.getEntityName()#"', ' ') ;
 		}
@@ -82,6 +87,10 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		
 		if (len(This.getTable()) gt 0){
 			header = ListAppend(header, 'table="#This.getTable()#"', ' ') ;
+		}
+		
+		if (len(This.getSchema()) gt 0){
+			header = ListAppend(header, 'schema="#This.getSchema()#"', ' ') ;
 		}
 		
 		if (len(This.getEntityName()) gt 0){
