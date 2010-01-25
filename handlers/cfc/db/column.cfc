@@ -8,13 +8,16 @@ component accessors="true" extends="dbItem"
 	property name="column" hint="The real name of the column in the database.";
 	property name="length" hint="The length of the column";
 	property name="isForeignKey" type="boolean" hint="Is this column a foreign key. ";
+	property name="isMemeberOfCompositeForeignKey" type="boolean" hint="Is this column a member of a composite foreign key. ";
 	property name="isPrimaryKey" type="boolean" hint="Is this column a primary key, um isn't that a little obvious? ";
+	property name="isComputed" type="boolean" hint="Is this column a computed value. ";
 	property name="foreignKey" hint="The primary key of the foreign key table." ;
 	property name="foreignKeyTable" hint="The foreign key table." ;
 	property name="ormType" hint="The ormtype" ;
 	property name="dataType" hint="The type as presented by cfdbinfo" ;
 	property name="uiType" hint="The type to generate ui's for." ;
 	property name="Type" hint="The ColdFusion datatype" ;
+	property name="TestType" hint="The type used for unit testing" ;
 	
 	/**
 	 * @hint Converts table to XML for serialization

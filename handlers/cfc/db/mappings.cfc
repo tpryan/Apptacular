@@ -10,12 +10,13 @@ component
 	public function init(){
 		variables.datatypes = {};
 		
-		var defaultinteger = {type="numeric",ormtype="integer",uitype="string"};
-		var defaultstring = {type="string",ormtype="string",uitype="string"};
-		var defaultnumeric = {type="numeric",ormtype="float",uitype="string"};
-		var defaulttext = {type="string",ormtype="text",uitype="text"};
-		var defaultchar = {type="string",ormtype="string",uitype="string"};
-		var defaultvalue = {type="string",ormtype="string",uitype="string"};
+		var defaultinteger = {type="numeric",ormtype="integer",uitype="string", testtype="numeric"};
+		var defaultstring = {type="string",ormtype="string",uitype="string", testtype="string"};
+		var defaultnumeric = {type="numeric",ormtype="float",uitype="string", testtype="numeric"};
+		var defaulttext = {type="string",ormtype="text",uitype="text", testtype="string"};
+		var defaultchar = {type="string",ormtype="string",uitype="string", testtype="string"};
+		var defaultboolean = {type="boolean",ormtype="boolean",uitype="boolean", testtype="boolean"};
+		var defaultvalue = {type="string",ormtype="string",uitype="string", testtype="string"};
 		
 		//Various Integers
 		datatypes['int'] = defaultinteger;
@@ -38,9 +39,14 @@ component
 		datatypes['set'] = defaultstring;
 		datatypes['sysname'] = defaultstring;
 		datatypes['name'] = defaultstring;
-		datatypes['uniqueidentifier'] = defaultstring;
 		
 		datatypes['default'] = defaultvalue;
+		
+		
+		datatypes['uniqueidentifier']['type'] = "string";
+		datatypes['uniqueidentifier']['ormType'] = "string";
+		datatypes['uniqueidentifier']['uiType'] = "string";
+		datatypes['uniqueidentifier']['testType'] = "uniqueidentifier";
 		
 		//numerics
 		datatypes['number'] = defaultnumeric;
@@ -55,59 +61,69 @@ component
 		
 		datatypes['text'] = defaulttext;
 		datatypes['ntext'] = defaulttext;
-		datatypes['xml'] = defaulttext;
+		
+		datatypes['xml']['type'] = "string";
+		datatypes['xml']['ormType'] = "string";
+		datatypes['xml']['uiType'] = "string";
+		datatypes['xml']['testType'] = "xml";
 	
 	
 		//Various Booleans
-		datatypes['boolean']['type'] = "boolean";
-		datatypes['boolean']['ormType'] = "boolean";
-		datatypes['boolean']['uiType'] = "boolean";
+		
+		datatypes['boolean'] = defaultboolean;
+		datatypes['yes_no'] = defaultboolean;
+		datatypes['true_false'] = defaultboolean;
+		datatypes['bit'] = defaultboolean;
+		datatypes['flag'] = defaultboolean;
+		
 
-		datatypes['yes_no']['type'] = "boolean";
 		datatypes['yes_no']['ormType'] = "yes_no";
-		datatypes['yes_no']['uiType'] = "boolean";
 
-		datatypes['true_false']['type'] = "boolean";
 		datatypes['true_false']['ormType'] = "true_false";
-		datatypes['true_false']['uiType'] = "boolean";
+		
 		
 		datatypes['bit']['type'] = "boolean";
 		datatypes['bit']['ormType'] = "boolean";
 		datatypes['bit']['uiType'] = "boolean";
+		datatypes['bit']['testtype'] = "bit";
 		
-		datatypes['flag']['type'] = "boolean";
-		datatypes['flag']['ormType'] = "boolean";
-		datatypes['flag']['uiType'] = "boolean";
 		
 		//various ob's
 		datatypes['clob']['type'] = "clob";
 		datatypes['clob']['ormType'] = "clob";
 		datatypes['clob']['uiType'] = "text";
+		datatypes['clob']['testtype'] = "string";
 		
 		datatypes['blob']['type'] = "binary";
 		datatypes['blob']['ormType'] = "binary";
 		datatypes['blob']['uiType'] = "binary";
+		datatypes['blob']['testtype'] = "string";
 		
 		//various dates
 		datatypes['date']['type'] = "date";
 		datatypes['date']['ormType'] = "date";
 		datatypes['date']['uiType'] = "date";
+		datatypes['date']['testtype'] = "date";
 		
 		datatypes['time']['type'] = "date";
 		datatypes['time']['ormType'] = "time";
 		datatypes['time']['uiType'] = "time";
+		datatypes['time']['testtype'] = "date";
 		
 		datatypes['timestamp']['type'] = "date";
 		datatypes['timestamp']['ormType'] = "timestamp";
 		datatypes['timestamp']['uiType'] = "datetime";
+		datatypes['timestamp']['testtype'] = "date";
 		
 		datatypes['datetime']['type'] = "date";
 		datatypes['datetime']['ormType'] = "timestamp";
 		datatypes['datetime']['uiType'] = "datetime";
+		datatypes['datetime']['testtype'] = "date";
 		
 		datatypes['year']['type'] = "numeric";
 		datatypes['year']['ormType'] = "integer";
 		datatypes['year']['uiType'] = "string";
+		datatypes['year']['testtype'] = "numeric";
 			
     	return This;
     }
@@ -155,6 +171,21 @@ component
 		}
 		
 		return dataTypeInfo['UIType'];
+	}
+	
+	/**
+	 * @hint gets the TestType for a given datatype
+	 */
+	public string function getTestType(required string datatype){
+		
+		if (structKeyExists(datatypes, arguments.datatype)){
+			var dataTypeInfo = datatypes[arguments.datatype];		
+		}
+		else{
+			var dataTypeInfo = datatypes['default'];
+		}
+		
+		return dataTypeInfo['testtype'];
 	}
 
 

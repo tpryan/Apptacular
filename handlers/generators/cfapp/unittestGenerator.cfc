@@ -79,9 +79,9 @@ component  extends="codeGenerator"
 	public apptacular.handlers.cfc.code.cfc function createViewsTest(required any table){
 		var entityName = table.getEntityName();
 		var baseurl = variables.config.getRootURL() & "/#entityName#.cfm";
-		
 		var testView  = New apptacular.handlers.cfc.code.cfc();
-	    testView.setName("test#entityName#");
+	    
+		testView.setName("test#entityName#");
 	    testView.setFileLocation(variables.config.getTestFilePath() & fs & "view");
 		testView.setFormat(variables.config.getCFCFormat());
 		testView.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
@@ -96,7 +96,7 @@ component  extends="codeGenerator"
 		var newreturns200=createSimple200UnitTest(newURL, "testNewReturns200", entityName, "new"); 
 		testView.addFunction(newreturns200);
 		
-		var id = discoverValidId(table);
+		var id = table.discoverValidId();
 		
 		// Add basic 200 test for read
 		var readURL = baseurl & "?method=read&" & table.getIdentity() & "=" & id ;
@@ -151,14 +151,17 @@ component  extends="codeGenerator"
 		var create = createSimpleCreateOrDeleteUnitTest(table);
 		testEntity.addFunction(create);
 
-		//Create Read Test
-		var read = createSimpleReadUnitTest(table);
-		testEntity.addFunction(read);
+		var id = table.discoverValidId();
 		
-		//Create Update Test
-		var update = createSimpleUpdateUnitTest(table);
-		testEntity.addFunction(update);
-		
+		if (len(id) > 0){
+			//Create Read Test
+			var read = createSimpleReadUnitTest(table);
+			testEntity.addFunction(read);
+			
+			//Create Update Test
+			var update = createSimpleUpdateUnitTest(table);
+			testEntity.addFunction(update);
+		}
 		
 		//Create Delete Test
 		var delete = createSimpleCreateOrDeleteUnitTest(table, "Delete");
@@ -249,7 +252,7 @@ component  extends="codeGenerator"
 	*/
 	private apptacular.handlers.cfc.code.func function createSimpleUpdateUnitTest(required any table){
 		var i = 0;
-		var id = discoverValidId(table);
+		var id = table.discoverValidId();
 		var entityName = table.getEntityName();
 		var tableName = table.getName();
 		var identity = table.getIdentity();
@@ -269,28 +272,30 @@ component  extends="codeGenerator"
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
+			if (column.getisPrimaryKey() ){ 
+				continue;
+			}
+			
+			
 			if (column.getIsForeignKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
-				var ftid = discoverValidId(foreignTable);
+				var ftid = foreignTable.discoverValidId();
 				
 				
 				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
-					update.addSimpleSet('#entityName#.set#column.getName()#(EntityLoad("#ftEntityName#", #ftid#, true))', 3);  
+					update.addSimpleSet('#entityName#.set#column.getName()#(EntityLoad("#ftEntityName#", "#ftid#", true))', 3);  
 				}
 				else{
-					update.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+					update.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", "#ftid#", true))', 3); 
 				}
 				
 				
 				
 			}
-			else if (column.getisPrimaryKey() ){ 
-			
-			}
 			else if (not config.isMagicField(column.getName())){
-				update.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column.getType())#")', 3); 
+				update.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column)#")', 3); 
 			}
 		}
 		update.addSimpleSet("EntitySave(#entityName#)",3);
@@ -313,9 +318,10 @@ component  extends="codeGenerator"
 	*/
 	private apptacular.handlers.cfc.code.func function createSimpleReadUnitTest(required any table){
 		var i = 0;
-		var id = discoverValidId(table);
+		var id = table.discoverValidId();
 		var entityName = table.getEntityName();
 		var tableName = table.getName();
+		var SchemaName = table.getSchema();
 		var identity = table.getIdentity();
 		var dsname = variables.datasource.getName();
 		var columns = table.getColumns();
@@ -323,7 +329,27 @@ component  extends="codeGenerator"
 		read.setReturnType("void");
 		read.setName("testRead");
 		read.addLocalVariable("fromQuery");
-		var sql = "SELECT * FROM #tableName# WHERE #identity# = #id#";
+		
+		
+		//Slight tweak because I was running into case sensitivity issues.
+		var idColumn = table.getColumn(table.getIdentity());
+		
+		//Dealing with those pesky composite keys again. 
+		if (table.hasCompositePrimaryKey()){
+			var	WhereClause = Replace(ReplaceList(id, "{,}",","  ), ",", " AND ", "ALL");
+		}
+		else{
+			var	WhereClause = "#idColumn.getColumn()# = #id#";
+		}
+		
+		if (Len(SchemaName) > 0){
+			var sql = "SELECT * FROM #SchemaName#.#tableName# WHERE #WhereClause#";
+		}
+		else{
+			var sql = "SELECT * FROM #tableName# WHERE #WhereClause#";
+		}
+		
+		
 		
 		
 		read.AddOperation('');
@@ -345,7 +371,14 @@ component  extends="codeGenerator"
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
-			if (column.getIsForeignKey()){
+			if (column.getIsPrimaryKey()){
+			
+				read.AddSimpleComment("Primary Key Test", 2);
+				read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#())', 2);	
+				read.AddLineBreak();
+			}
+			
+			else if (column.getIsForeignKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
@@ -353,19 +386,20 @@ component  extends="codeGenerator"
 				read.AddSimpleComment("Need to test if #column.getName()# is null that we don't try and test an empty string versus null", 2);
 				
 				
-				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
+				
+				if (table.getForeignTableCount(foreignTable.getName()) gt 1 AND not table.hasCompositePrimaryKey()){
 					read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
-					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#().get#ftIdentity#())', 3);
+					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#().get#ftIdentity#())', 3);
 				}
 				else{
 					read.StartSimpleIF('not IsNull(#entityName#.get#ftEntityName#())',2);
-					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#ftEntityName#().get#ftIdentity#())', 3);
+					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#ftEntityName#().get#ftIdentity#())', 3);
 				}
 				
 				
 				read.EndSimpleIF(2);
 				read.StartSimpleElse(2);
-				read.AddSimpleSet('assertTrue(Len(fromQuery.#column.getColumn()#) eq 0)', 3);	
+				read.AddSimpleSet('assertTrue(Len(fromQuery["#column.getColumn()#"][1]) eq 0)', 3);	
 				read.EndSimpleIF(2);
 				read.AddLineBreak();
 				
@@ -375,23 +409,23 @@ component  extends="codeGenerator"
 				read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
 				
 				if (column.getOrmType() eq "binary"){
-					read.AddSimpleSet('assertEquals(toBase64(fromQuery.#column.getColumn()#), toBase64(#entityName#.get#column.getName()#()))', 3);
+					read.AddSimpleSet('assertEquals(toBase64(fromQuery["#column.getColumn()#"][1]), toBase64(#entityName#.get#column.getName()#()))', 3);
 					
 				}
 				else if (column.getDataType() eq "year"){
-					read.AddSimpleSet('assertEquals(Year(fromQuery.#column.getColumn()#), #entityName#.get#column.getName()#())', 3);
+					read.AddSimpleSet('assertEquals(Year(fromQuery["#column.getColumn()#"][1]), #entityName#.get#column.getName()#())', 3);
 					
 				}
 				else if (column.getDataType() eq "bit"){
-					read.AddSimpleSet('assertEquals(YesNoFormat(fromQuery.#column.getColumn()#), YesNoFormat(#entityName#.get#column.getName()#()))', 3);
+					read.AddSimpleSet('assertEquals(YesNoFormat(fromQuery["#column.getColumn()#"][1]), YesNoFormat(#entityName#.get#column.getName()#()))', 3);
 					
 				}
 				else{
-					read.AddSimpleSet('assertEquals(fromQuery.#column.getColumn()#, #entityName#.get#column.getName()#())', 3);	
+					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#())', 3);	
 				}
 				read.EndSimpleIF(2);
 				read.StartSimpleElse(2);
-				read.AddSimpleSet('assertTrue(Len(fromQuery.#column.getColumn()#) eq 0)', 3);	
+				read.AddSimpleSet('assertTrue(Len(fromQuery["#column.getColumn()#"][1]) eq 0)', 3);	
 				read.EndSimpleIF(2);
 				read.AddLineBreak();
 			}
@@ -416,6 +450,8 @@ component  extends="codeGenerator"
 		var dsname = variables.datasource.getName();
 		var columns = table.getColumns();
 		var read= New apptacular.handlers.cfc.code.func();
+		var excludeStruct = {};
+		
 		read.setReturnType("void");
 		read.setName("test#arguments.type#");
 		
@@ -435,37 +471,76 @@ component  extends="codeGenerator"
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
+			if (column.getisPrimaryKey() ){ 
+				continue;
+			}
+			
+			if (column.getisComputed() ){ 
+				continue;
+			}
+			
+			if (not StructKeyExists(excludeStruct, column.getforeignKeyTable())){
+				excludeStruct[column.getforeignKeyTable()]="";
+			}
+			
 			if (column.getIsForeignKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
+				
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
-				var ftid = discoverValidId(foreignTable);
+				var ftid = foreignTable.discoverValidId(excludeStruct[column.getforeignKeyTable()]);
+				excludeStruct[column.getforeignKeyTable()] = ListAppend(excludeStruct[column.getforeignKeyTable()], ftid);
 				
+			
 				
 				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
-					read.addSimpleSet('#entityName#.set#column.getName()#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+					var setterName = column.getName();
 				}
 				else{
-					read.addSimpleSet('#entityName#.set#ftEntityName#(EntityLoad("#ftEntityName#", #ftid#, true))', 3); 
+					var setterName = ftEntityName;
+				}
+				
+				if (table.hasCompositePrimaryKey()){
+					var ftidString  = '#ftid#';
+				}
+				else{
+					var ftidString  = '"#ftid#"';
 				}
 				
 				
+				read.addSimpleSet('#entityName#.set#setterName#(EntityLoad("#ftEntityName#", #ftidString#, true))', 3);  
+				
 				
 			}
-			else if (column.getisPrimaryKey() ){ 
-			
-			}
 			else if (not config.isMagicField(column.getName())){
-				read.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column.getType())#")', 3); 
+				read.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column)#")', 3); 
 			}
 		}
+		
 		
 		read.addSimpleSet("EntitySave(#entityName#)",3);
 		
 		if(FindNoCase("delete", arguments.type)){
+		
 			read.addLineBreak();
 			read.addSimpleComment("Now see if we can delete it. ", 3);
-			read.addSimpleSet('var #entityName#Copy = EntityLoad("#entityName#", #entityName#.get#Identity#(), true)', 3);
+		
+			if (table.HasCompositePrimaryKey()){
+				var pkColumns = table.getPrimaryKeyColumns();
+				
+				read.addSimpleSet('var idStruct = {}', 3);
+				
+				for (i=1; i <= ArrayLen(pkColumns); i++){
+					read.addSimpleSet('idStruct["#pkColumns[i].getName()#"] = #entityName#.get#pkColumns[i].getName()#()', 3);
+				}
+				read.addSimpleSet('var #entityName#Copy = EntityLoad("#entityName#", idStruct, true)', 3);
+			}
+			else{
+				
+				read.addSimpleSet('var #entityName#Copy = EntityLoad("#entityName#", #entityName#.get#Identity#(), true)', 3);
+				
+			}
+		
 			read.addSimpleSet('EntityDelete(#entityName#Copy)', 3);
 			
 		
@@ -520,40 +595,33 @@ component  extends="codeGenerator"
 	/**
 	* @hint Generates repeatable data for testing creates and updates.
 	*/
-	private any function getDummyData(required string type){
+	private any function getDummyData(required any column){
 	
+	
+		var type = arguments.column.getTestType();
 		var dummy = structNew();
 		dummy['string'] = "Test String";
-		dummy['numeric'] = 1;
-		dummy['integer'] = 1;
+		dummy['numeric'] = 2;
+		dummy['integer'] = 2;
+		dummy['bit'] = true;
 		dummy['boolean'] = true;
+		dummy['xml'] = XMLNew();
 		dummy['date'] = CreateDate(2000, 1, 1);
 		dummy['datetime'] = CreateDateTime(2000, 1, 1, 0, 0, 0);
 		dummy['binary'] = "##ImageGetBlob(ImageNew('#config.getCSSFilePath()##fs#appgrad.jpg'))##";
+		dummy['uniqueidentifier'] = "9aadcb0d-36cf-483f-84d8-585c2d4ec6e8";
+	
+		var returnValue = dummy[arguments.column.getTestType()];
 		
-		return dummy[arguments.type];
+		if (FindNoCase("string", type)){
+			returnValue = left(returnValue, column.getLength());
+		}
+		
+		if (FindNoCase("date", type) and FindNoCase("end", arguments.column.getName())){
+			returnValue = DateAdd("d", 1, returnValue);		
+		}
+		return returnValue;
 	}
 	
-	/**
-	* @hint Searchs through a table to determine if there is a valid id to use for reads and updates. 
-	*/
-	private any function discoverValidId(table){
-		//Crazy, but use a query to get a valid record to implement in this call.
-		var qry = new Query(datasource=variables.datasource.getName(), maxrows=1);
-		
-		//Slight tweak because I was running into case sensitivity issues.
-		var idColumn = table.getColumn(table.getIdentity());
-		
-		
-		if (Len(table.getschema()) > 0){
-			qry.setSQL("select #idColumn.getColumn()# as id from #table.getSchema()#.#table.getName()#");
-		}
-		else{
-			qry.setSQL("select #idColumn.getColumn()# as id from #table.getName()#");
-		}
-		
-		var id = qry.execute().getResult().id;
-		return id;		
-	}
 
 }

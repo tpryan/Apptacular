@@ -44,6 +44,8 @@ component
 		StructDelete(props, "excludedtables");
 		StructDelete(props, "excludedtablelist");
 		StructDelete(props, "virtualcolumns");
+		StructDelete(props, "datasource");
+		StructDelete(props, "engine");
 		
 		var keys = StructKeyArray(props);
 		ArraySort(keys, "textnocase");

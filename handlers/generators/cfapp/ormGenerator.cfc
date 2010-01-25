@@ -10,6 +10,8 @@ component extends="codeGenerator"{
 		var i = 0;
 		var j = 0;
 		var k = 0;
+		var composites = StructNew();
+		var compositeArray = ArrayNew(1);
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
 		cfc.setFormat(variables.config.getCFCFormat());
@@ -38,17 +40,16 @@ component extends="codeGenerator"{
 	    
 		var columns = table.getColumns();
 		
+		
+		
 		for (i=1; i <= ArrayLen(columns); i++){
 	        var column = columns[i];
 	       	
-	       	property = New apptacular.handlers.cfc.code.property();
+	        var property = New apptacular.handlers.cfc.code.property();
 	       	property.setName(column.getName());
 			property.setType(column.getType());
 			property.setORMType(column.getOrmType());
-	       	
-			if (not column.isColumnSameAsColumnName()){
-				property.setColumn(column.getColumn());
-	       	}
+			property.setColumn(column.getColumn());
 	       	
 	       	if (column.getLength() gt 0){
 	       		property.setLength(column.getLength());
@@ -57,15 +58,15 @@ component extends="codeGenerator"{
 	       	
 	       	if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
 	       		property.setFieldtype('id');
-	       		property.setGenerator('increment');
+	       		property.setGenerator('native');
 	       	}	
-	       	else if (column.getisForeignKey()){
+	       	else if (column.getisForeignKey() AND not column.getIsMemeberOfCompositeForeignKey()){
 				var fTable = dataSource.getTable(column.getForeignKeyTable());
 				
 				if (table.getForeignTableCount(fTable.getName()) gt 1){
 					property.setName(column.getName());
-					property.setInsert(false);
-					property.setUpdate(false);
+					//property.setInsert(false);
+					//property.setUpdate(false);
 				}	
 				else{
 					property.setName(fTable.getEntityName());
@@ -79,10 +80,48 @@ component extends="codeGenerator"{
 	       		property.setCFC(fTable.getEntityName());
 	       		property.setInverse(true);
 	       		property.SetmissingRowIgnored(true);
-	       	}	
+	       	}
+			
+			else if (column.getisForeignKey() AND column.getIsMemeberOfCompositeForeignKey()){
+				if (not StructKeyExists(composites,column.getForeignKeyTable() )){
+					composites[column.getForeignKeyTable()] = column.getForeignKey();
+       			}
+				else{
+					composites[column.getForeignKeyTable()] = ListAppend(composites[column.getForeignKeyTable()], column.getForeignKey());
+				}
+				
+				continue;		
+			}	
 	        
 	        cfc.AddProperty(property);
 	    }
+		
+		
+		var compositeArray = StructKeyArray(composites);
+		
+		//handle composite foreign key relationships
+		for (i=1; i <= ArrayLen(compositeArray); i++){
+			var property = New apptacular.handlers.cfc.code.property();
+	       	var fTable = dataSource.getTable(compositeArray[i]);
+			
+			property.setName(fTable.getEntityName());
+			property.setType("");
+			property.setOrmType("");
+			property.setFieldtype('many-to-one');
+       		property.setFkcolumn(composites[compositeArray[i]]);
+       		property.setCFC(fTable.getEntityName());
+       		property.setInverse(true);
+       		property.SetmissingRowIgnored(true);
+			property.setInsert(false);
+			property.setUpdate(false);
+			cfc.AddProperty(property);
+		
+		}
+		
+		
+		
+		
+		
 		   	
 		var references = table.getReferences();
 	   	

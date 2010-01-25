@@ -48,19 +48,25 @@ component accessors="true" extends="dbItem"
 		
 		
 		for (i=1; i <= tables.recordCount; i++){
-			var table = New table(tables.table_name[i], This.getName());
-			
 			
 			if(structKeyExists(tables, "table_owner")){
-				table.setSchema(tables.table_owner[i]);
+				var schema = tables.table_owner[i];
+			}
+			else{
+				var schema = "";
 			}
 			
 			if (CompareNoCase(tables.table_type[i], "view") eq 0){
-				table.setIsView(true);
+				var isView = true; 
 			}
 			else{
-				table.setIsView(false);
+				var isView = false; 
 			}
+			
+			
+			var table = New table(tables.table_name[i], This.getName(), schema, isView);
+			
+			
 			
 			table.setrowcount(calculateRowCount(table));
 			
@@ -115,15 +121,7 @@ component accessors="true" extends="dbItem"
 		var qry = new Query(datasource=This.getName());
 		qry.setSQL(SQL);
 		
-		try{
 			var countOfRows = qry.execute().getResult().countOfRows;
-			}
-			catch(any e){
-				
-				writeDump(variables.debugTables);
-				writeDump(e);
-				abort;
-			}
 		
 		return countOfRows;
 	}
@@ -193,7 +191,6 @@ component accessors="true" extends="dbItem"
 		
 		tables=sptables.execute().getprocResultSets().tables;
 		
-		variables.debugTables = tables; //delete me later.
 		
 		var qoq = new Query(); 
 		var queryString = "	SELECT  	*  

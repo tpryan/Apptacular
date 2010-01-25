@@ -34,13 +34,17 @@
 	//process DB version of schema
 	db = New cfc.db.datasource(dsName);
 
+	
 	//process config default 
 	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
+	
 	
 	//make sure that large existing apps don't wire one-to-many relationships
 	if (db.calculateHighestRowCount() gt 1000){
 		config.setWireOneToManyinViews(false);
 	}
+	
+	
 	
 	//sort through any url parameters here, used in automation and testing
 	urlkeys = StructKeyArray(url);
@@ -59,6 +63,7 @@
 	//process file version of schema
 	dbConfig = New cfc.db.dbConfig(dbConfigPath);
 	
+	
 	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
@@ -66,6 +71,7 @@
 	else{
 		datamodel= db;
 	}
+	
 	
 	//write back to disk.
 	dbConfig.writeConfig(datamodel);

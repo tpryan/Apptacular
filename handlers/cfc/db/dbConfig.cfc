@@ -54,6 +54,8 @@ component
 			return arguments.datasource;
 		}
 		
+		
+		
 		var i = 0;
 		var j = 0;
 		var checksums = getChecksumInfoFromDisk();
@@ -70,6 +72,7 @@ component
 			newDataSource = reWriteObject(newDataSource, checksums[DSCSPath]['filePath'], "datasource");
 		}
 		StructDelete(checksums, DSCSPath);
+		
 		
 		//check tables
 		var tableStruct = StructNew();
@@ -164,8 +167,9 @@ component
 		
 		}
 		catch(any e){
-			writeDump(keys[i]);
-			writeDump(newObject);
+			writeDump("here there be errors ");
+			//writeDump(keys[i]);
+			//writeDump(newObject);
 			writeDump(e);
 			abort;
 		}
