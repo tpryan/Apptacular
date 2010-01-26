@@ -59,6 +59,7 @@ component accessors="true"{
 	
 	property name="OverwriteDataModel" type="boolean" hint="Setting this to true will allow config XML to become authoritative. Don't do this until you are mostly done messing around with model.";
 	property name="LockApplication" type="boolean" hint="Setting this to true will prevent any new files from being written or modified by the Apptacular extension";
+	property name="selectorThreshold" type="numeric" hint="The number of items in a related table past which we don't want to create drop down menus that will cause the system to slow down like crazy.";
 	
 	
 	/**
@@ -106,6 +107,7 @@ component accessors="true"{
 		This.setLockApplication(false);
 		This.setWireOneToManyinViews(true);
 		This.setLogSQL(true);
+		This.setSelectorThreshold(50);
 		
 		This.setDateFormat("mm/dd/yyyy");
 		

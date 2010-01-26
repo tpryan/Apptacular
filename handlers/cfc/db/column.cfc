@@ -10,6 +10,7 @@ component accessors="true" extends="dbItem"
 	property name="isForeignKey" type="boolean" hint="Is this column a foreign key. ";
 	property name="isMemeberOfCompositeForeignKey" type="boolean" hint="Is this column a member of a composite foreign key. ";
 	property name="isPrimaryKey" type="boolean" hint="Is this column a primary key, um isn't that a little obvious? ";
+	property name="isIdentity" type="boolean" hint="Is this column an actual identity.";
 	property name="isComputed" type="boolean" hint="Is this column a computed value. ";
 	property name="foreignKey" hint="The primary key of the foreign key table." ;
 	property name="foreignKeyTable" hint="The foreign key table." ;

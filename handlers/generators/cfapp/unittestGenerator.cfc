@@ -96,18 +96,38 @@ component  extends="codeGenerator"
 		var newreturns200=createSimple200UnitTest(newURL, "testNewReturns200", entityName, "new"); 
 		testView.addFunction(newreturns200);
 		
-		var id = table.discoverValidId();
+		var id = table.discoverValidId(format='url');
 		
-		// Add basic 200 test for read
-		var readURL = baseurl & "?method=read&" & table.getIdentity() & "=" & id ;
-		var readreturns200=createSimple200UnitTest(readURL, "testReadReturns200", entityName, "read"); 
-		testView.addFunction(readreturns200);
 		
-		// Add basic 200 test for edit
-		var editURL = baseurl & "?method=edit&" & table.getIdentity() & "=" & id ;
-		var editreturns200=createSimple200UnitTest(editURL, "testEditReturns200", entityName, "edit"); 
-		testView.addFunction(editreturns200);
-	
+		
+		
+		if (table.getRowCount() > 0){
+			// Add basic 200 test for read
+			if (table.hasCompositePrimaryKey()){
+				var readURL = baseurl & "?method=read&" & id ;
+			}
+			else{
+				var readURL = baseurl & "?method=read&" & table.getIdentity() & "=" & id ;
+			}
+		
+			var readreturns200=createSimple200UnitTest(readURL, "testReadReturns200", entityName, "read"); 
+			testView.addFunction(readreturns200);
+		}
+		
+		if (table.getRowCount() > 0){
+			// Add basic 200 test for edit
+			if (table.hasCompositePrimaryKey()){
+				var editURL = baseurl & "?method=edit&" & id ;
+			}
+			else{
+				var editURL = baseurl & "?method=edit&" & table.getIdentity() & "=" & id ;
+			}
+			
+			var editreturns200=createSimple200UnitTest(editURL, "testEditReturns200", entityName, "edit"); 
+			testView.addFunction(editreturns200);
+		}
+		
+		
 	
 		return testView;
 	}
@@ -146,26 +166,40 @@ component  extends="codeGenerator"
 		testEntity.setFormat(variables.config.getCFCFormat());
 		testEntity.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
 
-
-		//Create Create Test
-		var create = createSimpleCreateOrDeleteUnitTest(table);
-		testEntity.addFunction(create);
-
-		var id = table.discoverValidId();
+		if (table.getIsView()){
 		
-		if (len(id) > 0){
-			//Create Read Test
-			var read = createSimpleReadUnitTest(table);
-			testEntity.addFunction(read);
+			var id = table.discoverValidId();
 			
-			//Create Update Test
-			var update = createSimpleUpdateUnitTest(table);
-			testEntity.addFunction(update);
-		}
+			if (len(id) > 0){
+				//Create Read Test
+				var read = createSimpleReadUnitTest(table);
+				testEntity.addFunction(read);
+			}	
 		
-		//Create Delete Test
-		var delete = createSimpleCreateOrDeleteUnitTest(table, "Delete");
-		testEntity.addFunction(delete);
+		}
+		else{
+			//Create Create Test
+			var create = createSimpleCreateOrDeleteUnitTest(table);
+			testEntity.addFunction(create);
+	
+			var id = table.discoverValidId();
+			
+			if (len(id) > 0){
+				//Create Read Test
+				var read = createSimpleReadUnitTest(table);
+				testEntity.addFunction(read);
+				
+				//Create Update Test
+				var update = createSimpleUpdateUnitTest(table);
+				testEntity.addFunction(update);
+			}
+			
+			//Create Delete Test
+			var delete = createSimpleCreateOrDeleteUnitTest(table, "Delete");
+			testEntity.addFunction(delete);
+		}
+
+		
 		
 
 		return testEntity;
@@ -197,11 +231,20 @@ component  extends="codeGenerator"
 		return runner;
 	}
 	
+	
 	/**
 	* @hint Creates a simple html runner for MXunit
 	*/
-	public apptacular.handlers.cfc.code.cfpage function createDirectoryRunner(){
-		var runner = New apptacular.handlers.cfc.code.cfpage("runner", variables.config.getTestFilePath());
+	public apptacular.handlers.cfc.code.cfpage function createDirectoryRunner(string location=""){
+		
+		if (len(arguments.location)){
+			var fileLocation = arguments.location;
+		}
+		else{
+			var fileLocation = variables.config.getTestFilePath();
+		}
+		
+		var runner = New apptacular.handlers.cfc.code.cfpage("runner", fileLocation);
 		runner.appendBody('<cfparam name="url.output" type="string" default="extjs" />');
 		runner.appendBody('');
 		runner.appendBody('<cfinvoke component="#variables.config.getMXUNITCFCPAth()#.runner.DirectoryTestSuite"   ');
@@ -261,11 +304,23 @@ component  extends="codeGenerator"
 		var update= New apptacular.handlers.cfc.code.func();
 		update.setReturnType("void");
 		update.setName("testUpdate");
+		var composites = StructNew();
+		var compositeArray = ArrayNew(1);
+		
+		//Dealing with those pesky composite keys again. 
+		if (table.hasCompositePrimaryKey()){
+			var idString = id;
+		}
+		else{
+			var idString = "'#id#'";
+		}
+		
+		
 	
 		update.addLineBreak();
 		update.AddOperation('			<cftransaction action="begin">');
 		update.AddOperationScript('		transaction action="begin"{');	
-		update.addSimpleSet('var #entityName# = EntityLoad("#entityName#", #id#, true)', 3);
+		update.addSimpleSet('var #entityName# = EntityLoad("#entityName#", #idString#, true)', 3);
 		
 		
 		//Convert all of these columns to dummy data.
@@ -276,8 +331,19 @@ component  extends="codeGenerator"
 				continue;
 			}
 			
+			if (column.getisForeignKey() AND column.getIsMemeberOfCompositeForeignKey()){
+				if (not StructKeyExists(composites,column.getForeignKeyTable() )){
+					composites[column.getForeignKeyTable()] = column.getForeignKey();
+       			}
+				else{
+					composites[column.getForeignKeyTable()] = ListAppend(composites[column.getForeignKeyTable()], column.getForeignKey());
+				}
+				
+				continue;		
+			}	
 			
-			if (column.getIsForeignKey()){
+			
+			else if (column.getIsForeignKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
@@ -294,10 +360,26 @@ component  extends="codeGenerator"
 				
 				
 			}
+			
 			else if (not config.isMagicField(column.getName())){
 				update.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column)#")', 3); 
 			}
 		}
+		
+		
+		//handle composite foreign key relationships
+		for (i=1; i <= ArrayLen(compositeArray); i++){
+	       	var fTable = dataSource.getTable(compositeArray[i]);
+			var ftEntityName = foreignTable.getEntityName();
+			var ftid = foreignTable.discoverValidId(excludeStruct[column.getforeignKeyTable()]);
+			var ftidString  = '#ftid#';
+			var setterName = ftEntityName;
+			
+			update.addSimpleSet('#entityName#.set#setterName#(EntityLoad("#ftEntityName#", #ftidString#, true))', 3);
+		
+		}
+		
+		
 		update.addSimpleSet("EntitySave(#entityName#)",3);
 		
 		update.addLineBreak();
@@ -329,6 +411,8 @@ component  extends="codeGenerator"
 		read.setReturnType("void");
 		read.setName("testRead");
 		read.addLocalVariable("fromQuery");
+		var composites = StructNew();
+		var compositeArray = ArrayNew(1);
 		
 		
 		//Slight tweak because I was running into case sensitivity issues.
@@ -337,9 +421,11 @@ component  extends="codeGenerator"
 		//Dealing with those pesky composite keys again. 
 		if (table.hasCompositePrimaryKey()){
 			var	WhereClause = Replace(ReplaceList(id, "{,}",","  ), ",", " AND ", "ALL");
+			var idString = id;
 		}
 		else{
-			var	WhereClause = "#idColumn.getColumn()# = #id#";
+			var	WhereClause = "#idColumn.getColumn()# = '#id#'";
+			var idString = "'#id#'";
 		}
 		
 		if (Len(SchemaName) > 0){
@@ -357,7 +443,7 @@ component  extends="codeGenerator"
 		read.AddOperation('			#sql#');
 		read.AddOperation('		</cfquery">');
 		read.AddOperation('');
-		read.AddOperation('		<cfset var #entityName# = EntityLoad("#entityName#", #id#, true) />');
+		read.AddOperation('		<cfset var #entityName# = EntityLoad("#entityName#", #idString#, true) />');
 		
 		read.AddOperation('');
 		read.AddOperationScript('');
@@ -365,20 +451,24 @@ component  extends="codeGenerator"
 		read.AddOperationScript('		qry.setSQL("#sql#");');
 		read.AddOperationScript('		fromQuery = qry.execute().getResult();');
 		read.AddOperationScript('');
-		read.AddOperationScript('		var #entityName# = EntityLoad("#entityName#", #id#, true);');
+		read.AddOperationScript('		var #entityName# = EntityLoad("#entityName#", #idString#, true);');
 		read.AddOperationScript('');
 		
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
-			if (column.getIsPrimaryKey()){
 			
-				read.AddSimpleComment("Primary Key Test", 2);
-				read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#())', 2);	
-				read.AddLineBreak();
-			}
-			
-			else if (column.getIsForeignKey()){
+			if (column.getisForeignKey() AND column.getIsMemeberOfCompositeForeignKey()){
+				if (not StructKeyExists(composites,column.getForeignKeyTable() )){
+					composites[column.getForeignKeyTable()] = column.getForeignKey();
+       			}
+				else{
+					composites[column.getForeignKeyTable()] = ListAppend(composites[column.getForeignKeyTable()], column.getForeignKey());
+				}
+				
+				continue;		
+			}	
+			else if (column.getIsForeignKey() and not column.getIsPrimaryKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				var ftIdentity = foreignTable.getIdentity();
 				var ftEntityName = foreignTable.getEntityName();
@@ -405,19 +495,38 @@ component  extends="codeGenerator"
 				
 			}
 			else{
+				
+				if (column.getIsPrimaryKey()){
+					read.AddSimpleComment("Primary Key Test", 2);
+				}
+				
 				read.AddSimpleComment("Need to test if #column.getName()# is null that we don't try and test an empty string versus null", 2);
 				read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
 				
-				if (column.getOrmType() eq "binary"){
+				if (column.getTestType() eq "binary"){
 					read.AddSimpleSet('assertEquals(toBase64(fromQuery["#column.getColumn()#"][1]), toBase64(#entityName#.get#column.getName()#()))', 3);
-					
+				}
+				else if (column.getDataType() eq "money"){
+					read.AddSimpleSet('assertEquals(DollarFormat(Round(fromQuery["#column.getColumn()#"][1])), DollarFormat(Round(#entityName#.get#column.getName()#())))', 3);
+				}
+				else if (column.getOrmType() eq "integer"){
+					read.AddSimpleSet('assertEquals(numberFormat(fromQuery["#column.getColumn()#"][1], "_"), numberFormat(#entityName#.get#column.getName()#(), "_"))', 3);
+				}
+				else if (column.getTestType() eq "numeric"){
+					read.AddSimpleSet('assertEquals(numberFormat(Round(fromQuery["#column.getColumn()#"][1]), "_.______"), numberFormat(Round(#entityName#.get#column.getName()#()), "_.______"))', 3);
 				}
 				else if (column.getDataType() eq "year"){
 					read.AddSimpleSet('assertEquals(Year(fromQuery["#column.getColumn()#"][1]), #entityName#.get#column.getName()#())', 3);
 					
 				}
-				else if (column.getDataType() eq "bit"){
+				else if (column.getTestType() eq "bit"){
 					read.AddSimpleSet('assertEquals(YesNoFormat(fromQuery["#column.getColumn()#"][1]), YesNoFormat(#entityName#.get#column.getName()#()))', 3);
+					
+				}
+				else if (column.getTestType() eq "date"){
+					read.AddSimpleSet('var formatedExpected = DateFormat(fromQuery["#column.getColumn()#"][1], "yyyy-dd-mm") & " " & TimeFormat(fromQuery["#column.getColumn()#"][1], "hh:mm:ss.l")', 3);
+					read.AddSimpleSet('var formatedActual = DateFormat(#entityName#.get#column.getName()#(), "yyyy-dd-mm") & " " & TimeFormat(#entityName#.get#column.getName()#(), "hh:mm:ss.l")', 3);
+					read.AddSimpleSet('assertEquals(formatedExpected, formatedActual)', 3);
 					
 				}
 				else{
@@ -432,6 +541,38 @@ component  extends="codeGenerator"
 			
 			
 		}
+		compositeArray = StructKeyArray(composites);
+		
+		//handle composite foreign key relationships
+		for (i=1; i <= ArrayLen(compositeArray); i++){
+	       	var fTable = dataSource.getTable(compositeArray[i]);
+			var ftEntityName = fTable.getEntityName();
+			var ftid = fTable.discoverValidId();
+			var ftidString  = '#ftid#';
+			var setterName = ftEntityName;
+			var fklist = composites[compositeArray[i]];
+			
+			read.AddSimpleComment("Testing for a composite Foreign Key.  That's right I generate unit tests for COMPOSITE FOREIGN KEYS, that's how much I rock. ", 2);
+			read.StartSimpleIF('not IsNull(#entityName#.get#ftEntityName#())',2);
+			
+			for (j = 1; j <= ListLen(fklist); j++ ){
+				var fk = ListGetAt(fklist, j);
+				read.AddSimpleSet('assertEquals(fromQuery["#fk#"][1], #entityName#.get#ftEntityName#().get#fk#())', 3);
+			}
+			
+			read.EndSimpleIF(2);
+			read.StartSimpleElse(2);
+			for (j = 1; j <= ListLen(fklist); j++ ){
+				var fk = ListGetAt(fklist, j);
+				read.AddSimpleSet('assertTrue(Len(fromQuery["#fk#"][1]) eq 0)', 3);	
+			}
+			
+			
+			read.EndSimpleIF(2);		
+		
+		}
+		
+		
 		
 		read.AddOperation('');
 		read.AddOperationScript('');
@@ -451,6 +592,8 @@ component  extends="codeGenerator"
 		var columns = table.getColumns();
 		var read= New apptacular.handlers.cfc.code.func();
 		var excludeStruct = {};
+		var composites = StructNew();
+		var compositeArray = ArrayNew(1);
 		
 		read.setReturnType("void");
 		read.setName("test#arguments.type#");
@@ -471,19 +614,45 @@ component  extends="codeGenerator"
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
-			if (column.getisPrimaryKey() ){ 
+			if (column.getisPrimaryKey() and FindNoCase("numeric", column.getTestType()) AND not column.getIsForeignKey() AND column.getIsIdentity()){ 
 				continue;
 			}
 			
 			if (column.getisComputed() ){ 
-				continue;
+				read.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column)#")', 3);
+				continue; 
 			}
 			
 			if (not StructKeyExists(excludeStruct, column.getforeignKeyTable())){
 				excludeStruct[column.getforeignKeyTable()]="";
 			}
+			if (column.getIsPrimaryKey() AND column.getIsForeignKey()) {
+				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
+				
+				var ftIdentity = foreignTable.getIdentity();
+				var ftEntityName = foreignTable.getEntityName();
+				var ftid = foreignTable.discoverValidId(excludeStruct[column.getforeignKeyTable()]);
+				
+				var ftidString  = '"#ftid#"';
+				var setterName = column.getName();
+				
+				read.addSimpleSet('#entityName#.set#setterName#(#ftidString#)', 3);  
+				
+				
+			}
 			
-			if (column.getIsForeignKey()){
+			else if (column.getisForeignKey() AND column.getIsMemeberOfCompositeForeignKey()){
+				if (not StructKeyExists(composites,column.getForeignKeyTable() )){
+					composites[column.getForeignKeyTable()] = column.getForeignKey();
+       			}
+				else{
+					composites[column.getForeignKeyTable()] = ListAppend(composites[column.getForeignKeyTable()], column.getForeignKey());
+				}
+				
+				continue;		
+			}	
+			
+			else if (column.getIsForeignKey()){
 				var foreignTable = variables.datasource.getTable(column.getforeignKeyTable());
 				
 				var ftIdentity = foreignTable.getIdentity();
@@ -500,7 +669,7 @@ component  extends="codeGenerator"
 					var setterName = ftEntityName;
 				}
 				
-				if (table.hasCompositePrimaryKey()){
+				if (foreignTable.hasCompositePrimaryKey()){
 					var ftidString  = '#ftid#';
 				}
 				else{
@@ -515,7 +684,23 @@ component  extends="codeGenerator"
 			else if (not config.isMagicField(column.getName())){
 				read.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column)#")', 3); 
 			}
+			
+			
 		}
+		
+		//handle composite foreign key relationships
+		for (i=1; i <= ArrayLen(compositeArray); i++){
+	       	var fTable = dataSource.getTable(compositeArray[i]);
+			var ftEntityName = foreignTable.getEntityName();
+			var ftid = foreignTable.discoverValidId(excludeStruct[column.getforeignKeyTable()]);
+			var ftidString  = '#ftid#';
+			var setterName = ftEntityName;
+			
+			read.addSimpleSet('#entityName#.set#setterName#(EntityLoad("#ftEntityName#", #ftidString#, true))', 3);
+		
+		}
+		
+		
 		
 		
 		read.addSimpleSet("EntitySave(#entityName#)",3);

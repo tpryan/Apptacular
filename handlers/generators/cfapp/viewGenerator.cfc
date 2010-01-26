@@ -103,7 +103,11 @@ component extends="codeGenerator"{
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
-		 	if (column.getIsForeignKey()){
+			if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
+	       		ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
+	       	}	
+			
+		 	else if (column.getIsForeignKey()){
 			
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				var page = "#fkTable.getEntityName()#.cfm";
@@ -244,7 +248,14 @@ component extends="codeGenerator"{
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
 		 	
-			if (column.getisForeignKey()){
+			if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
+	       		ct.AppendBody('		<tr>');
+		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+		 		ct.AppendBody('			<td>###EntityName#.get#column.getName()#()##</td>');
+				ct.AppendBody('		</tr>');
+	       	}
+			
+			else if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				var page = "#fkTable.getEntityName()#.cfm";
 				var method ="?method=read";
@@ -368,12 +379,75 @@ component extends="codeGenerator"{
 		ct.AppendBody('	<tbody>');
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
-			column = columns[i];
-			columnName = column.getName();
+			var column = columns[i];
+			var columnName = column.getName();
+			var fktableCount = 0;
+			
+			if (column.getisForeignKey()){
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				var fktableCount = fkTable.getRowCount();
+					
+			}			
 				
 	 		if (column.getIsPrimaryKey()){
 	 			ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
 	 		}
+			else if (column.getisForeignKey() and fktableCount < config.getSelectorThreshold()){
+					var fkTable = datasource.getTable(column.getForeignKeyTable());
+					
+					
+					ct.AppendBody('		<tr>');
+					if (table.getForeignTableCount(fkTable.getName()) gt 1){
+						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
+						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
+						ct.AppendBody('			<cfelse>');
+						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
+						ct.AppendBody('			</cfif>');
+						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
+		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
+
+					}	
+					else{
+						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
+						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
+						ct.AppendBody('			<cfelse>');
+						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = #EntityName#.get#fkTable.getEntityName()#().get#FKTable.getIdentity()#() />');
+						ct.AppendBody('			</cfif>');
+						
+						
+						ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
+		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');
+					}
+						
+			}
+			else if (column.getisForeignKey() and fktableCount >= config.getSelectorThreshold()){
+					var fkTable = datasource.getTable(column.getForeignKeyTable());
+					
+					
+					ct.AppendBody('		<tr>');
+					if (table.getForeignTableCount(fkTable.getName()) gt 1){
+						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
+						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
+						ct.AppendBody('			<cfelse>');
+						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
+						ct.AppendBody('			</cfif>');
+						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
+						ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###columnName#Value##" /></td>');
+						
+					}	
+					else{
+						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
+						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
+						ct.AppendBody('			<cfelse>');
+						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = #EntityName#.get#fkTable.getEntityName()#().get#FKTable.getIdentity()#() />');
+						ct.AppendBody('			</cfif>');
+						
+						
+						ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
+						ct.AppendBody('			<td><input name="#fkTable.getEntityName()#" type="text" id="#fkTable.getEntityName()#" value="###fkTable.getEntityName()#Value##" /></td>');
+					}
+						
+			}
 			else{
 	 			uitype = column.getUIType();
 				
@@ -416,34 +490,7 @@ component extends="codeGenerator"{
 						ct.AppendBody('			<td>###EntityName#.get#columnName#()##</td>');
 					}		
 				}
-				else if (column.getisForeignKey()){
-					var fkTable = datasource.getTable(column.getForeignKeyTable());
-					
-					
-					ct.AppendBody('		<tr>');
-					if (table.getForeignTableCount(fkTable.getName()) gt 1){
-						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
-						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
-						ct.AppendBody('			<cfelse>');
-						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
-						ct.AppendBody('			</cfif>');
-						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
-		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
-
-					}	
-					else{
-						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
-						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
-						ct.AppendBody('			<cfelse>');
-						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = #EntityName#.get#fkTable.getEntityName()#().get#FKTable.getIdentity()#() />');
-						ct.AppendBody('			</cfif>');
-						
-						
-						ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
-		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');
-					}
-						
-				}
+				
 				else{
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###EntityName#.get#columnName#()##" /></td>');
@@ -485,6 +532,7 @@ component extends="codeGenerator"{
 	public apptacular.handlers.cfc.code.CFPage function createView(required any table){
 	    
 	    var i=0;
+		var j=0;
 		var fileLocation = variables.config.getAppFilePath();
 	    var view  = New apptacular.handlers.cfc.code.CFPage(table.getEntityName(), fileLocation);
 		var entityCFCPath = variables.config.getEntityCFCPath();
@@ -493,10 +541,22 @@ component extends="codeGenerator"{
 		var identity = table.getIdentity();
 		var columns = table.getColumns();
 		var orderby = table.getorderby();
+		var pkcols = table.getPrimaryKeyColumns();
 		
 	    view.AppendBody('<cfsetting showdebugoutput="false" />');
 	    view.AppendBody('<cfparam name="url.method" type="string" default="list" />');
-	    view.AppendBody('<cfparam name="url.#identity#" type="numeric" default="0" />');
+		
+		
+		if (table.hasCompositePrimaryKey()){
+			for (i= 1; i <= ArrayLen(pkcols); i++){
+				 view.AppendBody('<cfparam name="url.#pkcols[i].getName()#" type="any" default="0" />');
+			}
+		}
+		else{
+			 view.AppendBody('<cfparam name="url.#identity#" type="any" default="0" />');
+		}
+		
+	   
 	    view.AppendBody('<cfparam name="url.message" type="string" default="" />');
 		view.AppendBody('<cfparam name="url.offset" type="numeric" default="0" />');
 		view.AppendBody('<cfparam name="url.maxresults" type="numeric" default="10" />');
@@ -518,7 +578,21 @@ component extends="codeGenerator"{
 		view.AppendBody();
 	    
 		view.AppendBody('	<cfcase value="read">');
-	    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+	    
+		if (table.hasCompositePrimaryKey()){
+			view.AppendBody('		<cfset keys = {} />');
+			for (i= 1; i <= ArrayLen(pkcols); i++){
+				view.AppendBody('		<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
+			}
+		
+			view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", keys, true) />');
+		}
+		else{
+			view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+		}
+		
+		
+		
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a> /');
@@ -554,7 +628,21 @@ component extends="codeGenerator"{
 		    view.AppendBody('		<cfif url.#identity# eq 0>');
 		    view.AppendBody('			<cfset #entityName# = New ' & entityName  & '() />');
 		    view.AppendBody('		<cfelse>');
-		    view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+		    
+			
+			if (table.hasCompositePrimaryKey()){
+				view.AppendBody('			<cfset keys = {} />');
+				for (i= 1; i <= ArrayLen(pkcols); i++){
+					view.AppendBody('			<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
+				}
+				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", keys, true) />');
+			}
+			else{
+				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+			}
+			
+			
+			
 		    view.AppendBody('		</cfif>');
 			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');

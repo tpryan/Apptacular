@@ -53,6 +53,7 @@ component
 		datatypes['decimal'] = defaultnumeric;
 		datatypes['numeric'] = defaultnumeric;
 		datatypes['money'] = defaultnumeric;
+		datatypes['smallmoney'] = defaultnumeric;
 	
 	
 		//Chars text other strings
@@ -97,7 +98,22 @@ component
 		datatypes['blob']['type'] = "binary";
 		datatypes['blob']['ormType'] = "binary";
 		datatypes['blob']['uiType'] = "binary";
-		datatypes['blob']['testtype'] = "string";
+		datatypes['blob']['testtype'] = "binary";
+		
+		datatypes['image']['type'] = "binary";
+		datatypes['image']['ormType'] = "binary";
+		datatypes['image']['uiType'] = "binary";
+		datatypes['image']['testtype'] = "binary";
+		
+		datatypes['binary']['type'] = "binary";
+		datatypes['binary']['ormType'] = "binary";
+		datatypes['binary']['uiType'] = "binary";
+		datatypes['binary']['testtype'] = "binary";
+		
+		datatypes['varbinary']['type'] = "binary";
+		datatypes['varbinary']['ormType'] = "binary";
+		datatypes['varbinary']['uiType'] = "binary";
+		datatypes['varbinary']['testtype'] = "binary";
 		
 		//various dates
 		datatypes['date']['type'] = "date";

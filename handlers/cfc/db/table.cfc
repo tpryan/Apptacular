@@ -146,15 +146,22 @@ component accessors="true" extends="dbItem"
 				column.setName(columns.column_name[i]);
 			}
 			
+			//Deal with Fracking microsoft custom variables.
+			if (FindNoCase("Microsoft",variables.Engine) AND isUcase(Left(columns.type_name[i], 1)) ){
+				var columnType = findBaseTypeofCustom(columns.type_name[i]);
+			}
+			else{
+				var	columnType = columns.type_name[i];
+			}
 			
 			
 			
 			column.setDisplayName(capitalize(columns.column_name[i]));
 			column.setColumn(columns.column_name[i]);
-			column.setType(mappings.getType(columns.type_name[i]));
-			column.setOrmType(mappings.getOrmType(columns.type_name[i]));
-			column.setUIType(mappings.getUIType(columns.type_name[i]));
-			column.setTestType(mappings.getTestType(columns.type_name[i]));
+			column.setType(mappings.getType(columnType));
+			column.setOrmType(mappings.getOrmType(columnType));
+			column.setUIType(mappings.getUIType(columnType));
+			column.setTestType(mappings.getTestType(columnType));
 			column.setDataType(columns.type_name[i]);
 			column.setisForeignKey(columns.is_ForeignKey[i]);
 			column.setisPrimaryKey(columns.is_PrimaryKey[i]);
@@ -163,6 +170,7 @@ component accessors="true" extends="dbItem"
 			column.setLength(columns.column_size[i]);
 			column.setisMemeberOfCompositeForeignKey(false);
 			column.setisComputed(false);
+			column.setisIdentity(false);
 			
 			if (CompareNoCase(column.getForeignKeyTable(), "N/A") eq 0){
 				column.setForeignKeyTable(JavaCast('null', ''));
@@ -183,6 +191,7 @@ component accessors="true" extends="dbItem"
 			else if(FindNoCase("identity", columns.type_name[i])){
 				This.setIdentity(column.getName());
 				This.setOrderBy(column.getName() & " asc");
+				column.setisIdentity(true);
 			}
 			
 			if (column.getIsForeignKey()){
@@ -227,6 +236,29 @@ component accessors="true" extends="dbItem"
 		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
+		
+	}
+	
+	private string function findBaseTypeofCustom(required string dbtype){
+		var result = arguments.dbtype;
+		
+		//Short Circuit the whole dealio 
+		if (not FindNoCase("Microsoft",variables.Engine)){
+			return arguments.result;
+		}
+		
+		//Get the columndata in the table.
+		var custom = New storedProc();
+		var procResult = New storedProcResult();
+		custom.setProcedure("sp_help");
+		custom.addParam(cfsqltype="cf_sql_varchar", type="in",value="#arguments.dbtype#");
+		custom.setDataSource(variables.datasource);
+		custom.addProcResult(name="custominfo",resultset=1); 
+	
+		var custominfo = custom.execute().getprocResultSets().custominfo;
+		result = custominfo.storage_type[1];
+		
+		return result;
 		
 	}
 	
@@ -568,6 +600,15 @@ component accessors="true" extends="dbItem"
 	public boolean function isProperTable(){
 		
 		var identity = This.getIdentity();
+		var columns = This.getColumns();
+		var i = 0;
+		
+		for (i = 1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
+			if (FindNoCase(".", column.getColumn())){
+				return false;
+			}
+		}
 		
 		if (not isDefined("identity")){
 			return false;
@@ -662,10 +703,10 @@ component accessors="true" extends="dbItem"
 	/**
 	* @hint Searchs through a table to determine if there is a valid id to use for reads and updates. 
 	*/
-	public any function discoverValidId(string excludelist=""){
+	public any function discoverValidId(string excludelist="", string format=""){
 		
 		if (This.hasCompositePrimaryKey()){
-			return discoverValidIdCompositeKey();
+			return discoverValidIdCompositeKey(arguments.format);
 		}
 		else{
 			return discoverValidIdSingleKey(excludelist);
@@ -709,7 +750,7 @@ component accessors="true" extends="dbItem"
 	/**
 	* @hint Searchs through a table to determine if there is a valid composite id to use for reads and updates. 
 	*/
-	private any function discoverValidIdCompositeKey(){
+	private any function discoverValidIdCompositeKey(string format=""){
 		
 		var SQL = "";
 		var keyColumns = "";
@@ -742,7 +783,12 @@ component accessors="true" extends="dbItem"
 			returnStructString = ListAppend(returnStructString, "#column.getColumn()#='#resultQuery[column.getColumn()][1]#'");
 		}
 		
-		var returnString =  "{" & returnStructString & "}";	
+		var returnString =  "{" & returnStructString & "}";
+		
+		if (FindNoCase("url", arguments.format)){
+			returnString =ReplaceList(returnString, "{,},'", ",,");
+			returnString =Replace(returnString, ",", "&", "ALL");
+		}	
 		
 		return	returnString;
 	}
@@ -760,6 +806,11 @@ component accessors="true" extends="dbItem"
 		
 		var value = qry.execute().getResult().value;
 		return value;
+	}
+	
+	private string function isUcase(required string character){
+		if(asc(character) gte 65 and asc(character) lte 90) return TRUE;
+		else return FALSE;
 	}
 	
 }

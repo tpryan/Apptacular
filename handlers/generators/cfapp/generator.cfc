@@ -150,6 +150,12 @@ component{
 			var directoryRunner = unittestGenerator.createDirectoryRunner();
 			ArrayAppend(files, directoryRunner);
 			
+			var EntityRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & "/entity");
+			ArrayAppend(files, EntityRunner);
+			
+			var ViewRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & "/view");
+			ArrayAppend(files, ViewRunner);
+			
 			var GlobalTest = unittestGenerator.createGlobalTest();
 			ArrayAppend(files, GlobalTest);
 			
