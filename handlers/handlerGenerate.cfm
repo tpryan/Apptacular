@@ -1,4 +1,4 @@
-<cfsetting showdebugoutput="FALSE" />
+<cfsetting showdebugoutput="false" />
 
 <cfif not structKeyExists(form, "ideeventInfo")>
 	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="ideeventInfo" />
@@ -107,6 +107,8 @@
 	
 
 </cfscript>
+
+
 
 <!--- reset application --->
 <cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />

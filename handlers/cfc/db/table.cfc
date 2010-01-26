@@ -196,12 +196,9 @@ component accessors="true" extends="dbItem"
 			
 			if (column.getIsForeignKey()){
 				This.setHasForeignKeys(TRUE);
-			}
-			
-			if (column.getisForeignKey()){
-				This.setIsForeignKey(TRUE);
 				ForeignKeyFound = TRUE;
 			}
+			
 			
 		}
 		

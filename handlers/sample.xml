@@ -1,11 +1,11 @@
 <event>
     <ide>
         <rdsview>
-            <database name="apptacular_adeventure_works">
+            <database name="apptacular_blog">
             </database>
         </rdsview>
     </ide>
     <user>
-    	<input name="Location" value="/Users/terryr/Sites/centaur.dev/adventureworks" />
+    	<input name="Location" value="/Users/terryr/Sites/centaur.dev/BlogDemo" />
 	</user>	
 </event>
