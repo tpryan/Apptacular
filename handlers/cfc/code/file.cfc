@@ -69,9 +69,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 		while(NOT FileisEOF(file)) { 
 			appendBody(FileReadLine(file));
 		} 
-		
 		FileClose(file); 
-	
 	}
 	
 	/**
