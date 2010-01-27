@@ -623,6 +623,8 @@ component  extends="codeGenerator"
 				continue; 
 			}
 			
+			
+			
 			if (not StructKeyExists(excludeStruct, column.getforeignKeyTable())){
 				excludeStruct[column.getforeignKeyTable()]="";
 			}
@@ -639,6 +641,10 @@ component  extends="codeGenerator"
 				read.addSimpleSet('#entityName#.set#setterName#(#ftidString#)', 3);  
 				
 				
+			}
+			else if (config.isMagicField(column.getName())){
+				read.addSimpleComment("So it appears that eventHandlers don't fire in transactions, so workaround.", 3);
+				read.addSimpleSet('#entityName#.set#column.getName()#(Now())', 3);
 			}
 			
 			else if (column.getisForeignKey() AND column.getIsMemeberOfCompositeForeignKey()){
@@ -681,7 +687,7 @@ component  extends="codeGenerator"
 				
 				
 			}
-			else if (not config.isMagicField(column.getName())){
+			else {
 				read.addSimpleSet('#entityName#.set#column.getName()#("#getDummyData(column)#")', 3); 
 			}
 			
