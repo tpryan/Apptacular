@@ -180,9 +180,23 @@ component extends="codeGenerator"{
 			}
 		}
 		
-		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=read&#identity#=###entityName#.get#identity#()##">Read</a></td>');
-		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=edit&#identity#=###entityName#.get#identity#()##">Edit</a></td>');
-		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=delete_process&#identity#=###entityName#.get#identity#()##" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
+		
+		if (table.hasCompositePrimaryKey()){
+			var pkcols = table.getPrimaryKeyColumns();
+			keyString = "";
+			for (i= 1; i <= ArrayLen(pkcols); i++){
+				var key = pkcols[i].getName();
+				keyString = ListAppend(keyString,  "#key#=###entityName#.get#key#()##", "&");
+			}
+		}
+		else{
+			 keyString = "#identity#=###entityName#.get#identity#()##";
+		}
+		
+		
+		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=read&#keyString#">Read</a></td>');
+		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=edit&#keyString#">Edit</a></td>');
+		ct.AppendBody('			<td class="crudlink"><a href="#entityName#.cfm?method=delete_process&#keyString#" onclick="if (confirm(''Are you sure?'')) { return true}; return false"">Delete</a></td>');
 		ct.AppendBody('		</tr>');
 		ct.AppendBody('	</cfloop>');
 		
