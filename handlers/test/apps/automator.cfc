@@ -13,7 +13,6 @@
 
 	<cffunction name="generateApplication" output="FALSE" access="public"  returntype="boolean" hint="" >
 		
-		
 		<cfscript>
 			var targeturl = "http://" & cgi.server_name & "/apptacular/handlers/handlerGenerate.cfm?createTests=true";
 		</cfscript>
