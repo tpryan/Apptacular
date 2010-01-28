@@ -42,8 +42,10 @@ component
 				FileWrite(tableSchemaPath & variables.FS & columns[j].getName() & ".xml", columns[j].serialize());
 			}
 		}
+		
 	
 	}
+	
 	
 	/**
 	* @hint Rewrites all of the info in a datasource from the config files.

@@ -455,8 +455,20 @@ component accessors="true" extends="dbItem"
 							WHERE 		INDEX_DESCRIPTION like '%primary key%'"; 
 		qoq.setAttributes(resultSet = index);  
 		qoq.SetDBType("query"); 
-		var indexKeys = qoq.execute(sql=queryString).getResult()['Index_keys']; 
-		indexKeys = Replace(indexKeys, ", ", ",", "ALL");
+		
+		
+		
+		try{
+			var indexKeys = qoq.execute(sql=queryString).getResult()['Index_keys']; 
+			indexKeys = Replace(indexKeys, ", ", ",", "ALL");
+		}
+		catch(any e){
+		
+			if (FindNoCase("The select column reference [Index_Keys]", e.detail)){
+				return columns;
+			}
+			
+		}
 		
 		//loop through the columns and alter any primary key holding columns
 		for (i=1; i <= ArrayLen(columns); i++){

@@ -438,21 +438,19 @@ component  extends="codeGenerator"
 		
 		
 		
-		read.AddOperation('');
+		read.AddLineBreak('');
+		
 		read.AddOperation('		<cfquery name="fromQuery" datasource="#dsname#">');
 		read.AddOperation('			#sql#');
 		read.AddOperation('		</cfquery">');
-		read.AddOperation('');
-		read.AddOperation('		<cfset var #entityName# = EntityLoad("#entityName#", #idString#, true) />');
 		
-		read.AddOperation('');
-		read.AddOperationScript('');
 		read.AddOperationScript('		var qry = new Query(datasource="#dsname#");');
 		read.AddOperationScript('		qry.setSQL("#sql#");');
 		read.AddOperationScript('		fromQuery = qry.execute().getResult();');
-		read.AddOperationScript('');
-		read.AddOperationScript('		var #entityName# = EntityLoad("#entityName#", #idString#, true);');
-		read.AddOperationScript('');
+		
+		read.AddLineBreak('');
+		read.AddSimpleSet('var #entityName# = EntityLoad("#entityName#", #idString#, true)', 2);
+		read.AddLineBreak('');
 		
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
@@ -475,8 +473,6 @@ component  extends="codeGenerator"
 				
 				read.AddSimpleComment("Need to test if #column.getName()# is null that we don't try and test an empty string versus null", 2);
 				
-				
-				
 				if (table.getForeignTableCount(foreignTable.getName()) gt 1 AND not table.hasCompositePrimaryKey()){
 					read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
 					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#().get#ftIdentity#())', 3);
@@ -485,7 +481,6 @@ component  extends="codeGenerator"
 					read.StartSimpleIF('not IsNull(#entityName#.get#ftEntityName#())',2);
 					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#ftEntityName#().get#ftIdentity#())', 3);
 				}
-				
 				
 				read.EndSimpleIF(2);
 				read.StartSimpleElse(2);
@@ -567,12 +562,9 @@ component  extends="codeGenerator"
 				read.AddSimpleSet('assertTrue(Len(fromQuery["#fk#"][1]) eq 0)', 3);	
 			}
 			
-			
 			read.EndSimpleIF(2);		
 		
 		}
-		
-		
 		
 		read.AddOperation('');
 		read.AddOperationScript('');
@@ -640,7 +632,6 @@ component  extends="codeGenerator"
 				
 				read.addSimpleSet('#entityName#.set#setterName#(#ftidString#)', 3);  
 				
-				
 			}
 			else if (config.isMagicField(column.getName())){
 				read.addSimpleComment("So it appears that eventHandlers don't fire in transactions, so workaround.", 3);
@@ -707,8 +698,6 @@ component  extends="codeGenerator"
 		}
 		
 		
-		
-		
 		read.addSimpleSet("EntitySave(#entityName#)",3);
 		
 		if(FindNoCase("delete", arguments.type)){
@@ -733,7 +722,6 @@ component  extends="codeGenerator"
 			}
 		
 			read.addSimpleSet('EntityDelete(#entityName#Copy)', 3);
-			
 		
 		}
 

@@ -15,27 +15,28 @@ component displayname="argument" hint="A CFC representation of an argument for c
 		* @hint Returns the actual CFML code.
 	*/
 	public string function getCFML(){
-		var argCFML = '<cfargument';
+		var argCFML = CreateObject("java","java.lang.StringBuilder").Init();
+		argCFML = argCFML.append('<cfargument ');
 		
-		argCFML = ListAppend(argCFML, 'name="#This.getName()#"', ' ');
+		argCFML = argCFML.append('name="#This.getName()#" ');
 		
 		if (len(This.getType())){
-			argCFML = ListAppend(argCFML, 'type="#This.getType()#"', ' ');
+			argCFML = argCFML.append('type="#This.getType()#" ');
 		}
 		
 		if (len(This.getRequired()) gt 0 and IsBoolean(This.getRequired()) and This.getRequired()){
-			argCFML = ListAppend(argCFML, 'required="#This.getRequired()#"', ' ');
+			argCFML = argCFML.append('required="#This.getRequired()#" ');
 		}
 		
 		if (len(This.getDefaultvalue()) gt 0 and IsBoolean(This.getRequired()) and not This.getRequired()){
-			argCFML = ListAppend(argCFML, 'default="#This.getDefaultvalue()#"', ' ');
+			argCFML = argCFML.append('default="#This.getDefaultvalue()#" ');
 		}
 		
 		if (len(This.getHint())){
-			argCFML = ListAppend(argCFML, 'hint="#This.getHint()#"', ' ');
+			argCFML = argCFML.append('hint="#This.getHint()#" ');
 		}
 		
-		argCFML = ListAppend(argCFML, ' />' & variables.lineBreak, ' ');
+		argCFML = argCFML.append(' />' & variables.lineBreak);
 		
 		return argCFML;
 	
@@ -45,20 +46,20 @@ component displayname="argument" hint="A CFC representation of an argument for c
 		* @hint Returns the actual cfscript code.
 	*/
 	public string function getCFScript(){
-		var argCFML = '';
+		var argCFML = CreateObject("java","java.lang.StringBuilder").Init();
 		
-		argCFML = ListAppend(argCFML, '#This.getName()#', ' ');
+		argCFML = argCFML.append('#This.getName()# ');
 		
 		if (len(This.getType())){
-			argCFML = ListPrepend(argCFML, '#This.getType()#', ' ');
+			argCFML = argCFML.insert(0, '#This.getType()# ');
 		}
 		
 		if (len(This.getRequired()) gt 0 and IsBoolean(This.getRequired()) and This.getRequired()){
-			argCFML = ListPrepend(argCFML, 'required', ' ');
+			argCFML = argCFML.insert(0, 'required ');
 		}
 		
 		if (len(This.getDefaultvalue()) gt 0){
-			argCFML = ListAppend(argCFML, '="#This.getDefaultvalue()#"', ' ');
+			argCFML = argCFML.append('="#This.getDefaultvalue()#" ');
 		}
 		
 		

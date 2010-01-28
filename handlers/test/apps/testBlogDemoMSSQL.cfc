@@ -6,7 +6,7 @@ component extends="mxunit.framework.TestCase"{
     	
     }
 	
-	public void function testBlogDemo(){
+	public void function testBlogDemoMSSQL(){
 		variables.automator.clearFiles();
 		AssertTrue(automator.generateApplication());
     }
