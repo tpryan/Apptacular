@@ -504,16 +504,16 @@ component  extends="codeGenerator"
 				else if (column.getDataType() eq "money"){
 					read.AddSimpleSet('assertEquals(DollarFormat(Round(fromQuery["#column.getColumn()#"][1])), DollarFormat(Round(#entityName#.get#column.getName()#())))', 3);
 				}
+				else if (column.getTestType() eq "year"){
+					read.AddSimpleSet('assertEquals(Year(fromQuery["#column.getColumn()#"][1]), #entityName#.get#column.getName()#())', 3);
+				}
 				else if (column.getOrmType() eq "integer"){
 					read.AddSimpleSet('assertEquals(numberFormat(fromQuery["#column.getColumn()#"][1], "_"), numberFormat(#entityName#.get#column.getName()#(), "_"))', 3);
 				}
 				else if (column.getTestType() eq "numeric"){
 					read.AddSimpleSet('assertEquals(numberFormat(Round(fromQuery["#column.getColumn()#"][1]), "_.______"), numberFormat(Round(#entityName#.get#column.getName()#()), "_.______"))', 3);
 				}
-				else if (column.getDataType() eq "year"){
-					read.AddSimpleSet('assertEquals(Year(fromQuery["#column.getColumn()#"][1]), #entityName#.get#column.getName()#())', 3);
-					
-				}
+				
 				else if (column.getTestType() eq "bit"){
 					read.AddSimpleSet('assertEquals(YesNoFormat(fromQuery["#column.getColumn()#"][1]), YesNoFormat(#entityName#.get#column.getName()#()))', 3);
 					
@@ -785,6 +785,7 @@ component  extends="codeGenerator"
 		dummy['bit'] = true;
 		dummy['boolean'] = true;
 		dummy['xml'] = XMLNew();
+		dummy['year'] = 2000;
 		dummy['date'] = CreateDate(2000, 1, 1);
 		dummy['datetime'] = CreateDateTime(2000, 1, 1, 0, 0, 0);
 		dummy['binary'] = "##ImageGetBlob(ImageNew('#config.getCSSFilePath()##fs#appgrad.jpg'))##";

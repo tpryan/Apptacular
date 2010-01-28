@@ -139,7 +139,7 @@ component
 		datatypes['year']['type'] = "numeric";
 		datatypes['year']['ormType'] = "integer";
 		datatypes['year']['uiType'] = "string";
-		datatypes['year']['testtype'] = "numeric";
+		datatypes['year']['testtype'] = "year";
 			
     	return This;
     }
