@@ -90,8 +90,8 @@ component
 		
 		
 		//various ob's
-		datatypes['clob']['type'] = "clob";
-		datatypes['clob']['ormType'] = "clob";
+		datatypes['clob']['type'] = "string";
+		datatypes['clob']['ormType'] = "string";
 		datatypes['clob']['uiType'] = "text";
 		datatypes['clob']['testtype'] = "string";
 		

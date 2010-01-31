@@ -424,8 +424,16 @@ component  extends="codeGenerator"
 			var idString = id;
 		}
 		else{
-			var	WhereClause = "#idColumn.getColumn()# = '#id#'";
-			var idString = "'#id#'";
+			
+			if (FindNoCase("Int", idColumn.getDataType())){
+				var	WhereClause = "#idColumn.getColumn()# = #id#";
+				var idString = "#id#";
+			}
+			else{
+				var	WhereClause = "#idColumn.getColumn()# = '#id#'";
+				var idString = "'#id#'";
+			}
+			
 		}
 		
 		if (Len(SchemaName) > 0){

@@ -64,9 +64,12 @@ component accessors="true" extends="dbItem"
 			}
 			
 			
+			if (FindNoCase("SYSTEM TABLE", tables.table_type[i])){
+				continue;
+			}
+			
+			
 			var table = New table(tables.table_name[i], This.getName(), schema, isView);
-			
-			
 			
 			table.setrowcount(calculateRowCount(table));
 			
