@@ -56,6 +56,7 @@
 			</fileset>	
 		</copy>
 		
+		<copy todir="${dropbox.dir}" preservelastmodified="true" file="${package.dir}/${app.name}.zip" />
 		<copy todir="${package.dir}/apptacularExtensionAndSQL/" preservelastmodified="true" file="${package.dir}/${app.name}.zip" />
 	
 		<echo message="Zipping and publishing"/>
