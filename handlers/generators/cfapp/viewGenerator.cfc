@@ -135,8 +135,8 @@ component extends="codeGenerator"{
 				ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
 			}
 			
-			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0){
-				ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
+			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0 OR compareNoCase(columns[i].getuitype(), "image") eq 0){
+				ct.AppendBody('			<td><cf_displayImage image="###entityName#.get#columns[i].getName()#()##" maxheight="50" /></td>');
 			}
 			else if (compareNoCase(columns[i].getuitype(), "boolean") eq 0){
 				ct.AppendBody('			<td>##YesNoFormat(#entityName#.get#columns[i].getName()#())##</td>');
@@ -302,20 +302,10 @@ component extends="codeGenerator"{
 		 		ct.AppendBody('			<td>[Cannot currently display binary files]</td>');
 				ct.AppendBody('		</tr>');	
 			}
-			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0){
+			else if (compareNoCase(columns[i].getuitype(), "picture") eq 0 OR compareNoCase(columns[i].getuitype(), "image") eq 0){
 				ct.AppendBody('		<tr>');
 		 		ct.AppendBody('			<th>#column.getDisplayName()#</th>');
-		 		ct.AppendBody('			<td>');
-				ct.AppendBody('				<cftry>');
-				ct.AppendBody('					<cfcatch>');
-				ct.AppendBody('						<cfif FindNoCase("ColdFusion was unable to create an image",cfcatch.message)>');
-				ct.AppendBody('							[Unsupported image]');
-				ct.AppendBody('						<cfelse>');	
-				ct.AppendBody('							<cfrethrow />');		
-				ct.AppendBody('						</cfif>');		
-				ct.AppendBody('					</cfcatch>');
-				ct.AppendBody('				</cftry>');	
-				ct.AppendBody('			</td>');
+		 		ct.AppendBody('			<td><cf_displayImage image="###EntityName#.get#column.getName()#()##" /></td>');
 				ct.AppendBody('		</tr>');	
 			}
 			else if (compareNoCase(column.getuitype(), "boolean") eq 0){
@@ -827,6 +817,19 @@ component extends="codeGenerator"{
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCustomTagFilePath());
 		file.setName("loginForm");
+		file.setExtension("cfm"); 
+		file.InsertFile(origCT);
+		return file;  
+	}
+	
+	/**
+	* @hint Copying hard copy Image Display Custom Tag file to Custom tag location 
+	*/
+	public apptacular.handlers.cfc.code.file function createImageDisplayCustomTag(){
+		var origCT = ExpandPath("generators/cfapp/storage/displayImage.cfm");
+		var file  =  New apptacular.handlers.cfc.code.file();
+		file.setFileLocation(variables.config.getCustomTagFilePath());
+		file.setName("displayImage");
 		file.setExtension("cfm"); 
 		file.InsertFile(origCT);
 		return file;  

@@ -102,7 +102,7 @@ component
 		
 		datatypes['image']['type'] = "binary";
 		datatypes['image']['ormType'] = "binary";
-		datatypes['image']['uiType'] = "binary";
+		datatypes['image']['uiType'] = "image";
 		datatypes['image']['testtype'] = "binary";
 		
 		datatypes['binary']['type'] = "binary";

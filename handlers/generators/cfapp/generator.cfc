@@ -54,6 +54,8 @@ component{
 			ArrayAppend(files, mmrct);
 			var grad = viewGenerator.createGradient();
 			ArrayAppend(files, grad);
+			var idct = viewGenerator.createImageDisplayCustomTag();
+			ArrayAppend(files, idct);
 			
 			var index = viewGenerator.createIndex();
 			ArrayAppend(files, index);
