@@ -229,7 +229,7 @@ component accessors="true" extends="dbItem"
 		}
 		
 		//Added this because of difficulties mapping composite foriegn keys
-		columnArray=doubleCheckComputed(columnArray);
+		columnArray=doubleCheckMSSQLValues(columnArray);
 		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
@@ -260,7 +260,7 @@ component accessors="true" extends="dbItem"
 	}
 	
 	
-	private array function doubleCheckComputed(required array columnArray){
+	private array function doubleCheckMSSQLValues(required array columnArray){
 		//Short Circuit the whole dealio 
 		if (not FindNoCase("Microsoft",variables.Engine)){
 			return arguments.columnArray;
@@ -292,20 +292,27 @@ component accessors="true" extends="dbItem"
 	
 		var columnsdata = sptables.execute().getprocResultSets().columnsdata;
 		
+		
+		
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			for (j=1; j <= columnsdata.recordCount; j++){
 				if(CompareNoCase(Trim(columnsdata['column_name'][j]),Trim(column.getColumn())) eq 0 ){
+					
+					if (FindNoCase("binary",columnsdata['type'][j])){
+						column.setDataType("binary");
+						column.setUIType("binary");
+					}
+					
 					column.setIscomputed(columnsdata['computed'][j]);
+					column[i]= column;
 					continue;
 				}
-			
 			}
 		
 		}
 		
 		return columns;
-		
 	}
 	
 	/**

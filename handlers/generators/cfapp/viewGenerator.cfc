@@ -378,7 +378,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
 		ct.AppendBody('<cfoutput>');
-		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html">');
+		ct.AppendBody('<cfform action="?method=edit_process" method="post" format="html" enctype="multipart/form-data">');
 		ct.AppendBody('	<table>');
 		ct.AppendBody('	<tbody>');
 		
@@ -470,9 +470,22 @@ component extends="codeGenerator"{
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
 				}
-				else if (compareNoCase(uitype, "picture") eq 0){
+				else if (compareNoCase(uitype, "picture") eq 0 OR compareNoCase(uitype, "image") eq 0){
+					
+					
+					
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
-	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
+					ct.AppendBody('			<td>');
+					ct.AppendBody('				<cfif not IsNull(person.get#columnName#())>');
+					ct.AppendBody('					<cf_displayImage image="###entityName#.get#columns[i].getName()#()##" /> - Current Image<br />');
+					ct.AppendBody('					<label for="#columns[i].getName()#___remove">Remove Image (#columns[i].getName()#):</label>');
+					ct.AppendBody('					<cfinput name="#columns[i].getName()#___remove" type="checkbox" value="TRUE" id="#columns[i].getName()#___remove" class="checkbox" /><br />');
+					ct.AppendBody('				</cfif>');
+					ct.AppendBody('				<input name="#columns[i].getName()#___file" type="file" id="#columns[i].getName()#" value="" /><br />');
+					ct.AppendBody('			</td>');
+					
+					
+					
 				}
 				else if (compareNoCase(uitype, "boolean") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
@@ -660,9 +673,47 @@ component extends="codeGenerator"{
 		    view.AppendBody('	</cfcase>');
 			view.AppendBody();
 		    view.AppendBody('	<cfcase value="edit_process">');
+			
+			
+			//handle image and binary upload
+			for (i=1; i <= arraylen(columns); i++){
+				var uiType = columns[i].getUIType();
+				var columnName = columns[i].getName();
+				if (FindNoCase(uiType,"image") OR FindNoCase(uiType,"picture") OR FindNoCase(uiType,"binary")){
+					view.AppendBody('');
+					view.AppendBody('		<!--- Process binary file insert or edit for #columnName# --->');
+					view.AppendBody('		<cfif structKeyExists(form, "#columnName#___file") and len(form.#columnName#___file) gt 0>');
+					view.AppendBody('			<cfset fileName = createUUID() />');
+			 		view.AppendBody('			<cfset tempPath = getTempDirectory() &  fileName  />');
+					view.AppendBody('			<cffile action="upload" filefield="#columnName#___file" destination="##tempPath##" nameconflict="overwrite"  />');
+					view.AppendBody('			<cfset tempFile = fileReadBinary(tempPath) />');
+					view.AppendBody('			<cfset form["#columnName#"] = tempFile />');
+					view.AppendBody('			<cfset structDelete(form, "#columnName#___file") />');
+					view.AppendBody('		</cfif>');
+					view.AppendBody('');
+				
+				}
+			}
+			
+			
 			view.AppendBody('		<cfset #entityName# = EntityNew("#entityName#") />');
 			view.AppendBody('		<cfset #entityName# = #entityName#.populate(form) />');
-		    view.AppendBody('		<cfset EntitySave(#entityName#) />');
+		    
+			//handle image and binary deletion
+			for (i=1; i <= arraylen(columns); i++){
+				var uiType = columns[i].getUIType();
+				var columnName = columns[i].getName();
+				if (FindNoCase(uiType,"image") OR FindNoCase(uiType,"picture") OR FindNoCase(uiType,"binary")){
+					view.AppendBody('');
+					view.AppendBody('		<!--- Process binary file removal for #columnName# --->');
+					view.AppendBody('		<cfif structKeyExists(form, "#columnName#___remove") and form.#columnName#___remove>');
+					view.AppendBody('			<cfset #entityName#.set#columnName#(JavaCast("Null", "")) />');
+					view.AppendBody('		</cfif>');
+					view.AppendBody('');
+				}
+			}
+			
+			view.AppendBody('		<cfset EntitySave(#entityName#) />');
 		    view.AppendBody('		<cfset ORMFlush() />');
 		    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
 		    view.AppendBody('	</cfcase>');
