@@ -13,7 +13,7 @@
 		files = DirectoryList(path, true, "query", "*.xml");
 		editor = new apptacular.handlers.cfc.editor('column');
 		allowedcolumns = editor.getAllowedList();
-		uiList = "boolean,date,datetime,string,picture,text";
+		uiList = ArrayToList(New apptacular.handlers.cfc.db.mappings().getUiTypes());
 	</cfscript>
 	
 	<cfscript>

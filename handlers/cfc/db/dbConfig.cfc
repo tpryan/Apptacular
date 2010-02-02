@@ -129,8 +129,20 @@ component
 		
 		}
 		
+		
+		
+		
 		//Process Virtual Columns
 		var VCKeys = StructKeyArray(checksums);
+		
+		//Remove Orphan columns
+		for (i = ArrayLen(VCKeys); i > 0; i--){
+			var node = ListLast(VCKeys[i], FS);
+			if (CompareNoCase(left(node, 3), "vc_") neq 0){
+				ArrayDeleteAt(VCKeys, i);
+			}
+		}
+		
 		
 		for (i=1; i <= ArrayLen(VCKeys); i++){
 			var virtualColumn = New virtualColumn();
@@ -159,7 +171,14 @@ component
 	private any function reWriteObject(required any object, required string path, required string ObjectType){
 		var newObject = Duplicate(arguments.object);
 		var XML = XMLParse(FileRead(arguments.path));
+		try{
 		var keys = StructKeyArray(XML[arguments.ObjectType]);
+		}
+		catch(any e){
+			writeDump(arguments);
+			writeDump(e);
+			abort;
+		}
 		var i = 0;
 		
 		try{

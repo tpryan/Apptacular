@@ -143,6 +143,42 @@ component
 			
     	return This;
     }
+	
+	/**
+	 * @hint Gets a list of all of the UITypes in use in apptacular
+	 */
+	public array function getUITypes(){
+		var allArray = structFindKey(datatypes, "uiType", "ALL");
+		var i = 0;
+		var uniqueStruct = {};
+		
+		for (i = 1; i <= ArrayLen(allArray); i++){
+			uniqueStruct[allArray[i].value] = "";	
+		}
+		
+		var returnArray = StructKeyArray(uniqueStruct);
+		ArraySort(returnArray, "textnocase", "asc");
+		
+		return returnArray;
+	}
+	
+	/**
+	 * @hint Gets a list of all of the TestTypes in use in apptacular
+	 */
+	public array function getTestTypes(){
+		var allArray = structFindKey(datatypes, "testType", "ALL");
+		var i = 0;
+		var uniqueStruct = {};
+		
+		for (i = 1; i <= ArrayLen(allArray); i++){
+			uniqueStruct[allArray[i].value] = "";	
+		}
+		
+		var returnArray = StructKeyArray(uniqueStruct);
+		ArraySort(returnArray, "textnocase", "asc");
+		
+		return returnArray;
+	}
 
 	/**
 	 * @hint gets the Ormtype for a given datatype
