@@ -74,20 +74,36 @@
 		
 		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />
 		
-		<mxunittask server="${server}" defaultrunner="${runner.app.cfc}" haltonerror="true" verbose="true">
+		<mxunittask server="${server}" defaultrunner="${runner.app.cfc}" haltonerror="true" haltonfailure="true" verbose="true">
 			<directory path="${test.app.dir}" recurse="true" componentPath="${cfc.app.path}" />
 		</mxunittask>
 	</target>
 	
 	<target name="test.apps">
+		
+		<echo message="*************************************************************"/>
+		<echo message="Derby Tests"/>
+		<echo message="*************************************************************"/>
+		<echo message="Running CFartgallery Tests"/>
+		<ant antfile="${webroot}/cfartgallery/test/build.xml" inheritAll="false"/>
+		
+		<echo message="*************************************************************"/>
+		<echo message="MySQL Tests"/>
+		<echo message="*************************************************************"/>
 		<echo message="Running BlogDemo Tests"/>
 		<ant antfile="${webroot}/BlogDemo/test/build.xml" inheritAll="false"/>
 		
+		<echo message="Running Sakila Tests"/>
+		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
+		
+		<echo message="*************************************************************"/>
+		<echo message="MSSQL Tests"/>
+		<echo message="*************************************************************"/>
 		<echo message="Running BlogDemoMSSQL Tests"/>
 		<ant antfile="${webroot}/BlogDemoMSSQL/test/build.xml" inheritAll="false"/>
 		
-		<echo message="Running Sakila Tests"/>
-		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
+		<echo message="Running Facebook Tests"/>
+		<ant antfile="${webroot}/facebook/test/build.xml" inheritAll="false"/>
 		
 		<echo message="Running AdventureWorks Tests"/>
 		<ant antfile="${webroot}/adventureworks/test/build.xml" inheritAll="false"/>
