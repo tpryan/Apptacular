@@ -100,6 +100,11 @@ component
 		datatypes['blob']['uiType'] = "binary";
 		datatypes['blob']['testtype'] = "binary";
 		
+		datatypes['longblob']['type'] = "binary";
+		datatypes['longblob']['ormType'] = "binary";
+		datatypes['longblob']['uiType'] = "binary";
+		datatypes['longblob']['testtype'] = "binary";
+		
 		datatypes['image']['type'] = "binary";
 		datatypes['image']['ormType'] = "binary";
 		datatypes['image']['uiType'] = "image";
