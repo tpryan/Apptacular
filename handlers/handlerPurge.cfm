@@ -84,9 +84,10 @@
 <cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
+<cfset baseURL = "http://" & cgi.server_name & ":" & cgi.server_port />
 <cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm" />
 <cfset messagesOptions = "?type=purge&amp;fileCount=#extrafilesList.recordCount#&amp;dirCount=#emptyDirs.recordCount#" />
-<cfset messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions />
+<cfset messagesURL = baseURL  & messagesPath & messagesOptions />
 
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 

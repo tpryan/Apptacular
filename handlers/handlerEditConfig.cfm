@@ -15,9 +15,10 @@
 <cfif not FileExists(configPath)>
 
 	<cfscript>
+		baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=notanapplication";
-		messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions;
+		messagesURL = baseURL  & messagesPath & messagesOptions;
 	
 	</cfscript>
 	
