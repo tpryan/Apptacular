@@ -262,16 +262,20 @@ component extends="codeGenerator"{
 		}
 		
 		//NullifyZeroID is for use with Remote services.
+		var pkeys = table.getPrimaryKeyColumns();
 		var func= New apptacular.handlers.cfc.code.func();
 		func.setName('nullifyZeroID');
 		func.setAccess("public");
 		func.setReturnType('void');
-		func.AddOperation('		<cfif getIDValue() eq 0>');
-		func.AddOperation('			<cfset variables[getIDName()] = JavaCast("Null", "") />');	
-		func.AddOperation('		</cfif>');
-		func.AddOperationScript('		if (getIDValue() eq 0){');
-		func.AddOperationScript('			variables[getIDName()] = JavaCast("Null", "");');
-		func.AddOperationScript('		}');
+		
+		for (i=1; i <= arraylen(pkeys); i++){
+			var pkey = pkeys[i];
+			func.StartSimpleIF('get#pkey.getName()#() eq 0 OR get#pkey.getName()#() eq ""', 2);
+			func.AddSimpleSet('set#pkey.getName()#(JavaCast("Null", ""))' ,3);
+			func.EndSimpleIF(2);
+		}
+		
+		
 		cfc.addFunction(func);
 		
 		

@@ -60,6 +60,7 @@ component  extends="codeGenerator"
 		var cfcPath = variables.config.getEntityCFCPath();
 		var columns = table.getColumns();
 		var access = variables.config.getServiceAccess();
+		var type = table.getColumn(table.getIdentity()).getType();
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    cfc.setName(EntityName & "Service");
@@ -116,7 +117,16 @@ component  extends="codeGenerator"
 		var id = New apptacular.handlers.cfc.code.Argument();
 		id.setName('id');
 		id.setRequired(true);
-		id.setType('numeric');
+		
+		if (table.hasCompositePrimaryKey()){
+			id.setType('struct');	
+		}
+		else if(FindNoCase("numeric", type)){
+			id.setType('numeric');
+		}
+		else{
+			id.setType('string');
+		}
 		
 		var get= New apptacular.handlers.cfc.code.func();
 		get.setName('get');

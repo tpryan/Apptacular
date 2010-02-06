@@ -172,30 +172,30 @@ component  extends="codeGenerator"
 			
 			if (len(id) > 0){
 				//Create Read Test
-				var read = createSimpleReadUnitTest(table);
+				var read = createSimpleReadUnitTest(table=table);
 				testEntity.addFunction(read);
 			}	
 		
 		}
 		else{
 			//Create Create Test
-			var create = createSimpleCreateOrDeleteUnitTest(table);
+			var create = createSimpleCreateOrDeleteUnitTest(table=table);
 			testEntity.addFunction(create);
 	
 			var id = table.discoverValidId();
 			
 			if (len(id) > 0){
 				//Create Read Test
-				var read = createSimpleReadUnitTest(table);
+				var read = createSimpleReadUnitTest(table=table);
 				testEntity.addFunction(read);
 				
 				//Create Update Test
-				var update = createSimpleUpdateUnitTest(table);
+				var update = createSimpleUpdateUnitTest(table=table);
 				testEntity.addFunction(update);
 			}
 			
 			//Create Delete Test
-			var delete = createSimpleCreateOrDeleteUnitTest(table, "Delete");
+			var delete = createSimpleCreateOrDeleteUnitTest(table=table, type="Delete");
 			testEntity.addFunction(delete);
 		}
 
@@ -203,7 +203,63 @@ component  extends="codeGenerator"
 		
 
 		return testEntity;
-	}	
+	}
+	
+	
+	
+	/**
+	* @hint Creates a CRUD test for Services.
+	*/
+	public apptacular.handlers.cfc.code.cfc function createServiceTest(required any table){
+		var entityName = table.getEntityName();
+		var columns = table.getColumns();
+
+		var testEntity  = New apptacular.handlers.cfc.code.cfc();
+	    testEntity.setName("test#entityName#");
+	    testEntity.setFileLocation(variables.config.getTestFilePath() & fs & variables.config.getServiceFolder());
+		testEntity.setFormat(variables.config.getCFCFormat());
+		testEntity.setExtends(variables.config.getMXUNITCFCPAth() & ".framework.TestCase");
+
+		if (table.getIsView()){
+		
+			var id = table.discoverValidId();
+			
+			if (len(id) > 0){
+				//Create Read Test
+				var read = createSimpleReadUnitTest(table=table, isService=true);
+				testEntity.addFunction(read);
+			}	
+		
+		}
+		else{
+			//Create Create Test
+			var create = createSimpleCreateOrDeleteUnitTest(table=table, isService=true);
+			testEntity.addFunction(create);
+	
+			var id = table.discoverValidId();
+			
+			if (len(id) > 0){
+				//Create Read Test
+				var read = createSimpleReadUnitTest(table=table, isService=true);
+				testEntity.addFunction(read);
+				
+				//Create Update Test
+				var update = createSimpleUpdateUnitTest(table=table, isService=true);
+				testEntity.addFunction(update);
+			}
+			
+			//Create Delete Test
+			var delete = createSimpleCreateOrDeleteUnitTest(table=table, isService=true, type="Delete");
+			testEntity.addFunction(delete);
+		}
+
+		
+		
+
+		return testEntity;
+	}
+	
+		
 	
 	/**
 	* @hint Creates the remote facade that wires the IDE runner through the application scope of the application. 
@@ -293,7 +349,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an update test for ORM objects.
 	*/
-	private apptacular.handlers.cfc.code.func function createSimpleUpdateUnitTest(required any table){
+	private apptacular.handlers.cfc.code.func function createSimpleUpdateUnitTest(required any table, boolean isService=false){
 		var i = 0;
 		var id = table.discoverValidId();
 		var entityName = table.getEntityName();
@@ -320,6 +376,11 @@ component  extends="codeGenerator"
 		update.addLineBreak();
 		update.AddOperation('			<cftransaction action="begin">');
 		update.AddOperationScript('		transaction action="begin"{');	
+		
+		if (arguments.isService){
+			update.addSimpleSet('var #entityName#Service = new #variables.config.getserviceCFCPath()#.#entityName#Service()', 3);
+		}
+		
 		update.addSimpleSet('var #entityName# = EntityLoad("#entityName#", #idString#, true)', 3);
 		
 		
@@ -380,7 +441,14 @@ component  extends="codeGenerator"
 		}
 		
 		
-		update.addSimpleSet("EntitySave(#entityName#)",3);
+		if (arguments.isService){
+			update.addSimpleSet('#entityName#Service.update(#entityName#)', 3);
+		}
+		else{
+			update.addSimpleSet("EntitySave(#entityName#)",3);
+		}
+		
+		
 		
 		update.addLineBreak();
 		update.addSimpleComment("Make it go away!", 3);
@@ -398,7 +466,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates a read test for ORM objects.
 	*/
-	private apptacular.handlers.cfc.code.func function createSimpleReadUnitTest(required any table){
+	private apptacular.handlers.cfc.code.func function createSimpleReadUnitTest(required any table, boolean isService=false){
 		var i = 0;
 		var id = table.discoverValidId();
 		var entityName = table.getEntityName();
@@ -444,7 +512,9 @@ component  extends="codeGenerator"
 		}
 		
 		
-		
+		if (arguments.isService){
+			read.addSimpleSet('var #entityName#Service = new #variables.config.getserviceCFCPath()#.#entityName#Service()', 2);
+		}
 		
 		read.AddLineBreak('');
 		
@@ -457,7 +527,17 @@ component  extends="codeGenerator"
 		read.AddOperationScript('		fromQuery = qry.execute().getResult();');
 		
 		read.AddLineBreak('');
-		read.AddSimpleSet('var #entityName# = EntityLoad("#entityName#", #idString#, true)', 2);
+		
+		
+		if (arguments.isService){
+			read.addSimpleSet('var #entityName# = #entityName#Service.get(#idString#)', 2);
+		}
+		else{
+			read.AddSimpleSet('var #entityName# = EntityLoad("#entityName#", #idString#, true)', 2);
+		}
+		
+		
+		
 		read.AddLineBreak('');
 		
 		for (i=1; i <= ArrayLen(columns); i++){
@@ -507,7 +587,7 @@ component  extends="codeGenerator"
 				read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
 				
 				if (column.getTestType() eq "binary"){
-					read.AddSimpleSet('assertEquals(toBase64(fromQuery["#column.getColumn()#"][1]), toBase64(#entityName#.get#column.getName()#()))', 3);
+					read.AddSimpleSet('assertEquals(Left(toBase64(fromQuery["#column.getColumn()#"][1]),100), Left(toBase64(#entityName#.get#column.getName()#()), 100))', 3);
 				}
 				else if (column.getDataType() eq "money"){
 					read.AddSimpleSet('assertEquals(DollarFormat(Round(fromQuery["#column.getColumn()#"][1])), DollarFormat(Round(#entityName#.get#column.getName()#())))', 3);
@@ -583,7 +663,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Creates an Creates or Delete test for ORM objects.
 	*/
-	private apptacular.handlers.cfc.code.func function createSimpleCreateOrDeleteUnitTest(required any table, string type="Create"){
+	private apptacular.handlers.cfc.code.func function createSimpleCreateOrDeleteUnitTest(required any table, boolean isService=false, string type="Create"){
 		var i = 0;
 		var entityName = table.getEntityName();
 		var tableName = table.getName();
@@ -599,6 +679,11 @@ component  extends="codeGenerator"
 		read.setName("test#arguments.type#");
 		
 		read.addLocalVariable("fromHQL");
+		
+		
+		if (arguments.isService){
+			read.addSimpleSet('var #entityName#Service = new #variables.config.getserviceCFCPath()#.#entityName#Service()', 2);
+		}
 		
 		
 		read.addLineBreak();
@@ -705,8 +790,12 @@ component  extends="codeGenerator"
 		
 		}
 		
-		
-		read.addSimpleSet("EntitySave(#entityName#)",3);
+		if (arguments.isService){
+			read.addSimpleSet('#entityName#Service.update(#entityName#)', 3);
+		}
+		else{
+			read.addSimpleSet("EntitySave(#entityName#)",3);
+		}
 		
 		if(FindNoCase("delete", arguments.type)){
 		
@@ -729,7 +818,16 @@ component  extends="codeGenerator"
 				
 			}
 		
-			read.addSimpleSet('EntityDelete(#entityName#Copy)', 3);
+		
+			if (arguments.isService){
+				read.addSimpleSet('#entityName#Service.destroy	(#entityName#)', 3);
+			}
+			else{
+				read.addSimpleSet('EntityDelete(#entityName#Copy)', 3);
+			}
+
+		
+			
 		
 		}
 

@@ -137,6 +137,9 @@ component{
 					
 					var testEntity = unittestGenerator.createEntityTest(table);
 					ArrayAppend(files, testEntity);
+					
+					var testService = unittestGenerator.createServiceTest(table);
+					ArrayAppend(files, testService);
 				}
 			}//IsProperTable?	
 		}//for loop
@@ -157,6 +160,9 @@ component{
 			
 			var ViewRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & "/view");
 			ArrayAppend(files, ViewRunner);
+			
+			var ServiceRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & variables.config.getServiceFolder());
+			ArrayAppend(files, ServiceRunner);
 			
 			var GlobalTest = unittestGenerator.createGlobalTest();
 			ArrayAppend(files, GlobalTest);
