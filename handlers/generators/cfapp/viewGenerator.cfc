@@ -278,7 +278,7 @@ component extends="codeGenerator"{
 				ct.AppendBody('		<tr>');
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
 					ct.AppendBody('			<th>#column.getName()#</th>');
-					ct.AppendBody("'		<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
+					ct.AppendBody('			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->');
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
 					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
 					ct.AppendBody('			<cfelse>');
@@ -287,7 +287,7 @@ component extends="codeGenerator"{
 				}	
 				else{
 					ct.AppendBody('			<th>#fkTable.getEntityName()#</th>');
-					ct.AppendBody("'		<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
+					ct.AppendBody('			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->');
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#fkTable.getEntityName()#())>');
 					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#fkTable.getEntityName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
 					ct.AppendBody('			<cfelse>');
