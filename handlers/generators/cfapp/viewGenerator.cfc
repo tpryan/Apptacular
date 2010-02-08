@@ -97,8 +97,9 @@ component extends="codeGenerator"{
 		ct.AppendBody('	</thead>');
 		ct.AppendBody('	<tbody>');
 		
-		ct.AppendBody('	<cfloop array="##attributes.#entityName#Array##" index="#entityName#">');
-		ct.AppendBody('		<tr>');
+		ct.AppendBody('	<cfloop index="i" from="1" to="##ArrayLen(attributes.#entityName#Array)##">');
+		ct.AppendBody('		<cfset #entityName# = attributes.#entityName#Array[i] />');
+		ct.AppendBody('		<tr<cfif i mod 2> class="odd"</cfif>>');
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];

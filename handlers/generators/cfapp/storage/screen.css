@@ -93,3 +93,7 @@ select { 	width: 400px; }
 .listnav .pages{
 	text-align: center;		
 }
+
+.odd{
+	background-color: #CBE0E5;
+}
