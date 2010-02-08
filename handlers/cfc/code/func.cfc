@@ -346,17 +346,23 @@ component displayname="function" hint="A CFC representation of an function for c
 		* @hint Returns the content of the function in CFScript
 	*/
 	public string function getCFScript(){
-		var results="";
+		var results=CreateObject("java","java.lang.StringBuilder").Init();
+		
+		if (len(This.getHint())){
+			results = results.append('	/**');
+			results = results.append('	*@hint #This.getHint()#');
+			results = results.append('	*/');
+		}
 
-		results = results & generateCFScriptHeader();
-		results = results & generateCFScriptLocalVariables();
-		results = results & operationScript;
+		results = results.append(generateCFScriptHeader());
+		results = results.append(generateCFScriptLocalVariables());
+		results = results.append(operationScript);
 		
 		if (len(This.getReturnResult()) gt 0 AND compareNoCase(This.getReturnType(), "void") neq 0){
-			results = results.concat('		return #This.getReturnResult()#;' & variables.lineBreak);
+			results = results.append('		return #This.getReturnResult()#;' & variables.lineBreak);
 		}
 		
-		results = results.concat(generateCFScriptFooter()) ;
+		results = results.append(generateCFScriptFooter()) ;
 
 		return results;
 	}
