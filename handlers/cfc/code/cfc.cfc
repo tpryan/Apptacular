@@ -31,37 +31,38 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		* @hint Returns the CFC header in CFML.
 	*/		
 	private string function generateCFMLHeader(){
-		var header = '<cfcomponent';
+		var header = CreateObject("java","java.lang.StringBuilder").Init();
+		header.append('<cfcomponent');
 		
 		if (len(This.getExtends()) gt 0){
-			header = ListAppend(header, 'extends="#This.getExtends()#"', ' ') ;
+			header.append(' extends="#This.getExtends()#"');
 		}
 		
 		if (len(This.getImplements()) gt 0){
-			header = ListAppend(header, 'implements="#This.getImplements()#"', ' ') ;
+			header.append(' implements="#This.getImplements()#"');
 		}
 		
 		if (len(This.getPersistent())){
-			header = ListAppend(header, 'persistent="#This.getPersistent()#"', ' ') ;
+			header.append(' persistent="#This.getPersistent()#"');
 		}
 		
 		if (len(This.getTable()) gt 0){
-			header = ListAppend(header, 'table="#This.getTable()#"', ' ') ;
+			header.append(' table="#This.getTable()#"');
 		}
 		
 		if (len(This.getSchema()) gt 0){
-			header = ListAppend(header, 'schema="#This.getSchema()#"', ' ') ;
+			header.append(' schema="#This.getSchema()#"');
 		}
 		
 		if (len(This.getEntityName()) gt 0){
-			header = ListAppend(header, 'entityName="#This.getEntityName()#"', ' ') ;
+			header.append(' entityName="#This.getEntityName()#"');
 		}
 		
 		if (This.getOutput()){
-			header = ListAppend(header, 'output="#This.getOutput()#"', ' ') ;
+			header.append(' output="#This.getOutput()#"');
 		}
 		
-		header = ListAppend(header, '>' & variables.lineBreak, ' ') ;
+		header.append('>' & variables.lineBreak);
 		
 		return header;
 	
@@ -71,37 +72,40 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		* @hint Returns the CFC header in CFscript.
 	*/	
 	private string function generateCFScriptHeader(){
-		var header = 'component';
+	
+		var header = CreateObject("java","java.lang.StringBuilder").Init();
+	
+		header.append('component');
 		
 		if (len(This.getExtends()) gt 0){
-			header = ListAppend(header, 'extends="#This.getExtends()#"', ' ') ;
+			header.append(' extends="#This.getExtends()#"');
 		}
 		
 		if (len(This.getImplements()) gt 0){
-			header = ListAppend(header, 'implements="#This.getImplements()#"', ' ') ;
+			header.append(' implements="#This.getImplements()#"');
 		}
 		
 		if (len(This.getPersistent())){
-			header = ListAppend(header, 'persistent="#This.getPersistent()#"', ' ') ;
+			header.append(' persistent="#This.getPersistent()#"');
 		}
 		
 		if (len(This.getTable()) gt 0){
-			header = ListAppend(header, 'table="#This.getTable()#"', ' ') ;
+			header.append(' table="#This.getTable()#"');
 		}
 		
 		if (len(This.getSchema()) gt 0){
-			header = ListAppend(header, 'schema="#This.getSchema()#"', ' ') ;
+			header.append(' schema="#This.getSchema()#"');
 		}
 		
 		if (len(This.getEntityName()) gt 0){
-			header = ListAppend(header, 'entityName="#This.getEntityName()#"', ' ') ;
+			header.append(' entityName="#This.getEntityName()#"');
 		}
 		
 		if (This.getOutput()){
-			header = ListAppend(header, 'output="#This.getOutput()#"', ' ') ;
+			header.append(' output="#This.getOutput()#"');
 		}
 		
-		header = ListAppend(header, '{' & variables.lineBreak, ' ') ;
+		header.append('{' & variables.lineBreak);
 		
 		return header;
 	
@@ -131,11 +135,14 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 			return "";
 		}
 		
-		var props = variables.lineBreak;
+		var props = CreateObject("java","java.lang.StringBuilder").Init();
+		var props = props.Append(variables.lineBreak);
 		var i = 0;
 		
 		for (i = 1; i lte ArrayLen(variables.propertyArray); i++){
-			props = props & "	" & variables.propertyArray[i].getCFML() & variables.lineBreak ;
+			props = props.Append("	");
+			props = props.Append(variables.propertyArray[i].getCFML());
+			props = props.Append(variables.lineBreak);
 		}
 		
 		return props;
@@ -149,11 +156,14 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 			return "";
 		}
 		
-		var props = variables.lineBreak;
+		var props = CreateObject("java","java.lang.StringBuilder").Init();
+		props.Append(variables.lineBreak);
 		var i = 0;
 		
 		for (i = 1; i lte ArrayLen(variables.propertyArray); i++){
-			props = props & "	" & variables.propertyArray[i].getCFSCript() & variables.lineBreak ;
+			props.Append("	");
+			props.Append(variables.propertyArray[i].getCFSCript());
+			props.Append(variables.lineBreak);
 		}
 		
 		return props;
@@ -163,13 +173,13 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		* @hint Returns the CFC functions in CFML.
 	*/
 	private string function generateCFMLFunctions(){
-		var body = "";
+		var body = CreateObject("java","java.lang.StringBuilder").Init();
 		
-		body = body & variables.lineBreak;
+		body = body.append(variables.lineBreak);
 		
 		for (i = 1; i lte ArrayLen(variables.functionArray); i++){
-			body = body & "	" & variables.functionArray[i].getCFML();
-			body = body & variables.lineBreak;
+			body.append("	" & variables.functionArray[i].getCFML());
+			body.append(variables.lineBreak);
 		}
 		
 		return body;
@@ -180,13 +190,14 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		* @hint Returns the CFC functions in CFScript.
 	*/
 	private string function generateCFScriptFunctions(){
-		var body = "";
+		var body = CreateObject("java","java.lang.StringBuilder").Init();
 		
 		for (i = 1; i lte ArrayLen(variables.functionArray); i++){
-			body =  body & variables.lineBreak & "	" & variables.functionArray[i].getCFScript();
+			body.append(variables.lineBreak & "	");
+			body.append( variables.functionArray[i].getCFScript());
 		}
 		
-		body = body & variables.lineBreak;
+		body.append(variables.lineBreak);
 		return body;
 	
 	}
@@ -211,12 +222,12 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		* @hint Returns the CFC in CFML.
 	*/
 	public string function getCFML(){
-		var results = "";
+		var results = CreateObject("java","java.lang.StringBuilder").Init();
 
-		results = results & generateCFMLHeader();
-		results = results & generateCFMLProperties()  ;
-		results = results & generateCFMLFunctions();
-		results = results & generateCFMLFooter();
+		results.append(generateCFMLHeader());
+		results.append(generateCFMLProperties())  ;
+		results.append(generateCFMLFunctions());
+		results.append(generateCFMLFooter());
 
 		return results;
 	}	
@@ -225,12 +236,12 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		* @hint Returns the CFC in CFScript.
 	*/
 	public string function getCFScript(){
-		var results = "";
+		var results = CreateObject("java","java.lang.StringBuilder").Init();
 
-		results = results & generateCFScriptHeader();
-		results = results & generateCFScriptProperties()  ;
-		results = results & generateCFScriptFunctions();
-		results = results & generateCFScriptFooter();
+		results.append(generateCFScriptHeader());
+		results.append(generateCFScriptProperties());
+		results.append(generateCFScriptFunctions());
+		results.append(generateCFScriptFooter());
 
 		return results;
 	}

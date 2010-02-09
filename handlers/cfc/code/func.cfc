@@ -39,11 +39,11 @@ component displayname="function" hint="A CFC representation of an function for c
 	*/
 	public void function AddSimpleSet(required string Operation, numeric tabs=0 ){
 		var tab = "	";
-		var tabString = "";
+		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
 		
 		for (i = 1;i <= arguments.tabs; i++){
-			tabString = tabString & tab;
+			tabString.append(tab);
 		}
 		
 		AddOperation(tabString & "<cfset" & trim(arguments.Operation)  & " />");
@@ -52,11 +52,11 @@ component displayname="function" hint="A CFC representation of an function for c
 	
 	public void function StartSimpleIF(required string conditional, numeric tabs=0 ){
 		var tab = "	";
-		var tabString = "";
+		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
 		
 		for (i = 1;i <= arguments.tabs; i++){
-			tabString = tabString & tab;
+			tabString.append(tab);
 		}
 		
 		AddOperation(tabString & "<cfif " & trim(arguments.conditional)  & ">");
@@ -65,11 +65,11 @@ component displayname="function" hint="A CFC representation of an function for c
 	
 	public void function StartSimpleElse(numeric tabs=0 ){
 		var tab = "	";
-		var tabString = "";
+		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
 		
 		for (i = 1;i <= arguments.tabs; i++){
-			tabString = tabString & tab;
+			tabString.append(tab);
 		}
 		
 		AddOperation(tabString & "<cfelse>");
@@ -78,11 +78,11 @@ component displayname="function" hint="A CFC representation of an function for c
 	
 	public void function EndSimpleIF(numeric tabs=0 ){
 		var tab = "	";
-		var tabString = "";
+		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
 		
 		for (i = 1;i <= arguments.tabs; i++){
-			tabString = tabString & tab;
+			tabString.append(tab);
 		}
 		
 		AddOperation(tabString & "</cfif>");
@@ -95,11 +95,11 @@ component displayname="function" hint="A CFC representation of an function for c
 	*/
 	public void function AddSimpleComment(required string comment, numeric tabs=0 ){
 		var tab = "	";
-		var tabString = "";
+		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
 		
 		for (i = 1;i <= arguments.tabs; i++){
-			tabString = tabString & tab;
+			tabString.append(tab);
 		}
 		
 		AddOperation(tabString & "<!--- " & trim(arguments.comment)  & " --->");
@@ -118,14 +118,16 @@ component displayname="function" hint="A CFC representation of an function for c
 		* @hint Adds a line of CFML to the function.
 	*/
 	public void function AddOperation(required string Operation){
-		variables.operation = variables.operation.append(arguments.operation & lineBreak);
+		variables.operation.append(arguments.operation);
+		variables.operation.append(lineBreak);
 	}
 	
 	/**
 		* @hint Adds a line of CFScript to the function.
 	*/
 	public void function AddOperationScript(required string Operation){
-		variables.operationScript = variables.operationScript.append(arguments.operation & lineBreak);
+		variables.operationScript.append(arguments.operation);
+		variables.operationScript.append(lineBreak);
 	}
 
 	/**
@@ -349,20 +351,20 @@ component displayname="function" hint="A CFC representation of an function for c
 		var results=CreateObject("java","java.lang.StringBuilder").Init();
 		
 		if (len(This.getHint())){
-			results = results.append('/**' & linebreak);
-			results = results.append('	* @hint #This.getHint()#' & linebreak);
-			results = results.append('	*/' & linebreak & "	");
+			results.append('/**' & linebreak);
+			results.append('	* @hint #This.getHint()#' & linebreak);
+			results.append('	*/' & linebreak & "	");
 		}
 
-		results = results.append(generateCFScriptHeader());
-		results = results.append(generateCFScriptLocalVariables());
-		results = results.append(operationScript);
+		results.append(generateCFScriptHeader());
+		results.append(generateCFScriptLocalVariables());
+		results.append(operationScript);
 		
 		if (len(This.getReturnResult()) gt 0 AND compareNoCase(This.getReturnType(), "void") neq 0){
-			results = results.append('		return #This.getReturnResult()#;' & variables.lineBreak);
+			results.append('		return #This.getReturnResult()#;' & variables.lineBreak);
 		}
 		
-		results = results.append(generateCFScriptFooter()) ;
+		results.append(generateCFScriptFooter()) ;
 
 		return results;
 	}

@@ -79,6 +79,22 @@
 		</mxunittask>
 	</target>
 	
+	<target name="Rebuild.apps">
+		<echo message="Rebuilding all Aplications"/>
+		
+		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />
+		
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testAdventureWorks" runner="${runner.app.cfc}" />
+			<testcase name="apptacular.handlers.test.apps.testBlogDemo" runner="${runner.app.cfc}" />
+			<testcase name="apptacular.handlers.test.apps.testBlogDemoMSSQL" runner="${runner.app.cfc}" />
+			<testcase name="apptacular.handlers.test.apps.testCFArtGallery" runner="${runner.app.cfc}" />
+			<testcase name="apptacular.handlers.test.apps.testFacebook" runner="${runner.app.cfc}" />
+			<testcase name="apptacular.handlers.test.apps.testSakilaDemo" runner="${runner.app.cfc}" />
+			
+		</mxunittask>
+	</target>
+	
 	<target name="test.apps">
 		
 		<echo message="*************************************************************"/>

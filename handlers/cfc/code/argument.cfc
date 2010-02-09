@@ -16,27 +16,27 @@ component displayname="argument" hint="A CFC representation of an argument for c
 	*/
 	public string function getCFML(){
 		var argCFML = CreateObject("java","java.lang.StringBuilder").Init();
-		argCFML = argCFML.append('<cfargument ');
+		argCFML.append('<cfargument ');
 		
-		argCFML = argCFML.append('name="#This.getName()#" ');
+		argCFML.append('name="#This.getName()#" ');
 		
 		if (len(This.getType())){
-			argCFML = argCFML.append('type="#This.getType()#" ');
+			argCFML.append('type="#This.getType()#" ');
 		}
 		
 		if (len(This.getRequired()) gt 0 and IsBoolean(This.getRequired()) and This.getRequired()){
-			argCFML = argCFML.append('required="#This.getRequired()#" ');
+			argCFML.append('required="#This.getRequired()#" ');
 		}
 		
 		if (len(This.getDefaultvalue()) gt 0 and IsBoolean(This.getRequired()) and not This.getRequired()){
-			argCFML = argCFML.append('default="#This.getDefaultvalue()#" ');
+			argCFML.append('default="#This.getDefaultvalue()#" ');
 		}
 		
 		if (len(This.getHint())){
-			argCFML = argCFML.append('hint="#This.getHint()#" ');
+			argCFML.append('hint="#This.getHint()#" ');
 		}
 		
-		argCFML = argCFML.append(' />' & variables.lineBreak);
+		argCFML.append(' />' & variables.lineBreak);
 		
 		return argCFML;
 	
@@ -48,18 +48,18 @@ component displayname="argument" hint="A CFC representation of an argument for c
 	public string function getCFScript(){
 		var argCFML = CreateObject("java","java.lang.StringBuilder").Init();
 		
-		argCFML = argCFML.append('#This.getName()# ');
+		argCFML.append('#This.getName()# ');
 		
 		if (len(This.getType())){
-			argCFML = argCFML.insert(0, '#This.getType()# ');
+			argCFML.insert(0, '#This.getType()# ');
 		}
 		
 		if (len(This.getRequired()) gt 0 and IsBoolean(This.getRequired()) and This.getRequired()){
-			argCFML = argCFML.insert(0, 'required ');
+			argCFML.insert(0, 'required ');
 		}
 		
 		if (len(This.getDefaultvalue()) gt 0){
-			argCFML = argCFML.append('="#This.getDefaultvalue()#" ');
+			argCFML.append('="#This.getDefaultvalue()#" ');
 		}
 		
 		
