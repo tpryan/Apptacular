@@ -349,9 +349,9 @@ component displayname="function" hint="A CFC representation of an function for c
 		var results=CreateObject("java","java.lang.StringBuilder").Init();
 		
 		if (len(This.getHint())){
-			results = results.append('	/**');
-			results = results.append('	*@hint #This.getHint()#');
-			results = results.append('	*/');
+			results = results.append('/**' & linebreak);
+			results = results.append('	* @hint #This.getHint()#' & linebreak);
+			results = results.append('	*/' & linebreak & "	");
 		}
 
 		results = results.append(generateCFScriptHeader());

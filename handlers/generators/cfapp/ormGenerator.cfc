@@ -22,6 +22,7 @@ component extends="codeGenerator"{
 		// Create Init
 		var init= New apptacular.handlers.cfc.code.func();
 		init.setName('init');
+		init.setHint("A initialization routine, runs when object is created.");
 		init.setAccess("public");
 		init.setReturnType(table.getEntityName());
 		init.setReturnResult('This');
@@ -160,6 +161,7 @@ component extends="codeGenerator"{
 					var countFunc= New apptacular.handlers.cfc.code.func();
 					countFunc.setName("get#otherJoinTable.getEntityName()#Count");
 					countFunc.setAccess("public");
+					countFunc.setHint("Returns the count of records in #table.getName()#");
 					countFunc.setReturnType('numeric');
 					countFunc.AddOperation('		<cfset var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''" />');
 					countFunc.AddOperation('		<cfset var result = ormExecuteQuery(hql)[1] />');	
@@ -197,6 +199,8 @@ component extends="codeGenerator"{
 					countFunc.setAccess("public");
 					countFunc.setReturnType('numeric');
 					countFunc.setReturnResult('result');
+					countFunc.setHint("Returns the count of related records in #foreignTable.getName()#");
+					
 					
 					var ftEntityName = foreignTable.getEntityName();
 					var ftPlural = foreignTable.getPlural();
@@ -264,6 +268,7 @@ component extends="codeGenerator"{
 		//NullifyZeroID is for use with Remote services.
 		var pkeys = table.getPrimaryKeyColumns();
 		var func= New apptacular.handlers.cfc.code.func();
+		func.setHint("Nullifies blank or zero id's.  Useful for dealing with objects coming back from remoting.");
 		func.setName('nullifyZeroID');
 		func.setAccess("public");
 		func.setReturnType('void');
@@ -282,6 +287,8 @@ component extends="codeGenerator"{
 		//Add populate function
 		var populate= New apptacular.handlers.cfc.code.func();
 		populate.setName('populate');
+		populate.setHint("Populates the content of the object from a form structure.");
+		
 		populate.setAccess("public");
 		populate.setReturnType(table.getEntityName());
 		populate.setReturnResult("This");

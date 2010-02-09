@@ -30,6 +30,7 @@ component  extends="codeGenerator"
 		auth.AddArgument(username);
 		auth.AddArgument(password);
 		auth.setName('authenticate');
+		auth.setHint("Provides basic authentication for the application.");
 		
 		auth.AddOperationScript('		if (arguments.username eq arguments.password){');
 		auth.AddOperationScript('				return true;');
@@ -70,6 +71,7 @@ component  extends="codeGenerator"
 		//create Count Method
 		var func= New apptacular.handlers.cfc.code.func();
 		func.setName('count');
+		func.setHint("Returns the count of records in #EntityName#");
 		func.setAccess(access);
 		func.setReturnType("numeric");
 		func.setReturnResult('ormExecuteQuery("select Count(*) from #entityName#")[1]');
@@ -78,6 +80,7 @@ component  extends="codeGenerator"
 		//create list method
 		var list= New apptacular.handlers.cfc.code.func();
 		list.setName('list');
+		list.setHint("Returns all of the records in #EntityName#, with paging.");
 		list.setAccess(access);
 		list.setReturnType("#cfcPath#.#EntityName#[]");
 		list.setReturnResult('entityLoad("#entityName#", {}, "#orderby#", arguments)');
@@ -130,6 +133,7 @@ component  extends="codeGenerator"
 		
 		var get= New apptacular.handlers.cfc.code.func();
 		get.setName('get');
+		get.setHint("Returns one record from #EntityName#.");
 		get.setAccess(access);
 		get.setReturnType("#cfcPath#.#EntityName#");
 		get.AddArgument(id);
@@ -148,6 +152,7 @@ component  extends="codeGenerator"
 			
 			var func= New apptacular.handlers.cfc.code.func();
 			func.setName("update");
+			func.setHint("Updates one record from #EntityName#.");
 			func.setAccess(access);
 			func.setReturnType("void");
 			func.AddArgument(entity);
@@ -160,6 +165,7 @@ component  extends="codeGenerator"
 			//Delete Method
 			var func= New apptacular.handlers.cfc.code.func();
 			func.setName("destroy");
+			func.setHint("Deletes one record from #EntityName#.");
 			func.setAccess(access);
 			func.setReturnType("void");
 			func.AddArgument(entity);
@@ -172,6 +178,7 @@ component  extends="codeGenerator"
 		//Search Method
 		var search= New apptacular.handlers.cfc.code.func();
 		search.setName("search");
+		search.setHint("Performs searchs against #EntityName#.");
 		search.setAccess(access);
 		search.setReturnType("#cfcPath#.#EntityName#[]");
 		search.addLocalVariable("hqlString","string","FROM #EntityName# ");
