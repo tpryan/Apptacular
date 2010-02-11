@@ -69,8 +69,11 @@
 		<tr>
 	</table>
 
-
+<h1 class="table">#ListLast(path, FS)#</h1>
 </cfoutput>
+
+
+
 
 <cf_XMLForm fileToEdit="#tablePath#" message="#message#" cfcreference="apptacular.handlers.cfc.db.table" /> 
 <cfoutput>

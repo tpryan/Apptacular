@@ -34,15 +34,28 @@ component{
 		
 		//Create ORM dependent files
 		if (config.getCreateAppCFC()){
+		
+			var ormDependentFiles = structNew();
+			ormDependentFiles.label = "ORM Dependent";
+			ormDependentFiles.startTime = GetTickCount();
+		
 			var AppCFC = ormGenerator.createAppCFC(datasource, config.getRootFilePath());
 			ArrayAppend(files, AppCFC);
 			
 			var EventHandler = ormGenerator.createEventHandler(config.getEntityFilePath());
 			ArrayAppend(files, EventHandler);
+			
+			ormDependentFiles.endTime = GetTickCount();
+			
+			logTime(ormDependentFiles);
+			
 		}
 		
 		//Create global application views.
 		if (config.getCreateViews()){
+			var globalApplicationViews = structNew();
+			globalApplicationViews.label = "Global Application Views";
+			globalApplicationViews.startTime = GetTickCount();
 			
 			var css = viewGenerator.createCSS();
 			ArrayAppend(files, css);
@@ -79,30 +92,58 @@ component{
 				ArrayAppend(files, testIndex);
 			}
 			
+			globalApplicationViews.endTime = GetTickCount();
+			
+			
+			logTime(globalApplicationViews);
+			
 		}
 		
 		
 		
 		//Only generate login service if we are generating services
 		if (config.getCreateServices() AND config.getCreateLogin()){
+		
+			var authFile = structNew();
+			authFile.label = "Authentication Files";
+			authFile.startTime = GetTickCount();
+		
 			var authCFC = serviceGenerator.createAuthenticationService();
 			ArrayAppend(files, authCFC);
+			
+			authFile.endTime = GetTickCount();
+			logTime(authFile);
 		}
+		
+		var viewTime = 0;
+		var ormTime = 0;
+		var serviceTime = 0;
+		var testTime =  0;
 		
 		//Roll through the tables creating all per table interfaces here so as to not repeat table loops.
 		for (i=1; i <= ArrayLen(tables); i++){
 			var table = tables[i];
 			
+			
+			
 			if (table.isProperTable()){
 			
 				//Handle ORM Entities for tables.
 				if (config.getCreateEntities() and table.getCreateInterface()){
+					var ormTableTime = structNew();
+					ormTableTime.start = getTickCount();	
 					var ORMCFC = ormGenerator.createORMCFC(table);
 					ArrayAppend(files, ORMCFC);
+					ormTableTime.end = getTickCount();
+					ormTime = ormTime + (ormTableTime.end - ormTableTime.start);	
+				
 				}
 
 				//Handle Views for tables.
 				if (config.getCreateViews() and table.getCreateInterface()){
+					
+					var viewTableTime = structNew();
+					viewTableTime.start = getTickCount();	
 					
 					var View = viewGenerator.createView(table);
 					ArrayAppend(files, View);
@@ -117,6 +158,10 @@ component{
 						var ViewEditCustomTag = viewGenerator.createViewEditCustomTag(table);
 						ArrayAppend(files, ViewEditCustomTag);
 					}
+					
+					viewTableTime.end = getTickCount();
+					viewTime = viewTime + (viewTableTime.end - viewTableTime.start);	
+					
 				}
 				
 				
@@ -125,13 +170,22 @@ component{
 				//Handles Services for tables.
 				if (config.getCreateServices() and table.getCreateInterface()){
 					
+					var serviceTableTime = structNew();
+					serviceTableTime.start = getTickCount();	
+					
 					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
 					ArrayAppend(files, ORMServiceCFC);
+					
+					serviceTableTime.end = getTickCount();
+					serviceTime = serviceTime + (serviceTableTime.end - serviceTableTime.start);		
 				
 				}
 			
 				//Handles unit tests for tables.
 				if (config.getCreateTests() and table.getCreateInterface()){
+					var testTableTime = structNew();
+					testTableTime.start = getTickCount();	
+					
 					var testview = unittestGenerator.createViewsTest(table);
 					ArrayAppend(files, testview);
 					
@@ -140,9 +194,23 @@ component{
 					
 					var testService = unittestGenerator.createServiceTest(table);
 					ArrayAppend(files, testService);
+					
+					testTableTime.end = getTickCount();
+					testTime = testTime + (testTableTime.end - testTableTime.start);
 				}
 			}//IsProperTable?	
 		}//for loop
+		
+		ormTime = ormTime / 1000;
+		viewTime = viewTime /1000;
+		serviceTime = serviceTime / 1000;
+		testTime = testTime /1000;
+		
+		writeLog("Apptacular step: #datasource.getName()# :Table ORM object creation took #NumberFormat(ormTime, "_.____")# seconds.");
+		writeLog("Apptacular step: #datasource.getName()# :Table View object creation took #NumberFormat(viewTime, "_.____")# seconds.");
+		writeLog("Apptacular step: #datasource.getName()# :Table Test case creation took #NumberFormat(testTime, "_.____")# seconds.");
+		writeLog("Apptacular step: #datasource.getName()# :Table service object creation took #NumberFormat(serviceTime, "_.____")# seconds.");
+		
 		
 		//Generate extended unit testing pieces to compensate for Application coupling to ORM 
 		if (config.getCreateTests()){
@@ -204,5 +272,11 @@ component{
 		return ArrayLen(files);
 	}
 	
+	public void function logTime(required input){
+		var totalTime = (arguments.input.endTime - arguments.input.startTime) / 1000;	
+		writeLog("Apptacular step: #datasource.getName()# :#arguments.input.label# took #NumberFormat(totalTime, "_.____")# seconds.");
+	
+	
+	} 
 	
 }

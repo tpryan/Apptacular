@@ -30,6 +30,13 @@
 		
 		
 	}
+	
+	h1.table {
+		font-size: 150%;
+		margin-left: 250px;
+		
+		
+	}
 	h2 {
 		font-size: 110%;
 		

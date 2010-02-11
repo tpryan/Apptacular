@@ -62,11 +62,23 @@ component  extends="codeGenerator"
 		var columns = table.getColumns();
 		var access = variables.config.getServiceAccess();
 		var type = table.getColumn(table.getIdentity()).getType();
+		var tableName = table.getName();
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    cfc.setName(EntityName & "Service");
 	    cfc.setFileLocation(config.getServiceFilePath());
 		cfc.setFormat(variables.config.getCFCFormat());
+		
+		//create Init method
+		var init= New apptacular.handlers.cfc.code.func();
+		init.setName('init');
+		init.setHint("A initialization routine, runs when object is created.");
+		init.setAccess("public");
+		init.setReturnType(table.getEntityName() & "Service");
+		init.setReturnResult('This');
+		init.AddSimpleSet('This.table = "#tableName#"', 2);
+		cfc.addFunction(init);
+		
 	    
 		//create Count Method
 		var func= New apptacular.handlers.cfc.code.func();

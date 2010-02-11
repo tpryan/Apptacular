@@ -12,6 +12,9 @@
 		    	<action name="Generate Application" handlerid="generate" >
 		    		<input name="Location" default="{$projectlocation}" label="Enter destination" tooltip="Location where generated CFCs will be stored" type="projectdir"/>
 				</action>
+				<action name="Configure Table" handlerid="configtable" >
+		    		<input name="Location" default="{$projectlocation}" label="Enter Project that uses table" tooltip="Project that uses table" type="projectdir"/>
+				</action>
 			</menu>
 		</contribution>
 		<contribution target="projectview" >
@@ -20,6 +23,11 @@
 		    	<action name="Edit Data Model" handlerid="editDB"></action>
 				<action name="Purge Excess Files" handlerid="purge"></action>
 				<action name="Regenerate Application" handlerid="generate"></action>
+				<action name="Configure Table" handlerid="configtable">
+					<filters> 
+						<filter type="file" pattern=".*\.cfc" /> 
+					</filters>
+				</action>
 			</menu>
 			
 		</contribution>
@@ -31,6 +39,7 @@
 		<handler id="editDB" type="CFM" filename="handlerEditDB.cfm" />
 		<handler id="editConfig" type="CFM" filename="handlerEditConfig.cfm" />
 		<handler id="purge" type="CFM" filename="handlerPurge.cfm" />
+		<handler id="configtable" type="CFM" filename="handlerEditTable.cfm" />
 	</handlers>
 
 </application>

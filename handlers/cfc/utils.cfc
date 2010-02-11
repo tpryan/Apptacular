@@ -16,9 +16,19 @@
     }
 	
 	public string function findCFCPathFromFilePath(string path){
+		
+		var localPath = arguments.path;
+		
+		if (FindNoCase("cfc", listLast(localPath, "."))){
+			localPath = left(localPath, Len(localPath) - 4);
+		}
+		
 		var results = "";
-		results = replaceNoCase(arguments.path, webroot, "", "one");
+		results = replaceNoCase(localPath, webroot, "", "one");
 		results = replaceList(results, "/,\", ".,.");
+		
+		
+		
 		
 		if (compare(right(results, 1), ".") eq 0){
 			results = Left(results, len(results) -1);

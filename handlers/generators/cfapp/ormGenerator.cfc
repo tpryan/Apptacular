@@ -401,6 +401,7 @@ component extends="codeGenerator"{
 		postD.setReturnType("void");
 		postD.AddArgument(EntityArg);
 		postD.setName('postDelete');
+		postD.setHint("Event handler that fires after a delete operation.");
 		cfc.addFunction(postD);
 		
 		var postI= New apptacular.handlers.cfc.code.func();
@@ -408,6 +409,7 @@ component extends="codeGenerator"{
 		postI.setReturnType("void");
 		postI.AddArgument(EntityArg);
 		postI.setName('postInsert');
+		postI.setHint("Event handler that fires after a insert operation.");
 		cfc.addFunction(postI);
 		
 		var postL= New apptacular.handlers.cfc.code.func();
@@ -415,6 +417,7 @@ component extends="codeGenerator"{
 		postL.setReturnType("void");
 		postL.AddArgument(EntityArg);
 		postL.setName('postLoad');
+		postL.setHint("Event handler that fires after a load operation.");
 		cfc.addFunction(postL);
 		
 		var postU= New apptacular.handlers.cfc.code.func();
@@ -422,6 +425,7 @@ component extends="codeGenerator"{
 		postU.setReturnType("void");
 		postU.AddArgument(EntityArg);
 		postU.setName('postUpdate');
+		postU.setHint("Event handler that fires after a update operation.");
 		cfc.addFunction(postU);
 		
 		var preD= New apptacular.handlers.cfc.code.func();
@@ -429,6 +433,7 @@ component extends="codeGenerator"{
 		preD.setReturnType("void");
 		preD.AddArgument(EntityArg);
 		preD.setName('preDelete');
+		preD.setHint("Event handler that fires before a delete operation.");
 		cfc.addFunction(preD);
 		
 		var preI= New apptacular.handlers.cfc.code.func();
@@ -436,6 +441,7 @@ component extends="codeGenerator"{
 		preI.setReturnType("void");
 		preI.AddArgument(EntityArg);
 		preI.setName('preInsert');
+		preI.setHint("Event handler that fires before an insert operation. Ensures magic words get populated.");
 		preI.AddOperationScript('		if (structKeyExists(entity, "set#config.getCreatedOnString()#")){');
 		preI.AddOperationScript('			entity.set#config.getCreatedOnString()#(now());');
 		preI.AddOperationScript('		}');
@@ -460,6 +466,7 @@ component extends="codeGenerator"{
 		preL.setReturnType("void");
 		preL.AddArgument(EntityArg);
 		preL.setName('preLoad');
+		preL.setHint("Event handler that fires before a load operation.");
 		cfc.addFunction(preL);
 		
 		var preU= New apptacular.handlers.cfc.code.func();
@@ -467,6 +474,7 @@ component extends="codeGenerator"{
 		preU.setReturnType("void");
 		preU.AddArgument(EntityArg);
 		preU.setName('preUpdate');
+		preU.setHint("Event handler that fires before a update operation. Ensures magic words get populated.");
 		preU.AddArgument(OldDataArg);
 		
 		

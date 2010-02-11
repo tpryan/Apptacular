@@ -17,6 +17,15 @@ component extends="mxunit.framework.TestCase"{
 		
 		
     }
+	
+	public void function findPathFromfileName(){
+		var utils = new apptacular.handlers.cfc.utils("/Users/terryr/Sites/centaur.dev/");
+		var PathToTest = "/Users/terryr/Sites/centaur.dev/blogdemo/cfc/author.cfc";
+		var expectedPath = "blogdemo.cfc.author";
+		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
+		
+		
+    }
 
 
 }
