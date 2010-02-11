@@ -5,9 +5,11 @@
 </cfif>
 
 <cfscript>
+	failed = FALSE;
 	utils = New cfc.utils();
 	xmldoc = XMLParse(ideeventInfo); 
-	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator"); 
+	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
+	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port; 
 	
 	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
@@ -24,9 +26,38 @@
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
 		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 		dbConfigPath = rootFilePath & FS & ".apptacular/schema/";
-		dsName = DirectoryList(dbConfigPath, false, "name")[1];
+		
+		//Short circuit non apptacular apps.
+		if (not directoryExists(dbConfigPath)){
+			messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
+			messagesOptions = "?type=notanapplication";
+			messagesURL = baseURL & messagesPath & messagesOptions;
+			failed = true;
+		}
+		else{
+			dsName = DirectoryList(dbConfigPath, false, "name")[1];
+		}
+		
+		
 	}
 
+</cfscript>	
+	
+<cfif failed>
+	<cfheader name="Content-Type" value="text/xml">
+	<cfoutput> 
+	<response showresponse="true">
+		<ide url="#messagesURL#" > 
+			<dialog width="655" height="600" />
+		</ide> 
+	</response>
+	
+	</cfoutput>
+	<cfabort> 
+</cfif>
+	
+
+<cfscript>
 	StartTimer = getTickCount();
 	
 	rootCFCPath = utils.findCFCPathFromFilePath(rootFilePath);
@@ -80,7 +111,7 @@
 	if (config.getLockApplication()){
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=locked";
-		messagesURL = "http://" & cgi.server_name & messagesPath & messagesOptions;
+		messagesURL = baseURL & messagesPath & messagesOptions;
 	}
 	else{
 		ormGenerator = new generators.cfapp.ormGenerator(datamodel, config);

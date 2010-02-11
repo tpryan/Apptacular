@@ -1,6 +1,5 @@
-component 
-{
-
+<cfcomponent>
+<cfscript>
 	/**
 	 * @hint You know, an init. 
 	 */
@@ -183,7 +182,8 @@ component
 		
 		try{
 		for (i=1;i <= arraylen(keys); i++){
-			Evaluate("newObject.set#keys[i]#(XML[arguments.ObjectType][keys[i]]['XMLText'])");
+			invokeSetter(newObject, keys[i],  XML[arguments.ObjectType][keys[i]]['XMLText']);
+			//Evaluate("newObject.set#keys[i]#(XML[arguments.ObjectType][keys[i]]['XMLText'])");
 		}
 		
 		}
@@ -240,4 +240,18 @@ component
 		return returnStruct;
 	}
 
-}
+</cfscript>
+
+<cffunction name="invokeSetter" output="FALSE" access="public"  returntype="string" hint="Implements cfinvoke in script" >
+	<cfargument name="object" type="Any" required="TRUE" hint="The Object to invoke." />
+	<cfargument name="property" type="string" required="TRUE" hint="Property to set" />
+	<cfargument name="value" type="string" required="TRUE" hint="Value to set" />
+	
+	<cfinvoke component="#arguments.object#" method="set#arguments.property#" >
+		<cfinvokeargument name="#arguments.property#" value="#arguments.value#" />
+	</cfinvoke>
+
+
+</cffunction>
+
+</cfcomponent>

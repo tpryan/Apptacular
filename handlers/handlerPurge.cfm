@@ -7,6 +7,7 @@
 <cfscript>
 	utils = New cfc.utils();
 	FS = createObject("java", "java.lang.System").getProperty("file.separator");
+	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port; 
 	
 	xmldoc = XMLParse(ideeventInfo); 
 	
@@ -18,8 +19,35 @@
 	// get the cfc path from the schema files.
 	rootCFCPath = utils.findCFCPathFromFilePath(rootFilePath);
 	
-	// get the datasource name from the schema files.
-	dsName = DirectoryList(dbConfigPath, false, "name")[1];
+	
+	if (not directoryExists(dbConfigPath)){			
+		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
+		messagesOptions = "?type=notanapplication";
+		messagesURL = baseURL & messagesPath & messagesOptions;
+		failed = true;
+	}
+	else{
+		// get the datasource name from the schema files.
+		dsName = DirectoryList(dbConfigPath, false, "name")[1];
+	}
+	
+</cfscript>
+
+<cfif failed>
+	<cfheader name="Content-Type" value="text/xml">
+	<cfoutput> 
+	<response showresponse="true">
+		<ide url="#messagesURL#" > 
+			<dialog width="655" height="600" />
+		</ide> 
+	</response>
+	
+	</cfoutput>
+	<cfabort> 
+</cfif>
+
+
+<cfscript>	
 
 	//process both DB and file version of schema
 	db = New cfc.db.datasource(dsName);

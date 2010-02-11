@@ -23,6 +23,7 @@ component accessors="true" {
 	property name="getter" type="string" hint="See reference for cfproperty";
 	property name="insert" type="string" hint="See reference for cfproperty";
 	property name="update" type="string" hint="See reference for cfproperty";
+	property name="hint" type="string" hint="See reference for cfproperty";
 	
 	/**
 	* @hint The init that fires up all of this stuff. 

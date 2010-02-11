@@ -79,7 +79,7 @@
 		</mxunittask>
 	</target>
 	
-	<target name="Rebuild.apps">
+	<target name="rebuild.apps">
 		<echo message="Rebuilding all Aplications"/>
 		
 		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />
@@ -94,6 +94,17 @@
 			
 		</mxunittask>
 	</target>
+	
+	<target name="rebuild.blogdemo">
+		<echo message="Rebuilding all Aplications"/>
+		
+		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />
+		
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testBlogDemo" runner="${runner.app.cfc}" />
+		</mxunittask>
+	</target>
+	
 	
 	<target name="test.apps">
 		

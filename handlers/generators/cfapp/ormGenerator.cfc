@@ -161,13 +161,10 @@ component extends="codeGenerator"{
 					var countFunc= New apptacular.handlers.cfc.code.func();
 					countFunc.setName("get#otherJoinTable.getEntityName()#Count");
 					countFunc.setAccess("public");
-					countFunc.setHint("Returns the count of records in #table.getName()#");
+					countFunc.setHint("Returns the count of related (many to many) records in #table.getName()#");
 					countFunc.setReturnType('numeric');
-					countFunc.AddOperation('		<cfset var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''" />');
-					countFunc.AddOperation('		<cfset var result = ormExecuteQuery(hql)[1] />');	
-					countFunc.AddOperationScript('		var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''";');
-					countFunc.AddOperationScript('		var result = ormExecuteQuery(hql)[1];');
-					countFunc.setReturnResult('result');
+					countFunc.AddSimpleSet('var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''"',2);
+					countFunc.AddSimpleSet('var result = ormExecuteQuery(hql)[1]', 2);					
 					cfc.addFunction(countFunc);
 					
 				
@@ -199,7 +196,7 @@ component extends="codeGenerator"{
 					countFunc.setAccess("public");
 					countFunc.setReturnType('numeric');
 					countFunc.setReturnResult('result');
-					countFunc.setHint("Returns the count of related records in #foreignTable.getName()#");
+					countFunc.setHint("Returns the count of related (one to many) records in #foreignTable.getName()#");
 					
 					
 					var ftEntityName = foreignTable.getEntityName();

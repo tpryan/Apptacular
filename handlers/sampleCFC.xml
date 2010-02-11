@@ -1,0 +1,8 @@
+<event>
+    <ide>
+        <projectview projectlocation="/Users/terryr/Sites/centaur.dev/blogdemo" projectname="BlogDemo">
+            <resource path="/Users/terryr/Sites/centaur.dev/blogdemo/services/authorService.cfc" type="file" />
+        </projectview>
+    </ide>
+    <user />
+</event>
