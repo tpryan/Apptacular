@@ -78,11 +78,11 @@
 
 
 
-<cfif not FileExists(configPath)>
+<cfif not FileExists(configPath) OR not DirectoryExists(tablepath)>
 
 	<cfscript>
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
-		messagesOptions = "?type=notanapplication";
+		messagesOptions = "?type=notacfc";
 		messagesURL = baseURL  & messagesPath & messagesOptions;
 	
 	</cfscript>

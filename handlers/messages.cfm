@@ -9,6 +9,9 @@
 	<cfif FindNoCase("notanapplication", url.type)>
 		<cfoutput><p>Application is not an Apptacular application. You have to create from the RDS vew first.</p></cfoutput>				
 	</cfif>
+	<cfif FindNoCase("notacfc", url.type)>
+		<cfoutput><p>You can't edit this CFC's Apptacular metadata. This CFC is not an ORM CFC or a Service CFC for an ORM CFC. </p></cfoutput>				
+	</cfif>
 	<cfif FindNoCase("generated", url.type)>
 		<cfoutput><p><strong>#fileCount#</strong> Files Generated in <strong>#seconds#</strong> seconds.</p></cfoutput>				
 	</cfif>
