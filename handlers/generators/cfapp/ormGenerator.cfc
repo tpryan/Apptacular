@@ -164,7 +164,8 @@ component extends="codeGenerator"{
 					countFunc.setHint("Returns the count of related (many to many) records in #table.getName()#");
 					countFunc.setReturnType('numeric');
 					countFunc.AddSimpleSet('var hql = "select #table.getEntityName()#.#otherJoinTable.getPlural()#.size as #otherJoinTable.getEntityName()#Count from #table.getEntityName()# #table.getEntityName()# where #table.getIdentity()# = ''##This.get#table.getIdentity()#()##''"',2);
-					countFunc.AddSimpleSet('var result = ormExecuteQuery(hql)[1]', 2);					
+					countFunc.AddSimpleSet('var result = ormExecuteQuery(hql)[1]', 2);	
+					countFunc.setReturnResult("result");				
 					cfc.addFunction(countFunc);
 					
 				
