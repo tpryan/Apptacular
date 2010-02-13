@@ -520,7 +520,7 @@ component  extends="codeGenerator"
 		
 		read.AddOperation('		<cfquery name="fromQuery" datasource="#dsname#">');
 		read.AddOperation('			#sql#');
-		read.AddOperation('		</cfquery">');
+		read.AddOperation('		</cfquery>');
 		
 		read.AddOperationScript('		var qry = new Query(datasource="#dsname#");');
 		read.AddOperationScript('		qry.setSQL("#sql#");');
@@ -570,7 +570,7 @@ component  extends="codeGenerator"
 					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#ftEntityName#().get#ftIdentity#())', 3);
 				}
 				
-				read.EndSimpleIF(2);
+				read.EndSimpleIF(2, true);
 				read.StartSimpleElse(2);
 				read.AddSimpleSet('assertTrue(Len(fromQuery["#column.getColumn()#"][1]) eq 0)', 3);	
 				read.EndSimpleIF(2);
@@ -615,7 +615,7 @@ component  extends="codeGenerator"
 				else{
 					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#())', 3);	
 				}
-				read.EndSimpleIF(2);
+				read.EndSimpleIF(2, true);
 				read.StartSimpleElse(2);
 				read.AddSimpleSet('assertTrue(Len(fromQuery["#column.getColumn()#"][1]) eq 0)', 3);	
 				read.EndSimpleIF(2);
@@ -643,7 +643,7 @@ component  extends="codeGenerator"
 				read.AddSimpleSet('assertEquals(fromQuery["#fk#"][1], #entityName#.get#ftEntityName#().get#fk#())', 3);
 			}
 			
-			read.EndSimpleIF(2);
+			read.EndSimpleIF(2, true);
 			read.StartSimpleElse(2);
 			for (j = 1; j <= ListLen(fklist); j++ ){
 				var fk = ListGetAt(fklist, j);

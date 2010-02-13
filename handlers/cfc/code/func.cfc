@@ -46,11 +46,11 @@ component displayname="function" hint="A CFC representation of an function for c
 			tabString.append(tab);
 		}
 		
-		AddOperation(tabString & "<cfset" & trim(arguments.Operation)  & " />");
+		AddOperation(tabString & "<cfset " & trim(arguments.Operation)  & " />");
 		AddOperationScript(tabString & trim(arguments.Operation)  & ";");
 	}
 	
-	public void function StartSimpleIF(required string conditional, numeric tabs=0 ){
+	public void function StartSimpleIF(required string conditional, numeric tabs=0){
 		var tab = "	";
 		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
@@ -76,7 +76,8 @@ component displayname="function" hint="A CFC representation of an function for c
 		AddOperationScript(tabString & "else{");
 	}
 	
-	public void function EndSimpleIF(numeric tabs=0 ){
+	
+	public void function EndSimpleIF(numeric tabs=0 , boolean nextIsElse = false ){
 		var tab = "	";
 		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
 		var i=0;
@@ -85,7 +86,10 @@ component displayname="function" hint="A CFC representation of an function for c
 			tabString.append(tab);
 		}
 		
-		AddOperation(tabString & "</cfif>");
+		// So I screwed up and didn't think this the whole way through.  This should fix that for now.'
+		if(not arguments.nextIsElse){
+			AddOperation(tabString & "</cfif>");
+		}
 		AddOperationScript(tabString & "}");
 	}
 	
@@ -150,6 +154,10 @@ component displayname="function" hint="A CFC representation of an function for c
 		
 		if (len(This.getReturntype()) gt 0){
 			header = ListAppend(header, 'returnType="#This.getReturntype()#"', ' ');
+		}
+		
+		if (len(This.getHint()) gt 0){
+			header = ListAppend(header, 'hint="#This.getHint()#"', ' ');
 		}
 		
 		header = ListAppend(header, '>' & variables.lineBreak, ' ');

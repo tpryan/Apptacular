@@ -6,9 +6,9 @@ component extends="mxunit.framework.TestCase"{
     	
     }
 	
-	public void function testBlogDemo(){
+	public void function testBlogDemoCFML(){
 		variables.automator.clearFiles();
-		AssertTrue(automator.generateApplication());
+		AssertTrue(automator.generateApplicationCFML());
     }
 	
 

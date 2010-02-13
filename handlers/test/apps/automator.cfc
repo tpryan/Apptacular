@@ -29,6 +29,24 @@
 	
 	</cffunction>
 	
+	<cffunction name="generateApplicationCFML" output="FALSE" access="public"  returntype="boolean" hint="" >
+		
+		<cfscript>
+			var targeturl = "http://" & cgi.server_name & "/apptacular/handlers/handlerGenerate.cfm?createTests=true&CFCFormat='CFML'";
+		</cfscript>
+		
+		<cfhttp url="#targeturl#" timeout="300" method="post" >
+			<cfhttpparam name="ideeventInfo" type="formfield" value="#variables.XMLContents#" />
+		</cfhttp>
+	
+		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent)>
+			<cfreturn true />
+		<cfelse>
+			<cfreturn false />
+		</cfif>
+	
+	</cffunction>
+	
 	<cffunction name="clearFiles" output="FALSE" access="public"  returntype="void" hint="" >
 	
 		<cfscript>
