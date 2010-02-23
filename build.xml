@@ -68,10 +68,7 @@
 	
 	</target>
 
-	<target name="test" depends="test.apptacular,rebuild.apps" />
-	
-	
-	
+	<target name="test" depends="test.apptacular,test.rebuild.apps" />
 
 	<target name="test.apptacular">
 		<echo message="Running Apptacular Tests"/>
