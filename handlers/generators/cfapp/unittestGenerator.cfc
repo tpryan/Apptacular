@@ -320,13 +320,15 @@ component  extends="codeGenerator"
 	public apptacular.handlers.cfc.code.build function createAntRunner(){
 		var runner = New apptacular.handlers.cfc.code.build();
 		
+		var packagename = "#datasource.getName()#_#config.getCFCFormat()#";
+		
 		runner.setProjectName(variables.datasource.getName());
 		runner.setProjectDefault("test");
 		runner.setFileLocation(variables.config.getTestFilePath());
 		
 		runner.addProperty("mxunit.jar", variables.config.getMXUnitFilePath() & "/ant/lib/mxunit-ant-java5.jar");
 		//This is a hack to make sure that CF doesn't even run any debugging while ANT tests are running.
-		runner.addProperty("test.dir", variables.config.getTestFilePath() & "&amp;_cf_nodebug=true");
+		runner.addProperty("test.dir", variables.config.getTestFilePath() );
 		runner.addProperty("runner.cfc", variables.config.getTestRelativePath() & "/HttpAntRunner.cfc");
 		runner.addProperty("server", cgi.server_name);
 		runner.addProperty("cfc.path", variables.config.getTestCFCPath());
@@ -336,8 +338,8 @@ component  extends="codeGenerator"
 		runner.appendBody('');
 		runner.appendBody('		<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />');
 		runner.appendBody('		');
-		runner.appendBody('		<mxunittask server="${server}" defaultrunner="${runner.cfc}" haltonerror="true" haltonfailure="true" verbose="true">');
-		runner.appendBody('			<directory path="${test.dir}" recurse="true" componentPath="${cfc.path}" />');
+		runner.appendBody('		<mxunittask server="${server}" defaultrunner="${runner.cfc}" haltonerror="true" haltonfailure="true" verbose="true" outputdir="${test.dir}">');
+		runner.appendBody('			<directory path="${test.dir}" recurse="true" componentPath="${cfc.path}" packageName="#packagename#" />');
 		runner.appendBody('		</mxunittask>');
 		runner.appendBody('');
 		runner.appendBody('	</target>');
