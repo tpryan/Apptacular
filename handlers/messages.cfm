@@ -7,7 +7,7 @@
 
 <cf_pageWrapper>
 	<cfif FindNoCase("notanapplication", url.type)>
-		<cfoutput><p>Application is not an Apptacular application. You have to create from the RDS vew first.</p></cfoutput>				
+		<cfoutput><p>Application is not an Apptacular application. Before you can use this function you have to create the application using the RDS vew.</p></cfoutput>				
 	</cfif>
 	<cfif FindNoCase("notacfc", url.type)>
 		<cfoutput><p>You can't edit this CFC's Apptacular metadata. This CFC is not an ORM CFC or a Service CFC for an ORM CFC. </p></cfoutput>				
