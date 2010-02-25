@@ -34,12 +34,12 @@ a{
 
 .alert{
 	font-weight: bold;
-	color: red;
-	border: 1px dotted red;
-	background-color: #FFDFDF;
+	color: #565F61;
+	border: 1px dotted #565F61;
+	background-color: #CBE0E5;
 	padding: 1px;
 	}
-	
+
 form td{ border: 0;}
 
 td p {padding: 0; margin: 0;}	

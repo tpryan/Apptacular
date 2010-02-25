@@ -374,7 +374,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('<cfset #EntityName# = attributes.#EntityName# /> ');
 		ct.AppendBody('<cfset message = attributes.message /> ');
 		ct.AppendBody('<cfif CompareNoCase(message, "updated") eq 0>');
-		ct.AppendBody('	<p class="alert">Records updated</p>');
+		ct.AppendBody('	<p class="alert">Record updated</p>');
 		ct.AppendBody('<cfelse>');
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
