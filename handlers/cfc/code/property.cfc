@@ -41,9 +41,8 @@ component accessors="true" {
 		
 		result = result.append('<cfproperty ');	
 		result = addPropertyAttributes(result);
-		result = result.append(' />');
 		
-		return result;
+		return result & ' />';
 	}
 	
 	/**
