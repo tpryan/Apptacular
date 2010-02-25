@@ -37,21 +37,47 @@
 		return results;
 	}
 	
-	public string function findConfig(required string projectlocation, required string resourcepath){
+	public string function findConfig(required string projectlocation, required string resourcepath, string type="config"){
 		var lresourcepath = arguments.resourcepath;
-		var configFile = "/.apptacular/config.xml";
-		var pathToConfig = lresourcepath & configFile;
+		
+		if (FindNoCase("config", arguments.type)){
+			var configFile = "/.apptacular/config.xml";
+			
+			var pathToConfig = lresourcepath & configFile;
 	
-		while (not FileExists(pathToConfig)){
-			lresourcepath = listDeleteAt(lresourcepath, ListLen(lresourcepath, variables.FS), variables.FS);
+			while (not FileExists(pathToConfig)){
+				lresourcepath = listDeleteAt(lresourcepath, ListLen(lresourcepath, variables.FS), variables.FS);
+				
+				pathToConfig = lresourcepath & configFile;
+				
+				if (len(lresourcepath) < len(arguments.projectlocation)){
+					pathToConfig = "/dev/null";
+					break;
+				}
+			}	
 			
-			pathToConfig = lresourcepath & configFile;
 			
-			if (len(lresourcepath) < len(arguments.projectlocation)){
-				pathToConfig = "/dev/null";
-				break;
-			}
-		}	
+		}
+		else if (FindNoCase("schema", arguments.type)){
+			var configFile = "/.apptacular/schema";
+			
+			var pathToConfig = lresourcepath & configFile;
+	
+			while (not directoryExists(pathToConfig)){
+				lresourcepath = listDeleteAt(lresourcepath, ListLen(lresourcepath, variables.FS), variables.FS);
+				
+				pathToConfig = lresourcepath & configFile;
+				
+				if (len(lresourcepath) < len(arguments.projectlocation)){
+					pathToConfig = "/dev/null";
+					break;
+				}
+			}	
+			
+		}
+		
+		
+		
 		
 		return pathToConfig;
 	}	

@@ -3,7 +3,8 @@
 	<author>Adobe Systems</author>
 	<version>1.0</version>
 	<email>terry.ryan@adobe.com</email>	
-	<description>Generate simple crud app based on CF ORM technology.</description>	
+	<description>Generate a scaffolded application suitable for backend administration 
+	based on ColdFusion Object Relational Mapping (ORM) technology.</description>	
 	
 	<!-- Add menu contributions to RDS Data View -->	   
     <menucontributions >

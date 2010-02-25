@@ -54,9 +54,8 @@ component accessors="true" {
 		
 		result = result.append('property ');	
 		result = addPropertyAttributes(result);
-		result = result.append(';');
 		
-		return result;
+		return result & ";";
 	
 	}
 	private any function addPropertyAttributes(any stringBuilder){
@@ -152,6 +151,8 @@ component accessors="true" {
 		if (len(This.getUpdate())){
        		arguments.stringBuilder.append('update="#This.getUpdate()#" ');
        	}
+		
+		stringBuilder = trim(stringBuilder);
 			
 		return stringBuilder;
 	}

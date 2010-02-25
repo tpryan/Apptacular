@@ -24,8 +24,12 @@
 	}
 	//handle input from the project view
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
+	
+	
 		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-		dbConfigPath = rootFilePath & FS & ".apptacular/schema/";
+		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
+		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
+	
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
