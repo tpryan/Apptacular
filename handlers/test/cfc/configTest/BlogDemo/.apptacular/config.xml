@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<config>
+	<appFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/</appFilePath>
+	<appFolder></appFolder>
+	<CFCFormat>CFML</CFCFormat>
+	<CreateAppCFC>true</CreateAppCFC>
+	<createdOnString>createdOn</createdOnString>
+	<CreateEntities>true</CreateEntities>
+	<CreateLogin>false</CreateLogin>
+	<CreateServices>true</CreateServices>
+	<CreateTests>true</CreateTests>
+	<CreateViews>true</CreateViews>
+	<cssFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/css</cssFilePath>
+	<cssFolder>css</cssFolder>
+	<cssRelativePath>/BlogDemo/css</cssRelativePath>
+	<customTagFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/customTags</customTagFilePath>
+	<customTagFolder>customTags</customTagFolder>
+	<dateformat>mm/dd/yyyy</dateformat>
+	<EntityCFCPath>BlogDemo.cfc</EntityCFCPath>
+	<entityFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/cfc</entityFilePath>
+	<entityFolder>cfc</entityFolder>
+	<LockApplication>false</LockApplication>
+	<LogSQL>true</LogSQL>
+	<mxunitCFCPath>mxunit</mxunitCFCPath>
+	<mxunitFilePath>/Users/terryr/Sites/centaur.dev/mxunit</mxunitFilePath>
+	<OverwriteDataModel>false</OverwriteDataModel>
+	<rootCFCPath>BlogDemo</rootCFCPath>
+	<rootFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/</rootFilePath>
+	<rootRelativePath>/BlogDemo/</rootRelativePath>
+	<rootURL>http://centaur.dev/BlogDemo</rootURL>
+	<selectorThreshold>50</selectorThreshold>
+	<serviceAccess>remote</serviceAccess>
+	<serviceCFCPath>BlogDemo.services</serviceCFCPath>
+	<serviceFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/services</serviceFilePath>
+	<serviceFolder>services</serviceFolder>
+	<testCFCPath>BlogDemo.test</testCFCPath>
+	<testFilePath>/Users/terryr/Sites/centaur.dev/BlogDemo/test</testFilePath>
+	<testFolder>test</testFolder>
+	<testRelativePath>/BlogDemo/test</testRelativePath>
+	<testURL>http://centaur.dev/BlogDemo/test</testURL>
+	<timeformat>h:mm tt</timeformat>
+	<updatedOnString>updatedOn</updatedOnString>
+	<WireOneToManyinViews>true</WireOneToManyinViews>
+</config>

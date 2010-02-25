@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<config>
+	<appFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/</appFilePath>
+	<appFolder></appFolder>
+	<CFCFormat>cfscript</CFCFormat>
+	<CreateAppCFC>true</CreateAppCFC>
+	<createdOnString>createdOn</createdOnString>
+	<CreateEntities>true</CreateEntities>
+	<CreateLogin>false</CreateLogin>
+	<CreateServices>true</CreateServices>
+	<CreateTests>false</CreateTests>
+	<CreateViews>true</CreateViews>
+	<cssFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/css</cssFilePath>
+	<cssFolder>css</cssFolder>
+	<cssRelativePath>/collection/cfart1/css</cssRelativePath>
+	<customTagFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/customTags</customTagFilePath>
+	<customTagFolder>customTags</customTagFolder>
+	<dateformat>mm/dd/yyyy</dateformat>
+	<EntityCFCPath>collection.cfart1.cfc</EntityCFCPath>
+	<entityFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/cfc</entityFilePath>
+	<entityFolder>cfc</entityFolder>
+	<LockApplication>false</LockApplication>
+	<LogSQL>true</LogSQL>
+	<mxunitCFCPath>mxunit</mxunitCFCPath>
+	<mxunitFilePath>/Users/terryr/Sites/centaur.dev/mxunit</mxunitFilePath>
+	<OverwriteDataModel>false</OverwriteDataModel>
+	<rootCFCPath>collection.cfart1</rootCFCPath>
+	<rootFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/</rootFilePath>
+	<rootRelativePath>/collection/cfart1/</rootRelativePath>
+	<rootURL>http://centaur.dev/collection/cfart1</rootURL>
+	<selectorThreshold>50</selectorThreshold>
+	<serviceAccess>remote</serviceAccess>
+	<serviceCFCPath>collection.cfart1.services</serviceCFCPath>
+	<serviceFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/services</serviceFilePath>
+	<serviceFolder>services</serviceFolder>
+	<testCFCPath>collection.cfart1.test</testCFCPath>
+	<testFilePath>/Users/terryr/Sites/centaur.dev/collection/cfart1/test</testFilePath>
+	<testFolder>test</testFolder>
+	<testRelativePath>/collection/cfart1/test</testRelativePath>
+	<testURL>http://centaur.dev/collection/cfart1/test</testURL>
+	<timeformat>h:mm tt</timeformat>
+	<updatedOnString>updatedOn</updatedOnString>
+	<WireOneToManyinViews>true</WireOneToManyinViews>
+</config>

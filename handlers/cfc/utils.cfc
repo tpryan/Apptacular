@@ -35,6 +35,25 @@
 		}
 		
 		return results;
+	}
+	
+	public string function findConfig(required string projectlocation, required string resourcepath){
+		var lresourcepath = arguments.resourcepath;
+		var configFile = "/.apptacular/config.xml";
+		var pathToConfig = lresourcepath & configFile;
+	
+		while (not FileExists(pathToConfig)){
+			lresourcepath = listDeleteAt(lresourcepath, ListLen(lresourcepath, variables.FS), variables.FS);
+			
+			pathToConfig = lresourcepath & configFile;
+			
+			if (len(lresourcepath) < len(arguments.projectlocation)){
+				pathToConfig = "/dev/null";
+				break;
+			}
+		}	
+		
+		return pathToConfig;
 	}	
 
 	</cfscript>
