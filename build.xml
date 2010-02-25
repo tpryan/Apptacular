@@ -224,8 +224,6 @@
 		
 		<echo message="Running Facebook Tests - CFML"/>
 		<ant antfile="${webroot}/Facebook/test/build.xml" inheritAll="false"/>
-		
-		
 	</target>
 	
 	<target name="test.rebuild.sakilademo">
@@ -251,7 +249,6 @@
 		
 		
 	</target>
-	
 	
 	<target name="test.apps">
 		
