@@ -13,9 +13,6 @@
 		    	<action name="Generate Application" handlerid="generate" >
 		    		<input name="Location" default="{$projectlocation}" label="Enter destination" tooltip="Location where generated CFCs will be stored" type="projectdir"/>
 				</action>
-				<action name="Configure Table" handlerid="configtable" >
-		    		<input name="Location" default="{$projectlocation}" label="Enter Project that uses table" tooltip="Project that uses table" type="projectdir"/>
-				</action>
 			</menu>
 		</contribution>
 		<contribution target="projectview" >
