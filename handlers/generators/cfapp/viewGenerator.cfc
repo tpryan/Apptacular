@@ -56,9 +56,9 @@ component extends="codeGenerator"{
 				}
 			}
 			else{
-				ct.AppendBody('			<cfset #column.getColumn()#ascOrDesc = (FindNoCase("#column.getColumn()# asc", url.orderby))? "desc" : "asc" />');
-				ct.AppendBody('			<cfset #column.getColumn()#ascOrDescIcon = (FindNoCase("#column.getColumn()# asc", url.orderby))? "&darr;" : "&uarr;" />');
-				ct.AppendBody('			<th><a href="?offset=##attributes.offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=#column.getColumn()# ###column.getColumn()#ascOrDesc##">#column.getDisplayName()# ###column.getColumn()#ascOrDescIcon##</a></th>');
+				ct.AppendBody('			<cfset #column.getName()#ascOrDesc = (FindNoCase("#column.getColumn()# asc", url.orderby))? "desc" : "asc" />');
+				ct.AppendBody('			<cfset #column.getName()#ascOrDescIcon = (FindNoCase("#column.getColumn()# asc", url.orderby))? "&darr;" : "&uarr;" />');
+				ct.AppendBody('			<th><a href="?offset=##attributes.offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=#column.getName()# ###column.getName()#ascOrDesc##">#column.getDisplayName()# ###column.getName()#ascOrDescIcon##</a></th>');
 			}
 			columnCount++;
 			
