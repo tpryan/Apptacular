@@ -18,7 +18,9 @@ component extends="codeGenerator"{
 		ct.addAttribute(table.getEntityName() & "Array", "array", true);
 		ct.addAttribute("maxresults", "numeric", false, -1);
 		ct.addAttribute("offset", "numeric", false, -1);
+		ct.addAttribute("orderby", "string", false, "");
 		
+		ct.AppendBody('');
 		ct.AppendBody('<cfset #entityName#Count = ormExecuteQuery("select Count(*) from #entityName#")[1]  />');
 		ct.AppendBody('<cfset prevOffset = attributes.offset - attributes.maxresults />');
 		ct.AppendBody('<cfset nextOffset = attributes.offset + attributes.maxresults />');
@@ -54,7 +56,9 @@ component extends="codeGenerator"{
 				}
 			}
 			else{
-				ct.AppendBody('			<th>#column.getDisplayName()#</th>');
+				ct.AppendBody('			<cfset #column.getColumn()#ascOrDesc = (FindNoCase("#column.getColumn()# asc", url.orderby))? "desc" : "asc" />');
+				ct.AppendBody('			<cfset #column.getColumn()#ascOrDescIcon = (FindNoCase("#column.getColumn()# asc", url.orderby))? "&darr;" : "&uarr;" />');
+				ct.AppendBody('			<th><a href="?offset=##attributes.offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=#column.getColumn()# ###column.getColumn()#ascOrDesc##">#column.getDisplayName()# ###column.getColumn()#ascOrDescIcon##</a></th>');
 			}
 			columnCount++;
 			
@@ -209,7 +213,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('			<tr>');
 		ct.AppendBody('				<td class="prev">');
 		ct.AppendBody('					<cfif prevOffset gte 0>');
-		ct.AppendBody('						<a href="?offset=##prevOffset##&amp;maxresults=##attributes.maxresults##">&larr; Prev</a>');
+		ct.AppendBody('						<a href="?offset=##prevOffset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##">&larr; Prev</a>');
 		ct.AppendBody('					</cfif>');
 		ct.AppendBody('				</td>');
 		ct.AppendBody('				<td class="pages">');
@@ -218,13 +222,13 @@ component extends="codeGenerator"{
 		ct.AppendBody('						<cfif offset eq attributes.offset>');
 		ct.AppendBody('							##i##');
 		ct.AppendBody('						<cfelse>');
-		ct.AppendBody('							<a href="?offset=##offset##&amp;maxresults=##attributes.maxresults##">##i##</a>');
+		ct.AppendBody('							<a href="?offset=##offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##">##i##</a>');
 		ct.AppendBody('						</cfif>');
 		ct.AppendBody('					</cfloop>');
 		ct.AppendBody('				</td>');
 		ct.AppendBody('				<td class="next">');
 		ct.AppendBody('					<cfif nextOffset lt #entityname#Count>');
-		ct.AppendBody('					<a href="?offset=##nextOffset##&amp;maxresults=##attributes.maxresults##">Next &rarr;<a/>');
+		ct.AppendBody('					<a href="?offset=##nextOffset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##">Next &rarr;<a/>');
 		ct.AppendBody('					</cfif>');
 		ct.AppendBody('				</td>');
 		ct.AppendBody('			</tr>');
@@ -574,7 +578,7 @@ component extends="codeGenerator"{
 			 view.AppendBody('<cfparam name="url.#identity#" type="any" default="0" />');
 		}
 		
-	   
+	   	view.AppendBody('<cfparam name="url.orderby" type="string" default="#orderby#" />');
 	    view.AppendBody('<cfparam name="url.message" type="string" default="" />');
 		view.AppendBody('<cfparam name="url.offset" type="numeric" default="0" />');
 		view.AppendBody('<cfparam name="url.maxresults" type="numeric" default="10" />');
@@ -586,12 +590,12 @@ component extends="codeGenerator"{
 	    view.AppendBody('<cfswitch expression="##url.method##" >');
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
-	    view.AppendBody('		<cfset #entityName#Array = entityLoad("#entityName#", {}, "#orderby#", {offset=url.offset, maxresults=url.maxresults} ) />');
+	    view.AppendBody('		<cfset #entityName#Array = entityLoad("#entityName#", {}, url.orderby, {offset=url.offset, maxresults=url.maxresults} ) />');
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
 		view.AppendBody('		</p></cfoutput>');	
-		view.AppendBody('		<cf_#entityName#List #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" /> ');
+		view.AppendBody('		<cf_#entityName#List orderby="##url.orderby##" #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" /> ');
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    
