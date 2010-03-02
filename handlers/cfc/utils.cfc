@@ -112,11 +112,13 @@
 		<cfset var populatedDirectories = "" />
 		<cfset var allDirs = "" />
 		<cfset var emptyDirs = "" />
+		<cfset var lengths = [] />
 		<cfset var populatedDirectoriesArray = ArrayNew(1) />
 	
 		<cfquery name="populatedDirectories" dbtype="query">
 			SELECT 		distinct directory
 			FROM 		filesList
+			WHERE 		type = 'File'
 		</cfquery>
 		
 		
@@ -139,6 +141,21 @@
 			AND			path not like '%/.git%'
 			AND			path not like '%/.svn%'
 			</cfif>
+			AND			path not like '%/.apptacular%'
+			
+		</cfquery>
+		
+		<cfloop query="emptyDirs">
+			<cfset lengths[emptyDirs.CurrentRow] = Len(emptyDirs.path[emptyDirs.CurrentRow]) />
+		</cfloop>
+		
+		<cfset queryAddColumn(emptyDirs,"stringLength", "Integer", lengths) />
+		
+		<cfquery name="emptyDirs" dbtype="query">
+			SELECT 		path
+			FROM 		emptyDirs
+			ORDER BY 	stringLength DESC
+			
 		</cfquery>
 	
 		<cfreturn emptyDirs />

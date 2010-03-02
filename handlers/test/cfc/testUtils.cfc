@@ -5,8 +5,6 @@ component extends="mxunit.framework.TestCase"{
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/BlogDemo/services";
 		var expectedPath = "BlogDemo.services";
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
-		
-		
     }
 	
 	public void function findCFCPathFromFilePathWindowsPaths(){
@@ -14,8 +12,6 @@ component extends="mxunit.framework.TestCase"{
 		var PathToTest = "c:\inetpub\wwwroot\BlogDemo\services";
 		var expectedPath = "BlogDemo.services";
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
-		
-		
     }
 	
 	public void function findPathFromfileName(){
@@ -23,8 +19,6 @@ component extends="mxunit.framework.TestCase"{
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/blogdemo/cfc/author.cfc";
 		var expectedPath = "blogdemo.cfc.author";
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
-		
-		
     }
 
 	public void function testFindConfigWhenProjectIsRootButSelectedIsNotRoot(){
@@ -63,5 +57,20 @@ component extends="mxunit.framework.TestCase"{
 		AssertEquals(expectedPath, utils.findConfig(projectlocation, resourcepath));
     }
     
+	public void function testFindEmptyDirs(){
+		FS = createObject("java", "java.lang.System").getProperty("file.separator");
+    	var utils = new apptacular.handlers.cfc.utils();
+		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
+		var testPath = start & "utilsTest"; 
+		var results = utils.getEmptyDirectories(testPath);
+		var resultAsList = ValueList(results.path);
+		AssertTrue(ListFindNoCase(resultAsList, testPath & FS & "empty"), "Folder 'Empty' was not found");
+		AssertTrue(ListFindNoCase(resultAsList, testPath & FS & "emptyWithSub" & FS & "sub"), "Folder 'sub' was not found");
+		AssertTrue(ListFindNoCase(resultAsList, testPath & FS & "emptyWithSub"), "Folder 'emptyWithSub' was not found");
+		AssertFalse(ListFindNoCase(resultAsList, testPath & FS & "notEmpty"), "Folder 'notEmpty' was found, should not have been");
+		
+		
+		debug(resultAsList);
+    }
 
 }

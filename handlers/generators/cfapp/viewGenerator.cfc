@@ -3,6 +3,20 @@
 */
 component extends="codeGenerator"{
 
+
+	/**
+	* @hint Wires up all of the base things needed by generators.
+	*/
+	public any function init(required any datasource, required any config){
+		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
+		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		variables.datasource = arguments.datasource;
+		variables.config = arguments.config;
+		variables.storageRoot = GetDirectoryFromPath(GetCurrentTemplatePath()) & "/storage";
+				
+		return This;
+	}
+
 	/**
 	* @hint Generates a list custom tag for a table. 
 	*/
@@ -830,7 +844,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy CSS file to CSS location 
 	*/
 	public apptacular.handlers.cfc.code.file function createCSS(){
-		var origCT = ExpandPath("generators/cfapp/storage/screen.css");
+		var origCT = variables.storageRoot & "/screen.css";
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCSSFilePath());
 		file.setName("screen");
@@ -843,7 +857,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy gradient image file file to CSS location 
 	*/
 	public apptacular.handlers.cfc.code.image function createGradient(){
-		var origimage = ExpandPath("generators/cfapp/storage/appgrad.jpg");
+		var origimage = variables.storageRoot & "/appgrad.jpg";
 		var file  =  New apptacular.handlers.cfc.code.image();
 		file.setFileLocation(variables.config.getCSSFilePath());
 		file.setName("appgrad");
@@ -856,7 +870,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy Foreign Key Custom Tag file to Custom tag location 
 	*/
 	public apptacular.handlers.cfc.code.file function createForeignKeyCustomTag(){
-		var origCT = ExpandPath("generators/cfapp/storage/foreignKeySelector.cfm");
+		var origCT = variables.storageRoot & "/foreignKeySelector.cfm";
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCustomTagFilePath());
 		file.setName("foreignKeySelector");
@@ -869,7 +883,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy Login Custom Tag file to Custom tag location 
 	*/
 	public apptacular.handlers.cfc.code.file function createLoginCustomTag(){
-		var origCT = ExpandPath("generators/cfapp/storage/loginForm.cfm");
+		var origCT = variables.storageRoot & "/loginForm.cfm";
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCustomTagFilePath());
 		file.setName("loginForm");
@@ -882,7 +896,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy Image Display Custom Tag file to Custom tag location 
 	*/
 	public apptacular.handlers.cfc.code.file function createImageDisplayCustomTag(){
-		var origCT = ExpandPath("generators/cfapp/storage/displayImage.cfm");
+		var origCT = variables.storageRoot & "/displayImage.cfm";
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCustomTagFilePath());
 		file.setName("displayImage");
@@ -895,7 +909,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy Many to Many Custom Tag select interface file to Custom tag location 
 	*/
 	public apptacular.handlers.cfc.code.file function createManyToManyCustomTag(){
-		var origCT = ExpandPath("generators/cfapp/storage/manyToManySelector.cfm");
+		var origCT = variables.storageRoot & "/manyToManySelector.cfm";
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCustomTagFilePath());
 		file.setName("manyToManySelector");
@@ -908,7 +922,7 @@ component extends="codeGenerator"{
 	* @hint Copying hard copy Many to Many Custom Tag reader file to Custom tag location 
 	*/
 	public apptacular.handlers.cfc.code.file function createManyToManyReaderCustomTag(){
-		var origCT = ExpandPath("generators/cfapp/storage/manyToManyReader.cfm");
+		var origCT = variables.storageRoot & "/manyToManyReader.cfm";
 		var file  =  New apptacular.handlers.cfc.code.file();
 		file.setFileLocation(variables.config.getCustomTagFilePath());
 		file.setName("manyToManyReader");
