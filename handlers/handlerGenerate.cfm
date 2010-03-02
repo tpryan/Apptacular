@@ -20,7 +20,8 @@
 			rootFilePath = rootFilePath & FS;
 		}
 		
-		dbConfigPath = rootFilePath & ".apptacular/schema";  
+		dbConfigPath = rootFilePath & ".apptacular/schema"; 
+		appRoot = rootFilePath; 
 	}
 	//handle input from the project view
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
@@ -30,6 +31,7 @@
 		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
 		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 	
+		appRoot = utils.findApprRoot(rootFilePath,resourcePath);	
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
@@ -46,6 +48,7 @@
 	}
 
 </cfscript>	
+
 	
 <cfif failed>
 	<cfheader name="Content-Type" value="text/xml">
@@ -64,14 +67,14 @@
 <cfscript>
 	StartTimer = getTickCount();
 	
-	rootCFCPath = utils.findCFCPathFromFilePath(rootFilePath);
+	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
 
 	//process DB version of schema
 	db = New cfc.db.datasource(dsName);
 
 	
 	//process config default 
-	config = New generators.cfapp.Config(rootFilePath, rootCFCPath);
+	config = New generators.cfapp.Config(appRoot, appCFCPath);
 	
 	
 	//make sure that large existing apps don't wire one-to-many relationships
@@ -143,6 +146,7 @@
 	
 
 </cfscript>
+
 
 
 <!--- reset application --->
