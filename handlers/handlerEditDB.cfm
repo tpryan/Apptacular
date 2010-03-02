@@ -9,12 +9,20 @@
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />
 
 <cfscript>
+	utils = New cfc.utils();
 	XMLDoc = xmlParse(ideeventInfo);
+	
 	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-	schemaPath = projectPath & "/.apptacular/schema";
+	resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
+	configPath = utils.findConfig(projectPath,resourcePath);
+	schemaPath = utils.findConfig(projectPath,resourcePath, "schema");
+	
+	
+	//projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
+	//schemaPath = projectPath & "/.apptacular/schema";
 	
 	//Ensure that overwrites are respected.
-	configPath = projectPath & "/.apptacular/config.xml";
+	//configPath = projectPath & "/.apptacular/config.xml";
 </cfscript>
 
 
