@@ -279,6 +279,7 @@
 	<target name="test.build.report">
 		<junitreport todir="${mxlog.dir}/report">
 			<fileset dir="${mxlog.dir}">
+				<include name="apptacular/**/*.xml"/>
 				<include name="cfml/**/*.xml"/>
 				<include name="cfscript/**/*.xml"/>
 			</fileset>
