@@ -18,7 +18,8 @@ component accessors="true" extends="dbItem"
 	property name="dataType" hint="The type as presented by cfdbinfo" ;
 	property name="uiType" hint="The type to generate ui's for." ;
 	property name="Type" hint="The ColdFusion datatype" ;
-	property name="TestType" hint="The type used for unit testing" ;
+	property name="TestType" hint="The type used for unit testing";
+	property name="displayLength" type="boolean"  hint="Whether or not to put the length of the column into the property for it.";
 	
 	/**
 	 * @hint Converts table to XML for serialization

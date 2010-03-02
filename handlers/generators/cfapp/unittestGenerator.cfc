@@ -197,6 +197,13 @@ component  extends="codeGenerator"
 			//Create Delete Test
 			var delete = createSimpleCreateOrDeleteUnitTest(table=table, type="Delete");
 			testEntity.addFunction(delete);
+			
+			//deal with the idiocy of MSSQL
+			if (FindNoCase("Microsoft",variables.datasource.getEngine()) and table.hasRealIdentity()){
+				var tearDown = createTearDownUnitTestforMSSQL(table=table);
+				testEntity.addFunction(tearDown);
+			}
+			
 		}
 
 		
@@ -878,6 +885,54 @@ component  extends="codeGenerator"
 	
 		return returns200;
 	}
+	
+	private apptacular.handlers.cfc.code.func function createTearDownUnitTestforMSSQL(required any table){
+		var tableName = table.getName();
+		var SchemaName = table.getSchema();
+		var identity = table.getIdentity();
+		//Slight tweak because I was running into case sensitivity issues.
+		var idColumn = table.getColumn(identity).getColumn();
+		var dsname = variables.datasource.getName();
+		
+		if (Len(SchemaName) > 0){
+			var tableReference = "#SchemaName#.#tableName#";
+		}
+		else{
+			var tableReference = "#tableName#";
+		}
+		
+		
+		var tearDown= New apptacular.handlers.cfc.code.func();
+		tearDown.setReturnType("void");
+		tearDown.setName("tearDown");
+		tearDown.AddSimpleSet('var idSQL = "SELECT #idColumn# as high FROM #tableReference# ORDER BY #idColumn# DESC "', 2);
+		tearDown.AddSimpleSet('var qry = New query()', 2);
+		
+		
+		if (table.getRowCount() gt 0){
+			tearDown.AddSimpleComment('Figure out the right value for the identity');
+			tearDown.AddSimpleSet('qry.setDataSource("' & dsname &'")', 2);
+			tearDown.AddSimpleSet('qry.setMaxRows(1)', 2);
+			tearDown.AddSimpleSet('qry.setSQL(idSQL)', 2);
+			tearDown.AddSimpleSet('var newidentity=qry.execute().getResult().high', 2);
+		}
+		else{
+			tearDown.AddSimpleComment('There are no records in the table so start at 1');
+			tearDown.AddSimpleSet('var newidentity=1', 2);
+		}
+		
+		
+		tearDown.AddSimpleComment('Reset the identity');
+		tearDown.AddSimpleSet('var resetSQL = "DBCC CHECKIDENT (''#tableReference#'', RESEED, ##newidentity##)"', 2);
+		tearDown.AddSimpleSet('qry.setSQL(resetSQL)', 2);
+		tearDown.AddSimpleSet('qry.execute()', 2);
+		
+		
+	
+		return tearDown;
+	}
+	
+	
 	
 	/**
 	* @hint Generates repeatable data for testing creates and updates.

@@ -162,6 +162,7 @@ component accessors="true" extends="dbItem"
 			column.setOrmType(mappings.getOrmType(columnType));
 			column.setUIType(mappings.getUIType(columnType));
 			column.setTestType(mappings.getTestType(columnType));
+			column.setDisplayLength(mappings.getDisplayLength(columnType));
 			column.setDataType(columns.type_name[i]);
 			column.setisForeignKey(columns.is_ForeignKey[i]);
 			column.setisPrimaryKey(columns.is_PrimaryKey[i]);
@@ -827,6 +828,10 @@ component accessors="true" extends="dbItem"
 	private string function isUcase(required string character){
 		if(asc(character) gte 65 and asc(character) lte 90) return TRUE;
 		else return FALSE;
+	}
+	
+	public boolean function hasRealIdentity(){
+		return getColumn(This.getIdentity()).getIsIdentity();
 	}
 	
 }

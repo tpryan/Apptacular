@@ -52,7 +52,7 @@ component extends="codeGenerator"{
 			property.setORMType(column.getOrmType());
 			property.setColumn(column.getColumn());
 	       	
-	       	if (column.getLength() gt 0){
+	       	if (column.getLength() gt 0 AND column.getDisplayLength()){
 	       		property.setLength(column.getLength());
 	       	}
 			
