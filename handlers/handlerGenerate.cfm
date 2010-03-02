@@ -31,7 +31,7 @@
 		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
 		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 	
-		appRoot = utils.findApprRoot(rootFilePath,resourcePath);	
+		appRoot = utils.findAppRoot(rootFilePath,resourcePath);	
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){

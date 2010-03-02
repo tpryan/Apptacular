@@ -82,7 +82,7 @@
 		return pathToConfig;
 	}
 	
-	public string function findApprRoot(required string projectlocation, required string resourcepath){	
+	public string function findAppRoot(required string projectlocation, required string resourcepath){	
 		var lresourcepath = arguments.resourcepath;
 		var configFile = "/.apptacular/config.xml";
 			
