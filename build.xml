@@ -100,16 +100,7 @@
 		<echo message="*************************************************************"/>
 		<echo message="AdventureWorks Tests"/>
 		<echo message="*************************************************************"/>
-		<echo message="Rebuilding AdventureWorks Application - CFSCRIPT"/>
-		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
-			<testcase name="apptacular.handlers.test.apps.testAdventureWorks"  runner="${runner.app.cfc}" />
-		</mxunittask>
 		
-		<echo message="Running AdventureWorks Tests - CFSCRIPT"/>
-		<ant antfile="${webroot}/AdventureWorks/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Recovering Test Results - CFSCRIPT"/>
-		<copy todir="${mxlog.dir}/cfscript/AdventureWorks/" preservelastmodified="true" file="${webroot}/AdventureWorks/test/mxunitdirectorytestsuite_1.xml" />
 		
 		<echo message="Rebuilding AdventureWorks Application - CFML"/>
 		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
@@ -122,6 +113,17 @@
 		<echo message="Recovering Test Results - CFML"/>
 		<copy todir="${mxlog.dir}/cfml/AdventureWorks/" preservelastmodified="true" file="${webroot}/AdventureWorks/test/mxunitdirectorytestsuite_1.xml" />
 		
+		<echo message="Rebuilding AdventureWorks Application - CFSCRIPT"/>
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testAdventureWorks"  runner="${runner.app.cfc}" />
+		</mxunittask>
+		
+		<echo message="Running AdventureWorks Tests - CFSCRIPT"/>
+		<ant antfile="${webroot}/AdventureWorks/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Recovering Test Results - CFSCRIPT"/>
+		<copy todir="${mxlog.dir}/cfscript/AdventureWorks/" preservelastmodified="true" file="${webroot}/AdventureWorks/test/mxunitdirectorytestsuite_1.xml" />
+		
 	</target>
 	
 	<target name="test.rebuild.blogdemo">
@@ -129,16 +131,7 @@
 		<echo message="*************************************************************"/>
 		<echo message="BlogDemo Tests"/>
 		<echo message="*************************************************************"/>
-		<echo message="Rebuilding BlogDemo Application - CFSCRIPT"/>
-		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
-			<testcase name="apptacular.handlers.test.apps.testBlogDemo"  runner="${runner.app.cfc}" />
-		</mxunittask>
 		
-		<echo message="Running BlogDemo Tests - CFSCRIPT"/>
-		<ant antfile="${webroot}/BlogDemo/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Recovering Test Results - CFSCRIPT"/>
-		<copy todir="${mxlog.dir}/cfscript/blogdemo/" preservelastmodified="true" file="${webroot}/blogdemo/test/mxunitdirectorytestsuite_1.xml" />
 		
 		<echo message="Rebuilding BlogDemo Application - CFML"/>
 		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
@@ -151,6 +144,17 @@
 		<echo message="Recovering Test Results - CFML"/>
 		<copy todir="${mxlog.dir}/CFML/blogdemo/" preservelastmodified="true" file="${webroot}/blogdemo/test/mxunitdirectorytestsuite_1.xml" />
 		
+		<echo message="Rebuilding BlogDemo Application - CFSCRIPT"/>
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testBlogDemo"  runner="${runner.app.cfc}" />
+		</mxunittask>
+		
+		<echo message="Running BlogDemo Tests - CFSCRIPT"/>
+		<ant antfile="${webroot}/BlogDemo/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Recovering Test Results - CFSCRIPT"/>
+		<copy todir="${mxlog.dir}/cfscript/blogdemo/" preservelastmodified="true" file="${webroot}/blogdemo/test/mxunitdirectorytestsuite_1.xml" />
+		
 		
 	</target>
 	
@@ -159,16 +163,7 @@
 		<echo message="*************************************************************"/>
 		<echo message="BlogDemoSQL Tests"/>
 		<echo message="*************************************************************"/>
-		<echo message="Rebuilding BlogDemoSQL Application - CFSCRIPT"/>
-		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
-			<testcase name="apptacular.handlers.test.apps.testBlogDemoMSSQL"  runner="${runner.app.cfc}" />
-		</mxunittask>
 		
-		<echo message="Running BlogDemoSQL Tests - CFSCRIPT"/>
-		<ant antfile="${webroot}/BlogDemoMSSQL/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Recovering Test Results - CFSCRIPT"/>
-		<copy todir="${mxlog.dir}/cfscript/blogdemomssql/" preservelastmodified="true" file="${webroot}/blogdemomssql/test/mxunitdirectorytestsuite_1.xml" />
 		
 		<echo message="Rebuilding BlogDemoSQL Application - CFML"/>
 		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
@@ -181,6 +176,17 @@
 		<echo message="Recovering Test Results - CFML"/>
 		<copy todir="${mxlog.dir}/CFML/BlogDemoMSSQL/" preservelastmodified="true" file="${webroot}/BlogDemoMSSQL/test/mxunitdirectorytestsuite_1.xml" />
 		
+		<echo message="Rebuilding BlogDemoSQL Application - CFSCRIPT"/>
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testBlogDemoMSSQL"  runner="${runner.app.cfc}" />
+		</mxunittask>
+		
+		<echo message="Running BlogDemoSQL Tests - CFSCRIPT"/>
+		<ant antfile="${webroot}/BlogDemoMSSQL/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Recovering Test Results - CFSCRIPT"/>
+		<copy todir="${mxlog.dir}/cfscript/blogdemomssql/" preservelastmodified="true" file="${webroot}/blogdemomssql/test/mxunitdirectorytestsuite_1.xml" />
+		
 		
 	</target>
 	
@@ -189,16 +195,6 @@
 		<echo message="*************************************************************"/>
 		<echo message="CFArtgallery Tests"/>
 		<echo message="*************************************************************"/>
-		<echo message="Rebuilding CFArtgallery Application - CFSCRIPT"/>
-		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
-			<testcase name="apptacular.handlers.test.apps.testcfartgallery"  runner="${runner.app.cfc}" />
-		</mxunittask>
-		
-		<echo message="Running CFArtgallery Tests - CFSCRIPT"/>
-		<ant antfile="${webroot}/CFArtgallery/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Recovering Test Results - CFSCRIPT"/>
-		<copy todir="${mxlog.dir}/cfscript/CFArtgallery/" preservelastmodified="true" file="${webroot}/CFArtgallery/test/mxunitdirectorytestsuite_1.xml" />
 		
 		<echo message="Rebuilding CFArtgallery Application - CFML"/>
 		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
@@ -211,6 +207,16 @@
 		<echo message="Recovering Test Results - CFML"/>
 		<copy todir="${mxlog.dir}/CFML/CFArtgallery/" preservelastmodified="true" file="${webroot}/CFArtgallery/test/mxunitdirectorytestsuite_1.xml" />
 		
+		<echo message="Rebuilding CFArtgallery Application - CFSCRIPT"/>
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testcfartgallery"  runner="${runner.app.cfc}" />
+		</mxunittask>
+		
+		<echo message="Running CFArtgallery Tests - CFSCRIPT"/>
+		<ant antfile="${webroot}/CFArtgallery/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Recovering Test Results - CFSCRIPT"/>
+		<copy todir="${mxlog.dir}/cfscript/CFArtgallery/" preservelastmodified="true" file="${webroot}/CFArtgallery/test/mxunitdirectorytestsuite_1.xml" />
 		
 	</target>
 	
@@ -219,18 +225,6 @@
 		<echo message="*************************************************************"/>
 		<echo message="Facebook Tests"/>
 		<echo message="*************************************************************"/>
-		<echo message="Rebuilding Facebook Application - CFSCRIPT"/>
-		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
-			<testcase name="apptacular.handlers.test.apps.testFacebook"  runner="${runner.app.cfc}" />
-		</mxunittask>
-		
-		<echo message="Running Facebook Tests - CFSCRIPT"/>
-		<ant antfile="${webroot}/Facebook/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Recovering Test Results - CFSCRIPT"/>
-		<copy todir="${mxlog.dir}/cfscript/Facebook/" preservelastmodified="true" file="${webroot}/Facebook/test/mxunitdirectorytestsuite_1.xml" />
-		
-		
 		
 		<echo message="Rebuilding Facebook Application - CFML"/>
 		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
@@ -243,6 +237,16 @@
 		<echo message="Recovering Test Results - CFML"/>
 		<copy todir="${mxlog.dir}/CFML/Facebook/" preservelastmodified="true" file="${webroot}/Facebook/test/mxunitdirectorytestsuite_1.xml" />
 		
+		<echo message="Rebuilding Facebook Application - CFSCRIPT"/>
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testFacebook"  runner="${runner.app.cfc}" />
+		</mxunittask>
+		
+		<echo message="Running Facebook Tests - CFSCRIPT"/>
+		<ant antfile="${webroot}/Facebook/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Recovering Test Results - CFSCRIPT"/>
+		<copy todir="${mxlog.dir}/cfscript/Facebook/" preservelastmodified="true" file="${webroot}/Facebook/test/mxunitdirectorytestsuite_1.xml" />
 		
 	</target>
 	
@@ -251,16 +255,7 @@
 		<echo message="*************************************************************"/>
 		<echo message="SakilaDemo Tests"/>
 		<echo message="*************************************************************"/>
-		<echo message="Rebuilding SakilaDemo Application - CFSCRIPT"/>
-		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
-			<testcase name="apptacular.handlers.test.apps.testSakilaDemo"  runner="${runner.app.cfc}" />
-		</mxunittask>
 		
-		<echo message="Running SakilaDemo Tests - CFSCRIPT"/>
-		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Recovering Test Results - CFSCRIPT"/>
-		<copy todir="${mxlog.dir}/cfscript/SakilaDemo/" preservelastmodified="true" file="${webroot}/SakilaDemo/test/mxunitdirectorytestsuite_1.xml" />
 		
 		
 		<echo message="Rebuilding SakilaDemo Application - CFML"/>
@@ -273,6 +268,17 @@
 		
 		<echo message="Recovering Test Results - CFML"/>
 		<copy todir="${mxlog.dir}/CFML/SakilaDemo/" preservelastmodified="true" file="${webroot}/SakilaDemo/test/mxunitdirectorytestsuite_1.xml" />
+		
+		<echo message="Rebuilding SakilaDemo Application - CFSCRIPT"/>
+		<mxunittask server="${server}" haltonerror="true" haltonfailure="true" verbose="true">
+			<testcase name="apptacular.handlers.test.apps.testSakilaDemo"  runner="${runner.app.cfc}" />
+		</mxunittask>
+		
+		<echo message="Running SakilaDemo Tests - CFSCRIPT"/>
+		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
+		
+		<echo message="Recovering Test Results - CFSCRIPT"/>
+		<copy todir="${mxlog.dir}/cfscript/SakilaDemo/" preservelastmodified="true" file="${webroot}/SakilaDemo/test/mxunitdirectorytestsuite_1.xml" />
 		
 	</target>
 	
