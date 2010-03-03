@@ -375,6 +375,7 @@ component extends="codeGenerator"{
 	
 		var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    var fileLocation = variables.config.getEntityFilePath();
+		var access = variables.config.getServiceAccess();
 		
 		cfc.setFormat(variables.config.getCFCFormat());
 	    cfc.setName("eventHandler");
@@ -395,7 +396,7 @@ component extends="codeGenerator"{
 		
 		
 		var postD= New apptacular.handlers.cfc.code.func();
-		postD.setAccess("public");
+		postD.setAccess(access);
 		postD.setReturnType("void");
 		postD.AddArgument(EntityArg);
 		postD.setName('postDelete');
@@ -403,7 +404,7 @@ component extends="codeGenerator"{
 		cfc.addFunction(postD);
 		
 		var postI= New apptacular.handlers.cfc.code.func();
-		postI.setAccess("public");
+		postI.setAccess(access);
 		postI.setReturnType("void");
 		postI.AddArgument(EntityArg);
 		postI.setName('postInsert');
@@ -411,7 +412,7 @@ component extends="codeGenerator"{
 		cfc.addFunction(postI);
 		
 		var postL= New apptacular.handlers.cfc.code.func();
-		postL.setAccess("public");
+		postL.setAccess(access);
 		postL.setReturnType("void");
 		postL.AddArgument(EntityArg);
 		postL.setName('postLoad');
@@ -419,7 +420,7 @@ component extends="codeGenerator"{
 		cfc.addFunction(postL);
 		
 		var postU= New apptacular.handlers.cfc.code.func();
-		postU.setAccess("public");
+		postU.setAccess(access);
 		postU.setReturnType("void");
 		postU.AddArgument(EntityArg);
 		postU.setName('postUpdate');
@@ -427,7 +428,7 @@ component extends="codeGenerator"{
 		cfc.addFunction(postU);
 		
 		var preD= New apptacular.handlers.cfc.code.func();
-		preD.setAccess("public");
+		preD.setAccess(access);
 		preD.setReturnType("void");
 		preD.AddArgument(EntityArg);
 		preD.setName('preDelete');
@@ -435,7 +436,7 @@ component extends="codeGenerator"{
 		cfc.addFunction(preD);
 		
 		var preI= New apptacular.handlers.cfc.code.func();
-		preI.setAccess("public");
+		preI.setAccess(access);
 		preI.setReturnType("void");
 		preI.AddArgument(EntityArg);
 		preI.setName('preInsert');
@@ -460,7 +461,7 @@ component extends="codeGenerator"{
 		
 		
 		var preL= New apptacular.handlers.cfc.code.func();
-		preL.setAccess("public");
+		preL.setAccess(access);
 		preL.setReturnType("void");
 		preL.AddArgument(EntityArg);
 		preL.setName('preLoad');
@@ -468,7 +469,7 @@ component extends="codeGenerator"{
 		cfc.addFunction(preL);
 		
 		var preU= New apptacular.handlers.cfc.code.func();
-		preU.setAccess("public");
+		preU.setAccess(access);
 		preU.setReturnType("void");
 		preU.AddArgument(EntityArg);
 		preU.setName('preUpdate');

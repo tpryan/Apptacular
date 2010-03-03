@@ -73,7 +73,7 @@ component  extends="codeGenerator"
 		var init= New apptacular.handlers.cfc.code.func();
 		init.setName('init');
 		init.setHint("A initialization routine, runs when object is created.");
-		init.setAccess("public");
+		init.setAccess(access);
 		init.setReturnType(table.getEntityName() & "Service");
 		init.setReturnResult('This');
 		init.AddSimpleSet('This.table = "#tableName#"', 2);
