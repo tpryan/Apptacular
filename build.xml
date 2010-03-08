@@ -291,6 +291,17 @@
 			</fileset>
 			<report format="noframes" todir="${mxlog.dir}/report" />
 		</junitreport>
+		
+		<delete>
+			<fileset dir="${mxlog.dir}">
+				<include name="apptacular/**/*.xml"/>
+				<include name="cfml/**/*.xml"/>
+				<include name="cfscript/**/*.xml"/>
+			</fileset>
+			<fileset dir="${mxlog.dir}/report">
+				<include name="TESTS-TestSuites.xml"/>
+			</fileset>
+		</delete>	
 	</target>
 	
 	<target name="test.apps">
