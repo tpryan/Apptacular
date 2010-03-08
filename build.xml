@@ -289,7 +289,7 @@
 				<include name="cfml/**/*.xml"/>
 				<include name="cfscript/**/*.xml"/>
 			</fileset>
-			<report format="frames" todir="${mxlog.dir}/report" />
+			<report format="noframes" todir="${mxlog.dir}/report" />
 		</junitreport>
 	</target>
 	
