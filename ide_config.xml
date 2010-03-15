@@ -12,6 +12,7 @@
 			<menu name="Apptacular">
 		    	<action name="Generate Application" handlerid="generate" >
 		    		<input name="Location" default="{$projectlocation}" label="Enter destination" tooltip="Location where generated CFCs will be stored" type="projectdir"/>
+					<input name="GenerateServices" label="Create Remote Services" tooltip="This will expose your application via remote services to Flex or AJAX projects. There are security implications so don't check unless you know you need this." type="boolean" default="false" /> 
 				</action>
 			</menu>
 		</contribution>

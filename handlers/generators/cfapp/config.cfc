@@ -94,11 +94,12 @@ component accessors="true"{
 		This.setUpdatedOnString("updatedOn");
 		
 		calculatePaths();
-		
+	
+		//Settings defaults for these settings
 		This.setServiceAccess("remote");
 		This.setCreateViews(true);
 		This.setCreateAppCFC(true);
-		This.setCreateServices(true);
+		This.setCreateServices(false);
 		This.setCreateEntities(true);
 		This.setCreateLogin(false);
 		This.setCreateTests(false);

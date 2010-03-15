@@ -7,5 +7,6 @@
     </ide>
     <user>
     	<input name="Location" value="/Users/terryr/Sites/centaur.dev/SakilaDemo" />
+		<input name="GenerateServices" value="true" />
 	</user>	
 </event>

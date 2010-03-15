@@ -9,13 +9,15 @@
 	utils = New cfc.utils();
 	xmldoc = XMLParse(ideeventInfo); 
 	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
-	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port; 
+	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
+	generateServices = false; 
 	
 	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
 	
 		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
 		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value;
+		generateServices = XMLSearch(xmldoc, "/event/user/input[@name='GenerateServices']")[1].XMLAttributes.value;
 		if (right(rootFilePath, 1) neq FS){
 			rootFilePath = rootFilePath & FS;
 		}
@@ -75,7 +77,7 @@
 	
 	//process config default 
 	config = New generators.cfapp.Config(appRoot, appCFCPath);
-	
+	config.setCreateServices(generateServices);
 	
 	//make sure that large existing apps don't wire one-to-many relationships
 	if (db.calculateHighestRowCount() gt 1000){
