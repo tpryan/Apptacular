@@ -18,7 +18,6 @@
 	body{
 		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
 		font-size: 80%;
-		
 		background-color: #2A587A;
 		background-image: url(/apptacular/handlers/grad.jpg);
 		background-repeat: repeat-x;
@@ -26,21 +25,17 @@
 	}
 	h1 {
 		font-size: 120%;
-		
-		
 	}
 	
 	h1.table {
 		font-size: 150%;
 		margin-left: 250px;
-		
-		
 	}
+	
 	h2 {
 		font-size: 110%;
-		
-		
 	}
+
 	.alert{
 		font-weight: bold;
 		color: #FF0000;
@@ -48,9 +43,11 @@
 		background-color: #FFFFCC;
 		padding: 1px;
 		}
+
 	.breadcrumb{
 		font-size: 100%;
 	}
+
 	#prev, #next
 	{ width: 200px;}	
 		
@@ -59,7 +56,9 @@
 	}
 	
 	input[type="text"] { width: 350px; height: 14px; font-size: 11px; }
+
 	textarea{ width: 350px; height: 140px; font-size: 11px; }
+
 	#columns input[type="text"] { width: 110px; }
 	
 	a{
@@ -67,22 +66,21 @@
 	}		
 	a:hover{
 		color: #FFFFFF;
-		
 	}
+
 	#logo{
 		position: fixed;
 		bottom: 10px;
 		right: 10px;	
-		
 	}	
 	
 	.helplink{
 		font-size: 80%;
-		
 	}
 	
 </style>
 
+<!--[if lt IE 7]>
 <style type="text/css">
 	#logo{
 		margin-top: 10;
@@ -93,9 +91,6 @@
 		right:10;
 	}
 </style>
-
-<!--[if lt IE 7]>
-
 <![endif]-->
 
 
