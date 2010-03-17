@@ -6,12 +6,11 @@
 <cfoutput><title>Apptactular</title></cfoutput>
 <style type="text/css">
 	th {
-	text-align: left;
-	padding-right: 10px;
+		text-align: left;
+		padding-right: 10px;
 	}
 	td{
 		padding-right: 10px;
-		//border-bottom: 1px dotted #999;
 		vertical-align: top;	
 	}
 	
@@ -83,6 +82,22 @@
 	}
 	
 </style>
+
+<style type="text/css">
+	#logo{
+		margin-top: 10;
+		clear:both;
+		position:static;
+		float:right;
+		bottom:10;
+		right:10;
+	}
+</style>
+
+<!--[if lt IE 7]>
+
+<![endif]-->
+
 
 
 <script language="JavaScript">

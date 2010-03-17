@@ -96,6 +96,7 @@
 	</table>
 </td>
 </tr>
+</table>
 </cfoutput>
 
 
