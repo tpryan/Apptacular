@@ -6,6 +6,12 @@
 	<description>Generate a scaffolded application suitable for backend administration 
 	based on ColdFusion Object Relational Mapping (ORM) technology.</description>	
 	
+	
+	<events> 
+		<event type="onprojectcreate" handlerid="handlerCreateProject" /> 
+	</events>
+	
+	
 	<!-- Add menu contributions to RDS Data View -->	   
     <menucontributions >
 		<contribution target="rdsview" >
@@ -39,6 +45,7 @@
 		<handler id="editConfig" type="CFM" filename="handlerEditConfig.cfm" />
 		<handler id="purge" type="CFM" filename="handlerPurge.cfm" />
 		<handler id="configtable" type="CFM" filename="handlerEditTable.cfm" />
+		<handler id="handlerCreateProject" type="CFM" filename="handlerCreateProject.cfm" />
 	</handlers>
 
 </application>

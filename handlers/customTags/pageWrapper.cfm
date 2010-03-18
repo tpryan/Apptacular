@@ -55,7 +55,7 @@
 		text-align: right;
 	}
 	
-	input[type="text"] { width: 350px; height: 14px; font-size: 11px; }
+	input[type="text"], input[type="password"]{ width: 350px; height: 14px; font-size: 11px; }
 
 	textarea{ width: 350px; height: 140px; font-size: 11px; }
 

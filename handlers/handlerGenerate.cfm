@@ -1,16 +1,14 @@
 <cfsetting showdebugoutput="false" />
 
-<cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="ideeventInfo" />
-</cfif>
-
+<cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 <cfscript>
 	failed = FALSE;
 	utils = New cfc.utils();
 	xmldoc = XMLParse(ideeventInfo); 
 	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
-	generateServices = false; 
+	generateServices = false;
+	onprojectCreate = false; 
 	
 	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
@@ -33,7 +31,11 @@
 		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
 		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 	
-		appRoot = utils.findAppRoot(rootFilePath,resourcePath);	
+		appRoot = utils.findAppRoot(rootFilePath,resourcePath);
+		
+		writeLog("rootfilePath=#rootFilePath#");
+		writeLog("resourcePath=#resourcePath#");
+		writeLog("appRoot=#appRoot#");		
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
@@ -47,6 +49,18 @@
 		}
 		
 		
+	}
+	else if (structKeyExists(form, "projectPath")){
+		dsName = form.dsName;
+		rootFilePath = form.projectpath;
+		generateServices = StructKeyExists(form, "generateservices");
+		if (right(rootFilePath, 1) neq FS){
+			rootFilePath = rootFilePath & FS;
+		}
+		
+		dbConfigPath = rootFilePath & ".apptacular/schema"; 
+		appRoot = rootFilePath; 
+		onprojectCreate = true; 
 	}
 
 </cfscript>	
@@ -155,6 +169,10 @@
 <cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
 
+
+<cfif onprojectCreate>
+	<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
+</cfif>
 
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 
