@@ -2,7 +2,14 @@
 <cfscript>
 	handlerPath = getDirectoryFromPath(cgi.script_name) & "createProject/login.cfm";
 	XMLDoc = xmlParse(ideeventInfo);
-	projectPath = XMLDoc.event.ide.eventinfo.XMLAttributes.projectlocation;
+	
+	if (structKeyExists(XMLDoc.event.ide, "eventinfo")){
+		projectPath = XMLDoc.event.ide.eventinfo.XMLAttributes.projectlocation;
+	}
+	else{
+		projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
+	}
+	
 	
 	handlerURL = "http://" & cgi.server_name & handlerPath;
 </cfscript>
