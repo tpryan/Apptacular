@@ -192,8 +192,11 @@ component{
 					var testEntity = unittestGenerator.createEntityTest(table);
 					ArrayAppend(files, testEntity);
 					
-					var testService = unittestGenerator.createServiceTest(table);
-					ArrayAppend(files, testService);
+					//Only generate service tests if we are generating services.
+					if (config.getCreateServices()){
+						var testService = unittestGenerator.createServiceTest(table);
+						ArrayAppend(files, testService);
+					}
 					
 					testTableTime.end = getTickCount();
 					testTime = testTime + (testTableTime.end - testTableTime.start);
@@ -229,8 +232,10 @@ component{
 			var ViewRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & "/view");
 			ArrayAppend(files, ViewRunner);
 			
-			var ServiceRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & variables.config.getServiceFolder());
-			ArrayAppend(files, ServiceRunner);
+			if (config.getCreateServices()){
+				var ServiceRunner = unittestGenerator.createDirectoryRunner(variables.config.getTestFilePath() & FS & variables.config.getServiceFolder());
+				ArrayAppend(files, ServiceRunner);
+			}
 			
 			var GlobalTest = unittestGenerator.createGlobalTest();
 			ArrayAppend(files, GlobalTest);
