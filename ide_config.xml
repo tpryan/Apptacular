@@ -4,13 +4,13 @@
 	<version>1.0</version>
 	<email>terry.ryan@adobe.com</email>	
 	<description>Generate a scaffolded application suitable for backend administration 
-	based on ColdFusion Object Relational Mapping (ORM) technology.</description>	
+	based on ColdFusion Object Relational Mapping (ORM) technology. Additionally, this will generate
+	remote services for Flex clients and unit testing code for use with MXUnit.</description>	
 	
-	
+	<!-- Create an onProjectCreate Handler that allows you to run apptacular when you create an app -->	
 	<events> 
 		<event type="onprojectcreate" handlerid="handlerCreateProject" /> 
 	</events>
-	
 	
 	<!-- Add menu contributions to RDS Data View -->	   
     <menucontributions >
@@ -24,17 +24,19 @@
 		</contribution>
 		<contribution target="projectview" >
 			<menu name="Apptacular">
-				<action name="Edit Application Configuration" handlerid="editConfig"></action>
-		    	<action name="Edit Data Model" handlerid="editDB"></action>
-				<action name="Prune Excess Files" handlerid="purge"></action>
 				<action name="Regenerate Application" handlerid="generate"></action>
-				<action name="Configure Table" handlerid="configtable">
+				<action name="------------------------------" />
+				<action name="Create Application" handlerid="handlerCreateProject"></action>
+				<action name="Edit Application Configuration" handlerid="editConfig"></action>
+			    <action name="Edit Database Data Model" handlerid="editDB"></action>
+				<action name="Edit Item Data Model" handlerid="configtable">
 					<filters> 
 						<filter type="file" pattern=".*\.cfc" /> 
 					</filters>
-				</action>
+				</action>			
+				<action name="------------------------------" />
+				<action name="Prune Excess Files" handlerid="purge"></action>	
 			</menu>
-			
 		</contribution>
     </menucontributions>	
 
