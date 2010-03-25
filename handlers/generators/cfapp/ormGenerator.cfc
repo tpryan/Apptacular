@@ -312,10 +312,10 @@ component extends="codeGenerator"{
 			else if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				fkEName = fkTable.getentityName();
-				populate.AddOperation('		<cfset #fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true) />');
+				populate.AddOperation('		<cfset #fkEName# = entityLoad("' & fkEName  & '", arguments.formStruct.#fkEName#, true) />');
 				populate.AddOperation('		<cfset This.set#fkEName#(#fkEName#) />');
 				
-				populate.AddOperationScript('		#fkEName# = entityLoad("' & fkEName  & '", form.#fkEName#, true);');
+				populate.AddOperationScript('		#fkEName# = entityLoad("' & fkEName  & '", arguments.formStruct.#fkEName#, true);');
 				populate.AddOperationScript('		This.set#fkEName#(#fkEName#);');
 			}
 	    	else if (not config.isMagicField(column.getName())){ 
