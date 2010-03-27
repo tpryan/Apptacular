@@ -51,7 +51,10 @@ component accessors="true" extends="dbItem"
 		
 		This.setName(arguments.name);
 		This.setDisplayName(capitalize(arguments.name));
+		
 		This.setEntityName(Lcase(arguments.name));
+		
+		
 		This.setPlural(pluralize(This.getEntityName()));
 		This.setDisplayPlural(pluralize(capitalize(This.getEntityName())));
 		This.setSchema(arguments.schema);

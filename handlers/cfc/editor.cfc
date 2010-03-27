@@ -16,7 +16,7 @@ component accessors="true"{
 	private struct function setAllowedList(){
 		
 		var allowed = structNew();
-		allowed['datasource'] = "displayName";
+		allowed['datasource'] = "displayName,prefix";
 		allowed['table'] = "entityName,displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable";
 		allowed['column'] = "name,column,displayName,uiType";
 		allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,";

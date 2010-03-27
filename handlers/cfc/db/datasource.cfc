@@ -7,6 +7,7 @@ component accessors="true" extends="dbItem"
 	property name="displayName" hint="A pretty name, not at all like 'db_blog1_mysql'";
 	property name="engine"  hint="The database engine.";
 	property name="version" hint="The database version.";
+	property name="prefix" hint="An prefix on all of the tables in the database.";
 	property name="tables" type="table[]" hint="An array of all of the tables in the datasource.";
 	property name="tablesStruct" type="struct" hint="An structure of all of the tables in the datasource."; 
 	
@@ -21,6 +22,7 @@ component accessors="true" extends="dbItem"
 		
 		This.setName(arguments.datasource);
 		This.setDisplayName(arguments.datasource);
+		This.setPrefix("");
 	
 		populateDatasource();
 		populateTables();
@@ -119,8 +121,6 @@ component accessors="true" extends="dbItem"
 			var SQL = "SELECT count(*) as countOfRows FROM #table.getName()#";
 		}
 		
-		
-		
 		var qry = new Query(datasource=This.getName());
 		qry.setSQL(SQL);
 		
@@ -181,6 +181,25 @@ component accessors="true" extends="dbItem"
 		}
 	
 		return tables;
+	
+	}
+	
+	public void function dePrefixTables(){
+		var i = 0;
+		if (len(This.getPrefix()) > 0){
+			var tables = this.getTables();
+			var tableStruct = this.getTablesStruct();
+			for (i=1; i <= ArrayLen(tables); i++){
+				var table = tables[i];
+				table.setEntityName(Lcase(ReplaceNoCase(table.getEntityName(),This.getPrefix(), "", "one" )));	
+				tables[i] = table;
+				tableStruct[table.getName()]= table;
+			}
+			This.setTables(tables);	
+			This.setTablesStruct(tableStruct);		
+		}
+		
+		
 	
 	}
 	

@@ -121,9 +121,13 @@
 	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
+		datamodel.dePrefixTables();
+		writeLog("overwrite=true");
+		writeLog("prefix=#datamodel.getPrefix()#");	
 	}
 	else{
 		datamodel= db;
+		writeLog("overwrite=false");	
 	}
 	
 	
