@@ -98,8 +98,10 @@ component
 	 * @hint Plural of a string
 	 */
 	public string function pluralize(required string str){
-		
-		if(compareNoCase(Right(str, 1),"s") eq 0){
+		if(compareNoCase(Right(str, 1),"y") eq 0){
+			return Left(str, len(str)-1) & "ies"; 
+		}
+		else if(compareNoCase(Right(str, 1),"s") eq 0){
 			return str & "es"; 
 		}
 		else{
