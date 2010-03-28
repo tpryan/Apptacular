@@ -191,7 +191,28 @@ component accessors="true" extends="dbItem"
 			var tableStruct = this.getTablesStruct();
 			for (i=1; i <= ArrayLen(tables); i++){
 				var table = tables[i];
-				table.setEntityName(Lcase(ReplaceNoCase(table.getEntityName(),This.getPrefix(), "", "one" )));	
+				table.setEntityName(ReplaceNoCase(table.getEntityName(),This.getPrefix(), "", "one" ));	
+				table.setAllNamesBasedOnEntityName();	
+				tables[i] = table;
+				tableStruct[table.getName()]= table;
+			}
+			This.setTables(tables);	
+			This.setTablesStruct(tableStruct);		
+		}
+		
+		
+	
+	}
+	
+	public void function dePluralize(any stringUtil){
+		var i = 0;
+		if (len(This.getPrefix()) > 0){
+			var tables = this.getTables();
+			var tableStruct = this.getTablesStruct();
+			for (i=1; i <= ArrayLen(tables); i++){
+				var table = tables[i];
+				table.setEntityName( stringUtil.depluralize(table.getEntityName()) );
+				table.setAllNamesBasedOnEntityName();	
 				tables[i] = table;
 				tableStruct[table.getName()]= table;
 			}

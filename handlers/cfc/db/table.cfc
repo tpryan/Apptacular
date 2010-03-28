@@ -50,13 +50,10 @@ component accessors="true" extends="dbItem"
 		dbinfo.setTable(arguments.name);
 		
 		This.setName(arguments.name);
-		This.setDisplayName(capitalize(arguments.name));
-		
 		This.setEntityName(Lcase(arguments.name));
+		This.setAllNamesBasedOnEntityName();
 		
 		
-		This.setPlural(pluralize(This.getEntityName()));
-		This.setDisplayPlural(pluralize(capitalize(This.getEntityName())));
 		This.setSchema(arguments.schema);
 		This.setIsView(arguments.isView);
 		
@@ -70,6 +67,17 @@ component accessors="true" extends="dbItem"
 		return This;
 	}
 	
+	public string function setAllNamesBasedOnEntityName(){
+		This.setPlural(pluralize(This.getEntityName()));
+		This.setDisplayPlural(pluralize(formatDisplayName(This.getEntityName())));
+		This.setDisplayName(formatDisplayName(This.getEntityName()));
+	}
+	
+	public string function formatDisplayName(string name){
+		var result = capitalize(name);
+		result = Replace(result, "_", " ", "all");
+		return result;
+	}
 	
 	/**
 	 * @hint Add a jointable relationship

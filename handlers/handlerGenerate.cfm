@@ -122,6 +122,12 @@
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
 		datamodel.dePrefixTables();
+		
+		if (config.getDepluralize()){
+			stringUtil = new apptacular.handlers.cfc.stringUtil();
+			datamodel.depluralize(stringUtil);
+		}
+		
 		writeLog("overwrite=true");
 		writeLog("prefix=#datamodel.getPrefix()#");	
 	}

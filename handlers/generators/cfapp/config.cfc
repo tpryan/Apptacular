@@ -51,6 +51,9 @@ component accessors="true"{
 	
 	property name="CFCFormat" hint="Whether or not your CFCs are all CFML or all CFScript. [Options: CFML, CFSCRIPT]";
 	
+	property name="depluralize" hint="Whether or not Apptacular should depluralize your entity names. Experimental, may not yeild perfect results.";
+	
+	
 	property name="createdOnString" hint="The magic string for DateTime of object creation";
 	property name="updatedOnString" hint="The magic string for DateTime of object last update";
 	
@@ -109,6 +112,7 @@ component accessors="true"{
 		This.setWireOneToManyinViews(true);
 		This.setLogSQL(true);
 		This.setSelectorThreshold(50);
+		This.setDepluralize(false);
 		
 		This.setDateFormat("mm/dd/yyyy");
 		
