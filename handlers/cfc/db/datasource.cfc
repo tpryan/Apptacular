@@ -193,6 +193,8 @@ component accessors="true" extends="dbItem"
 				var table = tables[i];
 				table.setEntityName(ReplaceNoCase(table.getEntityName(),This.getPrefix(), "", "one" ));	
 				table.setAllNamesBasedOnEntityName();	
+				table.setPrefix(This.getPrefix());
+				table.populateColumns();
 				tables[i] = table;
 				tableStruct[table.getName()]= table;
 			}
@@ -212,7 +214,8 @@ component accessors="true" extends="dbItem"
 			for (i=1; i <= ArrayLen(tables); i++){
 				var table = tables[i];
 				table.setEntityName( stringUtil.depluralize(table.getEntityName()) );
-				table.setAllNamesBasedOnEntityName();	
+				table.setAllNamesBasedOnEntityName();
+				table.populateColumns();	
 				tables[i] = table;
 				tableStruct[table.getName()]= table;
 			}

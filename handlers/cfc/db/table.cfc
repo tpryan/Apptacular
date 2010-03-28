@@ -19,6 +19,7 @@ component accessors="true" extends="dbItem"
 	property name="orderby" hint="The column to order all refernece to these objects."; 
 	property name="createInterface" type="boolean" hint="Whether or not this table should have interfaces built for it. ";  
 	property name="schema" hint="The schema that contains the table."; 
+	property name="prefix" hint="An prefix on this table in the database.";
 	
 	property name="columns" type="column[]" hint="An array of all of the columns in the table.";
 	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";
@@ -53,7 +54,7 @@ component accessors="true" extends="dbItem"
 		This.setEntityName(Lcase(arguments.name));
 		This.setAllNamesBasedOnEntityName();
 		
-		
+		This.setPrefix("");
 		This.setSchema(arguments.schema);
 		This.setIsView(arguments.isView);
 		
@@ -223,7 +224,7 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint Populates the column information of the table.
 	 */	
-	private void function populateColumns(){
+	public void function populateColumns(){
 		dbinfo.setType("columns");
 		
 		var	columns = dbinfo.send().getResult();
@@ -764,22 +765,6 @@ component accessors="true" extends="dbItem"
 		
 	}
 	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	/**
@@ -876,22 +861,45 @@ component accessors="true" extends="dbItem"
     * @hint Determines if the name of a reference table makes it likely that it is a join table.
     */
 	private string function doReferencesDenoteAJoinTable(required array a){
+	
+		
+		
 		//This is the logic that figures out if this is a join table.
-		if (ArrayLen(a) eq 2 AND
-			(CompareNoCase(This.getName(), "#a[1]#to#a[2]#") eq 0 OR 
-				CompareNoCase(This.getName(), "#a[2]#to#a[1]#") eq 0 OR
-					CompareNoCase(This.getName(), "#a[1]#_#a[2]#") eq 0 OR 
-						CompareNoCase(This.getName(), "#a[2]#_#a[1]#") eq 0 OR
-							CompareNoCase(This.getName(), "#a[1]##a[2]#") eq 0 OR 
-								CompareNoCase(This.getName(), "#a[2]##a[1]#") eq 0)
-			)
-		{
-			return true;
+		if (ArrayLen(a) eq 2){
+			var thisTab = This.getName();
+			var	tab1 = a[1];
+			var	tab2 = a[2];
+			var i = 0;
+			
+			
+			
+			if(len(this.getPrefix()) gt 1 ){
+				var prefix = this.getPrefix();
+				thisTab = Replace(thisTab, prefix, "", "one");
+				tab1 = Replace(tab1, prefix, "", "one");
+				tab2 = Replace(tab2, prefix, "", "one");
+			}
+			
+			var patterns = [];
+			ArrayAppend(patterns, "#tab1#to#tab2#");
+			ArrayAppend(patterns, "#tab2#to#tab1#");
+			ArrayAppend(patterns, "#tab1#_#tab2#");
+			ArrayAppend(patterns, "#tab2#_#tab1#");
+			ArrayAppend(patterns, "#tab1##tab2#");
+			ArrayAppend(patterns, "#tab2##tab1#");
+			ArrayAppend(patterns, "#Left(tab1, 1)#2#Left(tab2, 1)#");
+			ArrayAppend(patterns, "#Left(tab2, 1)#2#Left(tab1, 1)#");
+		
+			writeLog("joinTableTest = #thisTab#; patterns = #ArrayToList(patterns)#");
+		
+			for (i=1; i <= arraylen(patterns); i++){
+				if (CompareNoCase(thisTab, patterns[i])){
+					return true;
+				}
+			
+			}
 		}
-		else{
-			return false;
-		}
-	
+			
+		return false;
 	}
-	
 }
