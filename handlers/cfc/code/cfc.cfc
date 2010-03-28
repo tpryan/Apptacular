@@ -266,7 +266,4 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		ArrayAppend(variables.propertyArray, arguments.property);
 	}
 
-
 }
-
-	
