@@ -893,7 +893,8 @@ component accessors="true" extends="dbItem"
 			writeLog("joinTableTest = #thisTab#; patterns = #ArrayToList(patterns)#");
 		
 			for (i=1; i <= arraylen(patterns); i++){
-				if (CompareNoCase(thisTab, patterns[i])){
+				if (CompareNoCase(thisTab, patterns[i]) eq 0){
+					writeLog("joinTableTest = #thisTab#; patternMatch = #patterns[i]#");
 					return true;
 				}
 			
