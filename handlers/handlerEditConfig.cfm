@@ -9,7 +9,6 @@
 <cfscript>
 	utils = New cfc.utils();
 	XMLDoc = xmlParse(ideeventInfo);
-	
 	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 	resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
 	configPath = utils.findConfig(projectPath,resourcePath);
@@ -36,7 +35,6 @@
 	</cfoutput>
 	<cfabort> 
 </cfif>
-
 
 <cfheader name="Content-Type" value="text/xml">
 <cfoutput> 
