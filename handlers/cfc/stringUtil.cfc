@@ -9,8 +9,6 @@ component{
 		var result = "";
 		
 		
-		
-		
 		if (CompareNoCase(right(str, 3), "ies") eq 0){
 			result = left(str, len(str)-3) & "y";
 		}
