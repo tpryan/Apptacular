@@ -26,14 +26,15 @@
 			<menu name="Apptacular">
 				<action name="Regenerate Application" handlerid="generate"></action>
 				<action name="------------------------------" />
-				<action name="Create Application" handlerid="handlerCreateProject"></action>
 				<action name="Edit Application Configuration" handlerid="editConfig"></action>
 			    <action name="Edit Database Data Model" handlerid="editDB"></action>
 				<action name="Edit Item Data Model" handlerid="configtable">
 					<filters> 
 						<filter type="file" pattern=".*\.cfc" /> 
 					</filters>
-				</action>			
+				</action>
+				<action name="------------------------------" />
+				<action name="Create Application" handlerid="handlerCreateProject"></action>			
 				<action name="------------------------------" />
 				<action name="Prune Excess Files" handlerid="purge"></action>	
 			</menu>
