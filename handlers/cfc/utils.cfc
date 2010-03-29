@@ -2,6 +2,9 @@
 
 	<cfscript>	
 	
+	/**
+    * @hint Initializes the whole thing.
+    */
 	public function init(string webroot=""){
     	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		
@@ -15,6 +18,9 @@
     	return This;
     }
 	
+	/**
+    * @hint Given a path from the filesystem, returns a CFC dot notation version. 
+    */
 	public string function findCFCPathFromFilePath(string path){
 		
 		var localPath = arguments.path;
@@ -28,8 +34,6 @@
 		results = replaceList(results, "/,\", ".,.");
 		
 		
-		
-		
 		if (compare(right(results, 1), ".") eq 0){
 			results = Left(results, len(results) -1);
 		}
@@ -37,6 +41,10 @@
 		return results;
 	}
 	
+	
+	/**
+    * @hint Traverses up the file system to find an apptacular config.xml file. 
+    */
 	public string function findConfig(required string projectlocation, required string resourcepath, string type="config"){
 		var lresourcepath = arguments.resourcepath;
 		
@@ -55,8 +63,6 @@
 					break;
 				}
 			}	
-			
-			
 		}
 		else if (FindNoCase("schema", arguments.type)){
 			var configFile = "/.apptacular/schema";
@@ -73,15 +79,15 @@
 					break;
 				}
 			}	
-			
 		}
-		
-		
-		
 		
 		return pathToConfig;
 	}
 	
+	
+	/**
+    * @hint Traverses up the file system to find the root of the current Apptacular application. 
+    */
 	public string function findAppRoot(required string projectlocation, required string resourcepath){	
 		var lresourcepath = arguments.resourcepath;
 		var configFile = "/.apptacular/config.xml";

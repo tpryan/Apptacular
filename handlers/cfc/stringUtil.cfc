@@ -1,10 +1,15 @@
 component{
 	
+	/**
+    * @hint Psuedo constructor
+    */
 	public function init(){
     	return This;
     }
     
-	
+	/**
+    * @hint Takes any string and find the singular of the word. 
+    */
 	public string function depluralize(required string str){
 		var result = "";
 		

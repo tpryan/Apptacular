@@ -57,6 +57,10 @@ component accessors="true" {
 		return result & ";";
 	
 	}
+	
+	/**
+    * @hint Builds the string of property attributes.
+    */
 	private any function addPropertyAttributes(any stringBuilder){
 		
 		if (len(This.getName())){

@@ -68,12 +68,19 @@ component accessors="true" extends="dbItem"
 		return This;
 	}
 	
+	
+	/**
+    * @hint Encapsulates all of the logic to set plurals and displays from an entity name
+    */
 	public string function setAllNamesBasedOnEntityName(){
 		This.setPlural(pluralize(This.getEntityName()));
 		This.setDisplayPlural(pluralize(formatDisplayName(This.getEntityName())));
 		This.setDisplayName(formatDisplayName(This.getEntityName()));
 	}
 	
+	/**
+    * @hint Encapsulates all of the logic to create an display name from an entity name
+    */
 	public string function formatDisplayName(string name){
 		var result = capitalize(name);
 		result = Replace(result, "_", " ", "all");
@@ -560,7 +567,6 @@ component accessors="true" extends="dbItem"
 			return arguments.columnArray;
 		}
 		
-		
 		var columns = arguments.columnArray;
 		var i = 0;
 		
@@ -594,8 +600,6 @@ component accessors="true" extends="dbItem"
 				writeDump(sptables.execute());
 				abort;
 			}
-		
-			
 		}
 		
 		//Just select out the columns
@@ -606,8 +610,6 @@ component accessors="true" extends="dbItem"
 		qoq.setAttributes(resultSet = index);  
 		qoq.SetDBType("query"); 
 		
-		
-		
 		try{
 			var indexKeys = qoq.execute(sql=queryString).getResult()['Index_keys']; 
 			indexKeys = Replace(indexKeys, ", ", ",", "ALL");
@@ -617,7 +619,6 @@ component accessors="true" extends="dbItem"
 			if (FindNoCase("The select column reference [Index_Keys]", e.detail)){
 				return columns;
 			}
-			
 		}
 		
 		//loop through the columns and alter any primary key holding columns
@@ -857,14 +858,10 @@ component accessors="true" extends="dbItem"
 		else return FALSE;
 	}
 	
-	
-	
 	/**
     * @hint Determines if the name of a reference table makes it likely that it is a join table.
     */
 	private string function doReferencesDenoteAJoinTable(required array a){
-	
-		
 		
 		//This is the logic that figures out if this is a join table.
 		if (ArrayLen(a) eq 2){
@@ -872,8 +869,6 @@ component accessors="true" extends="dbItem"
 			var	tab1 = a[1];
 			var	tab2 = a[2];
 			var i = 0;
-			
-			
 			
 			if(len(this.getPrefix()) gt 1 ){
 				var prefix = this.getPrefix();

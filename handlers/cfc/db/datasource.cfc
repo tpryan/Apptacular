@@ -111,6 +111,9 @@ component accessors="true" extends="dbItem"
 	}
 	
 	/*TODO: Encaspulate this better.*/
+	/**
+	* @hint Checks all the tables for Join Tables.
+	*/
 	public string function checkForJoinTables(){
 		var i = 0;
 		var j = 0;
@@ -231,6 +234,9 @@ component accessors="true" extends="dbItem"
 		return objectToXML("datasource");
 	}
 	
+	/**
+	* @hint Abstracts table retrieval method away from underlying MSSQL vs other decision. 
+	*/
 	public query function getTablesFromDatabase(){
 		
 		if (FindNoCase("Microsoft", This.getEngine())){
@@ -244,6 +250,9 @@ component accessors="true" extends="dbItem"
 	
 	}
 	
+	/**
+    * @hint Spins through the tables removes the prefix from an entityname.  
+    */
 	public void function dePrefixTables(){
 		var i = 0;
 		if (len(This.getPrefix()) > 0){
@@ -266,6 +275,9 @@ component accessors="true" extends="dbItem"
 	
 	}
 	
+	/**
+    * @hint Spins through the tables singularizes entitynames.  
+    */
 	public void function dePluralize(any stringUtil){
 		var i = 0;
 		if (len(This.getPrefix()) > 0){
@@ -287,6 +299,9 @@ component accessors="true" extends="dbItem"
 	
 	}
 	
+	/**
+    * @hint Gets table info from MSSQL using sp_help instead of CFDBInfo
+    */
 	private query function getTablesFromMSSQL(){
 		var sptables = New storedProc();
 		var procResult = New storedProcResult();
@@ -310,12 +325,18 @@ component accessors="true" extends="dbItem"
 		return tables;
 	}
 	
+	/**
+    * @hint Gets table info from database using CFDBInfo
+    */
 	private query function getTablesFromGeneric(){
 		dbinfo.setType("tables");
 		var tables = dbinfo.send().getResult();
 		return tables;
 	}
 	
+	/**
+    * @hint Reorders the tables in alphbetical order 
+    */
 	public array function getTablesOrdered(){
 		var tableList = StructKeyArray(variables.tablesStruct);
 		var i = 0;

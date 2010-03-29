@@ -20,10 +20,16 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 		return This;
 	}
 	
+	/**
+    * @hint Inserts a new line into the body content.
+    */
 	public void function appendBody(string bodyContent=""){
 		variables.body.append(arguments.bodyContent & variables.NL);
 	}
 	
+	/**
+    * @hint Inserts a new property into the build file..
+    */
 	public void function addProperty(required string name, required string value){
 		var prop = '	<property name="#arguments.name#" value="#arguments.value#" />';
 		ArrayAppend(variables.properties, prop);
@@ -31,7 +37,7 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 	
 	
 	/**
-		* @hint Returns the content.
+	* @hint Returns the content.
 	*/
 	public string function getFileContent(){
 		var result = CreateObject("java","java.lang.StringBuilder").Init();
@@ -49,6 +55,9 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 		return result;
 	}
 	
+	/**
+    * @hint Gets the XML header for the build file, and a few starter elements.
+    */
 	private string function getHeader(){
 		variables.header.append('<?xml version="1.0" encoding="UTF-8"?>' & variables.NL);
 		variables.header.append('<project name="#This.getProjectName()#"');
@@ -64,6 +73,9 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 		return header;
 	}
 	
+	/**
+    * @hint Gets the XML footer for the build file.
+    */
 	private string function getFooter(){
 		variables.footer.append('</project>' & variables.NL);
 		return footer;

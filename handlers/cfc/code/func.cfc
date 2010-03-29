@@ -50,6 +50,9 @@ component displayname="function" hint="A CFC representation of an function for c
 		AddOperationScript(tabString & trim(arguments.Operation)  & ";");
 	}
 	
+	/**
+	* @hint Begins a simple if statement in both CFML and CFScript 
+	*/
 	public void function StartSimpleIF(required string conditional, numeric tabs=0){
 		var tab = "	";
 		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
@@ -63,6 +66,9 @@ component displayname="function" hint="A CFC representation of an function for c
 		AddOperationScript(tabString & "if (" & trim(arguments.conditional)  & "){");
 	}
 	
+	/**
+	* @hint Adds a simple else statement in both CFML and CFScript 
+	*/
 	public void function StartSimpleElse(numeric tabs=0 ){
 		var tab = "	";
 		var tabString = CreateObject("java","java.lang.StringBuilder").Init();
@@ -76,7 +82,9 @@ component displayname="function" hint="A CFC representation of an function for c
 		AddOperationScript(tabString & "else{");
 	}
 	
-	
+	/**
+	* @hint Ends a simple if statement in both CFML and CFScript 
+	*/
 	public void function EndSimpleIF(numeric tabs=0 , boolean nextIsElse = false ){
 		var tab = "	";
 		var tabString = CreateObject("java","java.lang.StringBuilder").Init();

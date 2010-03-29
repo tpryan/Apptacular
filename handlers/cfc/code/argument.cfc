@@ -6,6 +6,9 @@ component displayname="argument" hint="A CFC representation of an argument for c
 	property name="defaultvalue" type="string"  hint="The value to set as default for the argument";
 	property name="hint" type="string" hint="The hint to add to the argument.";
 	
+	/**
+    * @hint Pseudo constructor
+    */
 	public argument function init(){
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		return This;

@@ -277,6 +277,9 @@ component{
 		return ArrayLen(files);
 	}
 	
+	/**
+    * @hint Utility used to log the time each step takes.
+    */
 	public void function logTime(required input){
 		var totalTime = (arguments.input.endTime - arguments.input.startTime) / 1000;	
 		writeLog("Apptacular step: #datasource.getName()# :#arguments.input.label# took #NumberFormat(totalTime, "_.____")# seconds.");

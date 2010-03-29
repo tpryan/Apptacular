@@ -4,6 +4,9 @@ component accessors="true"{
 	property name="BooleanList" getter="true" setter="false";
 	property name="TextAreaList" getter="true" setter="false";
 
+	/**
+	* @hint The init that fires up all of this stuff. 
+	*/
 	public function init(required string itemToEdit){
    		variables.allowedList = setAllowedList();
     	variables.BooleanList = setBooleanList();
@@ -13,6 +16,9 @@ component accessors="true"{
    		return This;
     }
 	
+	/**
+	* @hint Defines the list of configuration options that you can edit in builder ui
+	*/
 	private struct function setAllowedList(){
 		
 		var allowed = structNew();
@@ -29,6 +35,9 @@ component accessors="true"{
 		return allowed;
 	}
 	
+	/**
+	* @hint Defines the list of configuration options that present a boolean option in Builder ui.
+	*/
 	private struct function setBooleanList(){
 		
 		var booleans = structNew();
@@ -41,7 +50,9 @@ component accessors="true"{
 		return booleans;
 	}
 
-
+	/**
+	* @hint Defines the list of configuration options that present a richtextarea in Builder ui.
+	*/
 	private struct function setTextAreaList(){
 		
 		var textareas = structNew();
@@ -54,14 +65,23 @@ component accessors="true"{
 		return textareas;
 	}
 	
+	/**
+	* @hint Test if configuration option presents a boolean option in Builder ui.
+	*/
 	public boolean function isBooleanUI(required string field){
 		return ListFindNoCase(booleanList[itemToEdit], arguments.field);
 	}
 	
+	/**
+	* @hint Test if configuration option presents a richtextarea in Builder ui.
+	*/
 	public boolean function isTextAreaUI(required string field){
 		return ListFindNoCase(TextAreaList[itemToEdit], arguments.field);
 	}
 	
+	/**
+	* @hint Gets the list of all configs that can be edited in Builder UI. 
+	*/
 	public string function getAllowedList(){
 		return allowedList[itemToEdit];
 	}
