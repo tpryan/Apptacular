@@ -34,7 +34,8 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint Populate table information 
 	 */		
-	private void function populateTables(){
+	public void function populateTables(){
+		writeLog("populateTables called");
 		var i = 0;
 		var j = 0;
 		var tablesArray = ArrayNew(1);
@@ -109,6 +110,43 @@ component accessors="true" extends="dbItem"
 		
 	}
 	
+	/*TODO: Encaspulate this better.*/
+	public string function checkForJoinTables(){
+		var i = 0;
+		var j = 0;
+		var tablesArray = This.getTables();
+		var tablesStruct = This.getTablesStruct();
+	
+		//check for join tables.
+		var tablesStructKeys = StructKeyArray(tablesStruct);
+		
+		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
+			var localTable = tablesStruct[tablesStructKeys[i]];
+			var joinedTables = localTable.getJoinedTables();
+			
+			if (ArrayLen(joinedTables) gt 0 AND localTable.getIsJoinTable()){
+				var joinTable = tablesStruct[tablesStructKeys[i]];
+				var joinTableName = joinTable.getName();
+					
+				for (j=1; j <= ArrayLen(joinedTables); j++){
+					var tempTable = tablesStruct[joinedTables[j]];
+					temptable.setHasJoinTable(TRUE);
+					temptable.addJoinTable(joinTableName);
+					tablesStruct[joinedTables[j]] = tempTable;
+				}
+			}
+		}
+		
+		// poppulate array
+		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
+			ArrayAppend(tablesArray, tablesStruct[tablesStructKeys[i]]);
+		}
+		
+		This.setTables(tablesArray);
+		This.setTablesStruct(tablesStruct);
+	
+	}
+	
 	/**
 	 * @hint Counts rows for each table 
 	 */	
@@ -162,6 +200,28 @@ component accessors="true" extends="dbItem"
 	 */		
 	public table function getTable(required string tableName){
 		return This.getTablesStruct()[arguments.tableName];
+	}
+	
+	/**
+	 * @hint Alters a table object from datasource with that name. 
+	 */		
+	public void function setTable(required string tableName, required any table){
+		var i = 0;
+		var tableStruct = This.getTablesStruct();
+		tableStruct[arguments.tableName] = arguments.table;
+		This.setTablesStruct(tableStruct);
+		
+		var tableArray = This.getTables();
+		
+		for (i=1; i <= ArrayLen(tableArray);i++){
+			if (CompareNoCase(tableArray[i].getName(),arguments.tableName)){
+				tableArray[i] = arguments.table;
+				break;
+			}
+		
+		}
+		This.setTables(tableArray);
+		
 	}
 
 	/**

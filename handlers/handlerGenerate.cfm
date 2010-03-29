@@ -1,5 +1,9 @@
 <cfsetting showdebugoutput="false" />
 
+	<cfif not structKeyExists(form, "ideeventInfo")>
+	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="ideeventInfo" />
+</cfif>
+
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 <cfscript>
 	failed = FALSE;
@@ -121,7 +125,11 @@
 	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
+		
+		
 		datamodel.dePrefixTables();
+		datamodel.checkForJoinTables();
+		
 		
 		if (config.getDepluralize()){
 			stringUtil = new apptacular.handlers.cfc.stringUtil();

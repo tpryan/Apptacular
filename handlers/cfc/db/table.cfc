@@ -229,6 +229,7 @@ component accessors="true" extends="dbItem"
 		
 		var	columns = dbinfo.send().getResult();
 		var i = 0;
+		var j = 0;
 		var columnArray = arrayNew(1);
 		var columnStruct = structNew();
 		var referencedTables = structNew();
@@ -315,6 +316,7 @@ component accessors="true" extends="dbItem"
 			This.setIsJoinTable(TRUE);
 			This.setCreateInterface(FALSE);
 			This.setJoinedTables(structKeyArray(referencedTables));
+			
 		}
 		
 		//Added this because cfdbinfo doesn't like composite primary keys in MSSQL
@@ -879,6 +881,8 @@ component accessors="true" extends="dbItem"
 				tab1 = Replace(tab1, prefix, "", "one");
 				tab2 = Replace(tab2, prefix, "", "one");
 			}
+			
+			writeLog("prefix = #this.getPrefix()#");
 			
 			var patterns = [];
 			ArrayAppend(patterns, "#tab1#to#tab2#");
