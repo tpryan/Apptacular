@@ -683,7 +683,7 @@ component extends="codeGenerator"{
 			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> ');
 			view.AppendBody('		<cfif url.#identity# neq 0>');
-		    view.AppendBody('			<a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
+		    view.AppendBody('			/ <a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
 		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
 			view.AppendBody('		</cfif>');
 			view.AppendBody('		</p></cfoutput>');	
