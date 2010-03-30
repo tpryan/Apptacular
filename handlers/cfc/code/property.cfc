@@ -24,6 +24,7 @@ component accessors="true" {
 	property name="insert" type="string" hint="See reference for cfproperty";
 	property name="update" type="string" hint="See reference for cfproperty";
 	property name="hint" type="string" hint="See reference for cfproperty";
+	property name="remotingfetch" type="string" hint="See reference for cfproperty";
 	
 	/**
 	* @hint The init that fires up all of this stuff. 
@@ -153,6 +154,9 @@ component accessors="true" {
 		
 		if (len(This.getUpdate())){
        		arguments.stringBuilder.append('update="#This.getUpdate()#" ');
+       	}
+		if (len(This.getRemotingFetch())){
+       		arguments.stringBuilder.append('remotingFetch="#This.getRemotingFetch()#" ');
        	}
 		
 		stringBuilder = trim(stringBuilder);

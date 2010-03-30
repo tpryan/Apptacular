@@ -23,7 +23,17 @@ component extends="codeGenerator"{
 		var init= New apptacular.handlers.cfc.code.func();
 		init.setName('init');
 		init.setHint("A initialization routine, runs when object is created.");
-		init.setAccess("public");
+		
+		
+		//works around a bug in CF 9.0 where even non remotely called functions need to be remote
+		//when accessed by a remote service.
+		if (variables.config.getCreateServices()){
+			init.setAccess(variables.config.getServiceAccess());
+		}
+		else{
+			init.setAccess("public");
+		}
+		
 		init.setReturnType(table.getEntityName());
 		init.setReturnResult('This');
 		
@@ -76,6 +86,7 @@ component extends="codeGenerator"{
 				
 				property.setType("");
 				property.setOrmType("");
+				property.setRemotingFetch(true);
 				property.setFieldtype('many-to-one');
 	       		property.setFkcolumn(column.getName());
 	       		property.setCFC(fTable.getEntityName());
@@ -109,6 +120,7 @@ component extends="codeGenerator"{
 			property.setType("");
 			property.setOrmType("");
 			property.setFieldtype('many-to-one');
+			property.setRemotingFetch(true);
        		property.setFkcolumn(composites[compositeArray[i]]);
        		property.setCFC(fTable.getEntityName());
        		property.setInverse(true);
@@ -188,6 +200,7 @@ component extends="codeGenerator"{
 			   		property.setCascade("all-delete-orphan");
 					property.setSingularname(foreignTable.getEntityName());
 					property.setOrderby(foreignTable.getOrderBy());
+					property.setRemotingFetch(true);
 			   		cfc.AddProperty(property);
 					
 					var countFunc= New apptacular.handlers.cfc.code.func();
