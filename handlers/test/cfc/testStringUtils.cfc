@@ -64,6 +64,14 @@ component extends="mxunit.framework.TestCase"{
 		var actual = stringUtil.depluralize(starting);
 		AssertEquals(expected, actual);
     }
+	
+	public void function testStatus(){
+		var starting = "status";
+		var expected = "status";
+		var stringUtil = New apptacular.handlers.cfc.stringUtil();
+		var actual = stringUtil.depluralize(starting);
+		AssertEquals(expected, actual);
+    }
     
 
 }
