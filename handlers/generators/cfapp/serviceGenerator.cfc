@@ -81,59 +81,105 @@ component  extends="codeGenerator"
 		
 	    
 		//create Count Method
-		var func= New apptacular.handlers.cfc.code.func();
-		func.setName('count');
-		func.setHint("Returns the count of records in #EntityName#");
-		func.setAccess(access);
-		func.setReturnType("numeric");
-		func.setReturnResult('ormExecuteQuery("select Count(*) from #entityName#")[1]');
+		var func= createCountMethod(table);
 		cfc.addFunction(func);
 		
 		//create list method
-		var list= New apptacular.handlers.cfc.code.func();
-		list.setName('list');
-		list.setHint("Returns all of the records in #EntityName#, with paging.");
-		list.setAccess(access);
-		list.setReturnType("#cfcPath#.#EntityName#[]");
-		list.setReturnResult('entityLoad("#entityName#", {}, "#orderby#", arguments)');
-		
-		list.AddOperation('		<cfif arguments.offset eq 0>');
-		list.AddOperation('			<cfset structDelete(arguments, "offset") />');		
-		list.AddOperation('		</cfif>');
-		list.AddOperation('		<cfif arguments.maxresults eq 0>');
-		list.AddOperation('			<cfset structDelete(arguments, "maxresults") />');		
-		list.AddOperation('		</cfif>');
-		
-		list.AddOperationScript('		if(arguments.offset eq 0){');
-		list.AddOperationScript('			structDelete(arguments, "offset");');		
-		list.AddOperationScript('		}');
-		list.AddOperationScript('		if(arguments.maxresults eq 0){');
-		list.AddOperationScript('			structDelete(arguments, "maxresults");');		
-		list.AddOperationScript('		}');
-		
-		var offset = New apptacular.handlers.cfc.code.Argument();
-		offset.setName('offset');
-		offset.setRequired(false);
-		offset.setType('numeric');
-		offset.setDefaultValue(0);
-		list.AddArgument(offset);
-		
-		var maxresults = New apptacular.handlers.cfc.code.Argument();
-		maxresults.setName('maxresults');
-		maxresults.setRequired(false);
-		maxresults.setType('numeric');
-		maxresults.setDefaultValue(0);
-		list.AddArgument(maxresults);
-		
-		
+		var list= createListMethod(table, false);
 		cfc.addFunction(list);
 		
+		var listPaged= createListMethod(table, true);
+		cfc.addFunction(listPaged);
+		
 		//Create get method
+		var get= This.createGetMethod(table);
+		cfc.addFunction(get);
+		
+		//Remove views from editing
+		if (not table.getIsView()){
+		
+			//Update Method
+			var func= createUpdateMethod(table);
+			cfc.addFunction(func);
+			
+			//Delete Method
+			var func = createDestroyMethod(table);
+			cfc.addFunction(func);
+		
+		}	
+		
+		//Search Method
+		var search= createSearchMethod(table, false);
+		cfc.addFunction(search);
+		
+		var searchPaged= createSearchMethod(table, true);
+		cfc.addFunction(searchPaged);				
+		
+		return cfc;
+	}
+	
+	/**
+    * @hint Creates the delete method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createDestroyMethod(required any table){
+		var entityName = arguments.table.getEntityName();
+		var access = variables.config.getServiceAccess();
+		
+		var entity = New apptacular.handlers.cfc.code.Argument();
+		entity.setName("#EntityName#");
+		entity.setRequired(true);
+		entity.setType("any");
+		
+		var func= New apptacular.handlers.cfc.code.func();
+		func.setName("destroy");
+		func.setHint("Deletes one record from #EntityName#.");
+		func.setAccess(access);
+		func.setReturnType("void");
+		func.AddArgument(entity);
+		func.AddOperation('		<cfset EntityDelete(arguments.#EntityName#) />');
+		func.AddOperationScript('		EntityDelete(arguments.#EntityName#);');		
+
+		return func;	
+	}    
+
+	/**
+    * @hint Creates the update method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createUpdateMethod(required any table){
+		var entityName = arguments.table.getEntityName();
+		var access = variables.config.getServiceAccess();
+		
+		var entity = New apptacular.handlers.cfc.code.Argument();
+		entity.setName("#EntityName#");
+		entity.setRequired(true);
+		entity.setType("any");
+		
+		var func= New apptacular.handlers.cfc.code.func();
+		func.setName("update");
+		func.setHint("Updates one record from #EntityName#.");
+		func.setAccess(access);
+		func.setReturnType("void");
+		func.AddArgument(entity);
+		func.AddSimpleSet("arguments.#EntityName#.nullifyZeroID()", 2);
+		func.AddSimpleSet("EntitySave(arguments.#EntityName#)", 2);
+
+		return func;	
+	}
+	
+	/**
+    * @hint Creates the get method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createGetMethod(required any table){
+		var entityName = arguments.table.getEntityName();
+		var type = arguments.table.getColumn(table.getIdentity()).getType();
+		var access = variables.config.getServiceAccess();
+		var cfcPath = variables.config.getEntityCFCPath();
+		
 		var id = New apptacular.handlers.cfc.code.Argument();
 		id.setName('id');
 		id.setRequired(true);
 		
-		if (table.hasCompositePrimaryKey()){
+		if (arguments.table.hasCompositePrimaryKey()){
 			id.setType('struct');	
 		}
 		else if(FindNoCase("numeric", type)){
@@ -143,136 +189,193 @@ component  extends="codeGenerator"
 			id.setType('string');
 		}
 		
-		var get= New apptacular.handlers.cfc.code.func();
-		get.setName('get');
-		get.setHint("Returns one record from #EntityName#.");
-		get.setAccess(access);
-		get.setReturnType("#cfcPath#.#EntityName#");
-		get.AddArgument(id);
+		var func= New apptacular.handlers.cfc.code.func();
+		func.setName('get');
+		func.setHint("Returns one record from #EntityName#.");
+		func.setAccess(access);
+		func.setReturnType("#cfcPath#.#EntityName#");
+		func.AddArgument(id);
 		
-		get.setReturnResult('EntityLoad("#EntityName#", arguments.id, true)');
-		cfc.addFunction(get);
+		func.setReturnResult('EntityLoad("#EntityName#", arguments.id, true)');
 		
-		//Remove views from editing
-		if (not table.getIsView()){
+
+		return func;	
+	}
+
+	/**
+    * @hint Creates the count method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createCountMethod(required any table){
+		var entityName = arguments.table.getEntityName();
+		var access = variables.config.getServiceAccess();
 		
-			//Update Method
-			var entity = New apptacular.handlers.cfc.code.Argument();
-			entity.setName("#EntityName#");
-			entity.setRequired(true);
-			entity.setType("any");
+		var func= New apptacular.handlers.cfc.code.func();
+		func.setName('count');
+		func.setHint("Returns the count of records in #EntityName#");
+		func.setAccess(access);
+		func.setReturnType("numeric");
+		func.setReturnResult('ormExecuteQuery("select Count(*) from #entityName#")[1]');
+
+		return func;	
+	}
+	
+	/**
+    * @hint Creates the list method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createListMethod(required any table, boolean paged=false){
+		var entityName = arguments.table.getEntityName();
+		var access = variables.config.getServiceAccess();
+		var cfcPath = variables.config.getEntityCFCPath();
+		var OrderBy = table.getOrderBy();
+		
+		var func= New apptacular.handlers.cfc.code.func();
+		
+		if (arguments.paged){
+			func.setName('listPaged');
+			func.setHint("Returns all of the records in #EntityName#, with paging.");
+			func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#", arguments)');
+		}
+		else{
+			func.setName('list');
+			func.setHint("Returns all of the records in #EntityName#.");
+			func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#")');
+		}
+		func.setAccess(access);
+		func.setReturnType("#cfcPath#.#EntityName#[]");
+		
+		
+		
+		if (arguments.paged){
 			
-			var func= New apptacular.handlers.cfc.code.func();
-			func.setName("update");
-			func.setHint("Updates one record from #EntityName#.");
-			func.setAccess(access);
-			func.setReturnType("void");
-			func.AddArgument(entity);
-			func.AddOperation('		<cfset arguments.#EntityName#.nullifyZeroID() />');
-			func.AddOperation('		<cfset EntitySave(arguments.#EntityName#) />');
-			func.AddOperationScript('		arguments.#EntityName#.nullifyZeroID();');
-			func.AddOperationScript('		EntitySave(arguments.#EntityName#);');		
-			cfc.addFunction(func);
+			func.startSimpleIf("arguments.offset eq 0", 2);
+			func.addSimpleSet('structDelete(arguments, "offset")',2);
+			func.endSimpleIf(2);
 			
-			//Delete Method
-			var func= New apptacular.handlers.cfc.code.func();
-			func.setName("destroy");
-			func.setHint("Deletes one record from #EntityName#.");
-			func.setAccess(access);
-			func.setReturnType("void");
-			func.AddArgument(entity);
-			func.AddOperation('		<cfset EntityDelete(arguments.#EntityName#) />');
-			func.AddOperationScript('		EntityDelete(arguments.#EntityName#);');		
-			cfc.addFunction(func);
+			func.startSimpleIf("arguments.maxresults eq 0", 2);
+			func.addSimpleSet('structDelete(arguments, "maxresults")',2);
+			func.endSimpleIf(2);
+			
+			var offset = New apptacular.handlers.cfc.code.Argument();
+			offset.setName('offset');
+			offset.setRequired(false);
+			offset.setType('numeric');
+			offset.setDefaultValue(0);
+			func.AddArgument(offset);
+			
+			var maxresults = New apptacular.handlers.cfc.code.Argument();
+			maxresults.setName('maxresults');
+			maxresults.setRequired(false);
+			maxresults.setType('numeric');
+			maxresults.setDefaultValue(0);
+			func.AddArgument(maxresults);
+		}
+		return func;	
+	}
+	
+	/**
+    * @hint Creates the search method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createSearchMethod(required any table, boolean paged=false){
+		var entityName = arguments.table.getEntityName();
+		var access = variables.config.getServiceAccess();
+		var cfcPath = variables.config.getEntityCFCPath();
+		var OrderBy = table.getOrderBy();
+		var columns = table.getColumns();
 		
-		}	
 		
-		//Search Method
-		var search= New apptacular.handlers.cfc.code.func();
-		search.setName("search");
-		search.setHint("Performs searchs against #EntityName#.");
-		search.setAccess(access);
-		search.setReturnType("#cfcPath#.#EntityName#[]");
-		search.addLocalVariable("hqlString","string","FROM #EntityName# ");
-		search.addLocalVariable("whereClause","string","");
-		search.addLocalVariable("params","struct","Duplicate(arguments)", false);
+		var func= New apptacular.handlers.cfc.code.func();
+		
+		if (arguments.paged){
+			func.setName('searchPaged');
+			func.setHint("Performs search against #EntityName#., with paging.");
+		}
+		else{
+			func.setName('search');
+			func.setHint("Performs search against #EntityName#.");
+		}
+		
+		
+		func.setAccess(access);
+		func.setReturnType("#cfcPath#.#EntityName#[]");
+		func.addLocalVariable("hqlString","string","FROM #EntityName# ");
+		func.addLocalVariable("whereClause","string","");
+		func.addLocalVariable("params","struct","Duplicate(arguments)", false);
 		
 		var q = New apptacular.handlers.cfc.code.Argument();
 		q.setName("q");
 		q.setType("string");
 		q.setDefaultValue("");
-		search.addArgument(q);
+		func.addArgument(q);
 		
-		var offset = New apptacular.handlers.cfc.code.Argument();
-		offset.setName('offset');
-		offset.setRequired(false);
-		offset.setType('numeric');
-		offset.setDefaultValue(0);
-		search.AddArgument(offset);
-		
-		var maxresults = New apptacular.handlers.cfc.code.Argument();
-		maxresults.setName('maxresults');
-		maxresults.setRequired(false);
-		maxresults.setType('numeric');
-		maxresults.setDefaultValue(0);
-		search.AddArgument(maxresults);
 		
 		// handle manipulating the input arguments to be appropriate to pass to entityLoad
-		search.AddOperation('');
-		search.AddOperation('		<cfif params.offset eq 0>');
-		search.AddOperation('			<cfset structDelete(params, "offset") />');		
-		search.AddOperation('		</cfif>');
-		search.AddOperation('		<cfif params.maxresults eq 0>');
-		search.AddOperation('			<cfset structDelete(params, "maxresults") />');		
-		search.AddOperation('		</cfif>');
-		search.AddOperation('		<cfset structDelete(params, "q") />');
-		search.AddOperation('');		
-		search.AddOperationScript('');
-		search.AddOperationScript('		if(params.offset eq 0){');
-		search.AddOperationScript('			structDelete(params, "offset");');		
-		search.AddOperationScript('		}');
-		search.AddOperationScript('		if(params.maxresults eq 0){');
-		search.AddOperationScript('			structDelete(params, "maxresults");');		
-		search.AddOperationScript('		}');
-		search.AddOperationScript('		structDelete(params, "q");');
-		search.AddOperationScript('');	
+		if (arguments.paged){
+			
+			func.startSimpleIf("arguments.offset eq 0", 2);
+			func.addSimpleSet('structDelete(arguments, "offset")',2);
+			func.endSimpleIf(2);
+			
+			func.startSimpleIf("arguments.maxresults eq 0", 2);
+			func.addSimpleSet('structDelete(arguments, "maxresults")',2);
+			func.endSimpleIf(2);
+			
+			var offset = New apptacular.handlers.cfc.code.Argument();
+			offset.setName('offset');
+			offset.setRequired(false);
+			offset.setType('numeric');
+			offset.setDefaultValue(0);
+			func.AddArgument(offset);
+			
+			var maxresults = New apptacular.handlers.cfc.code.Argument();
+			maxresults.setName('maxresults');
+			maxresults.setRequired(false);
+			maxresults.setType('numeric');
+			maxresults.setDefaultValue(0);
+			func.AddArgument(maxresults);
+		}
 		
 		//Build the where clause
-		search.AddOperation('		<cfif len(arguments.q) gt 0>');
-		search.AddOperationScript('		if (len(arguments.q) gt 0){');		
+		func.AddOperation('		<cfif len(arguments.q) gt 0>');
+		func.AddOperationScript('		if (len(arguments.q) gt 0){');		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i].getName();
 			
 			if (FindNoCase("char",columns[i].getDataType())){
-				search.AddOperationScript('			whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|"); 	  ');		
-				search.AddOperation('				<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
+				func.AddOperationScript('			whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|"); 	  ');		
+				func.AddOperation('				<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
 			}
 		}
 		
-		search.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');			
-		search.AddOperation('		</cfif>');
-		search.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
-		search.AddOperationScript('		}');
+		func.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');			
+		func.AddOperation('		</cfif>');
+		func.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
+		func.AddOperationScript('		}');
 		
 		//Add Where Clause
-		search.AddOperationScript('		if (len(whereClause) gt 0){');	
-		search.AddOperationScript('			hqlString = hqlString & " WHERE " & whereClause;');	
-		search.AddOperationScript('		}');
-		search.AddOperation('		<cfif len(whereClause) gt 0>');
-		search.AddOperation('			<cfset hqlString = hqlString & " WHERE " & whereClause />');
-		search.AddOperation('		</cfif>');
+		func.AddOperationScript('		if (len(whereClause) gt 0){');	
+		func.AddOperationScript('			hqlString = hqlString & " WHERE " & whereClause;');	
+		func.AddOperationScript('		}');
+		func.AddOperation('		<cfif len(whereClause) gt 0>');
+		func.AddOperation('			<cfset hqlString = hqlString & " WHERE " & whereClause />');
+		func.AddOperation('		</cfif>');
 		
 		//Add order by
-		search.AddOperationScript('		hqlString = hqlString & " ORDER BY #OrderBy#";');	
-		search.AddOperation('		<cfset hqlString = hqlString & " ORDER BY #OrderBy#" />');
+		func.AddOperationScript('		hqlString = hqlString & " ORDER BY #OrderBy#";');	
+		func.AddOperation('		<cfset hqlString = hqlString & " ORDER BY #OrderBy#" />');
 		
 		//Execute and return
-		search.setReturnResult('ormExecuteQuery(hqlString, false, params)');
-		cfc.addFunction(search);		
+		func.setReturnResult('ormExecuteQuery(hqlString, false, params)');
 		
-		return cfc;
-	}    
+		
+		
+		
+		
+		
+		
+		
+		return func;	
+	}
 
 
 }
