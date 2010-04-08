@@ -64,6 +64,17 @@ component accessors="true"{
 	property name="LockApplication" type="boolean" hint="Setting this to true will prevent any new files from being written or modified by the Apptacular extension";
 	property name="selectorThreshold" type="numeric" hint="The number of items in a related table past which we don't want to create drop down menus that will cause the system to slow down like crazy.";
 	
+	//Service method names, allows changed list to GetAll, if that's your preferred syntax'
+	property name="serviceGetMethod" type="string" hint="The name of the method in a serivice that retrieves a single record.";
+	property name="serviceUpdateMethod" type="string" hint="The name of the method in a serivice that updates a single record.";
+	property name="serviceDeleteMethod" type="string" hint="The name of the method in a serivice that deletes a single record.";
+	property name="serviceListMethod" type="string" hint="The name of the method in a serivice that retrieves a all records.";
+	property name="serviceListPagedMethod" type="string" hint="The name of the method in a serivice that retrieves a all records, in pages.";
+	property name="serviceSearchMethod" type="string" hint="The name of the method in a serivice searches for records.";
+	property name="serviceSearchPagedMethod" type="string" hint="The name of the method in a serivice searches for records, in pages.";
+	property name="serviceInitMethod" type="string" hint="The name of the method in a serivice that acts as the constructor.";
+	property name="serviceCountMethod" type="string" hint="The name of the method in a serivice that returns a count of records in the underlying table.";
+	
 	
 	/**
 	* @hint The init that fires up all of this stuff. 
@@ -99,6 +110,12 @@ component accessors="true"{
 		calculatePaths();
 	
 		//Settings defaults for these settings
+		setConfigDefaults();
+			
+    	return This;
+    }
+	
+	private void function setConfigDefaults(){
 		This.setServiceAccess("remote");
 		This.setCreateViews(true);
 		This.setCreateAppCFC(true);
@@ -107,19 +124,27 @@ component accessors="true"{
 		This.setCreateLogin(false);
 		This.setCreateTests(false);
 		This.setCFCFormat("cfscript");
+		
 		This.setOverwriteDataModel(false);
 		This.setLockApplication(false);
 		This.setWireOneToManyinViews(true);
 		This.setLogSQL(true);
 		This.setSelectorThreshold(50);
 		This.setDepluralize(false);
-		
 		This.setDateFormat("mm/dd/yyyy");
-		
 		This.setTimeFormat("h:mm tt");
-			
-    	return This;
-    }
+	
+		This.setServiceDeleteMethod("destroy");
+		This.setServiceGetMethod("get");
+		This.setServiceInitMethod("init");
+		This.setServiceListMethod("list");
+		This.setServiceListPagedMethod("listPaged");
+		This.setServiceSearchMethod("search");
+		This.setServiceSearchPagedMethod("searchPaged");
+		This.setServiceUpdateMethod("update");
+		This.setServiceCountMethod("count");			
+	
+	}
 	
 	/**
 	* @hint Calculates the url of file paths that are passed in. 

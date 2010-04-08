@@ -57,12 +57,6 @@ component  extends="codeGenerator"
 	public apptacular.handlers.cfc.code.cfc function createORMServiceCFC(required any table){
 		var i=0;
 		var EntityName = table.getEntityName();
-		var OrderBy = table.getOrderBy();
-		var cfcPath = variables.config.getEntityCFCPath();
-		var columns = table.getColumns();
-		var access = variables.config.getServiceAccess();
-		var type = table.getColumn(table.getIdentity()).getType();
-		var tableName = table.getName();
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
 	    cfc.setName(EntityName & "Service");
@@ -70,49 +64,42 @@ component  extends="codeGenerator"
 		cfc.setFormat(variables.config.getCFCFormat());
 		
 		//create Init method
-		var init= New apptacular.handlers.cfc.code.func();
-		init.setName('init');
-		init.setHint("A initialization routine, runs when object is created.");
-		init.setAccess(access);
-		init.setReturnType(table.getEntityName() & "Service");
-		init.setReturnResult('This');
-		init.AddSimpleSet('This.table = "#tableName#"', 2);
+		var init= createInitMethod(arguments.table);
 		cfc.addFunction(init);
-		
 	    
 		//create Count Method
-		var func= createCountMethod(table);
+		var func= createCountMethod(arguments.table);
 		cfc.addFunction(func);
 		
 		//create list method
-		var list= createListMethod(table, false);
+		var list= createListMethod(arguments.table, false);
 		cfc.addFunction(list);
 		
-		var listPaged= createListMethod(table, true);
+		var listPaged= createListMethod(arguments.table, true);
 		cfc.addFunction(listPaged);
 		
 		//Create get method
-		var get= This.createGetMethod(table);
+		var get= This.createGetMethod(arguments.table);
 		cfc.addFunction(get);
 		
 		//Remove views from editing
 		if (not table.getIsView()){
 		
 			//Update Method
-			var func= createUpdateMethod(table);
+			var func= createUpdateMethod(arguments.table);
 			cfc.addFunction(func);
 			
 			//Delete Method
-			var func = createDestroyMethod(table);
+			var func = createDestroyMethod(arguments.table);
 			cfc.addFunction(func);
 		
 		}	
 		
 		//Search Method
-		var search= createSearchMethod(table, false);
+		var search= createSearchMethod(arguments.table, false);
 		cfc.addFunction(search);
 		
-		var searchPaged= createSearchMethod(table, true);
+		var searchPaged= createSearchMethod(arguments.table, true);
 		cfc.addFunction(searchPaged);				
 		
 		return cfc;
@@ -131,7 +118,7 @@ component  extends="codeGenerator"
 		entity.setType("any");
 		
 		var func= New apptacular.handlers.cfc.code.func();
-		func.setName("destroy");
+		func.setName(variables.config.getServiceDeleteMethod());
 		func.setHint("Deletes one record from #EntityName#.");
 		func.setAccess(access);
 		func.setReturnType("void");
@@ -155,7 +142,7 @@ component  extends="codeGenerator"
 		entity.setType("any");
 		
 		var func= New apptacular.handlers.cfc.code.func();
-		func.setName("update");
+		func.setName(variables.config.getServiceUpdateMethod());
 		func.setHint("Updates one record from #EntityName#.");
 		func.setAccess(access);
 		func.setReturnType("void");
@@ -190,7 +177,7 @@ component  extends="codeGenerator"
 		}
 		
 		var func= New apptacular.handlers.cfc.code.func();
-		func.setName('get');
+		func.setName(variables.config.getServiceGetMethod());
 		func.setHint("Returns one record from #EntityName#.");
 		func.setAccess(access);
 		func.setReturnType("#cfcPath#.#EntityName#");
@@ -210,11 +197,30 @@ component  extends="codeGenerator"
 		var access = variables.config.getServiceAccess();
 		
 		var func= New apptacular.handlers.cfc.code.func();
-		func.setName('count');
+		func.setName(variables.config.getServiceCountMethod());
 		func.setHint("Returns the count of records in #EntityName#");
 		func.setAccess(access);
 		func.setReturnType("numeric");
 		func.setReturnResult('ormExecuteQuery("select Count(*) from #entityName#")[1]');
+
+		return func;	
+	}
+	
+	/**
+    * @hint Creates the init method of the service.
+    */
+	public apptacular.handlers.cfc.code.func function createInitMethod(required any table){
+		var entityName = arguments.table.getEntityName();
+		var access = variables.config.getServiceAccess();
+		var tableName = arguments.table.getName();
+		
+		var func= New apptacular.handlers.cfc.code.func();
+		func.setName(variables.config.getServiceInitMethod());
+		func.setHint("A initialization routine, runs when object is created.");
+		func.setAccess(access);
+		func.setReturnType(entityName & "Service");
+		func.setReturnResult('This');
+		func.AddSimpleSet('This.table = "#tableName#"', 2);
 
 		return func;	
 	}
@@ -231,12 +237,12 @@ component  extends="codeGenerator"
 		var func= New apptacular.handlers.cfc.code.func();
 		
 		if (arguments.paged){
-			func.setName('listPaged');
+			func.setName(variables.config.getServiceListPagedMethod());
 			func.setHint("Returns all of the records in #EntityName#, with paging.");
 			func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#", arguments)');
 		}
 		else{
-			func.setName('list');
+			func.setName(variables.config.getServiceListMethod());
 			func.setHint("Returns all of the records in #EntityName#.");
 			func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#")');
 		}
@@ -248,11 +254,11 @@ component  extends="codeGenerator"
 		if (arguments.paged){
 			
 			func.startSimpleIf("arguments.offset eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "offset")',2);
+			func.addSimpleSet('structDelete(arguments, "offset")',3);
 			func.endSimpleIf(2);
 			
 			func.startSimpleIf("arguments.maxresults eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "maxresults")',2);
+			func.addSimpleSet('structDelete(arguments, "maxresults")',3);
 			func.endSimpleIf(2);
 			
 			var offset = New apptacular.handlers.cfc.code.Argument();
@@ -286,11 +292,11 @@ component  extends="codeGenerator"
 		var func= New apptacular.handlers.cfc.code.func();
 		
 		if (arguments.paged){
-			func.setName('searchPaged');
+			func.setName(variables.config.getServiceSearchPagedMethod());
 			func.setHint("Performs search against #EntityName#., with paging.");
 		}
 		else{
-			func.setName('search');
+			func.setName(variables.config.getServiceSearchMethod());
 			func.setHint("Performs search against #EntityName#.");
 		}
 		
@@ -312,11 +318,11 @@ component  extends="codeGenerator"
 		if (arguments.paged){
 			
 			func.startSimpleIf("arguments.offset eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "offset")',2);
+			func.addSimpleSet('structDelete(arguments, "offset")',3);
 			func.endSimpleIf(2);
 			
 			func.startSimpleIf("arguments.maxresults eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "maxresults")',2);
+			func.addSimpleSet('structDelete(arguments, "maxresults")',3);
 			func.endSimpleIf(2);
 			
 			var offset = New apptacular.handlers.cfc.code.Argument();
@@ -343,7 +349,7 @@ component  extends="codeGenerator"
 			
 			if (FindNoCase("char",columns[i].getDataType())){
 				func.AddOperationScript('			whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|"); 	  ');		
-				func.AddOperation('				<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
+				func.AddOperation('			<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
 			}
 		}
 		
