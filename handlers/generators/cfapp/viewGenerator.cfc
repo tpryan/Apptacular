@@ -401,6 +401,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('	<table>');
 		ct.AppendBody('	<tbody>');
 		
+		//loop through columns
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			var columnName = column.getName();
@@ -411,15 +412,19 @@ component extends="codeGenerator"{
 				var fktableCount = fkTable.getRowCount();
 					
 			}			
-				
+			
+			// if a primary key make it a hidden field.	
 	 		if (column.getIsPrimaryKey()){
 	 			ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
 	 		}
+			
+			// if it is a foriegn key, and there are few of them, we're wiring them up as many to ones
 			else if (column.getisForeignKey() and fktableCount < config.getSelectorThreshold()){
+					
 					var fkTable = datasource.getTable(column.getForeignKeyTable());
 					
-					
 					ct.AppendBody('		<tr>');
+					// if the table is linked to this table multiple times, then call it be the column in this table.
 					if (table.getForeignTableCount(fkTable.getName()) gt 1){
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
@@ -429,7 +434,8 @@ component extends="codeGenerator"{
 						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
 		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
 
-					}	
+					}
+					// Otherwise call it by the name of the remote table.	
 					else{
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
 						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
@@ -443,11 +449,15 @@ component extends="codeGenerator"{
 					}
 						
 			}
+			
+			// if it is a foriegn key, and there are many of them, we're NOT wiring them up as many to ones
 			else if (column.getisForeignKey() and fktableCount >= config.getSelectorThreshold()){
 					var fkTable = datasource.getTable(column.getForeignKeyTable());
 					
 					
 					ct.AppendBody('		<tr>');
+					
+					// if the table is linked to this table multiple times, then call it be the column in this table.
 					if (table.getForeignTableCount(fkTable.getName()) gt 1){
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
@@ -457,7 +467,8 @@ component extends="codeGenerator"{
 						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
 						ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###columnName#Value##" /></td>');
 						
-					}	
+					}
+					// Otherwise call it by the name of the remote table.		
 					else{
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#fkTable.getEntityName()#())>');
 						ct.AppendBody('				<cfset #fkTable.getEntityName()#Value = 0 /> ');
@@ -471,6 +482,7 @@ component extends="codeGenerator"{
 					}
 						
 			}
+			//otherwise it's just all of the rest of the conditions
 			else{
 	 			uitype = column.getUIType();
 				
@@ -490,9 +502,6 @@ component extends="codeGenerator"{
 	 				ct.AppendBody('			<td>[Cannot handle binaries yet.]</td>');
 				}
 				else if (compareNoCase(uitype, "picture") eq 0 OR compareNoCase(uitype, "image") eq 0){
-					
-					
-					
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 					ct.AppendBody('			<td>');
 					ct.AppendBody('				<cfif not IsNull(person.get#columnName#())>');
@@ -502,9 +511,6 @@ component extends="codeGenerator"{
 					ct.AppendBody('				</cfif>');
 					ct.AppendBody('				<input name="#columns[i].getName()#___file" type="file" id="#columns[i].getName()#" value="" /><br />');
 					ct.AppendBody('			</td>');
-					
-					
-					
 				}
 				else if (compareNoCase(uitype, "boolean") eq 0){
 					ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
@@ -535,6 +541,8 @@ component extends="codeGenerator"{
 				ct.AppendBody('		</tr>');
 			}
 		}
+		
+		
 		
 		//Wire up many to many relationships
 		if (table.getHasJoinTable()){

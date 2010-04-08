@@ -92,7 +92,10 @@ component accessors="true" extends="dbItem"
 	 */	
 	public void function addJoinTable(required string joinTable){
 		var joinTables = This.getJoinTables();
-		ArrayAppend(joinTables, arguments.joinTable);
+		
+		if (ArrayFind(joinTables,arguments.joinTable) eq 0){
+			ArrayAppend(joinTables, arguments.joinTable);
+		}
 		This.setJoinTables(joinTables);
 	}
 	
