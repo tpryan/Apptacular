@@ -1,6 +1,5 @@
 <cfsetting showdebugoutput="false" />
 
-
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 <cfscript>
 	failed = FALSE;
