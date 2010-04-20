@@ -11,7 +11,7 @@
 	}
 	
 	
-	handlerURL = "http://" & cgi.server_name & handlerPath;
+	handlerURL = "http://" & cgi.server_name & ":" & cgi.server_port & handlerPath;
 </cfscript>
 
 
