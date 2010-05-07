@@ -62,9 +62,11 @@ component extends="codeGenerator"{
 			property.setORMType(column.getOrmType());
 			property.setColumn(column.getColumn());
 	       	
-	       	if (column.getLength() gt 0 AND column.getDisplayLength()){
+			//Turns out that length is only important if you are generated database.
+			//Apptacular be its nature scaffolds from the database.
+	       	/* if (column.getLength() gt 0 AND column.getDisplayLength()){
 	       		property.setLength(column.getLength());
-	       	}
+	       	} */
 			
 	       	
 	       	if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
