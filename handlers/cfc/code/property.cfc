@@ -68,7 +68,7 @@ component accessors="true" {
 			arguments.stringBuilder.append('name="#This.getName()#" ');
        	}
        
-       	if (len(This.getColumn())){
+       	if (len(This.getColumn()) AND compare(This.getColumn(), This.getName()) neq 0 ){
        		arguments.stringBuilder.append('column="#This.getColumn()#" ');
        	}
        
@@ -76,7 +76,7 @@ component accessors="true" {
        		arguments.stringBuilder.append('ormtype="#This.getormtype()#" ');
        	}
 		
-		if (len(This.gettype())){
+		if (len(This.gettype()) AND compare(This.getType(), This.getORMType()) neq 0 ){
        		arguments.stringBuilder.append('type="#This.gettype()#" ');
        	}
        	

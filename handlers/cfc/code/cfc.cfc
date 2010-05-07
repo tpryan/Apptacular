@@ -32,10 +32,10 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	*/		
 	private string function generateCFMLHeader(){
 		var header = CreateObject("java","java.lang.StringBuilder").Init();
-		header.append('<cfcomponent ');
+		header.append('<cfcomponent');
 		header = addHeaderAttributes(header);
 		//concat here because the trim converts the stringbuilder to a string
-		header.concat('>' & variables.lineBreak);
+		header = header.concat('>' & variables.lineBreak);
 		
 		return header;
 	
@@ -48,10 +48,10 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	
 		var header = CreateObject("java","java.lang.StringBuilder").Init();
 	
-		header.append('component ');
+		header.append('component');
 		header = addHeaderAttributes(header);
 		//concat here because the trim converts the stringbuilder to a string
-		header.concat('{' & variables.lineBreak);
+		header = header.concat('{' & variables.lineBreak);
 		
 		return header;
 	
@@ -71,7 +71,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 			stringBuilder.append(' persistent="#This.getPersistent()#"');
 		}
 		
-		if (len(This.getTable()) gt 0){
+		if (len(This.getTable()) gt 0 AND compare(This.getTable(), This.getName()) neq 0 ){
 			stringBuilder.append(' table="#This.getTable()#"');
 		}
 		
@@ -79,7 +79,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 			stringBuilder.append(' schema="#This.getSchema()#"');
 		}
 		
-		if (len(This.getEntityName()) gt 0){
+		if (len(This.getEntityName()) gt 0 AND compare(This.getEntityName(), This.getName()) neq 0 ){
 			stringBuilder.append(' entityName="#This.getEntityName()#"');
 		}
 		
