@@ -32,37 +32,10 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	*/		
 	private string function generateCFMLHeader(){
 		var header = CreateObject("java","java.lang.StringBuilder").Init();
-		header.append('<cfcomponent');
-		
-		if (len(This.getExtends()) gt 0){
-			header.append(' extends="#This.getExtends()#"');
-		}
-		
-		if (len(This.getImplements()) gt 0){
-			header.append(' implements="#This.getImplements()#"');
-		}
-		
-		if (len(This.getPersistent())){
-			header.append(' persistent="#This.getPersistent()#"');
-		}
-		
-		if (len(This.getTable()) gt 0){
-			header.append(' table="#This.getTable()#"');
-		}
-		
-		if (len(This.getSchema()) gt 0){
-			header.append(' schema="#This.getSchema()#"');
-		}
-		
-		if (len(This.getEntityName()) gt 0){
-			header.append(' entityName="#This.getEntityName()#"');
-		}
-		
-		if (This.getOutput()){
-			header.append(' output="#This.getOutput()#"');
-		}
-		
-		header.append('>' & variables.lineBreak);
+		header.append('<cfcomponent ');
+		header = addHeaderAttributes(header);
+		//concat here because the trim converts the stringbuilder to a string
+		header.concat('>' & variables.lineBreak);
 		
 		return header;
 	
@@ -75,40 +48,48 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	
 		var header = CreateObject("java","java.lang.StringBuilder").Init();
 	
-		header.append('component');
-		
-		if (len(This.getExtends()) gt 0){
-			header.append(' extends="#This.getExtends()#"');
-		}
-		
-		if (len(This.getImplements()) gt 0){
-			header.append(' implements="#This.getImplements()#"');
-		}
-		
-		if (len(This.getPersistent())){
-			header.append(' persistent="#This.getPersistent()#"');
-		}
-		
-		if (len(This.getTable()) gt 0){
-			header.append(' table="#This.getTable()#"');
-		}
-		
-		if (len(This.getSchema()) gt 0){
-			header.append(' schema="#This.getSchema()#"');
-		}
-		
-		if (len(This.getEntityName()) gt 0){
-			header.append(' entityName="#This.getEntityName()#"');
-		}
-		
-		if (This.getOutput()){
-			header.append(' output="#This.getOutput()#"');
-		}
-		
-		header.append('{' & variables.lineBreak);
+		header.append('component ');
+		header = addHeaderAttributes(header);
+		//concat here because the trim converts the stringbuilder to a string
+		header.concat('{' & variables.lineBreak);
 		
 		return header;
 	
+	}
+	
+	private any function addHeaderAttributes(any stringBuilder){
+		
+		if (len(This.getExtends()) gt 0){
+			stringBuilder.append(' extends="#This.getExtends()#"');
+		}
+		
+		if (len(This.getImplements()) gt 0){
+			stringBuilder.append(' implements="#This.getImplements()#"');
+		}
+		
+		if (len(This.getPersistent())){
+			stringBuilder.append(' persistent="#This.getPersistent()#"');
+		}
+		
+		if (len(This.getTable()) gt 0){
+			stringBuilder.append(' table="#This.getTable()#"');
+		}
+		
+		if (len(This.getSchema()) gt 0){
+			stringBuilder.append(' schema="#This.getSchema()#"');
+		}
+		
+		if (len(This.getEntityName()) gt 0){
+			stringBuilder.append(' entityName="#This.getEntityName()#"');
+		}
+		
+		if (This.getOutput()){
+			stringBuilder.append(' output="#This.getOutput()#"');
+		}
+		
+		stringBuilder = trim(stringBuilder);
+			
+		return stringBuilder;
 	}
 	
 	/**
