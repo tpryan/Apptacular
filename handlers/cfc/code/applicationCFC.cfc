@@ -72,7 +72,6 @@ component displayname="Application CFC" hint="A CFC representation of an Applica
 		var i = 0;
 		var propStruct = structNew();
 		
-		
 		for(i = 1; i lte ArrayLen(variables.appPropertyArray); i++ ){
 			propStruct = variables.appPropertyArray[i];
 			if ((	isNumeric(propStruct.value) OR 
@@ -108,7 +107,6 @@ component displayname="Application CFC" hint="A CFC representation of an Applica
 		return results;
 	}
 	
-	
 	/**
 		* @hint Returns the actual cfscript cfc code.
 	*/
@@ -127,10 +125,3 @@ component displayname="Application CFC" hint="A CFC representation of an Applica
 		return results;
 	}
 }
-
-
-	
-	
-	
-	
-	
