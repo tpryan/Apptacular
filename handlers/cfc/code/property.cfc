@@ -72,11 +72,11 @@ component accessors="true" {
        		arguments.stringBuilder.append('column="#This.getColumn()#" ');
        	}
        
-      	if (len(This.getormtype())){
+      	if (len(This.getormtype()) AND compare(This.getType(), This.getORMType()) neq 0 ){
        		arguments.stringBuilder.append('ormtype="#This.getormtype()#" ');
        	}
 		
-		if (len(This.gettype()) AND compare(This.getType(), This.getORMType()) neq 0 ){
+		if (len(This.gettype())){
        		arguments.stringBuilder.append('type="#This.gettype()#" ');
        	}
        	
