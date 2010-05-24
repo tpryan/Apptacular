@@ -684,10 +684,68 @@ component extends="codeGenerator"{
 			else{
 				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
 			}
-			
-			
-			
 		    view.AppendBody('		</cfif>');
+			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
+			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> ');
+			view.AppendBody('		<cfif url.#identity# neq 0>');
+		    view.AppendBody('			/ <a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
+		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');
+			view.AppendBody('			/ <a href="#EntityName#.cfm?method=clone&amp;#identity#=###EntityName#.get#identity#()##&amp;message=clone">Clone</a>'); 		
+			view.AppendBody('		</cfif>');
+			view.AppendBody('		</p></cfoutput>');	
+			view.AppendBody();
+		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
+		    view.AppendBody('	</cfcase>');
+			view.AppendBody();
+			
+			
+			
+			// Clone item
+			view.AppendBody('	<cfcase value="clone">');
+		    
+			
+			if (table.hasCompositePrimaryKey()){
+				view.AppendBody('			<cfset keys = {} />');
+				for (i= 1; i <= ArrayLen(pkcols); i++){
+					view.AppendBody('			<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
+				}
+				view.AppendBody('		<cfset ref = entityLoad("' & entityName  & '", keys, true) />');
+			}
+			else{
+				view.AppendBody('		<cfset ref = entityLoad("' & entityName  & '", url.#identity#, true) />');
+			}
+			
+			view.AppendBody('		<cfset #entityName# = entityNew("' & entityName  & '") />');
+			
+			
+			
+			for (i= 1; i <= ArrayLen(columns); i++){
+			column = columns[i];
+			
+			if(column.getIsPrimaryKey()){
+			
+			
+			
+				
+	    	}
+			else if (column.getisForeignKey()){
+				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				fkEName = fkTable.getentityName();
+				view.AppendBody('		<cfset #entityName#.set#fkEName#(ref.get#fkEName#()) />');
+				
+			}
+	    	else if (not config.isMagicField(column.getName())){ 
+	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(ref.get#column.getName()#())  />');
+				
+	    	}
+			else{
+				view.AppendBody('		<cfset #entityName#.set#column.getName()#(ref.get#column.getName()#())  />');
+			}
+			
+	    }
+			
+			view.AppendBody();
+			
 			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> ');
 			view.AppendBody('		<cfif url.#identity# neq 0>');
@@ -699,6 +757,9 @@ component extends="codeGenerator"{
 		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
 		    view.AppendBody('	</cfcase>');
 			view.AppendBody();
+			
+			
+			
 		    view.AppendBody('	<cfcase value="edit_process">');
 			
 			
