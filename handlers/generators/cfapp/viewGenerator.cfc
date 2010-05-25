@@ -612,7 +612,7 @@ component extends="codeGenerator"{
 	    view.AppendBody('<cfswitch expression="##url.method##" >');
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
-	    view.AppendBody('		<cfset #entityName#Array = entityLoad("#entityName#", {}, url.orderby, {offset=url.offset, maxresults=url.maxresults} ) />');
+		view.AppendBody('		<cfset #entityName#Array = application.#entityName#Service.listPaged(url.offset, url.maxresults, url.orderby ) />');
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
@@ -628,11 +628,11 @@ component extends="codeGenerator"{
 			for (i= 1; i <= ArrayLen(pkcols); i++){
 				view.AppendBody('		<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
 			}
-		
-			view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", keys, true) />');
+			
+			view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(keys) />');
 		}
 		else{
-			view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+			view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(url.#identity#) />');
 		}
 		
 		
@@ -679,10 +679,10 @@ component extends="codeGenerator"{
 				for (i= 1; i <= ArrayLen(pkcols); i++){
 					view.AppendBody('			<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
 				}
-				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", keys, true) />');
+				view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(keys) />');
 			}
 			else{
-				view.AppendBody('			<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+				view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(url.#identity#) />');
 			}
 		    view.AppendBody('		</cfif>');
 			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
@@ -709,10 +709,10 @@ component extends="codeGenerator"{
 				for (i= 1; i <= ArrayLen(pkcols); i++){
 					view.AppendBody('			<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
 				}
-				view.AppendBody('		<cfset ref = entityLoad("' & entityName  & '", keys, true) />');
+				view.AppendBody('		<cfset ref = application.#entityName#Service.get(keys) />');
 			}
 			else{
-				view.AppendBody('		<cfset ref = entityLoad("' & entityName  & '", url.#identity#, true) />');
+				view.AppendBody('		<cfset ref = application.#entityName#Service.get(url.#identity#) />');
 			}
 			
 			view.AppendBody('		<cfset #entityName# = entityNew("' & entityName  & '") />');
@@ -723,8 +723,6 @@ component extends="codeGenerator"{
 				var column = columns[i];
 				
 				if(column.getIsPrimaryKey()){
-				
-				
 				
 					
 		    	}
@@ -813,14 +811,14 @@ component extends="codeGenerator"{
 				}
 			}
 			
-			view.AppendBody('		<cfset EntitySave(#entityName#) />');
+			view.AppendBody('		<cfset application.#entityName#Service.update(#entityName#) />');
 		    view.AppendBody('		<cfset ORMFlush() />');
 		    view.AppendBody('		<cflocation url ="##cgi.script_name##?method=edit&#identity#=###entityName#.get#identity#()##&message=updated" />');
 		    view.AppendBody('	</cfcase>');
 		    view.AppendBody();
 		    view.AppendBody('	<cfcase value="delete_process">');
 		    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
-		    view.AppendBody('		<cfset EntityDelete(#entityName#) />');
+		    view.AppendBody('		<cfset application.#entityName#Service.destroy(#entityName#) />');
 	 	    view.AppendBody('		<cfset ORMFlush() />');
 			view.AppendBody('		<cflocation url ="##cgi.script_name##?method=list&message=deleted" />');
 		    view.AppendBody('	</cfcase>');

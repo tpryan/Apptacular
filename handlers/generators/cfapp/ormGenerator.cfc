@@ -511,6 +511,10 @@ component extends="codeGenerator"{
 	    var dbname = variables.datasource.getName();
 	    var fileLocation = variables.config.getRootFilePath();
 	    var appCFC  =  New apptacular.handlers.cfc.code.applicationCFC();
+		var tables = datasource.getTables();
+		var i = 0;
+		
+		
 		appCFC.setFormat(variables.config.getCFCFormat());
 	    appCFC.setFileLocation(fileLocation) ;
 	    appCFC.addApplicationProperty('name', dbname) ;
@@ -571,6 +575,25 @@ component extends="codeGenerator"{
 		
 		
 		appCFC.addFunction(onRequestStart);
+		
+		
+		var onAppStart= New apptacular.handlers.cfc.code.func();
+		onAppStart.setName('onApplicationStart');
+		onAppStart.setAccess("public");
+		onAppStart.setReturnType("boolean");
+		onAppStart.setReturnResult('true');
+		
+		
+		for (i=1; i <= ArrayLen(tables); i++){
+			var table = tables[i];
+		
+			if (table.isProperTable() and config.getCreateServices() and table.getCreateInterface()){
+				onAppStart.AddSimpleSet('application.#table.GetEntityName()#Service = new #config.getServiceCFCPath()#.#table.GetEntityName()#Service()', 2);	
+				
+			}
+			
+		}	
+		appCFC.addFunction(onAppStart);
 		
 		return appCFC ;
 	}

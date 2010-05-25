@@ -239,7 +239,7 @@ component  extends="codeGenerator"
 		if (arguments.paged){
 			func.setName(variables.config.getServiceListPagedMethod());
 			func.setHint("Returns all of the records in #EntityName#, with paging.");
-			func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#", arguments)');
+			func.setReturnResult('entityLoad("#entityName#", {}, arguments.orderby, loadArgs)');
 		}
 		else{
 			func.setName(variables.config.getServiceListMethod());
@@ -252,14 +252,17 @@ component  extends="codeGenerator"
 		
 		
 		if (arguments.paged){
+		
+			func.addSimpleSet("var loadArgs = {}",2);
 			
-			func.startSimpleIf("arguments.offset eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "offset")',3);
+			func.startSimpleIf("arguments.offset neq 0", 2);
+			func.addSimpleSet('loadArgs.offset = arguments.offset',3);
 			func.endSimpleIf(2);
 			
-			func.startSimpleIf("arguments.maxresults eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "maxresults")',3);
+			func.startSimpleIf("arguments.maxresults neq 0", 2);
+			func.addSimpleSet('loadArgs.maxresults = arguments.maxresults',3);
 			func.endSimpleIf(2);
+			
 			
 			var offset = New apptacular.handlers.cfc.code.Argument();
 			offset.setName('offset');
@@ -274,6 +277,14 @@ component  extends="codeGenerator"
 			maxresults.setType('numeric');
 			maxresults.setDefaultValue(0);
 			func.AddArgument(maxresults);
+			
+			var orderbyarg = New apptacular.handlers.cfc.code.Argument();
+			orderbyarg.setName('orderby');
+			orderbyarg.setRequired(false);
+			orderbyarg.setType('string');
+			orderbyarg.setDefaultValue(OrderBy);
+			func.AddArgument(orderbyarg);
+			
 		}
 		return func;	
 	}
