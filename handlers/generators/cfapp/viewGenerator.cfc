@@ -429,7 +429,7 @@ component extends="codeGenerator"{
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
 						ct.AppendBody('			<cfelse>');
-						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
+						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()#() />');
 						ct.AppendBody('			</cfif>');
 						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
 		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
@@ -462,7 +462,7 @@ component extends="codeGenerator"{
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
 						ct.AppendBody('			<cfelse>');
-						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()# />');
+						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()#() />');
 						ct.AppendBody('			</cfif>');
 						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
 						ct.AppendBody('			<td><input name="#columnName#" type="text" id="#columnName#" value="###columnName#Value##" /></td>');
@@ -720,27 +720,39 @@ component extends="codeGenerator"{
 			
 			
 			for (i= 1; i <= ArrayLen(columns); i++){
-			column = columns[i];
-			
-			if(column.getIsPrimaryKey()){
-			
-			
-			
+				var column = columns[i];
 				
-	    	}
-			else if (column.getisForeignKey()){
-				var fkTable = datasource.getTable(column.getForeignKeyTable());
-				fkEName = fkTable.getentityName();
-				view.AppendBody('		<cfset #entityName#.set#fkEName#(ref.get#fkEName#()) />');
+				if(column.getIsPrimaryKey()){
 				
-			}
-	    	else if (not config.isMagicField(column.getName())){ 
-	    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(ref.get#column.getName()#())  />');
 				
-	    	}
-			else{
-				view.AppendBody('		<cfset #entityName#.set#column.getName()#(ref.get#column.getName()#())  />');
-			}
+				
+					
+		    	}
+				else if (column.getisForeignKey() AND not column.getIsMemeberOfCompositeForeignKey()){
+					var fTable = dataSource.getTable(column.getForeignKeyTable());
+					
+					if (table.getForeignTableCount(fTable.getName()) gt 1){
+						var propertyname = column.getName();
+					}	
+					else{
+						var propertyname = fTable.getEntityName();
+					}
+					
+					view.AppendBody('		<cfset #entityName#.set#propertyname#(ref.get#propertyname#())  />');
+					
+					
+				}
+				else if (column.getisForeignKey() AND column.getIsMemeberOfCompositeForeignKey()){
+				
+				}
+				
+		    	else if (not config.isMagicField(column.getName())){ 
+		    		view.AppendBody('		<cfset #entityName#.set#column.getName()#(ref.get#column.getName()#())  />');
+					
+		    	}
+				else{
+					view.AppendBody('		<cfset #entityName#.set#column.getName()#(ref.get#column.getName()#())  />');
+				}
 			
 	    }
 			

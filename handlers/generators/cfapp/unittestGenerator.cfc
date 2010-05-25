@@ -112,9 +112,8 @@ component  extends="codeGenerator"
 		
 			var readreturns200=createSimple200UnitTest(readURL, "testReadReturns200", entityName, "read"); 
 			testView.addFunction(readreturns200);
-		}
-		
-		if (table.getRowCount() > 0){
+
+
 			// Add basic 200 test for edit
 			if (table.hasCompositePrimaryKey()){
 				var editURL = baseurl & "?method=edit&" & id ;
@@ -125,6 +124,17 @@ component  extends="codeGenerator"
 			
 			var editreturns200=createSimple200UnitTest(editURL, "testEditReturns200", entityName, "edit"); 
 			testView.addFunction(editreturns200);
+			
+			// Add basic 200 test for clone
+			if (table.hasCompositePrimaryKey()){
+				var editURL = baseurl & "?method=clone&" & id ;
+			}
+			else{
+				var editURL = baseurl & "?method=clone&" & table.getIdentity() & "=" & id ;
+			}
+			
+			var clonereturns200=createSimple200UnitTest(editURL, "testCloneReturns200", entityName, "clone"); 
+			testView.addFunction(clonereturns200);
 		}
 		
 		
@@ -879,7 +889,7 @@ component  extends="codeGenerator"
 		returns200.AddOperationScript('		if (not FindNoCase("200", cfhttp.statusCode)){');
 		returns200.AddOperationScript('			debug(urlToTest);');
 		returns200.AddOperationScript('			debug(cfhttp);');
-		returns200.AddOperationScript('			fail("Simple HTTP Calls to #arguments.entityName# #arguments.operation# should work.");');
+		returns200.AddOperationScript('			fail("Simple HTTP Calls to #arguments.entityName#.#arguments.operation#() should work.");');
 		returns200.AddOperationScript('		}');
 		returns200.AddOperationScript('');
 	
