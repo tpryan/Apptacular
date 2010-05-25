@@ -116,10 +116,10 @@ component accessors="true"{
     }
 	
 	private void function setConfigDefaults(){
-		This.setServiceAccess("remote");
+		This.setServiceAccess("public");
 		This.setCreateViews(true);
 		This.setCreateAppCFC(true);
-		This.setCreateServices(false);
+		This.setCreateServices(true);
 		This.setCreateEntities(true);
 		This.setCreateLogin(false);
 		This.setCreateTests(false);

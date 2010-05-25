@@ -29,8 +29,8 @@
 		<tr>
 		<th></th>
 		<td>
-			<input type="checkbox" name="generateservices" value="true">
-			<label for="generateservices">Generate Services</label>
+			<input type="checkbox" name="generateremoteservices" value="true">
+			<label for="generateservices">Generate Remote Services</label>
 		</td>
 		</tr>
 		<tr><th></th><td><input type="submit" name="login" value="Generate Application"></td></tr>
