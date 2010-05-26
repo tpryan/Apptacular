@@ -22,8 +22,10 @@
 		background-color: #2A587A;
 		background-image: url(/apptacular/handlers/grad.jpg);
 		background-repeat: repeat-x;
+		background-position-y: -100px;
+		
 		margin: 0;
-		color: #F0f0f0;
+		color: #FFFFFF;
 		
 	}
 	
@@ -59,6 +61,11 @@
 	.breadcrumb{
 		font-size: 100%;
 	}
+	
+	.breadcrumb a{
+		color: #000000;
+		
+	}
 
 	#prev, #next
 	{ width: 200px;}	
@@ -75,7 +82,7 @@
 	#columns input[type="text"] { width: 110px; }
 	
 	a{
-		color:#666666;
+		color:#D0D0D0;
 	}		
 	a:hover{
 		color: #FFFFFF;
