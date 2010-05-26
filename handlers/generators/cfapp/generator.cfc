@@ -154,6 +154,9 @@ component{
 					var ViewSearchCustomTag = viewGenerator.createViewSearchCustomTag(table);
 					ArrayAppend(files, ViewSearchCustomTag);
 					
+					var ViewBreadcrumbCustomTag = viewGenerator.createViewBreadCrumbCustomTag(table);
+					ArrayAppend(files, ViewBreadcrumbCustomTag);
+					
 					var ViewReadCustomTag = viewGenerator.createViewReadCustomTag(table);
 					ArrayAppend(files, ViewReadCustomTag);
 					

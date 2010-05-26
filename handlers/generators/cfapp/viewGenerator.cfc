@@ -402,6 +402,40 @@ component extends="codeGenerator"{
 		return ct;
 	}
 	
+	public apptacular.handlers.cfc.code.customTag function createViewBreadCrumbCustomTag(required any table){
+		var entityName = table.getEntityName();
+		var identity = table.getIdentity();
+		var fileLocation = variables.config.getCustomTagFilePath();
+		var fileName = entityName & "Breadcrumb"; 
+		
+	    var ct  = New apptacular.handlers.cfc.code.customTag(fileName, fileLocation);
+		var EntityName = entityName;
+		ct.addAttribute('method', 'string', false, "list");
+		ct.addAttribute('new', 'boolean', false, "false");
+		ct.addAttribute(table.getEntityName(), 'any', false, "");
+		ct.AppendBody('<cfset new = attributes.new />');
+		ct.AppendBody('<cfset #entityName# = attributes.#entityName# />');
+		ct.AppendBody('<cfset method = attributes.method />');
+	
+		ct.AppendBody('');
+		ct.AppendBody('<cfoutput><p class="breadcrumb">');
+		ct.AppendBody('	<a href="index.cfm">Main</a> / ');
+		ct.AppendBody('		<a href="#entityName#.cfm?method=list">List</a> /');
+		ct.AppendBody('		<cfif CompareNoCase(method, "read") eq 0>');
+		ct.AppendBody('		<a href="#entityName#.cfm?method=edit&amp;#identity#=###entityName#.get#identity#()##">Edit</a> /');
+		ct.AppendBody('		<a href="#entityName#.cfm?method=clone&amp;#identity#=###entityName#.get#identity#()##&amp;message=clone">Clone</a> /');
+		ct.AppendBody('		</cfif>');
+		ct.AppendBody('		<cfif CompareNoCase(method, "edit") eq 0 and not new>');
+		ct.AppendBody('		<a href="#entityName#.cfm?method=read&amp;#identity#=###entityName#.get#identity#()##">Read</a> /');
+		ct.AppendBody('		<a href="#entityName#.cfm?method=clone&amp;#identity#=###entityName#.get#identity#()##&amp;message=clone">Clone</a> /');
+		ct.AppendBody('		</cfif>');
+		ct.AppendBody('	<a href="#entityName#.cfm?method=edit">New</a>');
+		ct.AppendBody('</p></cfoutput>');
+		ct.AppendBody('');
+		
+		return ct;
+	}
+	
 	/**
 	* @hint Generates a edit custom tag for a table. 
 	*/
@@ -643,10 +677,7 @@ component extends="codeGenerator"{
 	   	view.AppendBody('	<cfcase value="list">');
 		view.AppendBody('		<cfset #entityName#Array = application.#entityName#Service.listPaged(url.offset, url.maxresults, url.orderby ) />');
 		view.AppendBody('		<cfset totalCount = application.#entityName#Service.count() />');
-		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
-		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
-		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
-		view.AppendBody('		</p></cfoutput>');
+		view.AppendBody('		<cf_#EntityName#Breadcrumb method="list"/>');
 		view.AppendBody('		<cf_#entityName#Search q="##url.q##" />');			
 		view.AppendBody('		<cf_#entityName#List orderby="##url.orderby##" #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" totalCount="##totalCount##" /> ');
 	    view.AppendBody('	</cfcase>');
@@ -654,10 +685,7 @@ component extends="codeGenerator"{
 		view.AppendBody('	<cfcase value="searchresult">');
 		view.AppendBody('		<cfset #entityName#Array = application.#entityName#Service.searchPaged(url.q, url.offset, url.maxresults, url.orderby ) />');
 		view.AppendBody('		<cfset totalCount = application.#entityName#Service.searchCount(url.q) />');
-		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
-		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
-		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
-		view.AppendBody('		</p></cfoutput>');
+		view.AppendBody('		<cf_#EntityName#Breadcrumb method="list"/>');
 		view.AppendBody('		<cf_#entityName#Search q="##url.q##" />');			
 		view.AppendBody('		<cf_#entityName#List method="searchresult" q="##url.q##" orderby="##url.orderby##" #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##"  totalCount="##totalCount##" /> ');
 	    view.AppendBody('	</cfcase>');
@@ -679,11 +707,7 @@ component extends="codeGenerator"{
 		
 		
 		
-		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
-		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
-		view.AppendBody('			<a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a> /');
-		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
-		view.AppendBody('		</p></cfoutput>');	
+		view.AppendBody('		<cf_#EntityName#Breadcrumb method="read" #EntityName# = "###EntityName###"/>');
 		view.AppendBody('		<cf_#entityName#Search q="##url.q##" />');		
 		view.AppendBody('		<cf_#entityName#Read #entityName# = "###entityName###" /> ');
 		
@@ -698,8 +722,8 @@ component extends="codeGenerator"{
 				
 				if (not foreignTable.getIsJoinTable()){
 					view.AppendBody('');
-					view.AppendBody('			<h3>#foreignTable.getDisplayPlural()#</h3> ');
-					view.AppendBody('			<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
+					view.AppendBody('		<h3>#foreignTable.getDisplayPlural()#</h3> ');
+					view.AppendBody('		<cf_#foreignTable.getEntityName()#List message="" #foreignTable.getEntityName()#Array="###EntityName#.get#foreignTable.getPlural()#()##" /> ');
 					view.AppendBody('');
 				}
 			}
@@ -713,6 +737,7 @@ component extends="codeGenerator"{
 		    view.AppendBody('	<cfcase value="edit">');
 		    view.AppendBody('		<cfif url.#identity# eq 0>');
 		    view.AppendBody('			<cfset #entityName# = New ' & entityName  & '() />');
+			view.AppendBody('			<cfset new = true />');
 		    view.AppendBody('		<cfelse>');
 		    
 			
@@ -726,15 +751,9 @@ component extends="codeGenerator"{
 			else{
 				view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(url.#identity#) />');
 			}
+			view.AppendBody('			<cfset new = false />');
 		    view.AppendBody('		</cfif>');
-			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
-			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> ');
-			view.AppendBody('		<cfif url.#identity# neq 0>');
-		    view.AppendBody('			/ <a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
-		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');
-			view.AppendBody('			/ <a href="#EntityName#.cfm?method=clone&amp;#identity#=###EntityName#.get#identity#()##&amp;message=clone">Clone</a>'); 		
-			view.AppendBody('		</cfif>');
-			view.AppendBody('		</p></cfoutput>');
+			view.AppendBody('		<cf_#EntityName#Breadcrumb method="edit" #EntityName# = "###EntityName###"  new="##new##" /> ');
 			view.AppendBody();
 		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
 		    view.AppendBody('	</cfcase>');
@@ -798,13 +817,7 @@ component extends="codeGenerator"{
 			
 			view.AppendBody();
 			
-			view.AppendBody('		<cfoutput><p class="breadcrumb">');	
-			view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> ');
-			view.AppendBody('		<cfif url.#identity# neq 0>');
-		    view.AppendBody('			/ <a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
-		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
-			view.AppendBody('		</cfif>');
-			view.AppendBody('		</p></cfoutput>');
+			view.AppendBody('		<cf_#EntityName#Breadcrumb method="new" #EntityName# = "###EntityName###"  new="true" /> ');
 			view.AppendBody();
 		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
 		    view.AppendBody('	</cfcase>');
