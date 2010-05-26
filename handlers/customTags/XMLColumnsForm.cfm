@@ -90,17 +90,23 @@
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<cfselect name="#fieldname#" id="#attribute#">
+							<select name="#fieldname#" id="#attribute#">
 								<cfloop list="#uilist#" index="type">
 								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
 								</cfloop>
-							</cfselect>
+							</select>
+						</td>
+					<cfelseif ListFindNoCase("displayname", attribute)>
+						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
+						<cfset value = columns[attribute][columns.currentRow] />
+						<td>
+							<input name="#fieldname#" type="text" value="#value#" tabindex="#currentRow#" />
 						</td>			
 					<cfelse>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
-							<cfinput name="#fieldname#" type="text" value="#value#"   />
+							<input name="#fieldname#" type="text" value="#value#" />
 						</td>
 					</cfif>
 				</cfloop>
