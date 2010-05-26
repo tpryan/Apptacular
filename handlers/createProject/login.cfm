@@ -1,6 +1,4 @@
 <cfparam name="url.projectPath" type="string" />
-
-
 <cf_pageWrapper>
 <cfoutput>
 	<p>Please enter your RDS username and password.</p>

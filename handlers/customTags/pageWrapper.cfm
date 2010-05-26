@@ -8,6 +8,7 @@
 	th {
 		text-align: left;
 		padding-right: 10px;
+		font-weight: normal;
 	}
 	td{
 		padding-right: 10px;
@@ -21,7 +22,18 @@
 		background-color: #2A587A;
 		background-image: url(/apptacular/handlers/grad.jpg);
 		background-repeat: repeat-x;
+		margin: 0;
+		color: #F0f0f0;
 		
+	}
+	
+	#header{
+		background-color: #2A587A;
+		background-image: url(/apptacular/handlers/logo.png);
+		background-repeat: none;
+		height: 56px;
+		width: 100%;
+		margin: 0;
 	}
 	h1 {
 		font-size: 120%;
@@ -55,6 +67,7 @@
 		text-align: right;
 	}
 	
+	
 	input[type="text"], input[type="password"]{ width: 350px; height: 14px; font-size: 11px; }
 
 	textarea{ width: 350px; height: 140px; font-size: 11px; }
@@ -76,6 +89,10 @@
 	
 	.helplink{
 		font-size: 80%;
+	}
+	
+	#content{
+		margin: 0 5px;
 	}
 	
 </style>
@@ -112,8 +129,10 @@
 
 </head>
 <body>
+<div id="header"></div>
+<div id="content">
 <cfelse>
-<img src ="/apptacular/handlers/logo.jpg" width="100" height="100" id="logo">
+</div> <!--- end content --->
 </body>
 </html>
 </cfif>
