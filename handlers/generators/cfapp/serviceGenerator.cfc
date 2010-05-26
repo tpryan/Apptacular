@@ -100,7 +100,10 @@ component  extends="codeGenerator"
 		cfc.addFunction(search);
 		
 		var searchPaged= createSearchMethod(arguments.table, true);
-		cfc.addFunction(searchPaged);				
+		cfc.addFunction(searchPaged);
+		
+		var searchCount= createSearchMethod(arguments.table, false, true);
+		cfc.addFunction(searchCount);						
 		
 		return cfc;
 	}
@@ -292,12 +295,16 @@ component  extends="codeGenerator"
 	/**
     * @hint Creates the search method of the service.
     */
-	public apptacular.handlers.cfc.code.func function createSearchMethod(required any table, boolean paged=false){
+	public apptacular.handlers.cfc.code.func function createSearchMethod(required any table, boolean paged=false, boolean count=false){
 		var entityName = arguments.table.getEntityName();
 		var access = variables.config.getServiceAccess();
 		var cfcPath = variables.config.getEntityCFCPath();
 		var OrderBy = table.getOrderBy();
 		var columns = table.getColumns();
+		
+		if (arguments.count){
+			arguments.paged= false;
+		}
 		
 		
 		var func= New apptacular.handlers.cfc.code.func();
@@ -306,6 +313,10 @@ component  extends="codeGenerator"
 			func.setName(variables.config.getServiceSearchPagedMethod());
 			func.setHint("Performs search against #EntityName#., with paging.");
 		}
+		else if(arguments.count){
+			func.setName(variables.config.getServiceSearchCountMethod());
+			func.setHint("Determines total number of results of search for paging purposes.");
+		}
 		else{
 			func.setName(variables.config.getServiceSearchMethod());
 			func.setHint("Performs search against #EntityName#.");
@@ -313,10 +324,16 @@ component  extends="codeGenerator"
 		
 		
 		func.setAccess(access);
-		func.setReturnType("#cfcPath#.#EntityName#[]");
-		func.addLocalVariable("hqlString","string","FROM #EntityName# ");
+		func.addLocalVariable("hqlString","string","");
 		func.addLocalVariable("whereClause","string","");
-		func.addLocalVariable("params","struct","Duplicate(arguments)", false);
+		func.addLocalVariable("params","struct","{}", false);
+		
+		if (arguments.count){
+			func.setReturnType("numeric");
+		}
+		else{
+			func.setReturnType("#cfcPath#.#EntityName#[]");
+		}
 		
 		var q = New apptacular.handlers.cfc.code.Argument();
 		q.setName("q");
@@ -324,16 +341,21 @@ component  extends="codeGenerator"
 		q.setDefaultValue("");
 		func.addArgument(q);
 		
+		if (arguments.count){
+			func.addSimpleSet('hqlString = hqlString & "SELECT count(*) " ',2);
+		}
+		
+		func.addSimpleSet('hqlString = hqlString & "FROM #EntityName#" ',2);
+		
 		
 		// handle manipulating the input arguments to be appropriate to pass to entityLoad
 		if (arguments.paged){
-			
-			func.startSimpleIf("arguments.offset eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "offset")',3);
+			func.startSimpleIf("arguments.offset neq 0", 2);
+			func.addSimpleSet('params.offset = arguments.offset',3);
 			func.endSimpleIf(2);
 			
-			func.startSimpleIf("arguments.maxresults eq 0", 2);
-			func.addSimpleSet('structDelete(arguments, "maxresults")',3);
+			func.startSimpleIf("arguments.maxresults neq 0", 2);
+			func.addSimpleSet('params.maxresults = arguments.maxresults',3);
 			func.endSimpleIf(2);
 			
 			var offset = New apptacular.handlers.cfc.code.Argument();
@@ -349,41 +371,47 @@ component  extends="codeGenerator"
 			maxresults.setType('numeric');
 			maxresults.setDefaultValue(0);
 			func.AddArgument(maxresults);
+			
+			var orderbyarg = New apptacular.handlers.cfc.code.Argument();
+			orderbyarg.setName('orderby');
+			orderbyarg.setRequired(false);
+			orderbyarg.setType('string');
+			orderbyarg.setDefaultValue(OrderBy);
+			func.AddArgument(orderbyarg);
+			
+			
 		}
 		
 		//Build the where clause
-		func.AddOperation('		<cfif len(arguments.q) gt 0>');
-		func.AddOperationScript('		if (len(arguments.q) gt 0){');		
+		func.StartSimpleIf('len(arguments.q) gt 0', 2);		
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i].getName();
 			
 			if (FindNoCase("char",columns[i].getDataType())){
-				func.AddOperationScript('			whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|"); 	  ');		
-				func.AddOperation('			<cfset whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|") />');		
+				func.addSimpleSet('whereClause  = ListAppend(whereClause, " #column# LIKE ''%##arguments.q##%''", "|")',3);
 			}
 		}
 		
-		func.AddOperation('			<cfset whereClause = Replace(whereClause, "|", " OR ", "all") />');			
-		func.AddOperation('		</cfif>');
-		func.AddOperationScript('			whereClause = Replace(whereClause, "|", " OR ", "all");');	
-		func.AddOperationScript('		}');
+		func.AddSimpleSet('whereClause = Replace(whereClause, "|", " OR ", "all")', 3);
+		func.EndSimpleIf(2);
 		
 		//Add Where Clause
-		func.AddOperationScript('		if (len(whereClause) gt 0){');	
-		func.AddOperationScript('			hqlString = hqlString & " WHERE " & whereClause;');	
-		func.AddOperationScript('		}');
-		func.AddOperation('		<cfif len(whereClause) gt 0>');
-		func.AddOperation('			<cfset hqlString = hqlString & " WHERE " & whereClause />');
-		func.AddOperation('		</cfif>');
+		func.StartSimpleIf('len(whereClause) gt 0', 2);		
+		func.addSimpleSet('hqlString = hqlString & " WHERE " & whereClause',3);
+		func.EndSimpleIf(2);
 		
 		//Add order by
-		func.AddOperationScript('		hqlString = hqlString & " ORDER BY #OrderBy#";');	
-		func.AddOperation('		<cfset hqlString = hqlString & " ORDER BY #OrderBy#" />');
-		
+		if (not arguments.count){
+			func.addSimpleSet('hqlString = hqlString & " ORDER BY ##arguments.orderby##"',3);
+		}
 		//Execute and return
-		func.setReturnResult('ormExecuteQuery(hqlString, false, params)');
-		
+		if (arguments.count){
+			func.setReturnResult('ormExecuteQuery(hqlString, false, params)[1]');
+		}
+		else{
+			func.setReturnResult('ormExecuteQuery(hqlString, false, params)');
+		}
 		
 		
 		

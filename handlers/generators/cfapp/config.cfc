@@ -74,7 +74,7 @@ component accessors="true"{
 	property name="serviceSearchPagedMethod" type="string" hint="The name of the method in a serivice searches for records, in pages.";
 	property name="serviceInitMethod" type="string" hint="The name of the method in a serivice that acts as the constructor.";
 	property name="serviceCountMethod" type="string" hint="The name of the method in a serivice that returns a count of records in the underlying table.";
-	
+	property name="ServiceSearchCountMethod" type="string" hint="The name of the method in a service that returns the count of records in a search result.";
 	
 	/**
 	* @hint The init that fires up all of this stuff. 
@@ -142,7 +142,8 @@ component accessors="true"{
 		This.setServiceSearchMethod("search");
 		This.setServiceSearchPagedMethod("searchPaged");
 		This.setServiceUpdateMethod("update");
-		This.setServiceCountMethod("count");			
+		This.setServiceCountMethod("count");
+		This.setServiceSearchCountMethod("searchCount");			
 	
 	}
 	

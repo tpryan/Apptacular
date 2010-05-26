@@ -33,9 +33,12 @@ component extends="codeGenerator"{
 		ct.addAttribute("maxresults", "numeric", false, -1);
 		ct.addAttribute("offset", "numeric", false, -1);
 		ct.addAttribute("orderby", "string", false, "");
+		ct.addAttribute("q", "string", false, "");
+		ct.addAttribute("method", "string", false, "list");
+		ct.addAttribute("totalCount", "numeric", false, "0");
 		
 		ct.AppendBody('');
-		ct.AppendBody('<cfset #entityName#Count = ormExecuteQuery("select Count(*) from #entityName#")[1]  />');
+		ct.AppendBody('<cfset #entityName#Count = attributes.totalCount  />');
 		ct.AppendBody('<cfset prevOffset = attributes.offset - attributes.maxresults />');
 		ct.AppendBody('<cfset nextOffset = attributes.offset + attributes.maxresults />');
 		ct.AppendBody('<cfset pages = Ceiling(#entityName#Count / attributes.maxresults) />');
@@ -44,6 +47,8 @@ component extends="codeGenerator"{
 		ct.AppendBody('<cfset message = attributes.message /> ');
 		ct.AppendBody('<cfif CompareNoCase(message, "deleted") eq 0>');
 		ct.AppendBody('	<p class="alert">Record deleted</p>');
+		ct.AppendBody('<cfelseif CompareNoCase(message, "search") eq 0>');
+		ct.AppendBody('	<p class="alert">Results for <em>"<cfoutput>##attributes.q##</cfoutput>"</em></p>');
 		ct.AppendBody('<cfelse>');
 		ct.AppendBody('	<p></p>');
 		ct.AppendBody('</cfif>');
@@ -72,7 +77,7 @@ component extends="codeGenerator"{
 			else{
 				ct.AppendBody('			<cfset #column.getName()#ascOrDesc = (FindNoCase("#column.getColumn()# asc", url.orderby))? "desc" : "asc" />');
 				ct.AppendBody('			<cfset #column.getName()#ascOrDescIcon = (FindNoCase("#column.getColumn()# asc", url.orderby))? "&darr;" : "&uarr;" />');
-				ct.AppendBody('			<th><a href="?offset=##attributes.offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=#column.getName()# ###column.getName()#ascOrDesc##">#column.getDisplayName()# ###column.getName()#ascOrDescIcon##</a></th>');
+				ct.AppendBody('			<th><a href="?method=##attributes.method##&amp;offset=##attributes.offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=#column.getName()# ###column.getName()#ascOrDesc##&amp;q=##attributes.q##">#column.getDisplayName()# ###column.getName()#ascOrDescIcon##</a></th>');
 			}
 			columnCount++;
 			
@@ -221,13 +226,14 @@ component extends="codeGenerator"{
 		
 		//Generate paging details.
 		ct.AppendBody('<cfif attributes.offset gte 0>');
+		ct.AppendBody('<cfif pages gt 1>');
 		ct.AppendBody('	<tr>');
 		ct.AppendBody('	<td colspan="#columnCount#">');
 		ct.AppendBody('		<table class="listnav">');
 		ct.AppendBody('			<tr>');
 		ct.AppendBody('				<td class="prev">');
 		ct.AppendBody('					<cfif prevOffset gte 0>');
-		ct.AppendBody('						<a href="?offset=##prevOffset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##">&larr; Prev</a>');
+		ct.AppendBody('						<a href="?method=##attributes.method##&amp;offset=##prevOffset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##&amp;q=##url.q##">&larr; Prev</a>');
 		ct.AppendBody('					</cfif>');
 		ct.AppendBody('				</td>');
 		ct.AppendBody('				<td class="pages">');
@@ -236,13 +242,13 @@ component extends="codeGenerator"{
 		ct.AppendBody('						<cfif offset eq attributes.offset>');
 		ct.AppendBody('							##i##');
 		ct.AppendBody('						<cfelse>');
-		ct.AppendBody('							<a href="?offset=##offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##">##i##</a>');
+		ct.AppendBody('							<a href="?method=##attributes.method##&amp;offset=##offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##&amp;q=##url.q##">##i##</a>');
 		ct.AppendBody('						</cfif>');
 		ct.AppendBody('					</cfloop>');
 		ct.AppendBody('				</td>');
 		ct.AppendBody('				<td class="next">');
 		ct.AppendBody('					<cfif nextOffset lt #entityname#Count>');
-		ct.AppendBody('					<a href="?offset=##nextOffset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##">Next &rarr;<a/>');
+		ct.AppendBody('					<a href="?method=##attributes.method##&amp;offset=##nextOffset##&amp;maxresults=##attributes.maxresults##&amp;orderby=##attributes.orderby##&amp;q=##url.q##">Next &rarr;<a/>');
 		ct.AppendBody('					</cfif>');
 		ct.AppendBody('				</td>');
 		ct.AppendBody('			</tr>');
@@ -251,6 +257,7 @@ component extends="codeGenerator"{
 		ct.AppendBody('	</tr>');
 		ct.AppendBody('</cfif>');
 		ct.AppendBody('	</tbody>');
+		ct.AppendBody('</cfif>');
 		
 		ct.AppendBody('	</cfoutput>');
 		ct.AppendBody('</table>');
@@ -372,6 +379,27 @@ component extends="codeGenerator"{
 		ct.AppendBody('</cfoutput>');
 	    
 	    return ct;
+	}
+	
+	/**
+	* @hint Generates a search custom tag for a table. 
+	*/
+	public apptacular.handlers.cfc.code.customTag function createViewSearchCustomTag(required any table){
+		var fileLocation = variables.config.getCustomTagFilePath();
+		var fileName = table.getEntityName() & "Search"; 
+		
+	    var ct  = New apptacular.handlers.cfc.code.customTag(fileName, fileLocation);
+		var EntityName = table.getEntityName();
+		ct.addAttribute('q', 'string', false, "");
+	
+		ct.AppendBody('<cfoutput>');
+		ct.AppendBody('<cfform action="" method="get" format="html" >');
+		ct.AppendBody('<input name="method" type="hidden" value="searchresult" />');
+		ct.AppendBody('<input name="q" type="text" id="q" value="##attributes.q##" />');
+		ct.AppendBody('<input name="message" type="submit" value="Search" />');
+		ct.AppendBody('</cfform>');
+		ct.AppendBody('</cfoutput>');
+		return ct;
 	}
 	
 	/**
@@ -604,6 +632,7 @@ component extends="codeGenerator"{
 	    view.AppendBody('<cfparam name="url.message" type="string" default="" />');
 		view.AppendBody('<cfparam name="url.offset" type="numeric" default="0" />');
 		view.AppendBody('<cfparam name="url.maxresults" type="numeric" default="10" />');
+		view.AppendBody('<cfparam name="url.q" type="string" default="" />');
 	    view.AppendBody('<cfimport path="#entityCFCPath#.*" />');
 		view.AppendBody('<cf_pageWrapper>');
 		view.AppendBody();
@@ -613,11 +642,24 @@ component extends="codeGenerator"{
 		view.AppendBody();
 	   	view.AppendBody('	<cfcase value="list">');
 		view.AppendBody('		<cfset #entityName#Array = application.#entityName#Service.listPaged(url.offset, url.maxresults, url.orderby ) />');
+		view.AppendBody('		<cfset totalCount = application.#entityName#Service.count() />');
 		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
 		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
-		view.AppendBody('		</p></cfoutput>');	
-		view.AppendBody('		<cf_#entityName#List orderby="##url.orderby##" #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" /> ');
+		view.AppendBody('		</p></cfoutput>');
+		view.AppendBody('		<cf_#entityName#Search q="##url.q##" />');			
+		view.AppendBody('		<cf_#entityName#List orderby="##url.orderby##" #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##" totalCount="##totalCount##" /> ');
+	    view.AppendBody('	</cfcase>');
+		view.AppendBody();
+		view.AppendBody('	<cfcase value="searchresult">');
+		view.AppendBody('		<cfset #entityName#Array = application.#entityName#Service.searchPaged(url.q, url.offset, url.maxresults, url.orderby ) />');
+		view.AppendBody('		<cfset totalCount = application.#entityName#Service.searchCount(url.q) />');
+		view.AppendBody('		<cfoutput><p class="breadcrumb">');	
+		view.AppendBody('			<a href="index.cfm">Main</a> / <a href="##cgi.script_name##">List</a> /');
+		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
+		view.AppendBody('		</p></cfoutput>');
+		view.AppendBody('		<cf_#entityName#Search q="##url.q##" />');			
+		view.AppendBody('		<cf_#entityName#List method="searchresult" q="##url.q##" orderby="##url.orderby##" #entityName#Array = "###entityName#Array##" message="##url.message##" offset="##url.offset##" maxresults="##url.maxresults##"  totalCount="##totalCount##" /> ');
 	    view.AppendBody('	</cfcase>');
 		view.AppendBody();
 	    
@@ -629,10 +671,10 @@ component extends="codeGenerator"{
 				view.AppendBody('		<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
 			}
 			
-			view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(keys) />');
+			view.AppendBody('		<cfset #entityName# = application.#entityName#Service.get(keys) />');
 		}
 		else{
-			view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(url.#identity#) />');
+			view.AppendBody('		<cfset #entityName# = application.#entityName#Service.get(url.#identity#) />');
 		}
 		
 		
@@ -642,7 +684,7 @@ component extends="codeGenerator"{
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit&amp;#identity#=###EntityName#.get#identity#()##">Edit</a> /');
 		view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
 		view.AppendBody('		</p></cfoutput>');	
-		
+		view.AppendBody('		<cf_#entityName#Search q="##url.q##" />');		
 		view.AppendBody('		<cf_#entityName#Read #entityName# = "###entityName###" /> ');
 		
 		var references = table.getReferences();
@@ -692,7 +734,7 @@ component extends="codeGenerator"{
 		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');
 			view.AppendBody('			/ <a href="#EntityName#.cfm?method=clone&amp;#identity#=###EntityName#.get#identity#()##&amp;message=clone">Clone</a>'); 		
 			view.AppendBody('		</cfif>');
-			view.AppendBody('		</p></cfoutput>');	
+			view.AppendBody('		</p></cfoutput>');
 			view.AppendBody();
 		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
 		    view.AppendBody('	</cfcase>');
@@ -762,7 +804,7 @@ component extends="codeGenerator"{
 		    view.AppendBody('			/ <a href="#EntityName#.cfm?method=read&amp;#identity#=###EntityName#.get#identity#()##">Read</a> /');
 		    view.AppendBody('			<a href="#EntityName#.cfm?method=edit">New</a>');		
 			view.AppendBody('		</cfif>');
-			view.AppendBody('		</p></cfoutput>');	
+			view.AppendBody('		</p></cfoutput>');
 			view.AppendBody();
 		    view.AppendBody('		<cf_#entityName#Edit #entityName# = "###entityName###" message="##url.message##" /> ');
 		    view.AppendBody('	</cfcase>');
@@ -817,7 +859,18 @@ component extends="codeGenerator"{
 		    view.AppendBody('	</cfcase>');
 		    view.AppendBody();
 		    view.AppendBody('	<cfcase value="delete_process">');
-		    view.AppendBody('		<cfset #entityName# = entityLoad("' & entityName  & '", url.#identity#, true) />');
+			
+			if (table.hasCompositePrimaryKey()){
+				view.AppendBody('			<cfset keys = {} />');
+				for (i= 1; i <= ArrayLen(pkcols); i++){
+					view.AppendBody('			<cfset keys["#pkcols[i].getName()#"] = url["#pkcols[i].getName()#"] />');
+				}
+				view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(keys) />');
+			}
+			else{
+				view.AppendBody('			<cfset #entityName# = application.#entityName#Service.get(url.#identity#) />');
+			}
+			
 		    view.AppendBody('		<cfset application.#entityName#Service.destroy(#entityName#) />');
 	 	    view.AppendBody('		<cfset ORMFlush() />');
 			view.AppendBody('		<cflocation url ="##cgi.script_name##?method=list&message=deleted" />');

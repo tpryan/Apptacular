@@ -151,6 +151,9 @@ component{
 					var ViewListCustomTag = viewGenerator.createViewListCustomTag(table);
 					ArrayAppend(files, ViewListCustomTag);
 					
+					var ViewSearchCustomTag = viewGenerator.createViewSearchCustomTag(table);
+					ArrayAppend(files, ViewSearchCustomTag);
+					
 					var ViewReadCustomTag = viewGenerator.createViewReadCustomTag(table);
 					ArrayAppend(files, ViewReadCustomTag);
 					
