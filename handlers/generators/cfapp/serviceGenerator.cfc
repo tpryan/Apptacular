@@ -402,8 +402,11 @@ component  extends="codeGenerator"
 		func.EndSimpleIf(2);
 		
 		//Add order by
-		if (not arguments.count){
+		if (arguments.paged){
 			func.addSimpleSet('hqlString = hqlString & " ORDER BY ##arguments.orderby##"',3);
+		}
+		else if (not arguments.count){
+			func.addSimpleSet('hqlString = hqlString & " ORDER BY #OrderBy#"',3);
 		}
 		//Execute and return
 		if (arguments.count){
