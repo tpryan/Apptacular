@@ -242,15 +242,36 @@ component  extends="codeGenerator"
 		if (arguments.paged){
 			func.setName(variables.config.getServiceListPagedMethod());
 			func.setHint("Returns all of the records in #EntityName#, with paging.");
-			func.setReturnResult('entityLoad("#entityName#", {}, arguments.orderby, loadArgs)');
+			
+			if (variables.config.getReturnQueriesFromService()){
+				func.setReturnResult('entityToQuery(entityLoad("#entityName#", {}, arguments.orderby, loadArgs))');
+			}
+			else{
+				func.setReturnResult('entityLoad("#entityName#", {}, arguments.orderby, loadArgs)');
+			}
+			
 		}
 		else{
 			func.setName(variables.config.getServiceListMethod());
 			func.setHint("Returns all of the records in #EntityName#.");
-			func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#")');
+			
+			if (variables.config.getReturnQueriesFromService()){
+				func.setReturnResult('entityToQuery(entityLoad("#entityName#", {}, "#orderby#"))');
+			}
+			else{
+				func.setReturnResult('entityLoad("#entityName#", {}, "#orderby#")');
+			}
+			
 		}
 		func.setAccess(access);
-		func.setReturnType("#cfcPath#.#EntityName#[]");
+		
+		if (variables.config.getReturnQueriesFromService()){
+			func.setReturnType("query");
+		}
+		else{
+			func.setReturnType("#cfcPath#.#EntityName#[]");
+		}
+		
 		
 		
 		
@@ -332,7 +353,12 @@ component  extends="codeGenerator"
 			func.setReturnType("numeric");
 		}
 		else{
-			func.setReturnType("#cfcPath#.#EntityName#[]");
+			if (variables.config.getReturnQueriesFromService()){
+				func.setReturnType("query");
+			}
+			else{
+				func.setReturnType("#cfcPath#.#EntityName#[]");
+			}
 		}
 		
 		var q = New apptacular.handlers.cfc.code.Argument();
@@ -409,7 +435,10 @@ component  extends="codeGenerator"
 			func.addSimpleSet('hqlString = hqlString & " ORDER BY #OrderBy#"',3);
 		}
 		//Execute and return
-		if (arguments.count){
+		if (variables.config.getReturnQueriesFromService()){
+			func.setReturnResult('entityToQuery(ormExecuteQuery(hqlString, false, params))');
+		}
+		else if (arguments.count){
 			func.setReturnResult('ormExecuteQuery(hqlString, false, params)[1]');
 		}
 		else{

@@ -48,6 +48,7 @@ component accessors="true"{
 	property name="CreateTests" type="boolean" hint="Whether or not Apptacular should write default unit tests.";
 	property name="WireOneToManyinViews" type="boolean" hint="Whether or not Apptacular should write out oneToMany interfaces in view. Good to turn off if you have tables with 1000's of records wired to a oneToMany.";
 	property name="LogSQL" type="boolean" hint="Whether or not generated application should log Hibernate SQL operations to the console.";
+	property name="ReturnQueriesFromService" type="boolean" hint="Whether or not generated application return queries instead of arrays of ORM objects.";
 	
 	property name="CFCFormat" hint="Whether or not your CFCs are all CFML or all CFScript. [Options: CFML, CFSCRIPT]";
 	
@@ -143,7 +144,8 @@ component accessors="true"{
 		This.setServiceSearchPagedMethod("searchPaged");
 		This.setServiceUpdateMethod("update");
 		This.setServiceCountMethod("count");
-		This.setServiceSearchCountMethod("searchCount");			
+		This.setServiceSearchCountMethod("searchCount");
+		This.setReturnQueriesFromService("false");			
 	
 	}
 	
