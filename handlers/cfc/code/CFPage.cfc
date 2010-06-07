@@ -19,21 +19,21 @@ component displayname="CFPage" extends="file" hint="A cfc representation of a cf
 	}
 
 	/**
-		* @hint Adds CFML content to the page.
+	* @hint Adds CFML content to the page.
 	*/
 	public void function appendBody(string bodyContent=""){
 		ArrayAppend(variables.body, arguments.bodyContent & variables.NL);
 	}
 	
 	/**
-		* @hint Adds CFScript content to the page.
+	* @hint Adds CFScript content to the page.
 	*/
 	public void function appendBodyScript(string bodyContent=""){
 		ArrayAppend(variables.bodyScript,arguments.bodyContent & variables.NL);
 	}
 	
 	/**
-		* @hint Returns the page content as CFML.
+	* @hint Returns the page content as CFML.
 	*/
 	public string function getCFML(){
 		return ArrayToList(variables.body, "");
@@ -41,7 +41,7 @@ component displayname="CFPage" extends="file" hint="A cfc representation of a cf
 	
 	
 	/**
-		* @hint Writes the file to disk.
+	* @hint Writes the file to disk.
 	*/
 	public void function write(){
 		conditionallyCreateDirectory(This.getFileLocation());

@@ -46,7 +46,6 @@ component{
 			ArrayAppend(files, EventHandler);
 			
 			ormDependentFiles.endTime = GetTickCount();
-			
 			logTime(ormDependentFiles);
 			
 		}
@@ -93,12 +92,9 @@ component{
 			}
 			
 			globalApplicationViews.endTime = GetTickCount();
-			
-			
 			logTime(globalApplicationViews);
 			
 		}
-		
 		
 		
 		//Only generate login service if we are generating services
@@ -169,9 +165,6 @@ component{
 					viewTime = viewTime + (viewTableTime.end - viewTableTime.start);	
 					
 				}
-				
-				
-				
 				
 				//Handles Services for tables.
 				if (config.getCreateServices() and table.getCreateInterface()){
@@ -289,8 +282,6 @@ component{
 	public void function logTime(required input){
 		var totalTime = (arguments.input.endTime - arguments.input.startTime) / 1000;	
 		writeLog("Apptacular step: #datasource.getName()# :#arguments.input.label# took #NumberFormat(totalTime, "_.____")# seconds.");
-	
-	
 	} 
 	
 }

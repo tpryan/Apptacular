@@ -179,18 +179,12 @@
 		
 	}
 	
-	
-	
-	
 
 </cfscript>
-
-
 
 <!--- reset application --->
 <cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <cfhttp url="#script_Path#" timeout="0" />
-
 
 <cfif onprojectCreate>
 	<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
