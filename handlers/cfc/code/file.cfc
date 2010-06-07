@@ -10,7 +10,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
-		variables.body = CreateObject("java","java.lang.StringBuilder").Init();
+		variables.body = ArrayNew(1);
 		
 		return This;
 	}
@@ -19,14 +19,14 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 		* @hint Returns the content.
 	*/
 	public string function getFileContent(){
-		return variables.body;
+		return ArraytoList(variables.body, "");
 	}
 	
 	/**
 		* @hint Adds text content to the file.
 	*/
 	public void function appendBody(string bodyContent=""){
-		variables.body.append(arguments.bodyContent & variables.NL);
+		ArrayAppend(variables.body, arguments.bodyContent & variables.NL);
 	}
 	
 	
