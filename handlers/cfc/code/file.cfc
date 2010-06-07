@@ -23,7 +23,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	}
 	
 	/**
-		* @hint Adds CFML content to the page.
+		* @hint Adds text content to the file.
 	*/
 	public void function appendBody(string bodyContent=""){
 		variables.body.append(arguments.bodyContent & variables.NL);

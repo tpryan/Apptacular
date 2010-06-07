@@ -34,40 +34,23 @@ component  extends="codeGenerator"
 			loginTest.setName('testLoginNotRequired');
 		}
 		
+		loginTest.AddLineBreak();
+		loginTest.addSimpleSet('var httpObj = new http(url="##urlToTest##", timeout="5" )',2);
+		loginTest.addSimpleSet('cfhttp = httpObj.send().getPrefix()',2);
 		
-		loginTest.AddOperation('');
-		loginTest.AddOperation('		<cfhttp url="##urlToTest##" timeout="5" />');
-		
-		if (config.getcreateLogin()){
-			loginTest.AddOperation('		<cfif not FindNoCase("Please login", cfhttp.fileContent)>');
-			loginTest.AddOperation('			<cfset fail("Login should be required") />');
-			loginTest.AddOperation('		</cfif>');
-		}
-		else{
-			loginTest.AddOperation('		<cfif FindNoCase("Please login", cfhttp.fileContent)>');
-			loginTest.AddOperation('			<cfset fail("Login should not be required") />');
-			loginTest.AddOperation('		</cfif>');
-		}
-		
-		loginTest.AddOperation('');
-		
-		loginTest.AddOperationScript('');
-		loginTest.AddOperationScript('		var httpObj = new http(url="##urlToTest##", timeout="5" );');
-		loginTest.AddOperationScript('		cfhttp = httpObj.send().getPrefix();');
 		
 		if (config.getcreateLogin()){
-			loginTest.AddOperationScript('		if (not FindNoCase("Please login", cfhttp.fileContent)){');
-			loginTest.AddOperationScript('			fail("Login should be required");');
-			loginTest.AddOperationScript('		}');
+			loginTest.StartSimpleIF('not FindNoCase("Please login", cfhttp.fileContent)', 2);
+			loginTest.addSimpleSet('fail("Login should be required")', 3);
+			loginTest.EndSimpleIF(2);
 		}
 		else{
-			loginTest.AddOperationScript('		if (FindNoCase("Please login", cfhttp.fileContent)){');
-			loginTest.AddOperationScript('			fail("Login should not be required");');
-			loginTest.AddOperationScript('		}');
+			loginTest.StartSimpleIF('FindNoCase("Please login", cfhttp.fileContent)',2);
+			loginTest.addSimpleSet('fail("Login should not be required")',3);
+			loginTest.EndSimpleIF(2);
 		}
 		
-		loginTest.AddOperationScript('');
-		
+		loginTest.AddLineBreak();
 		testIndex.addFunction(loginTest);
 		
 		return testIndex;
@@ -213,11 +196,7 @@ component  extends="codeGenerator"
 				var tearDown = createTearDownUnitTestforMSSQL(table=table);
 				testEntity.addFunction(tearDown);
 			}
-			
 		}
-
-		
-		
 
 		return testEntity;
 	}
@@ -875,23 +854,20 @@ component  extends="codeGenerator"
 		returns200.addLocalVariable("cfhttp","struct");
 		returns200.addLocalVariable("urlToTest","string", "#arguments.targetURL#");
 	
-		returns200.AddOperation('');
-		returns200.AddOperation('		<cfhttp url="##urlToTest##" timeout="30" />');
-		returns200.AddOperation('		<cfif not FindNoCase("200", cfhttp.statusCode)>');
-		returns200.AddOperation('			<cfset debug(urlToTest) />');
-		returns200.AddOperation('			<cfset debug(cfhttp) />');
-		returns200.AddOperation('			<cfset fail("Simple HTTP Calls to view should work.") />');
-		returns200.AddOperation('		</cfif>');
-		returns200.AddOperation('');
-		returns200.AddOperationScript('');
-		returns200.AddOperationScript('		var httpObj = new http(url="##urlToTest##", timeout="30" );');
-		returns200.AddOperationScript('		cfhttp = httpObj.send().getPrefix();');
-		returns200.AddOperationScript('		if (not FindNoCase("200", cfhttp.statusCode)){');
-		returns200.AddOperationScript('			debug(urlToTest);');
-		returns200.AddOperationScript('			debug(cfhttp);');
-		returns200.AddOperationScript('			fail("Simple HTTP Calls to #arguments.entityName#.#arguments.operation#() should work.");');
-		returns200.AddOperationScript('		}');
-		returns200.AddOperationScript('');
+	
+		returns200.addLineBreak();
+		returns200.addSimpleSet('var httpObj = new http(url="##urlToTest##", timeout="30" )', 2);
+		returns200.addSimpleSet('cfhttp = httpObj.send().getPrefix()', 2);
+		
+		
+		returns200.addLineBreak();
+		returns200.StartSimpleIF('not FindNoCase("200", cfhttp.statusCode)', 2);
+		returns200.addSimpleSet('debug(urlToTest)', 3);
+		returns200.addSimpleSet('debug(cfhttp)', 3);
+		returns200.addSimpleSet('fail("Simple HTTP Calls to #arguments.entityName#.#arguments.operation#() should work.")', 3);
+		returns200.EndSimpleIF(2);
+		returns200.addLineBreak();
+	
 	
 		return returns200;
 	}

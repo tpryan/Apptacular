@@ -12,8 +12,8 @@ component displayname="CFPage" extends="file" hint="A cfc representation of a cf
 		This.setFileLocation(arguments.fileLocation);
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
-		variables.body = CreateObject("java","java.lang.StringBuilder").Init();
-		variables.bodyScript = CreateObject("java","java.lang.StringBuilder").Init();
+		variables.body = ArrayNew(1);
+		variables.bodyScript = ArrayNew(1);
 		
 		return This;
 	}
@@ -22,21 +22,21 @@ component displayname="CFPage" extends="file" hint="A cfc representation of a cf
 		* @hint Adds CFML content to the page.
 	*/
 	public void function appendBody(string bodyContent=""){
-		variables.body.append(arguments.bodyContent & variables.NL);
+		ArrayAppend(variables.body, arguments.bodyContent & variables.NL);
 	}
 	
 	/**
 		* @hint Adds CFScript content to the page.
 	*/
 	public void function appendBodyScript(string bodyContent=""){
-		variables.bodyScript.append(arguments.bodyContent & variables.NL);
+		ArrayAppend(variables.bodyScript,arguments.bodyContent & variables.NL);
 	}
 	
 	/**
 		* @hint Returns the page content as CFML.
 	*/
 	public string function getCFML(){
-		return variables.body;
+		return ArrayToList(variables.body, "");
 	}
 	
 	

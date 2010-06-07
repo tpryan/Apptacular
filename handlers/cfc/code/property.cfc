@@ -63,102 +63,105 @@ component accessors="true" {
     * @hint Builds the string of property attributes.
     */
 	private any function addPropertyAttributes(any stringBuilder){
+	
+		var lprops = ArrayNew(1);
 		
 		if (len(This.getName())){
-			arguments.stringBuilder.append('name="#This.getName()#" ');
+			ArrayAppend(lprops, 'name="#This.getName()#" ');
        	}
        
        	if (len(This.getColumn()) AND compare(This.getColumn(), This.getName()) neq 0 ){
-       		arguments.stringBuilder.append('column="#This.getColumn()#" ');
+       		ArrayAppend(lprops, 'column="#This.getColumn()#" ');
        	}
        
       	if (len(This.getormtype()) AND compare(This.getType(), This.getORMType()) neq 0 ){
-       		arguments.stringBuilder.append('ormtype="#This.getormtype()#" ');
+       		ArrayAppend(lprops, 'ormtype="#This.getormtype()#" ');
        	}
 		
 		if (len(This.gettype())){
-       		arguments.stringBuilder.append('type="#This.gettype()#" ');
+       		ArrayAppend(lprops, 'type="#This.gettype()#" ');
        	}
        	
        	if (len(This.getFieldtype())){
-       		arguments.stringBuilder.append('fieldtype="#This.getFieldtype()#" ');
+       		ArrayAppend(lprops, 'fieldtype="#This.getFieldtype()#" ');
        	}
        		
        	if (len(This.getGenerator())){
-       		arguments.stringBuilder.append('generator="#This.getGenerator()#" ');
+       		ArrayAppend(lprops, 'generator="#This.getGenerator()#" ');
        	}
        
        	if (len(This.getCFC())){
-       		arguments.stringBuilder.append('cfc="#This.getCFC()#" ');
+       		ArrayAppend(lprops, 'cfc="#This.getCFC()#" ');
        	}
        
        	if (len(This.getFkColumn())){
-       		arguments.stringBuilder.append('fkColumn="#This.getFkColumn()#" ');
+       		ArrayAppend(lprops, 'fkColumn="#This.getFkColumn()#" ');
        	}
        	
        	if (len(This.getmissingRowIgnored())){
-       		arguments.stringBuilder.append('missingRowIgnored="#This.getmissingRowIgnored()#" ');
+       		ArrayAppend(lprops, 'missingRowIgnored="#This.getmissingRowIgnored()#" ');
        	}
 		
 		if (len(This.getLength())){
-       		arguments.stringBuilder.append('length="#This.getLength()#" ');
+       		ArrayAppend(lprops, 'length="#This.getLength()#" ');
        	}
        	
        	if (len(This.getinverse())){
-       		arguments.stringBuilder.append('inverse="#This.getinverse()#" ');
+       		ArrayAppend(lprops, 'inverse="#This.getinverse()#" ');
        	}
        	
        	if (len(This.getcascade())){
-       		arguments.stringBuilder.append('cascade="#This.getcascade()#" ');
+       		ArrayAppend(lprops, 'cascade="#This.getcascade()#" ');
        	}
        	
        	if (len(This.getcollectiontype())){
-       		arguments.stringBuilder.append('collectiontype="#This.getcollectiontype()#" ');
+       		ArrayAppend(lprops, 'collectiontype="#This.getcollectiontype()#" ');
        	}
        	
        	if (len(This.getSingularName())){
-       		arguments.stringBuilder.append('SingularName="#This.getSingularName()#" ');
+       		ArrayAppend(lprops, 'SingularName="#This.getSingularName()#" ');
        	}
 		
 		if (len(This.getlinktable())){
-       		arguments.stringBuilder.append('linktable="#This.getlinktable()#" ');
+       		ArrayAppend(lprops, 'linktable="#This.getlinktable()#" ');
        	}
 		
 		if (len(This.getInverseJoinColumn())){
-       		arguments.stringBuilder.append('InverseJoinColumn="#This.getInverseJoinColumn()#" ');
+       		ArrayAppend(lprops, 'InverseJoinColumn="#This.getInverseJoinColumn()#" ');
        	}
 		
 		if (len(This.getlazy())){
-       		arguments.stringBuilder.append('lazy="#This.getlazy()#" ');
+       		ArrayAppend(lprops, 'lazy="#This.getlazy()#" ');
        	}
 		
 		if (len(This.getorderby())){
-       		arguments.stringBuilder.append('orderby="#This.getorderby()#" ');
+       		ArrayAppend(lprops, 'orderby="#This.getorderby()#" ');
        	}
 		
 		if (len(This.getpersistent())){
-       		arguments.stringBuilder.append('persistent="#This.getpersistent()#" ');
+       		ArrayAppend(lprops, 'persistent="#This.getpersistent()#" ');
        	}
 		
 		if (len(This.getgetter())){
-       		arguments.stringBuilder.append('getter="#This.getgetter()#" ');
+       		ArrayAppend(lprops, 'getter="#This.getgetter()#" ');
        	}
 		
 		if (len(This.getsetter())){
-       		arguments.stringBuilder.append('setter="#This.getsetter()#" ');
+       		ArrayAppend(lprops, 'setter="#This.getsetter()#" ');
        	}
 		
 		if (len(This.getInsert())){
-       		arguments.stringBuilder.append('insert="#This.getInsert()#" ');
+       		ArrayAppend(lprops, 'insert="#This.getInsert()#" ');
        	}
 		
 		if (len(This.getUpdate())){
-       		arguments.stringBuilder.append('update="#This.getUpdate()#" ');
+       		ArrayAppend(lprops, 'update="#This.getUpdate()#" ');
        	}
 		if (len(This.getRemotingFetch())){
-       		arguments.stringBuilder.append('remotingFetch="#This.getRemotingFetch()#" ');
+       		ArrayAppend(lprops, 'remotingFetch="#This.getRemotingFetch()#" ');
        	}
 		
+		stringBuilder.append(ArrayToList(lprops, ""));
 		stringBuilder = trim(stringBuilder);
 			
 		return stringBuilder;

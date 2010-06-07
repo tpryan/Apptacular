@@ -15,7 +15,7 @@ component displayname="Custom Tag" hint="A cfc representation of a Custom tag fo
 
 		variables.header = "<!--- #This.getName()#.cfm --->" & NL & '<cfprocessingdirective suppresswhitespace="yes">' & variables.NL;
 		variables.attributes = CreateObject("java","java.lang.StringBuilder").Init();
-		variables.body = CreateObject("java","java.lang.StringBuilder").Init();
+		variables.body = variables.body = ArrayNew(1);
 		variables.footer = "</cfprocessingdirective>" & variables.NL & '<cfexit method="exitTag" />' & variables.NL ;
 	
 		return This;
