@@ -13,6 +13,10 @@
 		<th><label for="password">Password:</label></th>
 		<td><input name="password" id="password" type="password" /></td>
 		</tr>
+		<tr>
+		<th><label for="rememberme">Remember me on this machine:</label></th>
+		<td><input name="rememberme" id="rememberme" type="checkbox" value="true" /></td>
+		</tr>
 		<tr><th></th><td><input type="submit" name="login" value="Login"></td></tr>
 	</form>
 	</table>

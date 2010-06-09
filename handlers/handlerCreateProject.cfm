@@ -1,6 +1,13 @@
 
 <cfscript>
-	handlerPath = getDirectoryFromPath(cgi.script_name) & "createProject/login.cfm";
+
+	if (application.rds.rememberMe){
+		handlerPath = getDirectoryFromPath(cgi.script_name) & "createProject/presentdatasources.cfm";
+	}
+	else{
+		handlerPath = getDirectoryFromPath(cgi.script_name) & "createProject/login.cfm";
+	}
+	
 	XMLDoc = xmlParse(ideeventInfo);
 	
 	if (structKeyExists(XMLDoc.event.ide, "eventinfo")){

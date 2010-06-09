@@ -9,4 +9,13 @@ component {
 	public boolean function onRequestStart() {
 		return true;
 	}
+	
+	public boolean function onApplicationStart(){
+		application.rds = {};
+		application.rds.username = "";
+		application.rds.password = "";
+		application.rds.rememberMe = false;
+		
+		return true;
+	}
 }

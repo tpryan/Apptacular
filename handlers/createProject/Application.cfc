@@ -1,6 +1,6 @@
 component {
 
-	This.name = "apptacularhandlerscreateproject";
+	This.name = "apptacularhandlers";
 	This.customTagPaths = ExpandPath('../customTags/');
 
 	/**

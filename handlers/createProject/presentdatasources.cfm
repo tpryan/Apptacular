@@ -1,7 +1,26 @@
 ﻿<cfscript>
 
+	if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
+		rds = application.rds;
+		projectPath = url.projectPath;
+	}
+	else{
+		rds.username = form.username;
+		rds.password = form.password;
+		projectPath = form.projectPath;
+	}
+	
+	
+	
+	if (structKeyExists(form, "rememberme")){
+		application.rds = {};
+		application.rds.username = form.username;
+		application.rds.password = form.password;
+		application.rds.rememberMe = true;
+	}
+	
 	admin= New CFIDE.adminapi.administrator();
-	admin.login(form.password, form.username);
+	admin.login(rds.password, rds.username);
 	datasource = new CFIDE.adminapi.datasource();
 	datasources = datasource.getDatasources();
 	datasourceArray = StructKeyArray(datasources);
@@ -14,7 +33,7 @@
 	<p>Pick the datasource you'd like to use to create your application</p>
 	<table>
 	<form action="../handlerGenerate.cfm" method="post">
-		<input type="hidden" name="projectPath" value="#form.projectPath#" />
+		<input type="hidden" name="projectPath" value="#projectPath#" />
 		<tr>
 		<th><label for="datasource">Datasource:</label></th>
 		<td>
