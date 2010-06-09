@@ -90,7 +90,8 @@
 	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
 
 	//process DB version of schema
-	db = New cfc.db.datasource(dsName);
+	stringUtils = New cfc.stringUtil();
+	db = New cfc.db.datasource(dsName,stringUtils);
 
 	
 	//process config default 
@@ -136,7 +137,6 @@
 		
 		
 		if (config.getDepluralize()){
-			stringUtil = new apptacular.handlers.cfc.stringUtil();
 			datamodel.depluralize(stringUtil);
 		}
 		

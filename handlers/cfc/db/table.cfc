@@ -37,10 +37,11 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint You know, an init. 
 	 */
-	public function init(required string name, required string datasource, string schema="", boolean isView=FALSE){
+	public function init(required string name, required string datasource, string schema="", boolean isView=FALSE, any stringUtil){
 		variables.mappings = New mappings();
 		variables.dbinfo = New dbinfo();
 		variables.datasource = arguments.datasource;
+		variables.stringUtil = arguments.stringUtil;
 		dbinfo.setDatasource(arguments.datasource);
 		
 		//Turns out that I need this
@@ -61,31 +62,19 @@ component accessors="true" extends="dbItem"
 		populateTable();
 		populateForeignKeys();
 		populateColumns();
-		populateForeignTables(); 
+		//populateForeignTables(); 
 		populateReferenceCounts();
+		populateRowCount();
 		calculateForeignKeyLabel();
+		
 		
 		return This;
 	}
 	
 	
-	/**
-    * @hint Encapsulates all of the logic to set plurals and displays from an entity name
-    */
-	public string function setAllNamesBasedOnEntityName(){
-		This.setPlural(pluralize(This.getEntityName()));
-		This.setDisplayPlural(pluralize(formatDisplayName(This.getEntityName())));
-		This.setDisplayName(formatDisplayName(This.getEntityName()));
-	}
 	
-	/**
-    * @hint Encapsulates all of the logic to create an display name from an entity name
-    */
-	public string function formatDisplayName(string name){
-		var result = capitalize(name);
-		result = Replace(result, "_", " ", "all");
-		return result;
-	}
+	
+	
 	
 	/**
 	 * @hint Add a jointable relationship
@@ -130,6 +119,8 @@ component accessors="true" extends="dbItem"
 		This.setForeignKeyLabel(result);
 	}
 	
+	
+	
 	/**
 	* @hint Searchs through a table to determine if there is a valid id to use for reads and updates. 
 	*/
@@ -142,6 +133,15 @@ component accessors="true" extends="dbItem"
 			return discoverValidIdSingleKey(excludelist);
 		}
 		
+	}
+	
+	/**
+    * @hint Encapsulates all of the logic to create an display name from an entity name
+    */
+	public string function formatDisplayName(string name){
+		var result = capitalize(name);
+		result = Replace(result, "_", " ", "all");
+		return result;
 	}
 	
 	/**
@@ -231,6 +231,107 @@ component accessors="true" extends="dbItem"
 		return value;
 	}
 	
+	
+	
+	
+	
+	/**
+	 * @hint Populates all of the details of Foreign keys relationships
+	 */
+	private void function populateForeignKeys(){
+		dbinfo.setType("foreignkeys");
+		var	foreignkeys = dbinfo.send().getResult();
+		var i = 0;
+		
+		dbinfo.setType("index");
+		var	indicies = dbinfo.send().getResult();
+		
+		This.setIsReferencedAsForeignKey(foreignKeys.recordCount > 0 );
+		
+		if (foreignkeys.recordCount gt 0){
+			var refArray = ArrayNew(1);
+			for (i = 1; i <= foreignkeys.recordCount; i++){
+				var ref = New reference();
+				ref.setForeignKeyTable(foreignkeys.fktable_name[i]);
+				ref.setForeignKey(foreignkeys.fkcolumn_name[i]);
+				arrayAppend(refArray, ref);
+			}
+			This.setReferences(refArray);
+		}
+	
+	}
+	
+	
+	/**
+    * @hint Determines if the table has a composite primary key. 
+    */
+	public boolean function hasCompositePrimaryKey(){
+		var columns = This.getColumns();
+		var i = 0;
+		var primarykeyCount = 0;
+		
+		for (i = 1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
+			if (column.getIsPrimaryKey()){
+				primarykeyCount++;
+			}
+			if(primarykeyCount > 1){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * @hint Whether or not this table has a primary key
+	 */	
+	public boolean function hasPrimaryKey(){
+		return (Not isNull(This.getIdentity()));
+	}
+
+	/**
+	* @hint Detects issues with the concept of identity.  Some tables have values for identity that aren't actually identities in the database.  This solves this. 
+	*/
+	public boolean function hasRealIdentity(){
+		return getColumn(This.getIdentity()).getIsIdentity();
+	}
+
+	/**
+	 * @hint Checks to see if entity name and the table name is the same to cut back on unnecessary code
+	 */	
+	public boolean function isEntitySameAsTableName(){
+		return (CompareNoCase(This.getName(), This.getEntityName()) eq 0);	
+	}
+	
+	/**
+	 * @hint Determines whether or not this table can be scaffolded.
+	 */	
+	public boolean function isProperTable(){
+		
+		var identity = This.getIdentity();
+		var columns = This.getColumns();
+		var i = 0;
+		
+		for (i = 1; i <= ArrayLen(columns); i++){
+			var column = columns[i];
+			if (FindNoCase(".", column.getColumn())){
+				return false;
+			}
+		}
+		
+		if (not isDefined("identity")){
+			return false;
+		}
+		
+		if (len(This.getIdentity() gt 0)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	/**
 	 * @hint Populates the column information of the table.
 	 */	
@@ -261,7 +362,7 @@ component accessors="true" extends="dbItem"
 			}
 			
 			//Deal with Fracking microsoft custom variables.
-			if (FindNoCase("Microsoft",variables.Engine) AND isUcase(Left(columns.type_name[i], 1)) ){
+			if (FindNoCase("Microsoft",variables.Engine) AND variables.stringUtil.isUcase(Left(columns.type_name[i], 1)) ){
 				var columnType = findBaseTypeofCustom(columns.type_name[i]);
 			}
 			else{
@@ -316,6 +417,10 @@ component accessors="true" extends="dbItem"
 				ForeignKeyFound = TRUE;
 			}
 			
+			//Handle foreign columns in the same loop 
+			populateColumnForeignTables(column);
+			
+			
 		}
 		
 		
@@ -329,14 +434,10 @@ component accessors="true" extends="dbItem"
 			
 		}
 		
-		//Added this because cfdbinfo doesn't like composite primary keys in MSSQL
-		if (not PrimaryKeyFound AND FindNoCase("Microsoft",variables.Engine)){
-			columnArray=doubleCheckMSSQLForPrimaryKeys(columnArray);
-		}
 		
-		//Added this because cfdbinfo doesn't like foreign keys in MSSQL
+		//Added this because cfdbinfo doesn't like foreign keys and composite primary keys in MSSQL
 		if (not PrimaryKeyFound AND FindNoCase("Microsoft",variables.Engine)){
-			columnArray=doubleCheckMSSQLForForiegnKeys(columnArray);
+			columnArray=doubleCheckMSSQLForKeys(columnArray);
 		}
 		
 		//Added this because of difficulties mapping composite foriegn keys
@@ -348,46 +449,22 @@ component accessors="true" extends="dbItem"
 	}
 	
 	/**
-	 * @hint Populates all of the details of Foreign keys relationships
-	 */
-	private void function populateForeignKeys(){
-		dbinfo.setType("foreignkeys");
-		var	foreignkeys = dbinfo.send().getResult();
-		var i = 0;
-		
-		dbinfo.setType("index");
-		var	indicies = dbinfo.send().getResult();
-		
-		This.setIsReferencedAsForeignKey(foreignKeys.recordCount > 0 );
-		
-		if (foreignkeys.recordCount gt 0){
-			var refArray = ArrayNew(1);
-			for (i = 1; i <= foreignkeys.recordCount; i++){
-				var ref = New reference();
-				ref.setForeignKeyTable(foreignkeys.fktable_name[i]);
-				ref.setForeignKey(foreignkeys.fkcolumn_name[i]);
-				arrayAppend(refArray, ref);
-			}
-			This.setReferences(refArray);
-		}
-	
+    * @hint Encapsulates all of the logic to set plurals and displays from an entity name
+    */
+	public string function setAllNamesBasedOnEntityName(){
+		This.setPlural(pluralize(This.getEntityName()));
+		This.setDisplayPlural(pluralize(formatDisplayName(This.getEntityName())));
+		This.setDisplayName(formatDisplayName(This.getEntityName()));
 	}
+	
 	
 	/**
-	 * @hint Fills all of the content in the table with defaults.
-	 */
-	private void function populateTable(){
-		This.setHasForeignKeys(FALSE);
-		This.setIsJoinTable(FALSE);
-		This.setSoftDelete(FALSE);
-		This.setHasJoinTable(FALSE);
-		This.setJoinTables(ArrayNew(1));
-		This.setjoinedTables(ArrayNew(1));
-		This.setVirtualcolumns(ArrayNew(1));
-		This.setForeignTables(structNew());
-		This.setreferenceCounts(structNew());
-		This.setCreateInterface(TRUE);
-	}
+	 * @hint Converts table to XML for serialization
+	 */	
+	public string function toXML(){
+		return objectToXML("table");
+	} 
+	
 	
 	/**
     * @hint This will find the type that a custom database type is based on. 
@@ -477,7 +554,7 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint Spins through and sees if there are any foriegn keys that cfdbinfo missed.
 	 */	
-	private array function doubleCheckMSSQLForForiegnKeys(required array columnArray){
+	private array function doubleCheckMSSQLForKeys(required array columnArray){
 	
 		//Short Circuit the whole dealio 
 		if (not FindNoCase("Microsoft",variables.Engine)){
@@ -491,6 +568,7 @@ component accessors="true" extends="dbItem"
 		var columns = arguments.columnArray;
 		var i = 0;
 		var j = 0;
+		var indexKeys = "";
 		
 		//Get the fkeys in the table.
 		var sptables = New storedProc();
@@ -506,29 +584,73 @@ component accessors="true" extends="dbItem"
 		
 		sptables.setDataSource(variables.datasource);
 		sptables.setDebug(true);
-		sptables.addProcResult(name="fkeys",resultset=7); 
+		sptables.addProcResult(name="fkeys",resultset=7);
+		sptables.addProcResult(name="index",resultset=6);
+		
+		
+		  
 	
 	
 		try{
-			var fkeys = sptables.execute().getprocResultSets().fkeys;
+			var results = sptables.execute().getprocResultSets();
 		}
 		catch(any e){
 			if (FindNoCase("Cannot find fkeys key in structure",e.message)){
-				return columns;
-			}
+				results.fkey = queryNew("");
+			}	
 			else{
 				writeDump(e);
 				writeDump(This);
 				writeDump(sptables);
 				writeDump(sptables.execute());
 				abort;
+			}		
+		}
+		
+		// handle fkeys
+		if (structKeyExists(results, "fkeys")){
+			var fkeys = results.fkeys;
+		}
+		else{
+			var fkeys = queryNew("");
+		}
+		
+		// handle index
+		if (structKeyExists(results, "fkeys")){
+			var index = results.index;
+		}
+		else{
+			var index = queryNew("");
+		}
+		
+		if (index.RecordCount gt 0){
+			//Just select out the columns
+			var qoq = new Query(); 
+			var queryString = "	SELECT  	Index_Keys 
+	                          	FROM  		resultSet
+								WHERE 		INDEX_DESCRIPTION like '%primary key%'"; 
+			qoq.setAttributes(resultSet = index);  
+			qoq.SetDBType("query"); 
+			
+			try{
+				indexKeys = qoq.execute(sql=queryString).getResult()['Index_keys']; 
+				indexKeys = Replace(indexKeys, ", ", ",", "ALL");
+			}
+			catch(any e){
+			
+				if (FindNoCase("The select column reference [Index_Keys]", e.detail)){
+					indexKeys = "";
+				}
 			}
 		}
+		
+		
 		
 		//loop through the columns and alter any foreign key holding columns
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
+			//handle fkeys. 
 			for (j=1; j <= fkeys.recordCount; j++){
 				var keyList = Replace(fkeys['CONSTRAINT_KEYS'][j], " ", "", "ALL");
 				var position = ListFindNoCase(keyList,column.getColumn());
@@ -551,6 +673,19 @@ component accessors="true" extends="dbItem"
 				}
 			
 			}
+			
+			//handle index
+			if (ListFindNoCase(indexKeys,column.getColumn())){
+				column.setIsPrimaryKey(True);
+				This.setIdentity(column.getName());
+				This.setOrderBy(column.getName() & " asc");
+				columns[i] = column;
+			}
+			
+			//Handle foreign columns in the same loop 
+			populateColumnForeignTables(column);
+			
+			
 		}
 		
 	
@@ -639,83 +774,10 @@ component accessors="true" extends="dbItem"
 		return columns;
 	}
 	
-	/**
-    * @hint Determines if the table has a composite primary key. 
-    */
-	public boolean function hasCompositePrimaryKey(){
-		var columns = This.getColumns();
-		var i = 0;
-		var primarykeyCount = 0;
-		
-		for (i = 1; i <= ArrayLen(columns); i++){
-			var column = columns[i];
-			if (column.getIsPrimaryKey()){
-				primarykeyCount++;
-			}
-			if(primarykeyCount > 1){
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * @hint Whether or not this table has a primary key
-	 */	
-	public boolean function hasPrimaryKey(){
-		return (Not isNull(This.getIdentity()));
-	}
-
-	/**
-	* @hint Detects issues with the concept of identity.  Some tables have values for identity that aren't actually identities in the database.  This solves this. 
-	*/
-	public boolean function hasRealIdentity(){
-		return getColumn(This.getIdentity()).getIsIdentity();
-	}
-
-	/**
-	 * @hint Checks to see if entity name and the table name is the same to cut back on unnecessary code
-	 */	
-	public boolean function isEntitySameAsTableName(){
-		return (CompareNoCase(This.getName(), This.getEntityName()) eq 0);	
-	}
-	
-		/**
-	 * @hint Determines whether or not this table can be scaffolded.
-	 */	
-	public boolean function isProperTable(){
-		
-		var identity = This.getIdentity();
-		var columns = This.getColumns();
-		var i = 0;
-		
-		for (i = 1; i <= ArrayLen(columns); i++){
-			var column = columns[i];
-			if (FindNoCase(".", column.getColumn())){
-				return false;
-			}
-		}
-		
-		if (not isDefined("identity")){
-			return false;
-		}
-		
-		if (len(This.getIdentity() gt 0)){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
 	
 	
-	/**
-	 * @hint Converts table to XML for serialization
-	 */	
-	public string function toXML(){
-		return objectToXML("table");
-	} 
+	
+	
 	
 	
 	
@@ -744,7 +806,22 @@ component accessors="true" extends="dbItem"
 		}
 	}
 	
+	private void function populateColumnForeignTables(any column){
+		var locColumn = arguments.column;
+		
+		if (len(locColumn.getForeignKeyTable())){
+			var ft = This.getForeignTables();
+		
+			if (not structKeyExists(ft, locColumn.getForeignKeyTable())){
+				ft[locColumn.getForeignKeyTable()] = 0;
+			}
+			
+			ft[locColumn.getForeignKeyTable()] = ft[locColumn.getForeignKeyTable()] + 1;
+			This.setForeignTables(Duplicate(ft));
+		}
+		
 	
+	}
 	
 	/**
 	 * @hint Populates all of the details of tables that reference this table as a foriegn key
@@ -770,6 +847,46 @@ component accessors="true" extends="dbItem"
 		This.setReferenceCounts(Duplicate(refCounts));
 		
 	}
+	
+	/**
+	 * @hint Counts rows for each table 
+	 */	
+	private void function populateRowCount(){
+		
+		if (Len(This.getschema()) > 0){
+			var SQL = "SELECT count(*) as countOfRows FROM #This.getSchema()#.#This.getName()#";	
+		}
+		else{
+			var SQL = "SELECT count(*) as countOfRows FROM #This.getName()#";
+		}
+		
+		var qry = new Query(datasource=variables.datasource);
+		qry.setSQL(SQL);
+		
+		var countOfRows = qry.execute().getResult().countOfRows;
+		
+		This.setrowCount(countOfRows);
+	}
+	
+	/**
+	 * @hint Fills all of the content in the table with defaults.
+	 */
+	private void function populateTable(){
+		This.setHasForeignKeys(FALSE);
+		This.setIsJoinTable(FALSE);
+		This.setSoftDelete(FALSE);
+		This.setHasJoinTable(FALSE);
+		This.setJoinTables(ArrayNew(1));
+		This.setjoinedTables(ArrayNew(1));
+		This.setVirtualcolumns(ArrayNew(1));
+		This.setForeignTables(structNew());
+		This.setreferenceCounts(structNew());
+		This.setCreateInterface(TRUE);
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -852,14 +969,6 @@ component accessors="true" extends="dbItem"
 	}
 	
 	
-	
-	/**
-	* @hint determines if a particular characters if uppercase or not.
-	*/
-	private string function isUcase(required string character){
-		if(asc(character) gte 65 and asc(character) lte 90) return TRUE;
-		else return FALSE;
-	}
 	
 	/**
     * @hint Determines if the name of a reference table makes it likely that it is a join table.

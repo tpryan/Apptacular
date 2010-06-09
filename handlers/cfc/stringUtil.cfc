@@ -38,6 +38,16 @@ component{
 		return result;
 	}
 	
+	/**
+	* @hint determines if a particular characters if uppercase or not.
+	*/
+	public string function isUcase(required string character){
+		if(asc(character) gte 65 and asc(character) lte 90) return TRUE;
+		else return FALSE;
+	}
+	
+	
+	
 	private string function specialWordProcess(required string wordToTest){
 		var result = "";
 		var i = 0;
@@ -64,5 +74,7 @@ component{
 		return result;
 	
 	}
+
+	
 
 }

@@ -14,8 +14,9 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint You know what this does.
 	 */	
-	public function init(required string datasource){
+	public function init(required string datasource, any stringUtil){
 		variables.dbinfo = New dbinfo();
+		variables.stringUtil = arguments.stringUtil;
 		dbinfo.setDatasource(arguments.datasource);
 		
 		variables.excludedTableList = generateExcludedTables();
@@ -49,9 +50,9 @@ component accessors="true" extends="dbItem"
 			excludedTableList = ListAppend(excludedTableList, "'#tables.table_name[i]#'");
 		}
 		
-		
 		for (i=1; i <= tables.recordCount; i++){
 			
+			//handle schemas
 			if(structKeyExists(tables, "table_owner")){
 				var schema = tables.table_owner[i];
 			}
@@ -59,6 +60,7 @@ component accessors="true" extends="dbItem"
 				var schema = "";
 			}
 			
+			//determine if a view
 			if (CompareNoCase(tables.table_type[i], "view") eq 0){
 				var isView = true; 
 			}
@@ -66,16 +68,13 @@ component accessors="true" extends="dbItem"
 				var isView = false; 
 			}
 			
-			
+			//ignore system tables
 			if (FindNoCase("SYSTEM TABLE", tables.table_type[i])){
 				continue;
 			}
 			
 			
-			var table = New table(tables.table_name[i], This.getName(), schema, isView);
-			
-			table.setrowcount(calculateRowCount(table));
-			
+			var table = New table(tables.table_name[i], This.getName(), schema, isView, variables.stringUtil);
 			tablesStruct[table.getName()] = table;
 			
 		}
@@ -150,25 +149,6 @@ component accessors="true" extends="dbItem"
 	
 	}
 	
-	/**
-	 * @hint Counts rows for each table 
-	 */	
-	public numeric function calculateRowCount(required table table){
-		
-		if (Len(table.getschema()) > 0){
-			var SQL = "SELECT count(*) as countOfRows FROM #table.getSchema()#.#table.getName()#";	
-		}
-		else{
-			var SQL = "SELECT count(*) as countOfRows FROM #table.getName()#";
-		}
-		
-		var qry = new Query(datasource=This.getName());
-		qry.setSQL(SQL);
-		
-			var countOfRows = qry.execute().getResult().countOfRows;
-		
-		return countOfRows;
-	}
 	
 	/**
 	 * @hint Calculates the highest row count in the database.
@@ -260,43 +240,57 @@ component accessors="true" extends="dbItem"
 			var tableStruct = this.getTablesStruct();
 			for (i=1; i <= ArrayLen(tables); i++){
 				var table = tables[i];
-				table.setEntityName(ReplaceNoCase(table.getEntityName(),This.getPrefix(), "", "one" ));	
-				table.setAllNamesBasedOnEntityName();	
-				table.setPrefix(This.getPrefix());
-				table.populateColumns();
+				table = dePrefixTable(table);
 				tables[i] = table;
 				tableStruct[table.getName()]= table;
 			}
 			This.setTables(tables);	
 			This.setTablesStruct(tableStruct);		
 		}
-		
-		
-	
 	}
+	
+	/**
+    * @hint Removes the prefix from one table.  
+    */
+	public any function dePrefixTable(any table){
+		var locTable = arguments.table;
+		locTable.setEntityName(ReplaceNoCase(locTable.getEntityName(),This.getPrefix(), "", "one" ));	
+		locTable.setAllNamesBasedOnEntityName();	
+		locTable.setPrefix(This.getPrefix());
+		locTable.populateColumns();
+		return locTable;
+	}
+	
+	
 	
 	/**
     * @hint Spins through the tables singularizes entitynames.  
     */
-	public void function dePluralize(any stringUtil){
+	public void function dePluralize(){
 		var i = 0;
 		if (len(This.getPrefix()) > 0){
 			var tables = this.getTables();
 			var tableStruct = this.getTablesStruct();
 			for (i=1; i <= ArrayLen(tables); i++){
 				var table = tables[i];
-				table.setEntityName( stringUtil.depluralize(table.getEntityName()) );
-				table.setAllNamesBasedOnEntityName();
-				table.populateColumns();	
+				table = dePluralizeSingleTable(table);
 				tables[i] = table;
 				tableStruct[table.getName()]= table;
 			}
 			This.setTables(tables);	
 			This.setTablesStruct(tableStruct);		
 		}
-		
-		
+	}
 	
+	/**
+    * @hint Removes the plural from one table.  
+    */
+	public any function dePluralizeSingleTable(any table){
+		var locTable = arguments.table;
+		locTable.setEntityName( varibales.stringUtil.depluralize(locTable.getEntityName()) );
+		locTable.setAllNamesBasedOnEntityName();
+		locTable.populateColumns();	
+		return locTable;
 	}
 	
 	/**
