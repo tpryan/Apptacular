@@ -14,9 +14,10 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint You know what this does.
 	 */	
-	public function init(required string datasource, any stringUtil){
+	public function init(required string datasource, any stringUtil, any log){
 		variables.dbinfo = New dbinfo();
 		variables.stringUtil = arguments.stringUtil;
+		variables.log = arguments.log;
 		dbinfo.setDatasource(arguments.datasource);
 		
 		variables.excludedTableList = generateExcludedTables();
@@ -25,9 +26,15 @@ component accessors="true" extends="dbItem"
 		This.setDisplayName(arguments.datasource);
 		This.setPrefix("");
 	
+		log.startEvent("popDatabase", "Populate Database");
 		populateDatasource();
-		populateTables();
+		log.endEvent("popDatabase");
 		
+		log.startEvent("popTables", "Populate Tables");
+		populateTables();
+		log.endEvent("popTables");
+		
+		log.logTimes();
 	
 		return This;
 	}
@@ -36,14 +43,17 @@ component accessors="true" extends="dbItem"
 	 * @hint Populate table information 
 	 */		
 	public void function populateTables(){
-		writeLog("populateTables called");
 		var i = 0;
 		var j = 0;
 		var tablesArray = ArrayNew(1);
 		var tablesStruct = StructNew();
 		var tablesStructKey = ArrayNew(1);
 		dbinfo.setType("tables");
+		
+		
+		log.startEvent("getTables", "Retreive table metadata.");
 		var tables = getTablesFromDatabase();
+		log.endEvent("getTables");
 		
 		excludedTableList = "";
 		for (i = 1; i <= tables.recordCount; i++){
@@ -73,9 +83,11 @@ component accessors="true" extends="dbItem"
 				continue;
 			}
 			
-			
-			var table = New table(tables.table_name[i], This.getName(), schema, isView, variables.stringUtil);
+			log.startEvent("popOneTable", "Populate Table #tables.table_name[i]#");
+			var table = New table(tables.table_name[i], This.getName(), schema, isView, variables.stringUtil, variables.log);
 			tablesStruct[table.getName()] = table;
+			log.endEvent("popOneTable");
+			
 			
 		}
 		
@@ -91,10 +103,8 @@ component accessors="true" extends="dbItem"
 				var joinTableName = joinTable.getName();
 					
 				for (j=1; j <= ArrayLen(joinedTables); j++){
-					var tempTable = tablesStruct[joinedTables[j]];
-					temptable.setHasJoinTable(TRUE);
-					temptable.addJoinTable(joinTableName);
-					tablesStruct[joinedTables[j]] = tempTable;
+					tablesStruct[joinedTables[j]].setHasJoinTable(TRUE);
+					tablesStruct[joinedTables[j]].addJoinTable(joinTableName);
 				}
 			}
 		}
@@ -412,4 +422,6 @@ component accessors="true" extends="dbItem"
 	
 		return excludedTableList;
 	}
+	
+	
 }

@@ -37,9 +37,6 @@
 	
 		appRoot = utils.findAppRoot(rootFilePath,resourcePath);
 		
-		writeLog("rootfilePath=#rootFilePath#");
-		writeLog("resourcePath=#resourcePath#");
-		writeLog("appRoot=#appRoot#");		
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
@@ -85,13 +82,15 @@
 	
 
 <cfscript>
-	StartTimer = getTickCount();
+	log = New cfc.log(dsName);
+	log.startEvent("app", "Apptacular Process");
 	
 	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
 
 	//process DB version of schema
 	stringUtils = New cfc.stringUtil();
-	db = New cfc.db.datasource(dsName,stringUtils);
+	
+	db = New cfc.db.datasource(dsName, stringUtils, log);
 
 	
 	//process config default 
@@ -139,13 +138,9 @@
 		if (config.getDepluralize()){
 			datamodel.depluralize(stringUtil);
 		}
-		
-		writeLog("overwrite=true");
-		writeLog("prefix=#datamodel.getPrefix()#");	
 	}
 	else{
 		datamodel= db;
-		writeLog("overwrite=false");	
 	}
 	
 	
@@ -164,13 +159,15 @@
 		serviceGenerator = new generators.cfapp.serviceGenerator(datamodel, config);
 		unittestGenerator = new generators.cfapp.unittestGenerator(datamodel, config);
 
-		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator);
+		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator, log);
 		generator.generate();
 		generator.writeFiles();
 		
-		EndTimer = getTickCount();
-		TickCount = EndTimer - StartTimer;
-		TickCount = TickCount / 1000;
+		log.endEvent("app");
+		log.logTimes();
+		TickCount = log.getEvent("app").totalTime;
+		
+		
 		
 		baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";

@@ -8,7 +8,8 @@ component{
 	*/
 	public generator function init(required any datasource, required any config, 
 			required ormGenerator ormGenerator, required viewGenerator viewGenerator, 
-			required serviceGenerator serviceGenerator, required unittestGenerator unittestGenerator){
+			required serviceGenerator serviceGenerator, required unittestGenerator unittestGenerator, 
+			required any log){
 			
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
@@ -20,6 +21,7 @@ component{
 		variables.viewGenerator = arguments.viewGenerator;
 		variables.serviceGenerator = arguments.serviceGenerator;
 		variables.unittestGenerator = arguments.unittestGenerator;
+		variables.log = arguments.log;
 				
 		return This;
 	}
@@ -35,9 +37,7 @@ component{
 		//Create ORM dependent files
 		if (config.getCreateAppCFC()){
 		
-			var ormDependentFiles = structNew();
-			ormDependentFiles.label = "ORM Dependent";
-			ormDependentFiles.startTime = GetTickCount();
+			variables.log.startEvent("ormDependencies", "ORM Dependent");
 		
 			var AppCFC = ormGenerator.createAppCFC(datasource, config.getRootFilePath());
 			ArrayAppend(files, AppCFC);
@@ -45,16 +45,13 @@ component{
 			var EventHandler = ormGenerator.createEventHandler(config.getEntityFilePath());
 			ArrayAppend(files, EventHandler);
 			
-			ormDependentFiles.endTime = GetTickCount();
-			logTime(ormDependentFiles);
+			variables.log.endEvent("ormDependencies");
 			
 		}
 		
 		//Create global application views.
 		if (config.getCreateViews()){
-			var globalApplicationViews = structNew();
-			globalApplicationViews.label = "Global Application Views";
-			globalApplicationViews.startTime = GetTickCount();
+			variables.log.startEvent("views", "Global Application Views");
 			
 			var css = viewGenerator.createCSS();
 			ArrayAppend(files, css);
@@ -91,8 +88,7 @@ component{
 				ArrayAppend(files, testIndex);
 			}
 			
-			globalApplicationViews.endTime = GetTickCount();
-			logTime(globalApplicationViews);
+			variables.log.endEvent("views");
 			
 		}
 		
@@ -116,6 +112,11 @@ component{
 		var serviceTime = 0;
 		var testTime =  0;
 		
+		variables.log.createEventSeries("view", "Table View object creation");
+		variables.log.createEventSeries("orm", "Table ORM object creation");
+		variables.log.createEventSeries("service", "Table Service object creation");
+		variables.log.createEventSeries("test", "Table Test object creation");
+		
 		//Roll through the tables creating all per table interfaces here so as to not repeat table loops.
 		for (i=1; i <= ArrayLen(tables); i++){
 			var table = tables[i];
@@ -126,20 +127,20 @@ component{
 			
 				//Handle ORM Entities for tables.
 				if (config.getCreateEntities() and table.getCreateInterface()){
-					var ormTableTime = structNew();
-					ormTableTime.start = getTickCount();	
+					
+					variables.log.startEventSeriesItem("orm");
+					
 					var ORMCFC = ormGenerator.createORMCFC(table);
 					ArrayAppend(files, ORMCFC);
-					ormTableTime.end = getTickCount();
-					ormTime = ormTime + (ormTableTime.end - ormTableTime.start);	
+					
+					variables.log.endEventSeriesItem("orm");
 				
 				}
 
 				//Handle Views for tables.
 				if (config.getCreateViews() and table.getCreateInterface()){
 					
-					var viewTableTime = structNew();
-					viewTableTime.start = getTickCount();	
+					variables.log.startEventSeriesItem("view");
 					
 					var View = viewGenerator.createView(table);
 					ArrayAppend(files, View);
@@ -161,29 +162,26 @@ component{
 						ArrayAppend(files, ViewEditCustomTag);
 					}
 					
-					viewTableTime.end = getTickCount();
-					viewTime = viewTime + (viewTableTime.end - viewTableTime.start);	
+					variables.log.endEventSeriesItem("view");	
 					
 				}
 				
 				//Handles Services for tables.
 				if (config.getCreateServices() and table.getCreateInterface()){
 					
-					var serviceTableTime = structNew();
-					serviceTableTime.start = getTickCount();	
+					variables.log.startEventSeriesItem("service");
 					
 					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
 					ArrayAppend(files, ORMServiceCFC);
 					
-					serviceTableTime.end = getTickCount();
-					serviceTime = serviceTime + (serviceTableTime.end - serviceTableTime.start);		
+					variables.log.endEventSeriesItem("service");	
 				
 				}
 			
 				//Handles unit tests for tables.
 				if (config.getCreateTests() and table.getCreateInterface()){
-					var testTableTime = structNew();
-					testTableTime.start = getTickCount();	
+					
+					variables.log.startEventSeriesItem("test");
 					
 					var testview = unittestGenerator.createViewsTest(table);
 					ArrayAppend(files, testview);
@@ -197,21 +195,10 @@ component{
 						ArrayAppend(files, testService);
 					}
 					
-					testTableTime.end = getTickCount();
-					testTime = testTime + (testTableTime.end - testTableTime.start);
+					variables.log.endEventSeriesItem("test");
 				}
 			}//IsProperTable?	
 		}//for loop
-		
-		ormTime = ormTime / 1000;
-		viewTime = viewTime /1000;
-		serviceTime = serviceTime / 1000;
-		testTime = testTime /1000;
-		
-		writeLog("Apptacular step: #datasource.getName()# :Table ORM object creation took #NumberFormat(ormTime, "_.____")# seconds.");
-		writeLog("Apptacular step: #datasource.getName()# :Table View object creation took #NumberFormat(viewTime, "_.____")# seconds.");
-		writeLog("Apptacular step: #datasource.getName()# :Table Test case creation took #NumberFormat(testTime, "_.____")# seconds.");
-		writeLog("Apptacular step: #datasource.getName()# :Table service object creation took #NumberFormat(serviceTime, "_.____")# seconds.");
 		
 		
 		//Generate extended unit testing pieces to compensate for Application coupling to ORM 
@@ -243,6 +230,8 @@ component{
 			ArrayAppend(files, antRunner);
 			
 		}
+		
+		variables.log.logTimes();
 	
 	}
 	

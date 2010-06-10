@@ -37,11 +37,12 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint You know, an init. 
 	 */
-	public function init(required string name, required string datasource, string schema="", boolean isView=FALSE, any stringUtil){
+	public function init(required string name, required string datasource, string schema="", boolean isView=FALSE, any stringUtil, any log){
 		variables.mappings = New mappings();
 		variables.dbinfo = New dbinfo();
 		variables.datasource = arguments.datasource;
 		variables.stringUtil = arguments.stringUtil;
+		variables.log = arguments.log;
 		dbinfo.setDatasource(arguments.datasource);
 		
 		//Turns out that I need this
@@ -59,13 +60,34 @@ component accessors="true" extends="dbItem"
 		This.setSchema(arguments.schema);
 		This.setIsView(arguments.isView);
 		
+		
+		log.startEvent("popTable", "Populate Table #arguments.name#");
 		populateTable();
+		log.endEvent("popTable");
+		
+		log.startEvent("popFK", "Populate Foreign Keys for #arguments.name#");
 		populateForeignKeys();
+		log.endEvent("popFK");
+		
+		log.startEvent("popCol", "Populate Columns for #arguments.name#");
 		populateColumns();
-		//populateForeignTables(); 
+		log.endEvent("popCol");
+		
+		log.startEvent("popRefCount", "Populate Reference Counts for #arguments.name#");
 		populateReferenceCounts();
+		log.endEvent("popRefCount");
+		
+		log.startEvent("poprc", "Populate Row Count for #arguments.name#");
 		populateRowCount();
+		log.endEvent("poprc");
+		
+		log.startEvent("calcFKLabel", "Calculate foreign key label for #arguments.name#");
 		calculateForeignKeyLabel();
+		log.endEvent("calcFKLabel");
+		
+		
+		log.logTimes();
+		
 		
 		
 		return This;
