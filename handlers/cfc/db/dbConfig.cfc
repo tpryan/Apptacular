@@ -50,7 +50,8 @@
 	* @hint Rewrites all of the info in a datasource from the config files.
 	*/	
 	public datasource function overwriteConfig(required datasource datasource){
-
+		writelog("yo in overwrite	");
+		
 		if (not directoryExists(variables.path)){
 			return arguments.datasource;
 		}
@@ -62,6 +63,7 @@
 		var checksums = getChecksumInfoFromDisk();
 		var newDataSource = duplicate(arguments.datasource);
 		
+		
 		//check datasource
 		var datasourceName = newDataSource.getName(); 
 		var DSCSPath = datasourceName; 
@@ -72,6 +74,8 @@
 		if (CompareNoCase(configCS, dbCS) neq 0 ){
 			newDataSource = reWriteObject(newDataSource, checksums[DSCSPath]['filePath'], "datasource");
 		}
+		
+		writelog("yo in overwrite	");
 		StructDelete(checksums, DSCSPath);
 		
 		
@@ -183,12 +187,17 @@
 		try{
 		for (i=1;i <= arraylen(keys); i++){
 			invokeSetter(newObject, keys[i],  XML[arguments.ObjectType][keys[i]]['XMLText']);
-			//Evaluate("newObject.set#keys[i]#(XML[arguments.ObjectType][keys[i]]['XMLText'])");
 		}
 		
 		}
 		catch(any e){
+			writeLog("Apptacular Error:  There is a good chance that you have added a variable to 
+				the variables scope of one of your database CFC's that doesn't need to be serialized.
+				Edit DbItem.cfc and delete project .apptacular to fix.");
 			writeDump("here there be errors ");
+			writeDump(newObject);
+			writeDump(keys);
+			writeDump(i);
 			//writeDump(keys[i]);
 			//writeDump(newObject);
 			writeDump(e);

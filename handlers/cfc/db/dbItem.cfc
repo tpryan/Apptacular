@@ -46,6 +46,8 @@ component
 		StructDelete(props, "virtualcolumns");
 		StructDelete(props, "datasource");
 		StructDelete(props, "engine");
+		StructDelete(props, "LOG");
+		StructDelete(props, "stringUtil");
 		
 		var keys = StructKeyArray(props);
 		ArraySort(keys, "textnocase");
