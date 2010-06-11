@@ -46,7 +46,12 @@
 <cfscript>	
 
 	//process both DB and file version of schema
-	db = New apptacular.handlers.cfc.db.datasource(dsName);
+	stringUtils = New apptacular.handlers.cfc.stringUtil();
+	
+	log = New apptacular.handlers.cfc.log(dsName);
+	log.startEvent("app", "Apptacular Purge Process");
+	
+	db = New apptacular.handlers.cfc.db.datasource(dsName, stringUtils, log);
 	dbConfig = New apptacular.handlers.cfc.db.dbConfig(dbConfigPath);
 	datamodel= dbConfig.overwriteConfig(db);
 	dbConfig.writeConfig(datamodel);
@@ -65,7 +70,7 @@
 	serviceGenerator = new apptacular.handlers.generators.cfapp.serviceGenerator(datamodel, config);
 	unittestGenerator = new apptacular.handlers.generators.cfapp.unittestGenerator(datamodel, config);
 
-	generator = New apptacular.handlers.generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator);
+	generator = New apptacular.handlers.generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator, log);
 		
 	generator.generate();
 	filesGenerated = generator.getAllGeneratedFilePaths();
