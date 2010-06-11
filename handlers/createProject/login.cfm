@@ -1,7 +1,13 @@
 <cfparam name="url.projectPath" type="string" />
+<cfparam name="url.message" type="string" default="" />
 <cf_pageWrapper>
 <cfoutput>
-	<p>Please enter your RDS username and password.</p>
+	<cfif FindNoCase("loginFail", url.message)>
+		<p class="alert">Login Failed. Please retry.</p>
+	<cfelse>
+		<p>Please enter your RDS username and password.</p>
+	</cfif>
+	
 	<table>
 	<form action="presentdatasources.cfm" method="post">
 		<input type="hidden" name="projectPath" value="#url.projectPath#" />

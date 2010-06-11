@@ -1,5 +1,7 @@
 ﻿<cfscript>
 
+	loginFail = false;
+
 	if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
 		rds = application.rds;
 		projectPath = url.projectPath;
@@ -12,21 +14,49 @@
 	
 	
 	
-	if (structKeyExists(form, "rememberme")){
+	
+	
+	try{
+		admin= New CFIDE.adminapi.administrator();
+		admin.login(rds.password, rds.username);
+		datasource = new CFIDE.adminapi.datasource();
+		datasources = datasource.getDatasources();
+		datasourceArray = StructKeyArray(datasources);
+		ArraySort(datasourceArray, "textnocase", "asc");
+		
+		
+		if (structKeyExists(form, "rememberme")){
 		application.rds = {};
 		application.rds.username = form.username;
 		application.rds.password = form.password;
 		application.rds.rememberMe = true;
 	}
+		
+	}	
+	catch(any e){
+		if (FindNoCase("CFACCESSDENIED", e.errorcode)){
+			loginFail = true;
+			application.rds = {};
+			application.rds.username = "";
+			application.rds.password = "";
+			application.rds.rememberMe = false;
+		}
+		else{
+			writeDump(e);
+			rethrow;
+		}
 	
-	admin= New CFIDE.adminapi.administrator();
-	admin.login(rds.password, rds.username);
-	datasource = new CFIDE.adminapi.datasource();
-	datasources = datasource.getDatasources();
-	datasourceArray = StructKeyArray(datasources);
-	ArraySort(datasourceArray, "textnocase", "asc");
+	}
+	
 
 </cfscript>
+
+<cfif loginFail>
+	<cflocation url="login.cfm?message=loginFail&projectPath=#projectPath#" addtoken="false" />
+
+	<cfabort>
+</cfif>
+
 
 <cf_pageWrapper>
 <cfoutput>

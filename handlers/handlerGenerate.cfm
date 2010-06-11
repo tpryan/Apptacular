@@ -1,5 +1,9 @@
 <cfsetting showdebugoutput="false" />
 
+<cfif not structKeyExists(form, "ideeventInfo")>
+	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="form.ideeventInfo" />
+</cfif>
+
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 <cfscript>
 	failed = FALSE;
@@ -68,6 +72,7 @@
 
 	
 <cfif failed>
+	<cflog text="Apptacular failed." />
 	<cfheader name="Content-Type" value="text/xml">
 	<cfoutput> 
 	<response showresponse="true">
@@ -136,7 +141,7 @@
 		
 		
 		if (config.getDepluralize()){
-			datamodel.depluralize(stringUtil);
+			datamodel.depluralize();
 		}
 	}
 	else{
