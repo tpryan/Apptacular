@@ -50,7 +50,6 @@
 	* @hint Rewrites all of the info in a datasource from the config files.
 	*/	
 	public datasource function overwriteConfig(required datasource datasource){
-		writelog("yo in overwrite	");
 		
 		if (not directoryExists(variables.path)){
 			return arguments.datasource;

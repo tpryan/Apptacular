@@ -50,6 +50,12 @@ component accessors="true" extends="dbItem"
 		var tablesStructKey = ArrayNew(1);
 		dbinfo.setType("tables");
 		
+		log.createEventSeries("popTable", "Populate Table metadata");
+		log.createEventSeries("popFK", "Populate Table Foreign Keys metadata");
+		log.createEventSeries("popCol", "Populate Table Columns metadata");
+		log.createEventSeries("popRefCount", "Populate Table Reference Counts metadata");
+		log.createEventSeries("poprc", "Populate Table Row Count");
+		log.createEventSeries("calcFKLabel", "Calculate foreign key labels");
 		
 		log.startEvent("getTables", "Retreive table metadata.");
 		var tables = getTablesFromDatabase();
@@ -83,10 +89,8 @@ component accessors="true" extends="dbItem"
 				continue;
 			}
 			
-			log.startEvent("popOneTable", "Populate Table #tables.table_name[i]#");
 			var table = New table(tables.table_name[i], This.getName(), schema, isView, variables.stringUtil, variables.log);
 			tablesStruct[table.getName()] = table;
-			log.endEvent("popOneTable");
 			
 			
 		}

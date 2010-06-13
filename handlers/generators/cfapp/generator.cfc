@@ -96,21 +96,14 @@ component{
 		//Only generate login service if we are generating services
 		if (config.getCreateServices() AND config.getCreateLogin()){
 		
-			var authFile = structNew();
-			authFile.label = "Authentication Files";
-			authFile.startTime = GetTickCount();
+			variables.log.startEvent("auth", "Authentication Files");
 		
 			var authCFC = serviceGenerator.createAuthenticationService();
 			ArrayAppend(files, authCFC);
 			
-			authFile.endTime = GetTickCount();
-			logTime(authFile);
+			variables.log.endEvent("auth");
 		}
 		
-		var viewTime = 0;
-		var ormTime = 0;
-		var serviceTime = 0;
-		var testTime =  0;
 		
 		variables.log.createEventSeries("view", "Table View object creation");
 		variables.log.createEventSeries("orm", "Table ORM object creation");
@@ -265,12 +258,5 @@ component{
 		return ArrayLen(files);
 	}
 	
-	/**
-    * @hint Utility used to log the time each step takes.
-    */
-	public void function logTime(required input){
-		var totalTime = (arguments.input.endTime - arguments.input.startTime) / 1000;	
-		writeLog("Apptacular step: #datasource.getName()# :#arguments.input.label# took #NumberFormat(totalTime, "_.____")# seconds.");
-	} 
 	
 }

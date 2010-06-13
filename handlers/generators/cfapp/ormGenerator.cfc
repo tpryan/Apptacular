@@ -144,7 +144,6 @@ component extends="codeGenerator"{
 				var joinTables = table.getJoinTables();
 				
 				
-				writeLog("References for table #table.getName()#: #ArrayToList(joinTables)# AND #foreignTable.getName()#");
 				if (ListFindNoCase(ArrayToList(joinTables),foreignTable.getName()) ){
 					//Handle Many-to-manys
 					otherJoinTable = datasource.getTable(foreignTable.getOtherJoinTable(table.getName()));		

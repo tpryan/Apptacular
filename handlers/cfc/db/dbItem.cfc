@@ -48,6 +48,8 @@ component
 		StructDelete(props, "engine");
 		StructDelete(props, "LOG");
 		StructDelete(props, "stringUtil");
+		StructDelete(props, "fullyQualifiedTableName");
+		StructDelete(props, "countQry");
 		
 		var keys = StructKeyArray(props);
 		ArraySort(keys, "textnocase");
@@ -111,12 +113,5 @@ component
 		}
 	}
 	
-	/**
-    * @hint Utility used to log the time each step takes.
-    */
-	public void function logTime(required input, required datasource){
-		var totalTime = (arguments.input.endTime - arguments.input.startTime) / 1000;	
-		writeLog("Apptacular step: #datasource# :#arguments.input.label# took #NumberFormat(totalTime, "_.____")# seconds.");
-	} 
 
 }

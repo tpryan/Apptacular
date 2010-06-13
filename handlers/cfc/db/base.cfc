@@ -459,7 +459,12 @@
                 <!--- process proc resultsets --->
                 <cfset var procresultset = {}>
         		<cfloop array="#procresults#" index="procresult">
-        			<cfset procresultset[procresult.name] = StructFind(variables,procresult["name"])>
+        			<cfif structKeyExists(variables, procresult["name"])>
+        				<cfset procresultset[procresult.name] = StructFind(variables,procresult["name"])>
+        			<cfelse>
+        				<cfset procresultset[procresult.name] = QueryNew("") />
+					</cfif>
+        			
             	</cfloop>
                 <!--- set inout and out variables, proc resultsets and the cfstoredproc prefix --->
 				<cfset spResult.setProcOutVariables(procvars)>

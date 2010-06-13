@@ -7,7 +7,6 @@
 	
 	// get folders needed for these operations. 
 	rootFilePath = url.appRoot;
-	writeLog("Path to Purge: " & rootFilePath, "Apptacular");
 	resourcePath = url.appRoot;
 	dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 	

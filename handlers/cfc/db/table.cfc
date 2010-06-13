@@ -43,7 +43,14 @@ component accessors="true" extends="dbItem"
 		variables.datasource = arguments.datasource;
 		variables.stringUtil = arguments.stringUtil;
 		variables.log = arguments.log;
+		varibales.countQry = new Query(datasource=variables.datasource);
+		
+		
+		
 		dbinfo.setDatasource(arguments.datasource);
+		
+		
+		
 		
 		//Turns out that I need this
 		dbinfo.setType("version");
@@ -60,34 +67,38 @@ component accessors="true" extends="dbItem"
 		This.setSchema(arguments.schema);
 		This.setIsView(arguments.isView);
 		
+		if (len(This.getSchema()) > 0){
+			variables.fullyQualifiedTableName = "#This.getSchema()#.#This.getName()#"; 
+		}
+		else{
+			variables.fullyQualifiedTableName = This.getName(); 	
+		}
 		
-		log.startEvent("popTable", "Populate Table #arguments.name#");
+		
+		
+		log.startEventSeriesItem("popTable");
 		populateTable();
-		log.endEvent("popTable");
+		log.endEventSeriesItem("popTable");
 		
-		log.startEvent("popFK", "Populate Foreign Keys for #arguments.name#");
+		log.startEventSeriesItem("popFK");
 		populateForeignKeys();
-		log.endEvent("popFK");
+		log.endEventSeriesItem("popFK");
 		
-		log.startEvent("popCol", "Populate Columns for #arguments.name#");
+		log.startEventSeriesItem("popCol");
 		populateColumns();
-		log.endEvent("popCol");
+		log.endEventSeriesItem("popCol");
 		
-		log.startEvent("popRefCount", "Populate Reference Counts for #arguments.name#");
+		log.startEventSeriesItem("popRefCount");
 		populateReferenceCounts();
-		log.endEvent("popRefCount");
+		log.endEventSeriesItem("popRefCount");
 		
-		log.startEvent("poprc", "Populate Row Count for #arguments.name#");
+		log.startEventSeriesItem("poprc");
 		populateRowCount();
-		log.endEvent("poprc");
+		log.endEventSeriesItem("poprc");
 		
-		log.startEvent("calcFKLabel", "Calculate foreign key label for #arguments.name#");
+		log.startEventSeriesItem("calcFKLabel");
 		calculateForeignKeyLabel();
-		log.endEvent("calcFKLabel");
-		
-		
-		log.logTimes();
-		
+		log.endEventSeriesItem("calcFKLabel");
 		
 		
 		return This;
@@ -242,12 +253,7 @@ component accessors="true" extends="dbItem"
 		//Crazy, but use a query to get a valid record to implement in this call.
 		var qry = new Query(datasource=variables.datasource, maxrows=1);
 		
-		if (Len(This.getschema()) > 0){
-			qry.setSQL("select #arguments.column# as value from #This.getSchema()#.#This.getName()#");
-		}
-		else{
-			qry.setSQL("select #arguments.column# as value from #This.getName()#");
-		}
+		qry.setSQL("select #arguments.column# as value from #fullyQualifiedTableName#");
 		
 		var value = qry.execute().getResult().value;
 		return value;
@@ -265,8 +271,6 @@ component accessors="true" extends="dbItem"
 		var	foreignkeys = dbinfo.send().getResult();
 		var i = 0;
 		
-		dbinfo.setType("index");
-		var	indicies = dbinfo.send().getResult();
 		
 		This.setIsReferencedAsForeignKey(foreignKeys.recordCount > 0 );
 		
@@ -402,24 +406,22 @@ component accessors="true" extends="dbItem"
 			column.setisForeignKey(columns.is_ForeignKey[i]);
 			column.setisPrimaryKey(columns.is_PrimaryKey[i]);
 			column.setForeignKey(columns.referenced_primarykey[i]);
-			column.setForeignKeyTable(columns.referenced_primarykey_table[i]);
 			column.setLength(columns.column_size[i]);
 			column.setisMemeberOfCompositeForeignKey(false);
 			column.setisComputed(false);
 			column.setisIdentity(false);
 			
-			//nullify blank foriegn keys or they will cause issues.
-			if (CompareNoCase(column.getForeignKeyTable(), "N/A") eq 0){
-				column.setForeignKeyTable(JavaCast('null', ''));
-			}	
+			//dont create blank foriegn keys or they will cause issues.
+			if (CompareNoCase(column.getForeignKeyTable(), "N/A") neq 0){
+				column.setForeignKeyTable(columns.referenced_primarykey_table[i]);
+			}
 			
 			//Clear number of referenced tables.
-			if (CompareNoCase(columns.referenced_primarykey_table[i], "N/A")){
+			if (CompareNoCase(columns.referenced_primarykey_table[i], "N/A") neq 0){
 				referencedTables[columns.referenced_primarykey_table[i]] = "";
 			}		
 			
-			columnArray[columns.ordinal_position[i]] = column;
-			columnStruct[column.getName()] = column;
+			
 			
 			//Figure out unique identifier information. 
 			if (column.getisPrimaryKey()){
@@ -439,6 +441,9 @@ component accessors="true" extends="dbItem"
 				ForeignKeyFound = TRUE;
 			}
 			
+			columnArray[columns.ordinal_position[i]] = column;
+			columnStruct[column.getName()] = column;
+			
 			//Handle foreign columns in the same loop 
 			populateColumnForeignTables(column);
 			
@@ -457,13 +462,10 @@ component accessors="true" extends="dbItem"
 		}
 		
 		
-		//Added this because cfdbinfo doesn't like foreign keys and composite primary keys in MSSQL
-		if (not PrimaryKeyFound AND FindNoCase("Microsoft",variables.Engine)){
-			columnArray=doubleCheckMSSQLForKeys(columnArray);
-		}
+		//Added this because cfdbinfo doesn't like foreign keys 
+		//	and composite primary keys in MSSQL
+		columnArray=doubleCheckMSSQL(columnArray);
 		
-		//Added this because of difficulties mapping composite foriegn keys
-		columnArray=doubleCheckMSSQLValues(columnArray);
 		
 		This.setColumns(columnArray);
 		This.setColumnsStruct(columnStruct);
@@ -514,69 +516,11 @@ component accessors="true" extends="dbItem"
 		
 	}
 	
-	/**
-    * @hint CFDBinfo seems to have issues with MSSQL, this checks for some info using native MSSQL info.
-    */
-	private array function doubleCheckMSSQLValues(required array columnArray){
-		
-		//Short Circuit the whole dealio 
-		if (not FindNoCase("Microsoft",variables.Engine)){
-			return arguments.columnArray;
-		}
-		
-		if (Len(This.GetIsView()) neq 0  AND This.GetIsView()){
-			return arguments.columnArray;
-		}
-		
-		var columns = arguments.columnArray;
-		var i = 0;
-		var j = 0;
-		
-		//Get the columndata in the table.
-		var sptables = New storedProc();
-		var procResult = New storedProcResult();
-		sptables.setProcedure("sp_help");
-		
-		if (len(This.getSchema()) > 0){
-			sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value="#This.getSchema()#.#This.getName()#"); 
-		}
-		else{
-			sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value=This.getName()); 	
-		}
-		
-		sptables.setDataSource(variables.datasource);
-		sptables.setDebug(true);
-		sptables.addProcResult(name="columnsdata",resultset=2); 
-	
-		var columnsdata = sptables.execute().getprocResultSets().columnsdata;
-		
-		for (i=1; i <= ArrayLen(columns); i++){
-			var column = columns[i];
-			for (j=1; j <= columnsdata.recordCount; j++){
-				if(CompareNoCase(Trim(columnsdata['column_name'][j]),Trim(column.getColumn())) eq 0 ){
-					
-					//set binaries
-					if (FindNoCase("binary",columnsdata['type'][j])){
-						column.setDataType("binary");
-						column.setUIType("binary");
-					}
-					
-					//set isComputeds.
-					column.setIscomputed(columnsdata['computed'][j]);
-					column[i]= column;
-					continue;
-				}
-			}
-		
-		}
-		
-		return columns;
-	}
 	
 	/**
 	 * @hint Spins through and sees if there are any foriegn keys that cfdbinfo missed.
 	 */	
-	private array function doubleCheckMSSQLForKeys(required array columnArray){
+	private array function doubleCheckMSSQL(required array columnArray){
 	
 		//Short Circuit the whole dealio 
 		if (not FindNoCase("Microsoft",variables.Engine)){
@@ -591,59 +535,18 @@ component accessors="true" extends="dbItem"
 		var i = 0;
 		var j = 0;
 		var indexKeys = "";
-		
-		//Get the fkeys in the table.
-		var sptables = New storedProc();
-		var procResult = New storedProcResult();
-		sptables.setProcedure("sp_help");
-		
-		if (len(This.getSchema()) > 0){
-			sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value="#This.getSchema()#.#This.getName()#"); 
-		}
-		else{
-			sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value=This.getName()); 	
-		}
-		
-		sptables.setDataSource(variables.datasource);
-		sptables.setDebug(true);
-		sptables.addProcResult(name="fkeys",resultset=7);
-		sptables.addProcResult(name="index",resultset=6);
-		
-		
+		var results = getspHelpProcObject();
 		  
 	
-	
-		try{
-			var results = sptables.execute().getprocResultSets();
-		}
-		catch(any e){
-			if (FindNoCase("Cannot find fkeys key in structure",e.message)){
-				results.fkey = queryNew("");
-			}	
-			else{
-				writeDump(e);
-				writeDump(This);
-				writeDump(sptables);
-				writeDump(sptables.execute());
-				abort;
-			}		
-		}
 		
-		// handle fkeys
-		if (structKeyExists(results, "fkeys")){
-			var fkeys = results.fkeys;
-		}
-		else{
-			var fkeys = queryNew("");
-		}
+		// get column data
+		var columnsdata = results.columnsdata;
 		
-		// handle index
-		if (structKeyExists(results, "fkeys")){
-			var index = results.index;
-		}
-		else{
-			var index = queryNew("");
-		}
+		// get fkeys
+		var fkeys = results.fkeys;
+		
+		// get  index
+		var index = results.index;
 		
 		if (index.RecordCount gt 0){
 			//Just select out the columns
@@ -668,7 +571,7 @@ component accessors="true" extends="dbItem"
 		
 		
 		
-		//loop through the columns and alter any foreign key holding columns
+		//loop through the columns and alter any columns that need altering
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
@@ -704,97 +607,48 @@ component accessors="true" extends="dbItem"
 				columns[i] = column;
 			}
 			
+			//handle columns
+			for (j=1; j <= columnsdata.recordCount; j++){
+				if(CompareNoCase(Trim(columnsdata['column_name'][j]),Trim(column.getColumn())) eq 0 ){
+					
+					//set binaries
+					if (FindNoCase("binary",columnsdata['type'][j])){
+						column.setDataType("binary");
+						column.setUIType("binary");
+					}
+					
+					//set isComputeds.
+					column.setIscomputed(columnsdata['computed'][j]);
+					column[i]= column;
+					continue;
+				}
+			}
+			
 			//Handle foreign columns in the same loop 
 			populateColumnForeignTables(column);
 			
-			
 		}
-		
 	
 		return columns;
 	}
+	
 	/**
-	 * @hint Spins through and sees if there are any primary keys that cfdbinfo missed.
-	 */	
-	private array function doubleCheckMSSQLForPrimaryKeys(required array columnArray){
-		
-		//Short Circuit the whole dealio 
-		if (not FindNoCase("Microsoft",variables.Engine)){
-			return arguments.columnArray;
-		}
-		
-		if (Len(This.GetIsView()) neq 0  AND This.GetIsView()){
-			return arguments.columnArray;
-		}
-		
-		var columns = arguments.columnArray;
-		var i = 0;
-		
-		//Get the indices in the table.
-		var sptables = New storedProc();
-		var procResult = New storedProcResult();
+	 * @hint Returns a stored proc object that can do sp_help in MSSQL
+	 */
+	private any function getspHelpProcObject(){
+		var sptables = New apptacular.handlers.cfc.db.storedProc();
 		sptables.setProcedure("sp_help");
-		
-		if (len(This.getSchema()) > 0){
-			sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value="#This.getSchema()#.#This.getName()#"); 
-		}
-		else{
-			sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value="#This.getName()#"); 	
-		}
-		
+		sptables.addParam(cfsqltype="cf_sql_varchar", type="in",value="#variables.fullyQualifiedTableName#"); 	
 		sptables.setDataSource(variables.datasource);
 		sptables.setDebug(true);
-		sptables.addProcResult(name="index",resultset=6); 
+		sptables.addProcResult(name="columnsdata",resultset=2); 
+		sptables.addProcResult(name="fkeys",resultset=7);
+		sptables.addProcResult(name="index",resultset=6);
+		var results = sptables.execute().getprocResultSets();
 		
-		try{
-			var index=sptables.execute().getprocResultSets().index;
-		}
-		catch(any e){
-			if (FindNoCase("Cannot find index key in structure",e.message)){
-				return columns;
-			}
-			else{
-				writeDump(e);
-				writeDump(This);
-				writeDump(sptables);
-				writeDump(sptables.execute());
-				abort;
-			}
-		}
-		
-		//Just select out the columns
-		var qoq = new Query(); 
-		var queryString = "	SELECT  	Index_Keys 
-                          	FROM  		resultSet
-							WHERE 		INDEX_DESCRIPTION like '%primary key%'"; 
-		qoq.setAttributes(resultSet = index);  
-		qoq.SetDBType("query"); 
-		
-		try{
-			var indexKeys = qoq.execute(sql=queryString).getResult()['Index_keys']; 
-			indexKeys = Replace(indexKeys, ", ", ",", "ALL");
-		}
-		catch(any e){
-		
-			if (FindNoCase("The select column reference [Index_Keys]", e.detail)){
-				return columns;
-			}
-		}
-		
-		//loop through the columns and alter any primary key holding columns
-		for (i=1; i <= ArrayLen(columns); i++){
-			var column = columns[i];
-			if (ListFindNoCase(indexKeys,column.getColumn())){
-				column.setIsPrimaryKey(True);
-				This.setIdentity(column.getName());
-				This.setOrderBy(column.getName() & " asc");
-				columns[i] = column;
-			}
-		}
-		
-		
-		return columns;
+		return results;
 	}
+	
 	
 	
 	
@@ -875,17 +729,10 @@ component accessors="true" extends="dbItem"
 	 */	
 	private void function populateRowCount(){
 		
-		if (Len(This.getschema()) > 0){
-			var SQL = "SELECT count(*) as countOfRows FROM #This.getSchema()#.#This.getName()#";	
-		}
-		else{
-			var SQL = "SELECT count(*) as countOfRows FROM #This.getName()#";
-		}
+		var SQL = "SELECT count(*) as countOfRows FROM #fullyQualifiedTableName#";	
+		varibales.countQry.setSQL(SQL);
 		
-		var qry = new Query(datasource=variables.datasource);
-		qry.setSQL(SQL);
-		
-		var countOfRows = qry.execute().getResult().countOfRows;
+		var countOfRows = varibales.countQry.execute().getResult().countOfRows;
 		
 		This.setrowCount(countOfRows);
 	}
@@ -926,12 +773,7 @@ component accessors="true" extends="dbItem"
 		var idColumn = This.getColumn(This.getIdentity());
 		
 		
-		if (Len(This.getschema()) > 0){
-			SQL = "select #idColumn.getColumn()# as id from #This.getSchema()#.#This.getName()#";
-		}
-		else{
-			SQL = "select #idColumn.getColumn()# as id from #This.getName()#";
-		}
+		SQL = "select #idColumn.getColumn()# as id from #fullyQualifiedTableName#";
 		
 		if (Len(excludelist) > 0){
 			var QualifiedList = ListQualify(excludelist, "'");
@@ -964,12 +806,7 @@ component accessors="true" extends="dbItem"
 		}
 		
 		
-		if (Len(This.getschema()) > 0){
-			SQL = "select #keyColumns# from #This.getSchema()#.#This.getName()#";
-		}
-		else{
-			SQL = "select #keyColumns# from #This.getName()#";
-		}
+		SQL = "select #keyColumns# from #fullyQualifiedTableName#";
 		
 		qry.setSQL(SQL);
 		
@@ -1011,7 +848,6 @@ component accessors="true" extends="dbItem"
 				tab2 = Replace(tab2, prefix, "", "one");
 			}
 			
-			writeLog("prefix = #this.getPrefix()#");
 			
 			var patterns = [];
 			ArrayAppend(patterns, "#tab1#to#tab2#");
@@ -1023,11 +859,9 @@ component accessors="true" extends="dbItem"
 			ArrayAppend(patterns, "#Left(tab1, 1)#2#Left(tab2, 1)#");
 			ArrayAppend(patterns, "#Left(tab2, 1)#2#Left(tab1, 1)#");
 		
-			writeLog("joinTableTest = #thisTab#; patterns = #ArrayToList(patterns)#");
 		
 			for (i=1; i <= arraylen(patterns); i++){
 				if (CompareNoCase(thisTab, patterns[i]) eq 0){
-					writeLog("joinTableTest = #thisTab#; patternMatch = #patterns[i]#");
 					return true;
 				}
 			
