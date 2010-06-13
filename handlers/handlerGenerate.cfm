@@ -176,7 +176,6 @@
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";
 		messagesURL = baseURL  & messagesPath & messagesOptions;
-		
 	}
 	
 
@@ -184,8 +183,10 @@
 
 <!--- reset application --->
 <cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
-<cfhttp url="#script_Path#" timeout="0" />
-
+<!--- addded to prevent application reset from slowing down the application building.  --->
+<cfthread name="#createUUID()#" action="run">
+	<cfhttp url="#script_Path#" timeout="0" />
+</cfthread>
 <cfif onprojectCreate>
 	<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
 </cfif>
