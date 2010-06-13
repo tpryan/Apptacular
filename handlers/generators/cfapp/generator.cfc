@@ -221,10 +221,7 @@ component{
 			
 			var antRunner = unittestGenerator.createAntRunner();
 			ArrayAppend(files, antRunner);
-			
 		}
-		
-		variables.log.logTimes();
 	
 	}
 	

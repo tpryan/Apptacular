@@ -34,7 +34,6 @@ component accessors="true" extends="dbItem"
 		populateTables();
 		log.endEvent("popTables");
 		
-		log.logTimes();
 	
 		return This;
 	}

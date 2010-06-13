@@ -764,7 +764,7 @@ component accessors="true" extends="dbItem"
 	*/
 	private any function discoverValidIdSingleKey(string excludelist=""){
 		
-		var SQL = "";
+		var SQL = CreateObject("java","java.lang.StringBuilder").Init();
 		
 		//Crazy, but use a query to get a valid record to implement in this call.
 		var qry = new Query(datasource=variables.datasource, maxrows=1);
@@ -772,12 +772,21 @@ component accessors="true" extends="dbItem"
 		//Slight tweak because I was running into case sensitivity issues.
 		var idColumn = This.getColumn(This.getIdentity());
 		
+		if (FindNoCase("Microsoft",variables.Engine)){
+			SQL.append("select top 1 #idColumn.getColumn()# as id from #fullyQualifiedTableName#");
+		}
+		else{
+			SQL.append("select #idColumn.getColumn()# as id from #fullyQualifiedTableName#");
+		}
 		
-		SQL = "select #idColumn.getColumn()# as id from #fullyQualifiedTableName#";
 		
 		if (Len(excludelist) > 0){
 			var QualifiedList = ListQualify(excludelist, "'");
-			SQL = SQL & " WHERE #idColumn.getColumn()# not in (#QualifiedList#)";
+			SQL.append(" WHERE #idColumn.getColumn()# not in (#QualifiedList#)");
+		}
+		
+		if (FindNoCase("mysql",variables.Engine)){
+			SQL.append(" LIMIT 1");
 		}
 		
 		qry.setSQL(SQL);

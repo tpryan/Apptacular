@@ -172,8 +172,6 @@
 		log.logTimes();
 		TickCount = log.getEvent("app").totalTime;
 		
-		
-		
 		baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";

@@ -74,6 +74,8 @@ component{
 	public void function logTimes(){
 		var i = 0;
 		
+		var startTime = getTickCount();
+		
 		for (i = 1; i <= arraylen(variables.logorder); i++){
 			var event = variables.logentries[variables.logorder[i]];
 			if (not event.logged and not event.open){
@@ -83,7 +85,9 @@ component{
 			}
 		}
 	
-		
+		var endTime = getTickCount();
+		var totalTime = (endTime - startTime) / 1000;
+		writeLog("Apptacular step: #datasource#: #NumberFormat(totalTime, "_.____")# seconds for writing the logs.");
 	} 
 
 
