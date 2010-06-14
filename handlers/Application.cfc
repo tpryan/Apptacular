@@ -18,4 +18,9 @@ component {
 		
 		return true;
 	}
+	
+	public void function onError(any exception, string eventname){
+		include "error.cfm";
+	}
+	
 }

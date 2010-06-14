@@ -3,7 +3,8 @@
 <cfparam name="url.fileCount" type="numeric" default="0" />
 <cfparam name="url.dirCount" type="numeric" default="0" />
 <cfparam name="url.seconds" type="numeric" default="0" />
-
+<cfparam name="url.detail" type="string" default="" />
+<cfparam name="url.message" type="string" default="" />
 
 <cf_pageWrapper>
 	<cfif FindNoCase("notanapplication", url.type)>
@@ -24,5 +25,15 @@
 			<p><strong>#dirCount# empty directories deleted.</strong></p>
 		</cfoutput>
 	
+	</cfif>
+	<cfif FindNoCase("error", url.type)>
+		<cfoutput>
+			<br />
+			<div class="alert">
+				<h1>An Error has occured.</h1>
+				<p><strong>Message:</strong>#url.message#</p>
+				<p><strong>Details:</strong>#url.detail#</p>
+			</div>
+		</cfoutput>				
 	</cfif>
 </cf_pageWrapper>
