@@ -335,30 +335,5 @@
 	
 	</target>	
 	
-	<target name="database.export.apptacular_blog" description="Exports scripto to create apptacular_blog database on MySQL">
-		<echo message="Getting apptacular_blog MySQL Dump" />
-		<exec executable="${mysql.mysqldump.exe}" spawn="false" dir="${mysql.dir}" output="${database.dir}apptacular_blog.sql">
-			<arg line="--database apptacular_blog"/>
-			<arg line="--tables"/>
-			<arg line="--verbose"/>
-			<arg line="--host ${database.host.local}"/>
-			<arg line="--user ${database.username.local}"/>
-			<arg line="--password=${database.password.local}"/>
-			<arg line="--no-create-db" />
-		</exec>
-	</target>
-	
-	<target name="database.export.apptacular_sakila" description="Exports scripto to create apptacular_blog database on MySQL">
-		<echo message="Getting apptacular_sakila MySQL Dump" />
-		<exec executable="${mysql.mysqldump.exe}" spawn="false" dir="${mysql.dir}" output="${database.dir}apptacular_sakila.sql">
-			<arg line="--database apptacular_sakila"/>
-			<arg line="--tables"/>
-			<arg line="--verbose"/>
-			<arg line="--host ${database.host.local}"/>
-			<arg line="--user ${database.username.local}"/>
-			<arg line="--password=${database.password.local}"/>
-			<arg line="--no-create-db" />
-		</exec>
-	</target>	
 	
 </project>	
