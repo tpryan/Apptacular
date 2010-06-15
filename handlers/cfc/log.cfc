@@ -6,6 +6,7 @@ component{
 		variables.logorder = [];
 		writeLog("*******************************************************");
 		writeLog("Apptacular Event Logging started");
+		writeLog("Datasource: #variables.datasource#");
 		writeLog("*******************************************************");	
     	return This;
     }
