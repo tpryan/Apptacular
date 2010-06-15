@@ -386,7 +386,7 @@ component  extends="codeGenerator"
 		for (i=1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
-			if (column.getisPrimaryKey() ){ 
+			if (column.getisPrimaryKey() or column.getIsIdentity() ){ 
 				continue;
 			}
 			
@@ -456,7 +456,7 @@ component  extends="codeGenerator"
 		update.AddOperationScript('		};');
 		
 		update.addLineBreak();
-		
+		update.addSimpleSet('ORMCloseSession()', 3);
 	
 		return update;
 	}
@@ -652,9 +652,9 @@ component  extends="codeGenerator"
 		
 		}
 		
-		read.AddOperation('');
-		read.AddOperationScript('');
-	
+		read.addSimpleSet('ORMCloseSession()', 3);
+		read.AddLineBreak('');
+		
 		return read;
 	}
 	
@@ -837,7 +837,7 @@ component  extends="codeGenerator"
 		read.AddOperationScript('		};');
 		
 		read.addLineBreak();
-		
+		read.addSimpleSet('ORMCloseSession()', 3);
 		
 	
 		return read;
