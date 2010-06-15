@@ -58,10 +58,18 @@ component extends="mxunit.framework.TestCase"{
     }
     
 	public void function testFindEmptyDirs(){
-		FS = createObject("java", "java.lang.System").getProperty("file.separator");
+		var FS = createObject("java", "java.lang.System").getProperty("file.separator");
     	var utils = new apptacular.handlers.cfc.utils();
 		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
-		var testPath = start & "utilsTest"; 
+		var testPath = start & "utilsTest";
+		
+		if (not directoryExists(testPath & fs & "empty")){
+			DirectoryCreate(testPath & fs & "empty");
+			DirectoryCreate(testPath & fs & "emptyWithSub");
+			DirectoryCreate(testPath & fs & "emptyWithSub" & fs & "sub");
+		}
+		
+		 
 		var results = utils.getEmptyDirectories(testPath);
 		var resultAsList = ValueList(results.path);
 		AssertTrue(ListFindNoCase(resultAsList, testPath & FS & "empty"), "Folder 'Empty' was not found");
