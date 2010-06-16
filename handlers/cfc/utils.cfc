@@ -41,6 +41,26 @@
 		return results;
 	}
 	
+	/**
+    * @hint Given a path from the filesystem, returns a CSS compatiable relative path. 
+    */
+	public string function findCSSPathFromFilePath(string path){
+		
+		var localPath = arguments.path;
+		
+		
+		var results = "";
+		results = replaceNoCase(localPath, webroot, "", "one");
+		results = replaceList(results, "\", "/");
+		
+		
+		if (compare(left(results, 1), "/") neq 0){
+			results = "/" & results;
+		}
+		
+		return results;
+	}
+	
 	
 	/**
     * @hint Traverses up the file system to find an apptacular config.xml file. 

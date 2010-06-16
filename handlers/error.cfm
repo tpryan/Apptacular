@@ -10,13 +10,17 @@
 	writeLog("Error URL: #messagesURL#");
 </cfscript>
 
-<cflocation url="#messagesURL#" addtoken="false" />
-<!---
-<cfheader name="Content-Type" value="text/xml">
-<cfoutput> 
-<response showresponse="true">
-	<ide url="#messagesURL#" > 
-		<dialog width="655" height="600" />
-	</ide> 
-</response> 
-</cfoutput>--->
+<cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT)>
+	<cfset messagesURL = baseURL  & messagesPath & XMLFormat(messagesOptions) />
+	<cfheader name="Content-Type" value="text/xml">
+	<cfoutput> 
+	<response showresponse="true">
+		<ide url="#messagesURL#" > 
+			<dialog width="655" height="600" />
+		</ide> 
+	</response> 
+	</cfoutput>
+<cfelse>
+	<cflocation url="#messagesURL#" addtoken="false" />
+</cfif>
+

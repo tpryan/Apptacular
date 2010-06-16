@@ -14,6 +14,20 @@ component extends="mxunit.framework.TestCase"{
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
     }
 	
+	public void function findCSSPathFromFilePathNixPaths(){
+		var utils = new apptacular.handlers.cfc.utils("/Users/terryr/Sites/centaur.dev/");
+		var PathToTest = "/Users/terryr/Sites/centaur.dev/extension/apptacular/handlers/grad.jpg";
+		var expectedPath = "/extension/apptacular/handlers/grad.jpg";
+		AssertEquals(expectedPath, utils.findCSSPathFromFilePath(PathToTest));
+    }
+	
+	public void function findCSSPathFromFilePathWindowsPaths(){
+		var utils = new apptacular.handlers.cfc.utils("c:\Inetpub\wwwroot\");
+		var PathToTest = "c:\Inetpub\wwwroot\extension\apptacular\handlers\grad.jpg";
+		var expectedPath = "/extension/apptacular/handlers/grad.jpg";
+		AssertEquals(expectedPath, utils.findCSSPathFromFilePath(PathToTest));
+    }
+	
 	public void function findPathFromfileName(){
 		var utils = new apptacular.handlers.cfc.utils("/Users/terryr/Sites/centaur.dev/");
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/blogdemo/cfc/author.cfc";

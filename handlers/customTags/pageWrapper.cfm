@@ -1,4 +1,13 @@
 <cfprocessingdirective suppresswhitespace="yes">
+<cfset utils = new apptacular.handlers.cfc.utils() />
+<cfset imageFolder = ReplaceNoCase(getDirectoryFromPath(getCurrentTemplatePath()), "/customtags", "/", "one") />
+
+
+<cfset logopath = "#imageFolder#/logo.png" />
+<cfset logocsspath = utils.findCSSPathFromFilePath(logopath) />
+<cfset bgpath = "#imageFolder#/grad.jpg" />
+<cfset bgcsspath = utils.findCSSPathFromFilePath(bgpath) />
+<cflog text="#logocsspath#" /> 
 <cfif thisTag.executionMode is "start">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -20,7 +29,7 @@
 		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
 		font-size: 80%;
 		background-color: #2A587A;
-		background-image: url(/apptacular/handlers/grad.jpg);
+		background-image: url(<cfoutput>#bgcsspath#</cfoutput>);
 		background-repeat: repeat-x;
 		background-position-y: -100px;
 		
@@ -31,7 +40,7 @@
 	
 	#header{
 		background-color: #2A587A;
-		background-image: url(/apptacular/handlers/logo.png);
+		background-image: url(<cfoutput>#logocsspath#</cfoutput>);
 		background-repeat: none;
 		height: 56px;
 		width: 100%;
