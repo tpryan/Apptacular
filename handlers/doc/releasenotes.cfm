@@ -1,5 +1,4 @@
-Does not honor constraints.
+<h1>Release Notes</h1>
+<cfinclude template="doc_hg_releasenotes.cfm" />
 
-Does not support "." characters in views. 
-
-Does not like computed columns in all cases.
+<cfinclude template="doc_cg_changes.cfm" />
