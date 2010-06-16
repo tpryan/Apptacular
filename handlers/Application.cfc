@@ -15,6 +15,7 @@ component {
 		application.rds.username = "";
 		application.rds.password = "";
 		application.rds.rememberMe = false;
+		application.version = "1.@buildNumber@";
 		
 		return true;
 	}

@@ -10,7 +10,27 @@
 	
 	<target name="package" depends="test,build" />
 
-	<target name="build" depends="build.clean,build.copy.files,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
+	<target name="build" depends="build.clean,build.copy.files,build.upversion,build.sql,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
+
+	<target name="build.upversion">
+		<propertyfile file="build.properties">
+			<entry key="build.number" type="int" default="0" operation="+" pattern="000000" />
+		</propertyfile>
+		
+		<property file="build.properties"/>
+		
+		<echo message="Build Number: ${build.number}"/>
+		<echo message="Inserting Build into the application"/>		
+		<replace file="${build.dir}\ide_config.xml">
+			<replacefilter token="@buildNumber@" value="${build.number}" />
+		</replace>
+		
+		<replace file="${build.dir}\handlers\Application.cfc">
+			<replacefilter token="@buildNumber@" value="${build.number}" />
+		</replace>
+		
+		
+	</target>	
 
 	<target name="build.clean">
 		<echo message="Cleaning Build Space"/>
@@ -24,25 +44,31 @@
 			<fileset dir="${dev.dir}">
 				<exclude name='.gitignore'/>
 				<exclude name='.git/**'/>
+				<exclude name='logs/**'/>
+				<exclude name='utils/**'/>
+				<exclude name='sql/**'/>
+				<exclude name='handlers/test/**'/>
 				<exclude name='settings.xml'/>
-				<exclude name='settings.properties'/>
+				<exclude name='**.properties'/>
 				<exclude name='.project'/>
 				<exclude name='.settings'/>
 				<exclude name='build.xml'/>
 				<exclude name='**/.DS_Store'/>
 			</fileset>	
 		</copy>
-		<echo message="Clearing out extraneous files."/>
-		<delete file='${build.dir}/.settings' />
-		<delete dir='${build.dir}/handlers/test' />
 		
-		<echo message="Create SQL file"/>
-		<echo message="Moving SQL to the right spot"/>
-		<move todir="${package.dir}/sql">
-   			<fileset dir="${build.dir}/sql"/>
-  		</move>
+		
 		
 	</target>
+	
+	<target name="build.sql">
+		<echo message="Create SQL files for demos"/>
+		<copy todir="${package.dir}/sql" preservelastmodified="true">
+			<fileset dir="${dev.dir}/sql">
+				<exclude name='**/.DS_Store'/>
+			</fileset>	
+		</copy>	
+	</target>	
 	
 	<target name="build.zip" description="Creates a zip file of the build.">
 		<echo message="Creating Zip File"/>
@@ -74,7 +100,10 @@
 		<echo message="Running Apptacular Tests"/>
 		
 		<mxunittask server="${server}" defaultrunner="${runner.app.cfc}" haltonerror="true" haltonfailure="true" verbose="true"  outputdir="${mxlog.dir}/apptacular">
-			<directory path="${test.app.dir}" recurse="true" componentPath="${cfc.app.path}" packageName="apptacular" />
+			<directory path="${test.app.dir}/cfc" recurse="true" componentPath="${cfc.app.path}.cfc" packageName="apptacular" />
+			<directory path="${test.app.dir}/code" recurse="true" componentPath="${cfc.app.path}.code" packageName="apptacular" />
+			<directory path="${test.app.dir}/db" recurse="true" componentPath="${cfc.app.path}.db" packageName="apptacular" />
+			<directory path="${test.app.dir}/generators" recurse="true" componentPath="${cfc.app.path}.generators" packageName="apptacular" />
 		</mxunittask>
 	</target>
 	
@@ -304,36 +333,6 @@
 		</delete>	
 	</target>
 	
-	<target name="test.apps">
-		
-		<echo message="*************************************************************"/>
-		<echo message="Derby Tests"/>
-		<echo message="*************************************************************"/>
-		<echo message="Running CFartgallery Tests"/>
-		<ant antfile="${webroot}/cfartgallery/test/build.xml" inheritAll="false"/>
-		
-		<echo message="*************************************************************"/>
-		<echo message="MySQL Tests"/>
-		<echo message="*************************************************************"/>
-		<echo message="Running BlogDemo Tests"/>
-		<ant antfile="${webroot}/BlogDemo/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Running Sakila Tests"/>
-		<ant antfile="${webroot}/SakilaDemo/test/build.xml" inheritAll="false"/>
-		
-		<echo message="*************************************************************"/>
-		<echo message="MSSQL Tests"/>
-		<echo message="*************************************************************"/>
-		<echo message="Running BlogDemoMSSQL Tests"/>
-		<ant antfile="${webroot}/BlogDemoMSSQL/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Running Facebook Tests"/>
-		<ant antfile="${webroot}/facebook/test/build.xml" inheritAll="false"/>
-		
-		<echo message="Running AdventureWorks Tests"/>
-		<ant antfile="${webroot}/adventureworks/test/build.xml" inheritAll="false"/>
-	
-	</target>	
 	
 	
 </project>	

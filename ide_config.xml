@@ -1,7 +1,7 @@
 <application>
 	<name>Apptacular</name>
 	<author>Adobe Systems</author>
-	<version>1.0</version>
+	<version>1.@buildNumber@</version>
 	<email>terry.ryan@adobe.com</email>	
 	<description>Generate a scaffolded application suitable for backend administration 
 	based on ColdFusion Object Relational Mapping (ORM) technology. Additionally, this will generate
