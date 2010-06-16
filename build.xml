@@ -10,7 +10,7 @@
 	
 	<target name="package" depends="test,build" />
 
-	<target name="build" depends="build.clean,build.copy.files,build.upversion,build.sql,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
+	<target name="build" depends="build.clean,build.documentation,build.copy.files,build.upversion,build.sql,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
 
 	<target name="build.upversion">
 		<propertyfile file="build.properties">
@@ -29,11 +29,17 @@
 			<replacefilter token="@buildNumber@" value="${build.number}" />
 		</replace>
 		
-		
-	</target>	
+	</target>
+	
+	<target name="build.documentation">
+		<echo message="Generating documentation."/>
+		<get src="http://${server}/apptacular/utils/CreateDocFiles.cfm" dest="getresult.html" verbose="true" />
+		<delete file='getresult.html' />
+	</target>		
 
 	<target name="build.clean">
 		<echo message="Cleaning Build Space"/>
+		<delete dir="${dev.dir}/docs"/>
 		<delete dir="${build.dir}"/>
 		<delete dir="${package.dir}/sql"/>
 	</target>
