@@ -10,16 +10,34 @@
 		
 		<cfreturn This />
     </cffunction>
+	
+	<cffunction name="resetApplication" output="FALSE" access="public"  returntype="void" hint="Resets the application scope of the generated app." >
+		<cfscript>
+			var cfhttp = {};
+			var ApplicationPath = XMLSearch(variables.XMLContents, "/event/user/input[@name='Location']")[1].XMLAttributes.value;
+			var webroot = ExpandPath('/');
+			var relativePath = replaceNoCase(ApplicationPath, webroot, "", "one");
+			relativePath = replaceNoCase(relativePath, "\", "/", "all");
+			var reseturl = "http://" & cgi.server_name & "/" & relativePath & "/" & "index.cfm?resetApp=true";
+		</cfscript>
+		
+		
+		<cfhttp url="#reseturl#" timeout="300" method="get" />
+	</cffunction>
 
 	<cffunction name="generateApplication" output="FALSE" access="public"  returntype="boolean" hint="" >
 		
 		<cfscript>
+			var cfhttp = {};
 			var targeturl = "http://" & cgi.server_name & "/apptacular/handlers/handlerGenerate.cfm?createTests=true";
 		</cfscript>
 		
 		<cfhttp url="#targeturl#" timeout="300" method="post" >
 			<cfhttpparam name="ideeventInfo" type="formfield" value="#variables.XMLContents#" />
 		</cfhttp>
+		
+		<cfset resetApplication() />
+		
 	
 		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent)>
 			<cfreturn true />
@@ -32,12 +50,15 @@
 	<cffunction name="generateApplicationCFML" output="FALSE" access="public"  returntype="boolean" hint="" >
 		
 		<cfscript>
+			var cfhttp = {};
 			var targeturl = "http://" & cgi.server_name & "/apptacular/handlers/handlerGenerate.cfm?createTests=true&CFCFormat='CFML'";
 		</cfscript>
 		
 		<cfhttp url="#targeturl#" timeout="300" method="post" >
 			<cfhttpparam name="ideeventInfo" type="formfield" value="#variables.XMLContents#" />
 		</cfhttp>
+	
+		<cfset resetApplication() />
 	
 		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent)>
 			<cfreturn true />
