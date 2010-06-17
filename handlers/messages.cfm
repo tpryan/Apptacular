@@ -19,6 +19,12 @@
 	<cfif FindNoCase("locked", url.type)>
 		<cfoutput><p>Application locked, unlock in the Application config to regenerate.</p></cfoutput>				
 	</cfif>
+	<cfif CompareNoCase("noupdate", url.type) eq 0>
+		<cfoutput><p>You are currently running at the latest version of Apptacular.</p></cfoutput>				
+	</cfif>
+	<cfif CompareNoCase("update", url.type) eq 0>
+		<cfoutput><p>Apptacular has been updated to version #application.version#</p></cfoutput>				
+	</cfif>
 	<cfif FindNoCase("purge", url.type)>
 		<cfoutput>
 			<p><strong>#fileCount# extraneous files deleted.</strong></p>

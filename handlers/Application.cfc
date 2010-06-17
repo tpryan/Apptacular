@@ -17,6 +17,10 @@ component {
 		application.rds.password = "";
 		application.rds.rememberMe = false;
 		application.version = "1.@buildNumber@";
+		application.buildURL = "http://bit.ly/ApptacularBuild";
+		application.appURL = "http://bit.ly/Apptacular";
+		application.update = new apptacular.handlers.cfc.update(application.version, application.buildURL, application.appURL);
+		application.root = getDirectoryFromPath(getCurrentTemplatePath());
 		
 		return true;
 	}

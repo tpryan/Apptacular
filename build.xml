@@ -83,13 +83,22 @@
 	
 	<target name="build.packagefordropbox" description="Creates a zip of SQL, extension and pdfs.">
 		<echo message="Collecting Files"/>
+		
+		<!-- Copy the SQL files to the andSQL Folder-->
 		<copy todir="${package.dir}/apptacularExtensionAndSQL/sql" preservelastmodified="true">
 			<fileset dir="${package.dir}/sql">
 				<exclude name='**/.DS_Store'/>
 			</fileset>	
 		</copy>
 		
+		<!-- Copy installable extension to dropbox folder -->
 		<copy todir="${dropbox.dir}" preservelastmodified="true" file="${package.dir}/${app.name}.zip" />
+		
+		<echo message="Writing Builder number to dropbox"/>
+		<property file="build.properties"/>
+		<echo file="${dropbox.dir}/${app.name}.build" message="${version.number}.${build.number}" append="false" />
+		
+		<!-- Copy installable extension to andSQL Folder-->
 		<copy todir="${package.dir}/apptacularExtensionAndSQL/" preservelastmodified="true" file="${package.dir}/${app.name}.zip" />
 	
 		<echo message="Zipping and publishing"/>

@@ -34,7 +34,9 @@
 					</filters>
 				</action>
 				<action name="------------------------------" />
-				<action name="Create Application" handlerid="handlerCreateProject"></action>			
+				<action name="Create Application" handlerid="handlerCreateProject"></action>
+				<action name="------------------------------" />
+				<action name="Check for Updates" handlerid="update"></action>			
 				<action name="------------------------------" />
 				<action name="Prune Excess Files" handlerid="purge"></action>	
 			</menu>
@@ -49,6 +51,7 @@
 		<handler id="purge" type="CFM" filename="handlerPurge.cfm" />
 		<handler id="configtable" type="CFM" filename="handlerEditTable.cfm" />
 		<handler id="handlerCreateProject" type="CFM" filename="handlerCreateProject.cfm" />
+		<handler id="update" type="CFM" filename="handlerupdate.cfm" />
 	</handlers>
 
 </application>
