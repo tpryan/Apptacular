@@ -29,7 +29,7 @@
 		</cfloop>
 		
 		<cfset FileWrite(fileToEdit,XML) />
-		<cfset message = "Changed Saved" />
+		<cfset message = "Changes Saved" />
 	</cfif>
 	
 	
