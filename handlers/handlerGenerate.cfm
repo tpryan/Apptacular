@@ -68,16 +68,7 @@
 
 	
 <cfif failed>
-	<cflog text="Apptacular failed." />
-	<cfheader name="Content-Type" value="text/xml">
-	<cfoutput> 
-	<response showresponse="true">
-		<ide url="#messagesURL#" > 
-			<dialog width="655" height="600" />
-		</ide> 
-	</response>
-	
-	</cfoutput>
+	<cf_ideWrapper messageURL="#messagesURL#" />
 	<cfabort> 
 </cfif>
 	
@@ -187,18 +178,12 @@
 	<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
 </cfif>
 
-<cfheader name="Content-Type" value="text/xml">
-<cfoutput> 
-<response showresponse="true">
-	<ide url="#messagesURL#" > 
-		<dialog width="655" height="600" />
-		<commands>
-			<command name="refreshproject">
-				<params>
-					<param key="projectname" value="<cfoutput>#rootFilePath#</cfoutput>" />
-				</params>
-			</command>
-		</commands>	  
-	</ide> 
-</response> 
-</cfoutput>
+<cf_ideWrapper messageURL="#messagesURL#">
+<commands>
+	<command name="refreshproject">
+		<params>
+			<param key="projectname" value="<cfoutput>#rootFilePath#</cfoutput>" />
+		</params>
+	</command>
+</commands>	
+</cf_ideWrapper>

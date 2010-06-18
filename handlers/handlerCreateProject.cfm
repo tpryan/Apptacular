@@ -21,13 +21,6 @@
 	handlerURL = "http://" & cgi.server_name & ":" & cgi.server_port & handlerPath;
 </cfscript>
 
+<cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#" />
 
-<cfheader name="Content-Type" value="text/xml">
-<cfoutput> 
-<response showresponse="true"> 
-	<ide url="#handlerURL#?projectPath=#projectPath#" > 
-		<dialog width="655" height="600" /> 
-	</ide> 
-</response> 
-</cfoutput>
 

@@ -25,25 +25,10 @@
 	
 	</cfscript>
 	
-	<cfheader name="Content-Type" value="text/xml">
-	<cfoutput> 
-	<response showresponse="true">
-		<ide url="#messagesURL#" > 
-			<dialog width="655" height="600" />
-		</ide> 
-	</response>
-	
-	</cfoutput>
+	<cf_ideWrapper messageURL="#messagesURL#" />
 	<cfabort> 
 </cfif>
 
 <cfset appRoot = utils.findAppRoot(projectPath,resourcePath) />
 
-<cfheader name="Content-Type" value="text/xml">
-<cfoutput> 
-<response showresponse="true"> 
-	<ide url="#handlerURL#?appRoot=#appRoot#" > 
-		<dialog width="655" height="600" /> 
-	</ide> 
-</response> 
-</cfoutput>
+<cf_ideWrapper messageURL="#handlerURL#?appRoot=#appRoot#" />
