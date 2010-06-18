@@ -24,23 +24,8 @@
 	
 	</cfscript>
 	
-	<cfheader name="Content-Type" value="text/xml">
-	<cfoutput> 
-	<response showresponse="true">
-		<ide url="#messagesURL#" > 
-			<dialog width="655" height="600" />
-		</ide> 
-	</response>
-	
-	</cfoutput>
+	<cf_ideWrapper messageURL="#messagesURL#" />
 	<cfabort> 
 </cfif>
 
-<cfheader name="Content-Type" value="text/xml">
-<cfoutput> 
-<response showresponse="true"> 
-	<ide url="#handlerURL#?configPath=#configPath#" > 
-		<dialog width="655" height="600" /> 
-	</ide> 
-</response> 
-</cfoutput>
+<cf_ideWrapper messageURL="#handlerURL#?configPath=#configPath#" /> 

@@ -29,15 +29,7 @@
 </cfscript>
 
 <cfif failed>
-	<cfheader name="Content-Type" value="text/xml">
-	<cfoutput> 
-	<response showresponse="true">
-		<ide url="#messagesURL#" > 
-			<dialog width="655" height="600" />
-		</ide> 
-	</response>
-	
-	</cfoutput>
+	<cf_ideWrapper messageURL="#messagesURL#" />
 	<cfabort> 
 </cfif>
 

@@ -35,14 +35,6 @@
 		
 	}
 	
-	#header{
-		background-color: #2A587A;
-		background-image: url(<cfoutput>#logocsspath#</cfoutput>);
-		background-repeat: none;
-		height: 56px;
-		width: 100%;
-		margin: 0;
-	}
 	h1 {
 		font-size: 120%;
 	}

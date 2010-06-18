@@ -36,15 +36,7 @@
 	
 	</cfscript>
 	
-	<cfheader name="Content-Type" value="text/xml">
-	<cfoutput> 
-	<response showresponse="true">
-		<ide url="#messagesURL#" > 
-			<dialog width="655" height="600" />
-		</ide> 
-	</response>
-	
-	</cfoutput>
+	<cf_ideWrapper messageURL="#messagesURL#" />
 	<cfabort> 
 </cfif>
 
@@ -54,12 +46,4 @@
 	FileWrite(configPath, configXML);
 </cfscript>
 
-
-<cfheader name="Content-Type" value="text/xml">
-<cfoutput> 
-<response showresponse="true"> 
-	<ide url="#handlerURL#?datasourcePath=#schemaPath#" > 
-		<dialog width="655" height="700" /> 
-	</ide> 
-</response> 
-</cfoutput>
+<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#" />
