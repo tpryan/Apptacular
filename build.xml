@@ -59,6 +59,7 @@
 				<exclude name='.project'/>
 				<exclude name='.settings'/>
 				<exclude name='build.xml'/>
+				<exclude name='build.local.xml'/>
 				<exclude name='**/.DS_Store'/>
 			</fileset>	
 		</copy>
