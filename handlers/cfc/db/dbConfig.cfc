@@ -74,7 +74,6 @@
 			newDataSource = reWriteObject(newDataSource, checksums[DSCSPath]['filePath'], "datasource");
 		}
 		
-		writelog("yo in overwrite	");
 		StructDelete(checksums, DSCSPath);
 		
 		

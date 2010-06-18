@@ -8,7 +8,6 @@
 	}
 	 
 	apptacularParentFolder = ExpandPath("../../");
-	writeLog(apptacularPArentFolder);	
 </cfscript>
 
 
