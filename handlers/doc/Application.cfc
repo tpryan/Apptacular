@@ -2,6 +2,7 @@ component {
 
 	This.name = "apptacularhandlersdocs";
 	This.customTagPaths = ExpandPath('../customTags/');
+	this.mappings["/Apptacular"] = expandPath("../../");
 
 	/**
     * @hint Fires when any page of the application is requested.
