@@ -17,6 +17,15 @@ component{
 		return trans;	
 		
 	}
+	
+	public string function isOnline(){
+		var httpObj = New http();
+		httpObj.setUrl(variables.buildURL);
+		var result = httpObj.send();
+		var trans = result.getPrefix().statusCode;
+		return FindNoCase("200", trans);	
+		
+	}
 
 	public boolean function shouldUpdate(){
 		if (not isNumeric(variables.currentVersion)){

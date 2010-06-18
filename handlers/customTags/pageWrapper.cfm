@@ -113,6 +113,21 @@
 		margin: 0 5px;
 	}
 	
+	#confirm{
+		font-size: 50px;
+		margin: 20px 20px;
+	}
+	
+	#updatetable{
+		font-size: 16px;
+		
+	}
+	
+	#updatetable td{
+		text-align: right;
+		font-weight: bold;
+	}
+	
 </style>
 
 <!--[if lt IE 7]>
