@@ -58,13 +58,19 @@
 
 	.alert{
 		font-weight: bold;
-		color: #FF0000;
+		color: #2A587A;
 		border: 1px dotted #FFFF33;
 		background-color: #FFFFCC;
 		padding: 1px;
 		}
 		
-		
+	.error{
+		font-weight: bold;
+		color: #FF0000;
+		border: 1px dotted #FFFF33;
+		background-color: #FFFFCC;
+		padding: 1px;
+		}	
 
 	.breadcrumb{
 		font-size: 100%;
