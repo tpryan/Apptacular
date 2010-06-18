@@ -2,11 +2,17 @@
 <cfset path = urlDecode(url.path) />
 
 
-<cfset directory = getDirectoryFromPath(path) />
+<cfif CompareNoCase(listLast(path,"."), "xml" ) eq 0>
+	<cfset tabledirectory = getDirectoryFromPath(path) />
+<cfelse>
+	<cfset tabledirectory = path />
+</cfif>
+
+
 
 <cfif structKeyExists(url, "delete")>
 	<cffile action="delete" file="#path#" />
-	<cflocation url="editTable.cfm?path=#URLEncodedFormat(directory)#" addtoken="false" />
+	<cflocation url="editTable.cfm?path=#URLEncodedFormat(tabledirectory)#" addtoken="false" />
 </cfif>
 
 
@@ -69,8 +75,7 @@
 				<td id="prev"></td>
 			</cfif>
 			
-			
-			<td>&uarr;<a href="editTable.cfm?path=#URLEncodedFormat(directory)#">Edit <strong>#ListLast(directory, FS)#</strong>&uarr;</a></td>
+			<td>&uarr;<a href="editTable.cfm?path=#URLEncodedFormat(tabledirectory)#">Edit <strong>#ListLast(tabledirectory, FS)#</strong>&uarr;</a></td>
 			
 			<cfif structKeyExists(breadcrumbStruct, "next") AND  len(breadcrumbStruct.next)>
 				<td id="next"><a href="editVirtualColumn.cfm?path=#URLEncodedFormat(breadcrumbStruct.next)#">Edit <strong>#ListFirst(ListLast(breadcrumbStruct.next, FS), ".")#</strong>&rarr;</a></td>
