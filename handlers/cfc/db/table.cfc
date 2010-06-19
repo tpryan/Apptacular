@@ -43,7 +43,7 @@ component accessors="true" extends="dbItem"
 		variables.datasource = arguments.datasource;
 		variables.stringUtil = arguments.stringUtil;
 		variables.log = arguments.log;
-		varibales.countQry = new Query(datasource=variables.datasource);
+		variables.countQry = new Query(datasource=variables.datasource);
 		
 		
 		
@@ -730,7 +730,7 @@ component accessors="true" extends="dbItem"
 	private void function populateRowCount(){
 		
 		var SQL = "SELECT count(*) as countOfRows FROM #fullyQualifiedTableName#";	
-		varibales.countQry.setSQL(SQL);
+		variables.countQry.setSQL(SQL);
 		
 		var countOfRows = varibales.countQry.execute().getResult().countOfRows;
 		
