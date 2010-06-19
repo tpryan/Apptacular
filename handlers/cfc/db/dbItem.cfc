@@ -71,9 +71,9 @@ component
 		}
 		
 		str.append('</#arguments.type#>');
-		str.append(NL);
+		str.append(NL); 
 		
-		return str;
+		return str; 
 	} 
 
 	/**
