@@ -4,9 +4,11 @@
 <cfscript>
 	failed = FALSE;
 	utils = New cfc.utils();
+	cgiUtils = New cfc.cgiUtils(cgi);
+	baseURL = cgiUtils.getBaseURL();
 	xmldoc = XMLParse(ideeventInfo); 
 	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
-	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
+	
 	generateRemoteServices = false;
 	onprojectCreate = false; 
 	
@@ -159,7 +161,6 @@
 		log.logTimes();
 		TickCount = log.getEvent("app").totalTime;
 		
-		baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";
 		messagesURL = baseURL  & messagesPath & messagesOptions;

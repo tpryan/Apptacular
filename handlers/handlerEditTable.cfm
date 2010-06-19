@@ -4,6 +4,8 @@
 <cfscript>
 	XMLDoc = xmlParse(ideeventInfo);
 	
+	cgiUtils = New cfc.cgiUtils(cgi);
+	baseURL = cgiUtils.getBaseURL();
 	
 	//handle input from the rds view
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
@@ -65,7 +67,6 @@
 	//Ensure that overwrites are respected.
 	configPath = projectPath & "/.apptacular/config.xml";
 	
-	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
 	handlerPath = getDirectoryFromPath(cgi.script_name) & "/editDB/editTable.cfm";
 	handlerOptions = "?path=" & tablepath;
 	handlerURL = baseURL & handlerPath & handlerOptions;

@@ -1,6 +1,9 @@
 
 <cfscript>
 
+	cgiUtils = New cfc.cgiUtils(cgi);
+	baseURL = cgiUtils.getBaseURL();
+
 	if (application.rds.rememberMe){
 		handlerPath = getDirectoryFromPath(cgi.script_name) & "createProject/presentdatasources.cfm";
 	}
@@ -18,7 +21,7 @@
 	}
 	
 	
-	handlerURL = "http://" & cgi.server_name & ":" & cgi.server_port & handlerPath;
+	handlerURL = baseURL & handlerPath;
 </cfscript>
 
 <cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#" />

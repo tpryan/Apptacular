@@ -1,6 +1,7 @@
 <cfscript>
 	shouldUpdate = application.update.shouldUpdate();
-	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
+	cgiUtils = New cfc.cgiUtils(cgi);
+	baseURL = cgiUtils.getBaseURL();
 	messagesPath = getDirectoryFromPath(cgi.script_name) & "/update/confirm.cfm";
 	confirmURL = baseURL & messagesPath;
 

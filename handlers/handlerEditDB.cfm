@@ -11,6 +11,8 @@
 <cfscript>
 	utils = New cfc.utils();
 	XMLDoc = xmlParse(ideeventInfo);
+	cgiUtils = New cfc.cgiUtils(cgi);
+	baseURL = cgiUtils.getBaseURL();
 	
 	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 	resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
@@ -29,7 +31,6 @@
 <cfif not FileExists(configPath)>
 
 	<cfscript>
-		baseURL = "http://" & cgi.server_name & ":" & cgi.server_port;
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=notanapplication";
 		messagesURL = baseURL  & messagesPath & messagesOptions;
