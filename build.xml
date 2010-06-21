@@ -54,6 +54,7 @@
 				<exclude name='utils/**'/>
 				<exclude name='sql/**'/>
 				<exclude name='handlers/test/**'/>
+				<exclude name='handlers/logs/**'/>
 				<exclude name='settings.xml'/>
 				<exclude name='**.properties'/>
 				<exclude name='.project'/>

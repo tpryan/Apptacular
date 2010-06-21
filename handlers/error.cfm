@@ -8,8 +8,15 @@
 	writeLog("Message: #error.message#");
 	writeLog("Detail: #error.Detail#");
 	writeLog("Error URL: #messagesURL#");
+	
+	errorDir = ExpandPath('./logs');
+	errorFile = DateFormat(now(), "yyyy-mm-dd") & "_" & timeFormat(now(), "hh-mm-ss-l") & ".html";
+	if (not DirectoryExists(errorDir)){
+		DirectoryCreate(errorDir);
+	}
+	writeDump(var=error,output= errorDir & "/" & errorFile);
+	
 </cfscript>
-
 <cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT)>
 	<cfset messagesURL = baseURL  & messagesPath & XMLFormat(messagesOptions) />
 	<cf_ideWrapper messageURL="#messagesURL#" />
