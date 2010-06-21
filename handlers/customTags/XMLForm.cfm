@@ -4,6 +4,13 @@
 	<cfparam name="attributes.fileToEdit" type="string" />
 	<cfparam name="attributes.message" type="string" default="" />
 	<cfparam name="attributes.cfcreference" type="string" default="" />
+	<cfparam name="attributes.helper" type="any" default="" />
+	
+	<cfif isSimpleValue(attributes.helper)>
+		<cfset helper = new apptacular.handlers.cfc.utils.genericHelper() />
+	<cfelse>
+		<cfset helper = attributes.helper />
+	</cfif>
 	
 	<cfset message = attributes.message />
 	<cfset tooltips = generateToolTips(attributes.cfcreference) />
@@ -60,7 +67,7 @@
 				</cfif>
 				<cfif editor.isBooleanUI(key)>
 					<tr>	
-						<th><label for="#key#">#key#</label></th>
+						<th><label for="#key#">#helper.getDisplayName(key)#</label></th>
 						<td>
 							<input name="#key#" type="radio" id="#key#true" value="true" <cfif IsBoolean(XML[XMLRoot][key]['XMLText']) AND XML[XMLRoot][key]['XMLText']>checked="checked" </cfif>/>
 							<label for="#key#true">True</label>
@@ -70,7 +77,7 @@
 					</tr>
 				<cfelseif editor.isTextAreaUI(key)>
 					<tr>	
-						<th><label for="#key#">#key#</label></th>
+						<th><label for="#key#">#helper.getDisplayName(key)#</label></th>
 						<td>
 							<cftextarea name="#key#" >#XML[XMLRoot][key]['XMLText']#</cftextarea>
 						</td>			
@@ -83,7 +90,7 @@
 					</cfif>
 					
 					<tr>	
-						<th><label for="#key#">#key#</label></th>
+						<th><label for="#key#">#helper.getDisplayName(key)#</label></th>
 						<td>
 							<cfinput name="#key#" type="text" id="#key#" value="#setting#" />
 						</td>			

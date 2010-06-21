@@ -3,34 +3,34 @@
 */
 component accessors="true"{
 	
-	property name="rootURL" hint="The url that corresponds to the rootFilePath";		
-	property name="rootFilePath" hint="The root directory under which all Apptacular files will be written.";
-	property name="rootCFCPath" hint="The CFC format path that corresponds to the rootFilePath";
-	property name="rootRelativePath" hint="The relative url (server omitted) that corresponds to the rootURL";			
+	property name="rootURL" displayName="Root URL" hint="The url that corresponds to the rootFilePath";		
+	property name="rootFilePath" displayName="Root File Path" hint="The root directory under which all Apptacular files will be written.";
+	property name="rootCFCPath" displayName="Root CFC Path" hint="The CFC format path that corresponds to the rootFilePath";
+	property name="rootRelativePath" displayName="Root Relative" hint="The relative url (server omitted) that corresponds to the rootURL";			
 	
 	//URLS
-	property name="testURL" hint="The url that corresponds to the testFilePath";		
+	property name="testURL" displayName="Unit Test URL"  hint="The url that corresponds to the testFilePath";		
 	
 	//File paths
-	property name="customTagFilePath" hint="The directory under the root where the custom tags will be written. [Computed from rootURL and customTagFolder]";
-	property name="entityFilePath" hint="The directory under the root where the entity CFCs will be written. [Computed from rootURL and entityTagFolder]";
-	property name="serviceFilePath" hint="The directory under the root where the service CFCs will be written. [Computed from rootURL and serviceFolder]";
-	property name="cssFilePath" hint="The directory under the root where the css files and accompanying images will be written. [Computed from rootURL and cssFolder]";
-	property name="testFilePath" hint="The directory under the root where the test cases will be written. [Computed from rootURL and testFolder]";
-	property name="appFilePath" hint="The directory under the root where the application will be written. [Computed from rootURL and testFolder]";
-	property name="mxunitFilePath" hint="The directory where the MXUnit files will be found.";
+	property name="customTagFilePath" displayName="Custom Tag File Path" hint="The directory under the root where the custom tags will be written. [Computed from rootURL and customTagFolder]";
+	property name="entityFilePath" displayName="ORM Entities File Path" hint="The directory under the root where the entity CFCs will be written. [Computed from rootURL and entityTagFolder]";
+	property name="serviceFilePath" displayName="Services File Path" hint="The directory under the root where the service CFCs will be written. [Computed from rootURL and serviceFolder]";
+	property name="cssFilePath" displayName="CSS File Path" hint="The directory under the root where the css files and accompanying images will be written. [Computed from rootURL and cssFolder]";
+	property name="testFilePath" displayName="Unit Test File Path" hint="The directory under the root where the test cases will be written. [Computed from rootURL and testFolder]";
+	property name="appFilePath"displayName="Application File Path"  hint="The directory under the root where the application will be written. [Computed from rootURL and testFolder]";
+	property name="mxunitFilePath" displayName="MXUnit Framework File Path" hint="The directory where the MXUnit files will be found.";
 	
 	//Relative Paths
 	property name="cssRelativePath" hint="The relative url (server omitted) that corresponds to the cssFilePath. [Computed from cssFilePath]";		
 	property name="testRelativePath" hint="The relative url (server omitted) that corresponds to the testFilePath. [Computed from testFilePath]";	
 	
 	//Folders
-	property name="customTagFolder" hint="The subfolder under the root where the custom tags will be written.";
-	property name="entityFolder" hint="The subfolder under the root where the entity CFCs will be written.";
-	property name="serviceFolder" hint="The subfolder under the root where the service CFCs will be written.";
-	property name="cssFolder" hint="The subfolder under the root where the css files and accompanying images will be written.";
-	property name="testFolder" hint="The subfolder under the root where the test cases will be written.";
-	property name="appFolder" hint="The subfolder under the root where the application files will be written.";
+	property name="customTagFolder" displayName="Custom Tag Folder" hint="The subfolder under the root where the custom tags will be written.";
+	property name="entityFolder" displayName="ORM Entity Folder" hint="The subfolder under the root where the entity CFCs will be written.";
+	property name="serviceFolder" displayName="Service Folder" hint="The subfolder under the root where the service CFCs will be written.";
+	property name="cssFolder" displayName="CSS Folder" hint="The subfolder under the root where the css files and accompanying images will be written.";
+	property name="testFolder" displayName="Unit Test Folder" hint="The subfolder under the root where the test cases will be written.";
+	property name="appFolder" displayName="Application Folder" hint="The subfolder under the root where the application files will be written.";
 	
 	//CFC paths	
 	property name="EntityCFCPath" hint="The CFC format path that corresponds to the entityFilePath";	
@@ -38,44 +38,43 @@ component accessors="true"{
 	property name="testCFCPath" hint="The CFC format path that corresponds to the testFilePath";	
 	property name="mxunitCFCPath" hint="The CFC Path where the MXUnit files will be found.";
 	
-	property name="serviceAccess" hint="Whether or not your services to be accessible or not. [Options: public, remote]";
-	property name="CreateViews" type="boolean" hint="Whether or not Apptacular should create view files (index.cfm, plus tabname.cfm, and custom tags.)";
-	property name="CreateAppCFC" type="boolean" hint="Whether or not Apptacular should create a Application.cfc";
-	property name="CreateServices" type="boolean" hint="Whether or not Apptacular should create services";
-	property name="UseServices" type="boolean" hint="Whether or not Apptacular should use services in lieu of Entity functions [Not implemented yet]";
-	property name="CreateEntities" type="boolean"  hint="Whether or not Apptacular should create entity files";
-	property name="CreateLogin" type="boolean" hint="Whether or not Apptacular should wire up login framework.";
-	property name="CreateTests" type="boolean" hint="Whether or not Apptacular should write default unit tests.";
-	property name="WireOneToManyinViews" type="boolean" hint="Whether or not Apptacular should write out oneToMany interfaces in view. Good to turn off if you have tables with 1000's of records wired to a oneToMany.";
-	property name="LogSQL" type="boolean" hint="Whether or not generated application should log Hibernate SQL operations to the console.";
-	property name="ReturnQueriesFromService" type="boolean" hint="Whether or not generated application return queries instead of arrays of ORM objects.";
+	property name="serviceAccess" displayName="Service Access"  hint="Whether or not your services to be accessible or not. [Options: public, remote]";
+	property name="CreateViews" displayName="Create Views" type="boolean" hint="Whether or not Apptacular should create view files (index.cfm, plus tabname.cfm, and custom tags.)";
+	property name="CreateAppCFC" displayName="Create Application.cfc" type="boolean" hint="Whether or not Apptacular should create a Application.cfc";
+	property name="CreateServices" displayName="Create Services" type="boolean" hint="Whether or not Apptacular should create services";
+	property name="CreateEntities" displayName="Create ORM Entities"  type="boolean"  hint="Whether or not Apptacular should create entity files";
+	property name="CreateLogin" displayName="Create Login Protection" type="boolean" hint="Whether or not Apptacular should wire up login framework.";
+	property name="CreateTests" displayname="Create Unit Tests" type="boolean" hint="Whether or not Apptacular should write default unit tests.";
+	property name="WireOneToManyinViews" displayName="Wire One to Many relationships in views "  type="boolean" hint="Whether or not Apptacular should write out oneToMany interfaces in view. Good to turn off if you have tables with 1000's of records wired to a oneToMany.";
+	property name="LogSQL" displayName="Log SQL" type="boolean" hint="Whether or not generated application should log Hibernate SQL operations to the console.";
+	property name="ReturnQueriesFromService" displayName="Return Queries from Services instead of ORM Arrays"  type="boolean" hint="Whether or not generated application return queries instead of arrays of ORM objects.";
 	
 	property name="CFCFormat" hint="Whether or not your CFCs are all CFML or all CFScript. [Options: CFML, CFSCRIPT]";
 	
-	property name="depluralize" hint="Whether or not Apptacular should depluralize your entity names. Experimental, may not yeild perfect results.";
+	property name="depluralize" displayName="Depluralize"   hint="Whether or not Apptacular should depluralize your entity names. Experimental, may not yeild perfect results.";
 	
 	
-	property name="createdOnString" hint="The magic string for DateTime of object creation";
-	property name="updatedOnString" hint="The magic string for DateTime of object last update";
+	property name="createdOnString" displayName="Created on String"  hint="The magic string for DateTime of object creation";
+	property name="updatedOnString" displayName="Updated on String" hint="The magic string for DateTime of object last update";
 	
-	property name="dateformat" hint="The format in which to display dates in views.";
-	property name="timeformat" hint="The format in which to display times in views.";
+	property name="dateformat" displayName="Date Format"  hint="The format in which to display dates in views.";
+	property name="timeformat" displayName="Time Format"  hint="The format in which to display times in views.";
 	
 	property name="OverwriteDataModel" type="boolean" hint="Setting this to true will allow config XML to become authoritative. Don't do this until you are mostly done messing around with model.";
-	property name="LockApplication" type="boolean" hint="Setting this to true will prevent any new files from being written or modified by the Apptacular extension";
-	property name="selectorThreshold" type="numeric" hint="The number of items in a related table past which we don't want to create drop down menus that will cause the system to slow down like crazy.";
+	property name="LockApplication" displayName="Lock Application"   type="boolean" hint="Setting this to true will prevent any new files from being written or modified by the Apptacular extension";
+	property name="selectorThreshold" displayName="Number of related items that will block relationship building in views"   type="numeric" hint="The number of items in a related table past which we don't want to create drop down menus that will cause the system to slow down like crazy.";
 	
 	//Service method names, allows changed list to GetAll, if that's your preferred syntax'
-	property name="serviceGetMethod" type="string" hint="The name of the method in a serivice that retrieves a single record.";
-	property name="serviceUpdateMethod" type="string" hint="The name of the method in a serivice that updates a single record.";
-	property name="serviceDeleteMethod" type="string" hint="The name of the method in a serivice that deletes a single record.";
-	property name="serviceListMethod" type="string" hint="The name of the method in a serivice that retrieves a all records.";
-	property name="serviceListPagedMethod" type="string" hint="The name of the method in a serivice that retrieves a all records, in pages.";
-	property name="serviceSearchMethod" type="string" hint="The name of the method in a serivice searches for records.";
-	property name="serviceSearchPagedMethod" type="string" hint="The name of the method in a serivice searches for records, in pages.";
-	property name="serviceInitMethod" type="string" hint="The name of the method in a serivice that acts as the constructor.";
-	property name="serviceCountMethod" type="string" hint="The name of the method in a serivice that returns a count of records in the underlying table.";
-	property name="ServiceSearchCountMethod" type="string" hint="The name of the method in a service that returns the count of records in a search result.";
+	property name="serviceGetMethod" displayName="Get method name"  type="string" hint="The name of the method in a serivice that retrieves a single record.";
+	property name="serviceUpdateMethod" displayName="Update method name"  type="string" hint="The name of the method in a serivice that updates a single record.";
+	property name="serviceDeleteMethod" displayName="Delete method name"  type="string" hint="The name of the method in a serivice that deletes a single record.";
+	property name="serviceListMethod" displayName="List method name"  type="string" hint="The name of the method in a serivice that retrieves a all records.";
+	property name="serviceListPagedMethod" displayName="List Paged method name"  type="string" hint="The name of the method in a serivice that retrieves a all records, in pages.";
+	property name="serviceSearchMethod" displayName="Search method name"  type="string" hint="The name of the method in a serivice searches for records.";
+	property name="serviceSearchPagedMethod" displayName="Search Paged method name"  type="string" hint="The name of the method in a serivice searches for records, in pages.";
+	property name="serviceInitMethod" displayName="Init method name"  type="string" hint="The name of the method in a serivice that acts as the constructor.";
+	property name="serviceCountMethod" displayName="Count method name"  type="string" hint="The name of the method in a serivice that returns a count of records in the underlying table.";
+	property name="ServiceSearchCountMethod" displayName="Search Count method name"  type="string" hint="The name of the method in a service that returns the count of records in a search result.";
 	
 	/**
 	* @hint The init that fires up all of this stuff. 
