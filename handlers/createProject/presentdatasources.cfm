@@ -60,31 +60,37 @@
 
 <cf_pageWrapper>
 <cfoutput>
-	<p>Pick the datasource you'd like to use to create your application</p>
-	<table>
-	<form action="../handlerGenerate.cfm" method="post">
-		<input type="hidden" name="projectPath" value="#projectPath#" />
-		<tr>
-		<th><label for="datasource">Datasource:</label></th>
-		<td>
-			<select name="dsName">
-				<option></option>
-				<cfloop array="#datasourceArray#" index="ds">
-					<option value="#ds#">#ds#</option>
-				</cfloop>
-			</select>
-		</td>
-		</tr>
-		<tr>
-		<th></th>
-		<td>
-			<input type="checkbox" name="generateremoteservices" value="true">
-			<label for="generateservices">Generate Remote Services</label>
-		</td>
-		</tr>
-		<tr><th></th><td><input type="submit" name="login" value="Generate Application"></td></tr>
-	</form>
-	</table>
+	<div id="content">
+		<p>Pick the datasource you'd like to use to create your application</p>
+		<table>
+		<form action="../handlerGenerate.cfm" method="post">
+			<input type="hidden" name="projectPath" value="#projectPath#" />
+			<tr>
+			<th><label for="datasource">Datasource:</label></th>
+			<td>
+				<select name="dsName">
+					<option></option>
+					<cfloop array="#datasourceArray#" index="ds">
+						<option value="#ds#">#ds#</option>
+					</cfloop>
+				</select>
+			</td>
+			</tr>
+			<tr>
+			<th></th>
+			<td>
+				<input type="checkbox" name="generateremoteservices" value="true">
+				<label for="generateservices">Generate Remote Services</label>
+			</td>
+			</tr>
+			<tr><th></th><td><input type="submit" name="login" value="Generate Application" onclick="toggleLoading();"></td></tr>
+		</form>
+		</table>
+	</div>
+	<div id="loading">
+		<p>Processing....</p>
+		<img src ="../ajax-loader.gif" height="19" width="220"  />
+	</div>
 </cfoutput>
 
 

@@ -123,6 +123,10 @@
 		font-weight: bold;
 	}
 	
+	#loading{
+		display: none;
+	}
+	
 </style>
 
 <!--[if lt IE 7]>
@@ -153,6 +157,14 @@
 		for (i = 0; i < field.length; i++)
 			field[i].checked = false ;
 	}
+	
+	function toggleLoading(){
+		var loading = document.getElementById("loading");
+		loading.style.display = 'block';
+		return true;
+	}
+	
+	
 </script>
 
 </head>
