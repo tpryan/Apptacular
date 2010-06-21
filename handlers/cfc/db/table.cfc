@@ -732,7 +732,7 @@ component accessors="true" extends="dbItem"
 		var SQL = "SELECT count(*) as countOfRows FROM #fullyQualifiedTableName#";	
 		variables.countQry.setSQL(SQL);
 		
-		var countOfRows = varibales.countQry.execute().getResult().countOfRows;
+		var countOfRows = variables.countQry.execute().getResult().countOfRows;
 		
 		This.setrowCount(countOfRows);
 	}
