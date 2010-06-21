@@ -1,5 +1,3 @@
-
-
 <cf_pageWrapper>
 	
 	<cfset isOnline = application.update.isOnline() />
@@ -17,7 +15,8 @@
 				</table>
 			</cfoutput>
 			<form action="update.cfm">
-				<input id="confirm" name="confirm" type="submit" value="Are you sure you want to update?" />
+				<label for="config">Are you sure you want to update?</label>
+				<input id="confirm" name="confirm" type="submit" value="Yes, I want to update!" />
 			</form>
 		<cfelse>
 			<cfoutput><p>You are currently running at the latest version of Apptacular.</p></cfoutput>	
