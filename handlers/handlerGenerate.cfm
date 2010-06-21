@@ -65,6 +65,8 @@
 		onprojectCreate = true; 
 	}
 
+	application.rootFilePath = rootFilePath;
+
 </cfscript>	
 
 	
@@ -77,6 +79,8 @@
 <cfscript>
 	log = New cfc.log(dsName);
 	log.startEvent("app", "Apptacular Process");
+	
+	
 	
 	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
 
