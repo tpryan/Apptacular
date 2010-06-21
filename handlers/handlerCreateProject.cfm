@@ -17,12 +17,13 @@
 		projectPath = XMLDoc.event.ide.eventinfo.XMLAttributes.projectlocation;
 	}
 	else{
-		projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
+		projectPath = XMLDoc.event.ide.projectview.resource.XmlAttributes['path'];
 	}
 	
 	
 	handlerURL = baseURL & handlerPath;
 </cfscript>
+
 
 <cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#" />
 
