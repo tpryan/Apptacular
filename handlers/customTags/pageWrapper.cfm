@@ -127,6 +127,21 @@
 		display: none;
 	}
 	
+	#updatenotice{
+		margin:0;
+		padding: 2px 5px;
+		background-color: #FFFFCC;
+		color: #000000;
+	}
+	
+	#updatenotice p{
+		margin:0;
+		padding: 0;
+		
+	}
+	
+	#updatenotice p a{color: #2A587A;}
+	#updatenotice p a:hover{color:#5D8BAD;}
 </style>
 
 <!--[if lt IE 7]>
@@ -169,6 +184,13 @@
 
 </head>
 <body>
+<cfif structKeyExists(application, "updateNeeded") AND 
+		application.updateNeeded AND
+		not FindNoCase("/update/", cgi.script_name)>
+<div id="updatenotice">
+	<p>There is an <a href="../update/confirm.cfm">update</a> available for Apptacular.</p>
+</div>
+</cfif>
 <div id="header"></div>
 <div id="content">
 <cfelse>
