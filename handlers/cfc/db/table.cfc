@@ -3,23 +3,23 @@
  */
 component accessors="true" extends="dbItem"  
 {
-	property name="name" hint="The real name of the table in the database.";
-	property name="displayName" hint="A pretty name, not at all like 'tbl_author_active'";
-	property name="entityName" hint="A code friendly name of the object usefull when your table is named 'tbl_author_active'";
-	property name="identity" hint="The unique identifier of the table.";
-	property name="plural"  hint="The plural of the entityname, used in relationships";
-	property name="displayPlural" hint="The pretty name of the plural.";
-	property name="ForeignKeyLabel" hint="The column to be used as a reference in related object ui.";
-	property name="isReferencedAsForeignKey" type="boolean" hint="Whether or not this table is referenced by another table's foreign key.";
-	property name="isJoinTable" type="boolean" hint="Whether or not this table is the join table of a many to many relationship";
-	property name="softDelete" type="boolean" hint="Whether or not this table should be deactivated instead of deleted [not yet implemented ]";  
-	property name="hasJoinTable" type="boolean" hint="Whether or not this table has a join table in a many to many relationship";  
-	property name="hasForeignKeys" type="boolean" hint="Whether or not this table has foreign keys";  
-	property name="isView" type="boolean" hint="It's not a table, it's a view!";
-	property name="orderby" hint="The column to order all refernece to these objects."; 
-	property name="createInterface" type="boolean" hint="Whether or not this table should have interfaces built for it. ";  
-	property name="schema" hint="The schema that contains the table."; 
-	property name="prefix" hint="An prefix on this table in the database.";
+	property name="name" displayname="Name" hint="The real name of the table in the database.";
+	property name="displayName" displayname="Display Name" hint="A pretty name, not at all like 'tbl_author_active'";
+	property name="entityName" displayname="Entity Name" hint="A code friendly name of the object usefull when your table is named 'tbl_author_active'";
+	property name="identity" displayname="Identity" hint="The unique identifier of the table.";
+	property name="plural" displayname="Plural" hint="The plural of the entityname, used in relationships";
+	property name="displayPlural" displayname="Plural Display Name"  hint="The pretty name of the plural.";
+	property name="ForeignKeyLabel" displayname="Foreign Key Label" hint="The column to be used as a reference in related object ui.";
+	property name="isReferencedAsForeignKey" displayname="Is this Table Referenced as a Foreign Key?"  type="boolean" hint="Whether or not this table is referenced by another table's foreign key.";
+	property name="isJoinTable" displayname="Is this table a join table?" type="boolean" hint="Whether or not this table is the join table of a many to many relationship";
+	property name="softDelete" displayname="Use Soft Deletes?"  type="boolean" hint="Whether or not this table should be deactivated instead of deleted [not yet implemented ]";  
+	property name="hasJoinTable" displayname="Does this table have join tables?"  type="boolean" hint="Whether or not this table has a join table in a many to many relationship";  
+	property name="hasForeignKeys" displayname="Does this table have foreign keys?" type="boolean" hint="Whether or not this table has foreign keys";  
+	property name="isView" displayname="Is this table a view?"  type="boolean" hint="It's not a table, it's a view!";
+	property name="orderby" displayname="Order by" hint="The column to order all refernece to these objects."; 
+	property name="createInterface" displayname="Should this table get wired up?" type="boolean" hint="Whether or not this table should have interfaces built for it. ";  
+	property name="schema" displayname="Schema" hint="The schema that contains the table."; 
+	property name="prefix" displayname="Prefix" hint="An prefix on this table in the database.";
 	
 	property name="columns" type="column[]" hint="An array of all of the columns in the table.";
 	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";

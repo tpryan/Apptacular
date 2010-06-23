@@ -121,6 +121,7 @@
 			<directory path="${test.app.dir}/code" recurse="true" componentPath="${cfc.app.path}.code" packageName="apptacular" />
 			<directory path="${test.app.dir}/db" recurse="true" componentPath="${cfc.app.path}.db" packageName="apptacular" />
 			<directory path="${test.app.dir}/generators" recurse="true" componentPath="${cfc.app.path}.generators" packageName="apptacular" />
+			<directory path="${test.app.dir}/utils" recurse="true" componentPath="${cfc.app.path}.utils" packageName="apptacular" />
 		</mxunittask>
 	</target>
 	

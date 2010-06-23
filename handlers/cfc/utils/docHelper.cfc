@@ -18,7 +18,7 @@ component{
 	}
 	
 	private struct function buildPropStruct(any config){
-		var info = getMetaData(arguments.config).properties;
+		var info = getComponentMetaData(arguments.config).properties;
 		var i = 0;
 		var results = {};
 		

@@ -1,31 +1,28 @@
 component extends="mxunit.framework.TestCase"{
 	
-	public void function setup(){
-		var FilePath = '/apache/htdocs/Apptacular/';
-		var cfcPath = "apptacular";	
-		variables.config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
-    	
-    }
-    
 	
-	
-	public void function testGetDisplayName_DisplayNameNOTSet(){
-		var configHelper = new apptacular.handlers.cfc.utils.configHelper(variables.config);
+	public void function test_config_GetDisplayName_DisplayNameNOTSet(){
+		var config = "apptacular.handlers.generators.cfapp.config";
+		var configHelper = new apptacular.handlers.cfc.utils.docHelper(config);
 		var actual = configHelper.getDisplayName("Astringthatshouldneverbeaconfigitem");
 		var expected  = "Astringthatshouldneverbeaconfigitem";
-				
 		AssertEquals(expected, actual);
-		
     }
 	
-	public void function testGetDisplayName_DisplayNameSet(){
-		var configHelper = new apptacular.handlers.cfc.utils.configHelper(variables.config);
+	public void function test_config_GetDisplayName_DisplayNameSet(){
+		var config = "apptacular.handlers.generators.cfapp.config";
+		var configHelper = new apptacular.handlers.cfc.utils.docHelper(config);
 		var actual = configHelper.getDisplayName("createTests");
-		var expected  = "Create Tests";
-				
+		var expected  = "Create Unit Tests";
 		AssertEquals(expected, actual);
-		
     }
 	
+	public void function test_table_GetDisplayName_DisplayNameSet(){
+		var table = "apptacular.handlers.cfc.db.table";
+		var docHelper = new apptacular.handlers.cfc.utils.docHelper(table);
+		var actual = docHelper.getDisplayName("displayname");
+		var expected  = "Display Name";
+		AssertEquals(expected, actual);
+    }
 
 }

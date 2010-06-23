@@ -73,9 +73,10 @@
 </cfoutput>
 
 
+<cfset tableCFC = "apptacular.handlers.cfc.db.table" />
+<cfset docHelper = new apptacular.handlers.cfc.utils.docHelper(tableCFC) />
 
-
-<cf_XMLForm fileToEdit="#tablePath#" message="#message#" cfcreference="apptacular.handlers.cfc.db.table" /> 
+<cf_XMLForm fileToEdit="#tablePath#" message="#message#" cfcreference="#tableCFC#" helper="#docHelper#" /> 
 <cfoutput>
 <table>
 <tr>
