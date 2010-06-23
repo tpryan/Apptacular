@@ -1,4 +1,6 @@
 <cfsetting showdebugoutput="false" />
+
+
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 <cfscript>
 	failed = FALSE;
@@ -65,8 +67,6 @@
 		onprojectCreate = true; 
 	}
 
-	application.rootFilePath = rootFilePath;
-
 </cfscript>	
 
 	
@@ -74,13 +74,46 @@
 	<cf_ideWrapper messageURL="#messagesURL#" />
 	<cfabort> 
 </cfif>
+
+<!--- New test to make sure that you do not build an apptacular project into a populated
+		project without asking.  --->
+
+<cfif not structKeyExists(form, "confirmed")>		
+	<cfdirectory action="list" directory="#rootFilePath#" name="projectFiles" listinfo="name" />
 	
+	<cfquery name="isApptacular" dbtype="query">
+		SELECT 	*
+		FROM	projectFiles
+		WHERE 	name = '.apptacular'
+	
+	</cfquery>
+	
+	<cfquery name="otherFiles" dbtype="query">
+		SELECT 	*
+		FROM	projectFiles
+		WHERE 	name != '.apptacular'
+		AND		name != '.project'
+	</cfquery>
+	
+	<cfif isApptacular.RecordCount eq 0 and otherFiles.RecordCount gt 0>
+		<cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/handlerGenerateWarning.cfm" />
+		<cfset messagesOptions = "?rootFilePath=#rootFilePath#&amp;dsName=#dsName#" />
+		<cfset messagesURL = baseURL  & messagesPath & messagesOptions />
+		<cflog text="messagesURL: #messagesURL#" />
+		
+		<cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT) eq 0>
+			<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
+		<cfelse>
+			<cf_ideWrapper messageURL="#messagesURL#" />
+			<cfabort>
+		</cfif>
+	</cfif>
+
+</cfif>
 
 <cfscript>
 	log = New cfc.log(dsName);
 	log.startEvent("app", "Apptacular Process");
-	
-	
 	
 	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
 
