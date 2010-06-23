@@ -3,11 +3,11 @@
  */
 component accessors="true" extends="dbItem"  
 {
-	property name="name" hint="Name of the ColdFusion Datasource to use.";
-	property name="displayName" hint="A pretty name, not at all like 'db_blog1_mysql'";
-	property name="engine"  hint="The database engine.";
-	property name="version" hint="The database version.";
-	property name="prefix" hint="An prefix on all of the tables in the database.";
+	property name="name" displayname="Name" hint="Name of the ColdFusion Datasource to use.";
+	property name="displayName" displayname="Display Name" hint="A pretty name, not at all like 'db_blog1_mysql'";
+	property name="engine"  displayname="Engine" hint="The database engine.";
+	property name="version" displayname="Version" hint="The database version.";
+	property name="prefix" displayname="Prefix" hint="An prefix on all of the tables in the database.";
 	property name="tables" type="table[]" hint="An array of all of the tables in the datasource.";
 	property name="tablesStruct" type="struct" hint="An structure of all of the tables in the datasource."; 
 	

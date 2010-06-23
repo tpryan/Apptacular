@@ -34,7 +34,8 @@
 		cfcPath = items[item].cfcPath;
 		editorItem = items[item].editorItem;
 		title = items[item].title;
-	
+		helper = new apptacular.handlers.cfc.utils.docHelper(cfcPath);
+		
 		tooltips = generateToolTips(cfcPath);
 		editor = new apptacular.handlers.cfc.editor(editorItem);
 		keys = editor.getAllowedList();
@@ -49,7 +50,7 @@
 				</cfif>
 				
 				<dl>
-				<dt>#key#</dt>	
+				<dt>#helper.getDisplayName(key)#</dt>	
 				<dd>#getToolTip(key)#</dd>
 				</dl>
 			</cfloop>

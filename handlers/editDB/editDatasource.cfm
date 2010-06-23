@@ -31,7 +31,10 @@
 
 <cf_pageWrapper>
 
-<cf_XMLForm fileToEdit="#path#" message="#message#"   cfcreference="apptacular.handlers.cfc.db.datasource" />
+<cfset datasourceCFC = "apptacular.handlers.cfc.db.datasource" />
+<cfset docHelper = new apptacular.handlers.cfc.utils.docHelper(datasourceCFC) />
+
+<cf_XMLForm fileToEdit="#path#" message="#message#" helper = "#docHelper#"   cfcreference="apptacular.handlers.cfc.db.datasource" />
 
 
 <h2>Edit Tables</h2>

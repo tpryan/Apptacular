@@ -33,6 +33,7 @@
 
 <cfset tooltips = generateToolTips(cfcPath) />
 <cfset editor = new apptacular.handlers.cfc.editor(editorItem) />
+<cfset helper = new apptacular.handlers.cfc.utils.docHelper(cfcPath) />
 <cfset keys = editor.getAllowedList() />
 
 <cf_pageWrapper>
@@ -46,7 +47,7 @@
 	</cfif>
 	
 	<dl>
-	<dt>#key#</dt>	
+	<dt>#helper.getDisplayName(key)#</dt>	
 	<dd>#getToolTip(key)#</dd>
 	</dl>
 </cfloop>
