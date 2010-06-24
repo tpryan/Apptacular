@@ -33,6 +33,10 @@ component {
 		return true;
 	}
 	
+	public void function onError(any exception, string eventname){
+		include "error.cfm";
+		abort;
+	}
 	
 	public void function checkForUpdates(){
 		if (not structKeyExists(application,"updateLastChecked") OR 
