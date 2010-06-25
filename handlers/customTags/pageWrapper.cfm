@@ -163,16 +163,20 @@
 
 	function checkAll(field)
 	{
-		for (i = 0; i < field.length; i++)
-			field[i].checked = true ;
+		for (i = 0; i < field.length; i++) {
+			if (field[i].disabled != true) {
+				field[i].checked = true;
+			}
+		}	
 	}
 	
-	function uncheckAll(field)
-	{
-		for (i = 0; i < field.length; i++)
-			field[i].checked = false ;
-	}
-	
+	function uncheckAll(field){
+		for (i = 0; i < field.length; i++) {
+			if (field[i].disabled != true) {
+				field[i].checked = false;
+			}
+		}
+	}	
 	function toggleLoading(){
 		var loading = document.getElementById("loading");
 		loading.style.display = 'block';

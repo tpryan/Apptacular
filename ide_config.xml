@@ -28,6 +28,7 @@
 				<action name="------------------------------" />
 				<action name="Edit Application Configuration" handlerid="editConfig"></action>
 			    <action name="Edit Database Data Model" handlerid="editDB"></action>
+				 <action name="Activate/Deactivate Tables" handlerid="editActive"></action>
 				<action name="Edit Item Data Model" handlerid="configtable">
 					<filters> 
 						<filter type="file" pattern=".*\.cfc" /> 
@@ -48,6 +49,7 @@
 		<handler id="generate" type="CFM" filename="handlerGenerate.cfm" />
 		<handler id="editDB" type="CFM" filename="handlerEditDB.cfm" />
 		<handler id="editConfig" type="CFM" filename="handlerEditConfig.cfm" />
+		<handler id="editActive" type="CFM" filename="handlerActiveTables.cfm" />
 		<handler id="purge" type="CFM" filename="handlerPurge.cfm" />
 		<handler id="configtable" type="CFM" filename="handlerEditTable.cfm" />
 		<handler id="handlerCreateProject" type="CFM" filename="handlerCreateProject.cfm" />
