@@ -66,6 +66,10 @@ component extends="codeGenerator"{
 			if (column.getIsForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				
+				if (not fkTable.getcreateInterface()){
+					continue;
+				}
+				
 				//If the table is linked more then once, you'll have to set pretty names yourself
 				if (table.getForeignTableCount(fkTable.getName()) gt 1){
 					ct.AppendBody('			<th>#column.getDisplayName()#</th>');
@@ -92,6 +96,10 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 
+				if (not foreignTable.getcreateInterface()){
+					continue;
+				}
+	
 				if (not foreignTable.getIsJoinTable()){
 					
 					if (table.getForeignTableCount(foreignTable.getName()) gt 1){
@@ -110,6 +118,10 @@ component extends="codeGenerator"{
 			for (i = 1; i <= ArrayLen(joinTables); i++){
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				if (not otherJoinTable.getcreateInterface()){
+					continue;
+				}
 			
 				ct.AppendBody('			<th>#otherJoinTable.getEntityName()#Count</th>');
 				columnCount++;
@@ -133,7 +145,14 @@ component extends="codeGenerator"{
 			
 		 	else if (column.getIsForeignKey()){
 			
+				
+			
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				
+				if (not fkTable.getcreateInterface()){
+					continue;
+				}
+				
 				var page = "#fkTable.getEntityName()#.cfm";
 				var method ="?method=read";
 				var idString = "&amp;#fkTable.getIdentity()#";
@@ -183,6 +202,11 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
+				if (not foreignTable.getcreateInterface()){
+					continue;
+				}
+				
+				
 				if (not foreignTable.getIsJoinTable()){
 					if (table.getReferenceCount(foreignTable.getName()) gt 1){
 						ct.AppendBody('			<td>###entityName#.get#foreignTable.getEntityName()##ref.getforeignKey()#Count()##</td>');
@@ -199,7 +223,12 @@ component extends="codeGenerator"{
 			var joinTables = table.getJoinTables();
 			for (i = 1; i <= ArrayLen(joinTables); i++){
 				var joinTable = dataSource.getTable(joinTables[i]);
-				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));	
+				
+				if (not otherJoinTable.getcreateInterface()){
+					continue;
+				}
+					
 				ct.AppendBody('			<td>###entityName#.get#otherJoinTable.getEntityName()#Count()##</td>');
 			}
 		}
@@ -297,6 +326,11 @@ component extends="codeGenerator"{
 			
 			else if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
+				
+				if (not fkTable.getcreateInterface()){
+					continue;
+				}
+				
 				var page = "#fkTable.getEntityName()#.cfm";
 				var method ="?method=read";
 				var idString = "&amp;#fkTable.getIdentity()#";
@@ -365,6 +399,10 @@ component extends="codeGenerator"{
 			for (i = 1; i <= ArrayLen(joinTables); i++){
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				if (not otherJoinTable.getcreateInterface()){
+					continue;
+				}
 			
 				ct.AppendBody('		<tr>');
 				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
@@ -485,6 +523,10 @@ component extends="codeGenerator"{
 					
 					var fkTable = datasource.getTable(column.getForeignKeyTable());
 					
+					if (not fkTable.getcreateInterface()){
+						continue;
+					}
+					
 					ct.AppendBody('		<tr>');
 					// if the table is linked to this table multiple times, then call it be the column in this table.
 					if (table.getForeignTableCount(fkTable.getName()) gt 1){
@@ -516,6 +558,9 @@ component extends="codeGenerator"{
 			else if (column.getisForeignKey() and fktableCount >= config.getSelectorThreshold()){
 					var fkTable = datasource.getTable(column.getForeignKeyTable());
 					
+					if (not fkTable.getcreateInterface()){
+						continue;
+					}
 					
 					ct.AppendBody('		<tr>');
 					
@@ -612,6 +657,10 @@ component extends="codeGenerator"{
 			for (i = 1; i <= ArrayLen(joinTables); i++){
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			
+				if (not otherJoinTable.getcreateInterface()){
+					continue;
+				}
 			
 				ct.AppendBody('		<tr>');
 				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
@@ -720,6 +769,10 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
+				if (not foreignTable.getcreateInterface()){
+					continue;
+				}
+				
 				if (not foreignTable.getIsJoinTable()){
 					view.AppendBody('');
 					view.AppendBody('		<h3>#foreignTable.getDisplayPlural()#</h3> ');
@@ -789,6 +842,11 @@ component extends="codeGenerator"{
 		    	}
 				else if (column.getisForeignKey() AND not column.getIsMemeberOfCompositeForeignKey()){
 					var fTable = dataSource.getTable(column.getForeignKeyTable());
+					
+					
+					if (not fTable.getcreateInterface()){
+						continue;
+					}
 					
 					if (table.getForeignTableCount(fTable.getName()) gt 1){
 						var propertyname = column.getName();

@@ -62,29 +62,29 @@ component extends="codeGenerator"{
 			property.setORMType(column.getOrmType());
 			property.setColumn(column.getColumn());
 	       	
-			//Turns out that length is only important if you are generated database.
-			//Apptacular be its nature scaffolds from the database.
-	       	/* if (column.getLength() gt 0 AND column.getDisplayLength()){
-	       		property.setLength(column.getLength());
-	       	} */
 			
 	       	
+			//If it is an identity. 
 	       	if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
 	       		property.setFieldtype('id');
 	       		property.setGenerator('native');
-	       	}	
+	       	}
+			
+			//if it is a many to one based on fkeys	
 	       	else if (column.getisForeignKey() AND not column.getIsMemeberOfCompositeForeignKey()){
 				var fTable = dataSource.getTable(column.getForeignKeyTable());
 				
+				//Don't wire up many to ones's if the other table is set not to be wired up
+				if (not fTable.getcreateInterface()){
+					continue;
+				}
+				
 				if (table.getForeignTableCount(fTable.getName()) gt 1){
 					property.setName(column.getName());
-					//property.setInsert(false);
-					//property.setUpdate(false);
 				}	
 				else{
 					property.setName(fTable.getEntityName());
 				}
-				
 				
 				property.setType("");
 				property.setOrmType("");
@@ -115,9 +115,15 @@ component extends="codeGenerator"{
 		
 		//handle composite foreign key relationships
 		for (i=1; i <= ArrayLen(compositeArray); i++){
-			var property = New apptacular.handlers.cfc.code.property();
+			
 	       	var fTable = dataSource.getTable(compositeArray[i]);
 			
+			//Don't wire up many to ones's if the other table is set not to be wired up
+			if (not fTable.getcreateInterface()){
+				continue;
+			}
+			
+			var property = New apptacular.handlers.cfc.code.property();
 			property.setName(fTable.getEntityName());
 			property.setType("");
 			property.setOrmType("");
@@ -149,7 +155,12 @@ component extends="codeGenerator"{
 					otherJoinTable = datasource.getTable(foreignTable.getOtherJoinTable(table.getName()));		
 					foreignColumns = foreignTable.getColumns();
 					
-					property = New apptacular.handlers.cfc.code.property();
+					//Don't wire up many to many's if the far table is set not to be wired up
+					if (not otherJoinTable.getcreateInterface()){
+						continue;
+					}
+					
+					var property = New apptacular.handlers.cfc.code.property();
 					property.setName(otherJoinTable.getPlural());
 			   		property.setFieldtype('many-to-many');
 					property.setCFC(otherJoinTable.getEntityName());
@@ -178,10 +189,15 @@ component extends="codeGenerator"{
 					countFunc.setReturnResult("result");				
 					cfc.addFunction(countFunc);
 					
+					
 				
 				}
 				else{
 				
+					//Don't wire up many to many's if the far table is set not to be wired up
+					if (not foreignTable.getcreateInterface()){
+						continue;
+					}
 				
 					//Handle Typical OneToManys
 					var property = New apptacular.handlers.cfc.code.property();
