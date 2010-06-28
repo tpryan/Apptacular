@@ -14,10 +14,11 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint You know what this does.
 	 */	
-	public function init(required string datasource, any stringUtil, any log){
+	public function init(required string datasource, any stringUtil, any log, any reservedWordHelper){
 		variables.dbinfo = New dbinfo();
 		variables.stringUtil = arguments.stringUtil;
 		variables.log = arguments.log;
+		variables.reservedWordHelper = arguments.reservedWordHelper;
 		dbinfo.setDatasource(arguments.datasource);
 		
 		variables.excludedTableList = generateExcludedTables();
@@ -88,7 +89,7 @@ component accessors="true" extends="dbItem"
 				continue;
 			}
 			
-			var table = New table(tables.table_name[i], This.getName(), schema, isView, variables.stringUtil, variables.log);
+			var table = New table(tables.table_name[i], This.getName(), schema, isView, variables.stringUtil, variables.log, variables.reservedWordHelper);
 			tablesStruct[table.getName()] = table;
 			
 			

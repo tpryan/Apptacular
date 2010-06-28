@@ -93,6 +93,8 @@
 		FROM	projectFiles
 		WHERE 	name != '.apptacular'
 		AND		name != '.project'
+		AND 	name != '.settings'
+		AND 	name != '.settings/org.eclipse.core.resources.prefs'
 	</cfquery>
 	
 	<cfif isApptacular.RecordCount eq 0 and otherFiles.RecordCount gt 0>
@@ -119,8 +121,9 @@
 
 	//process DB version of schema
 	stringUtils = New cfc.stringUtil();
+	reservedWordHelper = New cfc.utils.reservedWordHelper();
 	
-	db = New cfc.db.datasource(dsName, stringUtils, log);
+	db = New cfc.db.datasource(dsName, stringUtils, log, reservedWordHelper);
 
 	
 	//process config default 

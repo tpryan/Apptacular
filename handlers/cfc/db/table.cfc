@@ -37,11 +37,12 @@ component accessors="true" extends="dbItem"
 	/**
 	 * @hint You know, an init. 
 	 */
-	public function init(required string name, required string datasource, string schema="", boolean isView=FALSE, any stringUtil, any log){
+	public function init(required string name, required string datasource, string schema="", boolean isView=FALSE, any stringUtil, any log, any reservedWordHelper){
 		variables.mappings = New mappings();
 		variables.dbinfo = New dbinfo();
 		variables.datasource = arguments.datasource;
 		variables.stringUtil = arguments.stringUtil;
+		variables.reservedWordHelper = arguments.reservedWordHelper;
 		variables.log = arguments.log;
 		variables.countQry = new Query(datasource=variables.datasource);
 		
@@ -60,7 +61,12 @@ component accessors="true" extends="dbItem"
 		dbinfo.setTable(arguments.name);
 		
 		This.setName(arguments.name);
-		This.setEntityName(Lcase(arguments.name));
+		if (variables.reservedWordHelper.isReservedWord(arguments.name)){
+			This.setEntityName(Lcase(arguments.name) & "_");
+		}
+		else{
+			This.setEntityName(Lcase(arguments.name));
+		}
 		This.setAllNamesBasedOnEntityName();
 		
 		This.setPrefix("");
