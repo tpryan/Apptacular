@@ -81,6 +81,8 @@
 				</cfloop>
 			</tr>
 		
+		
+			<cflog text="#uilist#" />
         	<cfloop query="columns">
 			<tr>
 				<cfloop list="#columns.columnList#" index="attribute">
@@ -89,10 +91,11 @@
 					<cfelseif ListFindNoCase("uiType", attribute)>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
+						<cflog text="#attribute#: #columns[attribute][columns.currentRow]#" />
 						<td>
 							<select name="#fieldname#" id="#attribute#">
-								<cfloop list="#uilist#" index="type">
-								<option value="#type#"<cfif FindNoCase(type,value)> selected="selected"</cfif>>#type#</option>
+								<cfloop list="#uilist#" index="uilisttype">
+								<option value="#uilisttype#"<cfif CompareNoCase(uilisttype,value) eq 0> selected="selected"</cfif>>#uilisttype#</option>
 								</cfloop>
 							</select>
 						</td>
