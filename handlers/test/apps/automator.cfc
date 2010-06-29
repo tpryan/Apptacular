@@ -20,8 +20,6 @@
 			relativePath = replaceNoCase(relativePath, "\", "/", "all");
 			var reseturl = "http://" & cgi.server_name & "/" & relativePath & "/" & "index.cfm?resetApp=true";
 		</cfscript>
-		
-		
 		<cfhttp url="#reseturl#" timeout="300" method="get" />
 	</cffunction>
 

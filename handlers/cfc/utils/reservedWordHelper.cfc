@@ -12,7 +12,7 @@ component{
 		
 	}
 
-	public boolean function isFunctionName(required string word){
+	private boolean function isFunctionName(required string word){
 		return structKeyExists(variables.functionList, arguments.word);
 	}
 }
