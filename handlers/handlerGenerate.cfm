@@ -2,18 +2,26 @@
 
 
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
+
 <cfscript>
-	failed = FALSE;
+	
+	
+	//Instantiate a bunch of utily objects.
 	utils = New cfc.utils();
+	stringUtils = New cfc.stringUtil();
+	reservedWordHelper = New cfc.utils.reservedWordHelper();
 	cgiUtils = New cfc.cgiUtils(cgi);
+	
+	//Set a bunch of starting values for app.
 	baseURL = cgiUtils.getBaseURL();
-	xmldoc = XMLParse(ideeventInfo); 
+	failed = FALSE;
+	generateRemoteServices = FALSE;
 	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 	
-	generateRemoteServices = false;
-	onprojectCreate = false; 
+	xmldoc = XMLParse(ideeventInfo); 
 	
-	//handle input from the rds view
+	
+	//handle input from the rds view (Generate Application)
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
 	
 		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
@@ -30,16 +38,13 @@
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
 		appRoot = rootFilePath; 
 	}
-	//handle input from the project view
+	//handle input from the project view (Regenerate Application)
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
-	
 	
 		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
 		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
 		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
-	
 		appRoot = utils.findAppRoot(rootFilePath,resourcePath);
-		
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
@@ -54,6 +59,7 @@
 		
 		
 	}
+	//handle direct input from a form (Create Application)
 	else if (structKeyExists(form, "projectPath")){
 		dsName = form.dsName;
 		rootFilePath = form.projectpath;
@@ -64,7 +70,6 @@
 		
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
 		appRoot = rootFilePath; 
-		onprojectCreate = true; 
 	}
 
 </cfscript>	
@@ -101,14 +106,9 @@
 		<cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/handlerGenerateWarning.cfm" />
 		<cfset messagesOptions = "?rootFilePath=#rootFilePath#&amp;dsName=#dsName#" />
 		<cfset messagesURL = baseURL  & messagesPath & messagesOptions />
-		<cflog text="messagesURL: #messagesURL#" />
 		
-		<cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT) eq 0>
-			<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
-		<cfelse>
-			<cf_ideWrapper messageURL="#messagesURL#" />
-			<cfabort>
-		</cfif>
+		<cf_ideWrapper messageURL="#messagesURL#" />
+		<cfabort>
 	</cfif>
 
 </cfif>
@@ -120,9 +120,6 @@
 	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
 
 	//process DB version of schema
-	stringUtils = New cfc.stringUtil();
-	reservedWordHelper = New cfc.utils.reservedWordHelper();
-	
 	db = New cfc.db.datasource(dsName, stringUtils, log, reservedWordHelper);
 
 	
@@ -133,13 +130,10 @@
 		config.setServiceAccess("remote");
 	}
 	
-	
 	//make sure that large existing apps don't wire one-to-many relationships
 	if (db.calculateHighestRowCount() gt 1000){
 		config.setWireOneToManyinViews(false);
 	}
-	
-	
 	
 	//sort through any url parameters here, used in automation and testing
 	urlkeys = StructKeyArray(url);
@@ -162,11 +156,8 @@
 	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
-		
-		
 		datamodel.dePrefixTables();
 		datamodel.checkForJoinTables();
-		
 		
 		if (config.getDepluralize()){
 			datamodel.depluralize();
@@ -175,7 +166,6 @@
 	else{
 		datamodel= db;
 	}
-	
 	
 	//write back to disk.
 	dbConfig.writeConfig(datamodel);
@@ -193,8 +183,13 @@
 		unittestGenerator = new generators.cfapp.unittestGenerator(datamodel, config);
 
 		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator, log);
+		log.startEvent("filegen", "Apptacular File Generation");
 		generator.generate();
+		log.endEvent("filegen");
+		
+		log.startEvent("filewrite", "Apptacular File Writing");
 		generator.writeFiles();
+		log.endEvent("filewrite");
 		
 		log.endEvent("app");
 		log.logTimes();
@@ -209,14 +204,11 @@
 </cfscript>
 
 <!--- reset application --->
-<cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath,ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
+<cfset script_path = "http://" & cgi.server_name  & "/" & ReplaceNoCase(rootFilePath, ExpandPath('/'), "", "one") & "/index.cfm?reset_app" />
 <!--- addded to prevent application reset from slowing down the application building.  --->
 <cfthread name="#createUUID()#" action="run">
 	<cfhttp url="#script_Path#" timeout="0" />
 </cfthread>
-<cfif onprojectCreate>
-	<cflocation url="#ReplaceNoCase(messagesURL, "&amp;", "&","ALL")#" addtoken="false" />
-</cfif>
 
 <cf_ideWrapper messageURL="#messagesURL#">
 <commands>

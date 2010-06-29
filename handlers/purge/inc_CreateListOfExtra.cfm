@@ -38,11 +38,12 @@
 
 	//process both DB and file version of schema
 	stringUtils = New apptacular.handlers.cfc.stringUtil();
+	reservedWordHelper = New cfc.utils.reservedWordHelper();
 	
 	log = New apptacular.handlers.cfc.log(dsName);
 	log.startEvent("app", "Apptacular Purge Process");
 	
-	db = New apptacular.handlers.cfc.db.datasource(dsName, stringUtils, log);
+	db = New apptacular.handlers.cfc.db.datasource(dsName, stringUtils, log, reservedWordHelper);
 	dbConfig = New apptacular.handlers.cfc.db.dbConfig(dbConfigPath);
 	datamodel= dbConfig.overwriteConfig(db);
 	dbConfig.writeConfig(datamodel);
