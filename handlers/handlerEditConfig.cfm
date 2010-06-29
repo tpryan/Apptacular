@@ -7,8 +7,8 @@
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />
 
 <cfscript>
-	utils = New cfc.utils();
-	cgiUtils = New cfc.cgiUtils(cgi);
+	utils = New cfc.utils.utils();
+	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
 	XMLDoc = xmlParse(ideeventInfo);
 	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;

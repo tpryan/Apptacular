@@ -50,6 +50,7 @@ component
 		StructDelete(props, "stringUtil");
 		StructDelete(props, "fullyQualifiedTableName");
 		StructDelete(props, "countQry");
+		StructDelete(props, "reservedWordHelper");
 		
 		var keys = StructKeyArray(props);
 		ArraySort(keys, "textnocase");

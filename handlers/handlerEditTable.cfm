@@ -4,7 +4,7 @@
 <cfscript>
 	XMLDoc = xmlParse(ideeventInfo);
 	
-	cgiUtils = New cfc.cgiUtils(cgi);
+	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
 	
 	//handle input from the rds view

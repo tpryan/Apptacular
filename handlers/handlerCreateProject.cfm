@@ -1,7 +1,7 @@
 
 <cfscript>
 
-	cgiUtils = New cfc.cgiUtils(cgi);
+	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
 
 	if (application.rds.rememberMe){

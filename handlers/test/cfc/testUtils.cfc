@@ -7,6 +7,13 @@ component extends="mxunit.framework.TestCase"{
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
     }
 	
+	public void function findCFCPathFromFilePathNixPathsWhenProjectIsInBelowWebroot(){
+		var utils = new apptacular.handlers.cfc.utils.utils("/Users/terryr/Sites/terrenceryan.dev/");
+		var PathToTest = "/Users/terryr/Sites/terrenceryan.dev/admin/cfc";
+		var expectedPath = "admin.cfc";
+		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
+    }
+	
 	public void function findCFCPathFromFilePathWindowsPaths(){
 		var utils = new apptacular.handlers.cfc.utils.utils("c:\Inetpub\wwwroot\");
 		var PathToTest = "c:\inetpub\wwwroot\BlogDemo\services";

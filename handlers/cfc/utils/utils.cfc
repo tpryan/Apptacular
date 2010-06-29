@@ -25,9 +25,12 @@
 		
 		var localPath = arguments.path;
 		
-		if (FindNoCase("cfc", listLast(localPath, "."))){
+		
+		if (right(localPath, 4) eq ".cfc"){
 			localPath = left(localPath, Len(localPath) - 4);
 		}
+		
+		
 		
 		var results = "";
 		results = replaceNoCase(localPath, webroot, "", "one");

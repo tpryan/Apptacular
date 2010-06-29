@@ -84,7 +84,7 @@
 		project without asking.  --->
 
 <cfif not structKeyExists(form, "confirmed")>		
-	<cfdirectory action="list" directory="#rootFilePath#" name="projectFiles" listinfo="name" />
+	<cfdirectory action="list" directory="#appRoot#" name="projectFiles" listinfo="name" />
 	
 	<cfquery name="isApptacular" dbtype="query">
 		SELECT 	*

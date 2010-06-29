@@ -9,9 +9,9 @@
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />
 
 <cfscript>
-	utils = New cfc.utils();
+	utils = New cfc.utils.utils();
 	XMLDoc = xmlParse(ideeventInfo);
-	cgiUtils = New cfc.cgiUtils(cgi);
+	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
 	
 	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
