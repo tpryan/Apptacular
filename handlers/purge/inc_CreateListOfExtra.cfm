@@ -1,6 +1,6 @@
 <cfscript>
 	failed = FALSE;
-	utils = New apptacular.handlers.cfc.utils();
+	utils = New apptacular.handlers.cfc.utils.utils();
 	FS = createObject("java", "java.lang.System").getProperty("file.separator");
 	baseURL = "http://" & cgi.server_name & ":" & cgi.server_port; 
 	
@@ -37,7 +37,7 @@
 <cfscript>	
 
 	//process both DB and file version of schema
-	stringUtils = New apptacular.handlers.cfc.stringUtil();
+	stringUtils = New apptacular.handlers.cfc.utils.stringUtil();
 	reservedWordHelper = New cfc.utils.reservedWordHelper();
 	
 	log = New apptacular.handlers.cfc.log(dsName);
@@ -50,7 +50,7 @@
 	
 	
 	//process both default and file version of config
-	config = New apptacular.handlers.generators.cfapp.Config(rootFilePath, rootCFCPath);
+	config = New apptacular.handlers.cfc.generators.cfapp.Config(rootFilePath, rootCFCPath);
 	config.overwriteFromDisk();
 	config.writeToDisk();
 	

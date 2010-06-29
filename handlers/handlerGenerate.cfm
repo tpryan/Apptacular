@@ -7,10 +7,10 @@
 	
 	
 	//Instantiate a bunch of utily objects.
-	utils = New cfc.utils();
-	stringUtils = New cfc.stringUtil();
+	utils = New cfc.utils.utils();
+	stringUtils = New cfc.utils.stringUtil();
 	reservedWordHelper = New cfc.utils.reservedWordHelper();
-	cgiUtils = New cfc.cgiUtils(cgi);
+	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	
 	//Set a bunch of starting values for app.
 	baseURL = cgiUtils.getBaseURL();
@@ -114,7 +114,7 @@
 </cfif>
 
 <cfscript>
-	log = New cfc.log(dsName);
+	log = New cfc.utils.log(dsName);
 	log.startEvent("app", "Apptacular Process");
 	
 	appCFCPath = utils.findCFCPathFromFilePath(appRoot);
@@ -124,7 +124,7 @@
 
 	
 	//process config default 
-	config = New generators.cfapp.Config(appRoot, appCFCPath);
+	config = New cfc.generators.cfapp.Config(appRoot, appCFCPath);
 	
 	if (generateRemoteServices){
 		config.setServiceAccess("remote");
@@ -177,12 +177,12 @@
 		messagesURL = baseURL & messagesPath & messagesOptions;
 	}
 	else{
-		ormGenerator = new generators.cfapp.ormGenerator(datamodel, config);
-		viewGenerator = new generators.cfapp.viewGenerator(datamodel, config);
-		serviceGenerator = new generators.cfapp.serviceGenerator(datamodel, config);
-		unittestGenerator = new generators.cfapp.unittestGenerator(datamodel, config);
+		ormGenerator = new cfc.generators.cfapp.ormGenerator(datamodel, config);
+		viewGenerator = new cfc.generators.cfapp.viewGenerator(datamodel, config);
+		serviceGenerator = new cfc.generators.cfapp.serviceGenerator(datamodel, config);
+		unittestGenerator = new cfc.generators.cfapp.unittestGenerator(datamodel, config);
 
-		generator = New generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator, log);
+		generator = New cfc.generators.cfapp.generator(datamodel, config, ormGenerator, viewGenerator, serviceGenerator, unittestGenerator, log);
 		log.startEvent("filegen", "Apptacular File Generation");
 		generator.generate();
 		log.endEvent("filegen");

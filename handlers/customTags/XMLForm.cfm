@@ -44,7 +44,7 @@
 	<cfset XML = XMLParse(FileRead(fileToEdit)) />
 	<cfset XMLRoot = StructKeyArray(XML)[1] />
 	
-	<cfset editor = new apptacular.handlers.cfc.editor(XMLRoot) />
+	<cfset editor = new apptacular.handlers.cfc.utils.editor(XMLRoot) />
 	<cfset keys = editor.getAllowedList() />
 	
 	

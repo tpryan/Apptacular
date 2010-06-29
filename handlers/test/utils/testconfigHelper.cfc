@@ -2,7 +2,7 @@ component extends="mxunit.framework.TestCase"{
 	
 	
 	public void function test_config_GetDisplayName_DisplayNameNOTSet(){
-		var config = "apptacular.handlers.generators.cfapp.config";
+		var config = "apptacular.handlers.cfc.generators.cfapp.config";
 		var configHelper = new apptacular.handlers.cfc.utils.docHelper(config);
 		var actual = configHelper.getDisplayName("Astringthatshouldneverbeaconfigitem");
 		var expected  = "Astringthatshouldneverbeaconfigitem";
@@ -10,7 +10,7 @@ component extends="mxunit.framework.TestCase"{
     }
 	
 	public void function test_config_GetDisplayName_DisplayNameSet(){
-		var config = "apptacular.handlers.generators.cfapp.config";
+		var config = "apptacular.handlers.cfc.generators.cfapp.config";
 		var configHelper = new apptacular.handlers.cfc.utils.docHelper(config);
 		var actual = configHelper.getDisplayName("createTests");
 		var expected  = "Create Unit Tests";

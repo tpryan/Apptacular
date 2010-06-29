@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="test.ant" name="Apptacular" basedir=".">
 	
-	<property file="settings.properties"/>
+	<property file="local/settings.properties"/>
 	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${mxunit.jar}" />
 	
 	<target name="test.ant" description="Exports the script of the database ">
@@ -13,11 +13,11 @@
 	<target name="build" depends="build.clean,build.documentation,build.copy.files,build.upversion,build.sql,build.zip,build.packagefordropbox" description="All of the stuff surrounding creating a clean copy of the build" />
 
 	<target name="build.upversion">
-		<propertyfile file="build.properties">
+		<propertyfile file="local/build.properties">
 			<entry key="build.number" type="int" default="0" operation="+" pattern="000000" />
 		</propertyfile>
 		
-		<property file="build.properties"/>
+		<property file="local/build.properties"/>
 		
 		<echo message="Build Number: ${build.number}"/>
 		<echo message="Inserting Build into the application"/>		
@@ -97,7 +97,7 @@
 		<copy todir="${dropbox.dir}" preservelastmodified="true" file="${package.dir}/${app.name}.zip" />
 		
 		<echo message="Writing Builder number to dropbox"/>
-		<property file="build.properties"/>
+		<property file="local/build.properties"/>
 		<echo file="${dropbox.dir}/${app.name}.build" message="${version.number}.${build.number}" append="false" />
 		
 		<!-- Copy installable extension to andSQL Folder-->

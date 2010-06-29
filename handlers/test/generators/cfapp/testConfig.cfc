@@ -7,7 +7,7 @@ component extends="mxunit.framework.TestCase"{
 		var FilePath = '/apache/htdocs/Apptacular/';
 		var cfcPath = "apptacular";	
 		var webroot = '/apache/htdocs/';
-		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
+		var config = New apptacular.handlers.cfc.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
@@ -18,7 +18,7 @@ component extends="mxunit.framework.TestCase"{
 		var FilePath = 'c:\inetpub\wwwroot\Apptacular\';
 		var cfcPath = "apptacular";	
 		var webroot = 'c:\Inetpub\wwwroot\';
-		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
+		var config = New apptacular.handlers.cfc.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
@@ -29,7 +29,7 @@ component extends="mxunit.framework.TestCase"{
 		var FilePath = '/apache/htdocs/Apptacular';
 		var cfcPath = "apptacular";	
 		var webroot = '/apache/htdocs';
-		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
+		var config = New apptacular.handlers.cfc.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
@@ -40,7 +40,7 @@ component extends="mxunit.framework.TestCase"{
 		var FilePath = 'c:\inetpub\wwwroot\Apptacular';
 		var cfcPath = "apptacular";	
 		var webroot = 'c:\Inetpub\wwwroot';
-		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
+		var config = New apptacular.handlers.cfc.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
@@ -51,12 +51,12 @@ component extends="mxunit.framework.TestCase"{
 		var FilePath = 'c:\inetpub\wwwroot\blogdemomssql\test';
 		var cfcPath = "blogdemomssql.test";	
 		var webroot = 'c:\Inetpub\wwwroot';
-		var config = New apptacular.handlers.generators.cfapp.config(FilePath,cfcPath);
+		var config = New apptacular.handlers.cfc.generators.cfapp.config(FilePath,cfcPath);
 		makePublic(config,"calculateURL");
 	    AssertEquals(expectedURL,config.calculateURL(FilePath, webroot) );	
     }
 	public void function testAllPropertiesDocumented(){
-    	var metaData = GetComponentMetaData("apptacular.handlers.generators.cfapp.config");
+    	var metaData = GetComponentMetaData("apptacular.handlers.cfc.generators.cfapp.config");
 		var props = metaData.properties;
 		var i = 0;
 		var missing = [];

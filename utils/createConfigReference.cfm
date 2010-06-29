@@ -1,6 +1,6 @@
 <cfscript>
 	gitdir = ExpandPath("../");
-	items.config.cfcPath = "apptacular.handlers.generators.cfapp.config";
+	items.config.cfcPath = "apptacular.handlers.cfc.generators.cfapp.config";
 	items.config.editorItem = "config";
 	items.config.title = "Configuration Options";
 
@@ -37,7 +37,7 @@
 		helper = new apptacular.handlers.cfc.utils.docHelper(cfcPath);
 		
 		tooltips = generateToolTips(cfcPath);
-		editor = new apptacular.handlers.cfc.editor(editorItem);
+		editor = new apptacular.handlers.cfc.utils.editor(editorItem);
 		keys = editor.getAllowedList();
 		</cfscript>
 		

@@ -34,6 +34,7 @@ component {
 	}
 	
 	public void function onError(any exception, string eventname){
+		writeDump(var="#exception#" output="console");
 		include "error.cfm";
 		abort;
 	}

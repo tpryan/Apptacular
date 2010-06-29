@@ -1,7 +1,7 @@
 component extends="mxunit.framework.TestCase"{
 	
 	public void function setup(){
-		var XMLFile = expandPath("/apptacular/handlers/test/apps/config/apptacular_facebook.xml");
+		var XMLFile = expandPath("/apptacular/local/apps/apptacular_facebook.xml");
     	variables.automator = new automator(XMLFile);
     	
     }

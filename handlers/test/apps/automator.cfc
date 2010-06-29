@@ -37,7 +37,8 @@
 		<cfset resetApplication() />
 		
 	
-		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent)>
+		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent) OR 
+				FindNoCase("success", cfhttp.FileContent)>
 			<cfreturn true />
 		<cfelse>
 			<cfreturn false />
@@ -58,7 +59,8 @@
 	
 		<cfset resetApplication() />
 	
-		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent)>
+		<cfif FindNoCase('response showresponse="true"', cfhttp.filecontent)OR 
+				FindNoCase("success", cfhttp.FileContent)>
 			<cfreturn true />
 		<cfelse>
 			<cfreturn false />

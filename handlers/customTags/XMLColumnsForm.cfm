@@ -11,7 +11,7 @@
 		path = attributes.tablePathToEdit;
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");	
 		files = DirectoryList(path, true, "query", "*.xml");
-		editor = new apptacular.handlers.cfc.editor('column');
+		editor = new apptacular.handlers.cfc.utils.editor('column');
 		allowedcolumns = editor.getAllowedList();
 		uiList = ArrayToList(New apptacular.handlers.cfc.db.mappings().getUiTypes());
 	</cfscript>

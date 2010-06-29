@@ -1,6 +1,6 @@
 <cfprocessingdirective suppresswhitespace="yes">
 <cfif thisTag.executionMode is "start">
-<cfset utils = new apptacular.handlers.cfc.utils() />
+<cfset utils = new apptacular.handlers.cfc.utils.utils() />
 <cfset imageFolder = ReplaceNoCase(getDirectoryFromPath(getCurrentTemplatePath()), "/customtags", "/", "one") />
 <cfset logopath = "#imageFolder#/logo.png" />
 <cfset logocsspath = utils.findCSSPathFromFilePath(logopath) />

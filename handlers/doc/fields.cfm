@@ -2,7 +2,7 @@
 <cfparam name="url.item" type="string" default="config" />
 
 <cfscript>
-	items.config.cfcPath = "apptacular.handlers.generators.cfapp.config";
+	items.config.cfcPath = "apptacular.handlers.cfc.generators.cfapp.config";
 	items.config.editorItem = "config";
 	items.config.title = "Configuration Options";
 
@@ -32,7 +32,7 @@
 
 
 <cfset tooltips = generateToolTips(cfcPath) />
-<cfset editor = new apptacular.handlers.cfc.editor(editorItem) />
+<cfset editor = new apptacular.handlers.cfc.utils.editor(editorItem) />
 <cfset helper = new apptacular.handlers.cfc.utils.docHelper(cfcPath) />
 <cfset keys = editor.getAllowedList() />
 

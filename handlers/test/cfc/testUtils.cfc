@@ -1,42 +1,42 @@
 component extends="mxunit.framework.TestCase"{
 
 	public void function findCFCPathFromFilePathNixPaths(){
-		var utils = new apptacular.handlers.cfc.utils("/Users/terryr/Sites/centaur.dev/");
+		var utils = new apptacular.handlers.cfc.utils.utils("/Users/terryr/Sites/centaur.dev/");
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/BlogDemo/services";
 		var expectedPath = "BlogDemo.services";
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
     }
 	
 	public void function findCFCPathFromFilePathWindowsPaths(){
-		var utils = new apptacular.handlers.cfc.utils("c:\Inetpub\wwwroot\");
+		var utils = new apptacular.handlers.cfc.utils.utils("c:\Inetpub\wwwroot\");
 		var PathToTest = "c:\inetpub\wwwroot\BlogDemo\services";
 		var expectedPath = "BlogDemo.services";
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
     }
 	
 	public void function findCSSPathFromFilePathNixPaths(){
-		var utils = new apptacular.handlers.cfc.utils("/Users/terryr/Sites/centaur.dev/");
+		var utils = new apptacular.handlers.cfc.utils.utils("/Users/terryr/Sites/centaur.dev/");
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/extension/apptacular/handlers/grad.jpg";
 		var expectedPath = "/extension/apptacular/handlers/grad.jpg";
 		AssertEquals(expectedPath, utils.findCSSPathFromFilePath(PathToTest));
     }
 	
 	public void function findCSSPathFromFilePathWindowsPaths(){
-		var utils = new apptacular.handlers.cfc.utils("c:\Inetpub\wwwroot\");
+		var utils = new apptacular.handlers.cfc.utils.utils("c:\Inetpub\wwwroot\");
 		var PathToTest = "c:\Inetpub\wwwroot\extension\apptacular\handlers\grad.jpg";
 		var expectedPath = "/extension/apptacular/handlers/grad.jpg";
 		AssertEquals(expectedPath, utils.findCSSPathFromFilePath(PathToTest));
     }
 	
 	public void function findPathFromfileName(){
-		var utils = new apptacular.handlers.cfc.utils("/Users/terryr/Sites/centaur.dev/");
+		var utils = new apptacular.handlers.cfc.utils.utils("/Users/terryr/Sites/centaur.dev/");
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/blogdemo/cfc/author.cfc";
 		var expectedPath = "blogdemo.cfc.author";
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
     }
 
 	public void function testFindConfigWhenProjectIsRootButSelectedIsNotRoot(){
-    	var utils = new apptacular.handlers.cfc.utils();
+    	var utils = new apptacular.handlers.cfc.utils.utils();
 		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
 		var expectedPath = start & "configTest/blogdemo/.apptacular/config.xml"; 
 		var projectlocation = start & "configTest/blogdemo";
@@ -45,7 +45,7 @@ component extends="mxunit.framework.TestCase"{
     }
 	
 	public void function testFindConfigWhenProjectIsRootAndSelectedIsRoot(){
-    	var utils = new apptacular.handlers.cfc.utils();
+    	var utils = new apptacular.handlers.cfc.utils.utils();
 		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
 		var expectedPath = start & "configTest/blogdemo/.apptacular/config.xml"; 
 		var projectlocation = start & "configTest/blogdemo";
@@ -54,7 +54,7 @@ component extends="mxunit.framework.TestCase"{
     }
 	
 	public void function testFindConfigWhenThereIsNoConfig(){
-    	var utils = new apptacular.handlers.cfc.utils();
+    	var utils = new apptacular.handlers.cfc.utils.utils();
 		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
 		var expectedPath = "/dev/null"; 
 		var projectlocation = start & "configTest/NotAnApptacularApp";
@@ -63,7 +63,7 @@ component extends="mxunit.framework.TestCase"{
     }
 	
 	public void function testFindConfigWhenProjectIsNotRootAndSelectedIsDeeper(){
-    	var utils = new apptacular.handlers.cfc.utils();
+    	var utils = new apptacular.handlers.cfc.utils.utils();
 		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
 		var expectedPath = start & "configTest/Collection/cfart1/.apptacular/config.xml"; 
 		var projectlocation = start & "configTest/Collection/cfart1";
@@ -73,7 +73,7 @@ component extends="mxunit.framework.TestCase"{
     
 	public void function testFindEmptyDirs(){
 		var FS = createObject("java", "java.lang.System").getProperty("file.separator");
-    	var utils = new apptacular.handlers.cfc.utils();
+    	var utils = new apptacular.handlers.cfc.utils.utils();
 		var start = GetDirectoryFromPath(GetCurrentTemplatePath());
 		var testPath = start & "utilsTest";
 		
