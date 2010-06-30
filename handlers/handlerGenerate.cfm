@@ -90,7 +90,6 @@
 		SELECT 	*
 		FROM	projectFiles
 		WHERE 	name = '.apptacular'
-	
 	</cfquery>
 	
 	<cfquery name="otherFiles" dbtype="query">
@@ -121,7 +120,6 @@
 
 	//process DB version of schema
 	db = New cfc.db.datasource(dsName, stringUtils, log, reservedWordHelper);
-
 	
 	//process config default 
 	config = New cfc.generators.cfapp.Config(appRoot, appCFCPath);
@@ -151,7 +149,6 @@
 
 	//process file version of schema
 	dbConfig = New cfc.db.dbConfig(dbConfigPath);
-	
 	
 	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
@@ -199,8 +196,6 @@
 		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";
 		messagesURL = baseURL  & messagesPath & messagesOptions;
 	}
-	
-
 </cfscript>
 
 <!--- reset application --->
