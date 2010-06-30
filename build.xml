@@ -52,6 +52,7 @@
 				<exclude name='.git/**'/>
 				<exclude name='logs/**'/>
 				<exclude name='utils/**'/>
+				<exclude name='local/**'/>
 				<exclude name='sql/**'/>
 				<exclude name='handlers/test/**'/>
 				<exclude name='handlers/logs/**'/>
