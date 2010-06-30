@@ -38,31 +38,33 @@ component accessors="true" {
 		* @hint Returns the content of the property in CFML
 	*/
 	public string function getCFML(){
-		var result = CreateObject("java","java.lang.StringBuilder").Init();
+		var result = ArrayNew(1);
 		
-		result = result.append('<cfproperty ');	
-		result = addPropertyAttributes(result);
+		ArrayAppend(result, '<cfproperty ');	
+		ArrayAppend(result, addPropertyAttributes());
+		ArrayAppend(result, ' />');	
 		
-		return result & ' />';
+		return ArrayToList(result, "");
 	}
 	
 	/**
 		* @hint Returns the content of the property in CFScript
 	*/
 	public string function getCfScript(){
-		var result = CreateObject("java","java.lang.StringBuilder").Init();
+		var result = ArrayNew(1);
 		
-		result = result.append('property ');	
-		result = addPropertyAttributes(result);
+		ArrayAppend(result, 'property ');	
+		ArrayAppend(result, addPropertyAttributes());
+		ArrayAppend(result, ';');	
 		
-		return result & ";";
+		return ArrayToList(result, "");
 	
 	}
 	
 	/**
     * @hint Builds the string of property attributes.
     */
-	private any function addPropertyAttributes(any stringBuilder){
+	private string function addPropertyAttributes(){
 	
 		var lprops = ArrayNew(1);
 		
@@ -161,10 +163,8 @@ component accessors="true" {
        		ArrayAppend(lprops, 'remotingFetch="#This.getRemotingFetch()#" ');
        	}
 		
-		stringBuilder.append(ArrayToList(lprops, ""));
-		stringBuilder = trim(stringBuilder);
 			
-		return stringBuilder;
+		return ArrayToList(lprops, "");
 	}
 	
 	

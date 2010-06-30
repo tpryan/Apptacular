@@ -322,62 +322,52 @@ component displayname="function" hint="A CFC representation of an function for c
 		
 		}
 		
-		
 		return results;
-		
-		
-		
-		
 	}
 	
 	/**
 		* @hint Returns the content of the function in CFML
 	*/
 	public string function getCFML(){
-		var results=CreateObject("java","java.lang.StringBuilder").Init();
+		var results = ArrayNew(1);
 
-		results = results.append(generateCFMLHeader());
-		results = results.append(generateCFMLArguments());
-		results = results.append(generateCFMLLocalVariables());
-		results = results.append(ArrayToList(operation, ""));
-			
-		
-		
-		
-		
+		ArrayAppend(results, generateCFMLHeader());
+		ArrayAppend(results, generateCFMLArguments());
+		ArrayAppend(results, generateCFMLLocalVariables());
+		ArrayAppend(results, ArrayToList(operation, ""));
 		
 		if (len(This.getReturnResult()) gt 0 AND compareNoCase(This.getReturnType(), "void") neq 0){
-			results.append('		<cfreturn #This.getReturnResult()# />' & variables.lineBreak);
+			ArrayAppend(results, '		<cfreturn #This.getReturnResult()# />' & variables.lineBreak);
 		}
 		
-		results.append(generateCFMLFooter()) ;
+		ArrayAppend(results, generateCFMLFooter()) ;
 
-		return results;
+		return ArrayToList(results, "");
 	}
 	
 	/**
 		* @hint Returns the content of the function in CFScript
 	*/
 	public string function getCFScript(){
-		var results=CreateObject("java","java.lang.StringBuilder").Init();
+		var results = ArrayNew(1);
 		
 		if (len(This.getHint())){
-			results.append('/**' & linebreak);
-			results.append('	* @hint #This.getHint()#' & linebreak);
-			results.append('	*/' & linebreak & "	");
+			ArrayAppend(results, '/**' & linebreak);
+			ArrayAppend(results, '	* @hint #This.getHint()#' & linebreak);
+			ArrayAppend(results, '	*/' & linebreak & "	");
 		}
 
-		results.append(generateCFScriptHeader());
-		results.append(generateCFScriptLocalVariables());
-		results.append(ArrayToList(operationScript, ""));
+		ArrayAppend(results, generateCFScriptHeader());
+		ArrayAppend(results, generateCFScriptLocalVariables());
+		ArrayAppend(results, ArrayToList(operationScript, ""));
 		
 		if (len(This.getReturnResult()) gt 0 AND compareNoCase(This.getReturnType(), "void") neq 0){
-			results.append('		return #This.getReturnResult()#;' & variables.lineBreak);
+			ArrayAppend(results, '		return #This.getReturnResult()#;' & variables.lineBreak);
 		}
 		
-		results.append(generateCFScriptFooter()) ;
+		ArrayAppend(results, generateCFScriptFooter()) ;
 
-		return results;
+		return ArrayToList(results, "");
 	}
 	
 

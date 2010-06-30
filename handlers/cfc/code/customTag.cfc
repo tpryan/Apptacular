@@ -14,7 +14,7 @@ component displayname="Custom Tag" hint="A cfc representation of a Custom tag fo
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 
 		variables.header = "<!--- #This.getName()#.cfm --->" & NL & '<cfprocessingdirective suppresswhitespace="yes">' & variables.NL;
-		variables.attributes = CreateObject("java","java.lang.StringBuilder").Init();
+		variables.attributes = ArrayNew(1);
 		variables.body = ArrayNew(1);
 		variables.footer = "</cfprocessingdirective>" & variables.NL & '<cfexit method="exitTag" />' & variables.NL ;
 	
@@ -25,20 +25,19 @@ component displayname="Custom Tag" hint="A cfc representation of a Custom tag fo
 	* @hint Adds a cfparam'ed attribute to the custom tag. 
 	*/
 	public void function addAttribute(required string name, string type="", boolean required=false, string defaultvalue=""){
-		var attributeString = CreateObject("java","java.lang.StringBuilder").Init();
-		attributeString.append('<cfparam name="attributes.' & arguments.name & '"');
+		var result = ArrayNew(1);
+		ArrayAppend(result, '<cfparam name="attributes.' & arguments.name & '"');
 
 		if (len(arguments.type gt 1)){
-			attributeString.append(' type="' & arguments.type & '"');
+			ArrayAppend(result, ' type="' & arguments.type & '"');
 		}
 
 		if (not arguments.required AND len(arguments.defaultvalue gt 1)){
-			attributeString.append(' default="' & arguments.defaultvalue & '"');
+			ArrayAppend(result, ' default="' & arguments.defaultvalue & '"');
 		}
 
-		attributeString.append(" />" & variables.NL);
-
-		variables.attributes.append(attributeString);
+		ArrayAppend(result, " />" & variables.NL);
+		ArrayAppend(variables.attributes, ArrayToList(result, ""));
 	}
 	
 	/**
@@ -46,17 +45,17 @@ component displayname="Custom Tag" hint="A cfc representation of a Custom tag fo
 	*/	
 	public string function getCFML(){
 		var i=0;
-		var results = CreateObject("java","java.lang.StringBuilder").Init();
+		var results = ArrayNew(1);
 
 		// Add the header to the custom tag. --->
-		results.append(variables.header);
-		results.append(variables.attributes);
-		results.append(ArrayToList(variables.body, ""));
+		ArrayAppend(results, variables.header);
+		ArrayAppend(results, ArrayToList(variables.attributes, ""));
+		ArrayAppend(results, ArrayToList(variables.body, ""));
 
 		// Add the footer to the custom tag. --->
-		results.append(variables.footer);
+		ArrayAppend(results, variables.footer);
 
-		return results;
+		return ArrayToList(results, "");
 	}	
 
 }
