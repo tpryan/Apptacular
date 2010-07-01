@@ -6,6 +6,9 @@
 	FROM	projectFiles
 	WHERE 	name != '.apptacular'
 	AND		name != '.project'
+	AND 	name != '.settings'
+	AND 	name != '.settings/org.eclipse.core.resources.prefs'
+	AND 	name != 'settings.xml'
 </cfquery>
 
 

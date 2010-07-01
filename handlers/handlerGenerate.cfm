@@ -99,6 +99,9 @@
 		AND		name != '.project'
 		AND 	name != '.settings'
 		AND 	name != '.settings/org.eclipse.core.resources.prefs'
+		AND 	name != 'settings.xml'
+		
+		
 	</cfquery>
 	
 	<cfif isApptacular.RecordCount eq 0 and otherFiles.RecordCount gt 0>
