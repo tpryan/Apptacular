@@ -29,6 +29,13 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 		ArrayAppend(variables.body, arguments.bodyContent & variables.NL);
 	}
 	
+	/**
+		* @hint Adds a linebreak content to the file.
+	*/
+	public void function appendLineBreak(){
+		ArrayAppend(variables.body, variables.NL);
+	}
+	
 	
 	/**
 		* @hint Adds all of the pieces together to get the fully qualified path of the file.

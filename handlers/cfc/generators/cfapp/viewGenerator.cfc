@@ -79,9 +79,11 @@ component extends="codeGenerator"{
 				}
 			}
 			else{
+				ct.AppendBody('			<!--- Header for #column.getName()# --->');
 				ct.AppendBody('			<cfset #column.getName()#ascOrDesc = (FindNoCase("#column.getColumn()# asc", url.orderby))? "desc" : "asc" />');
 				ct.AppendBody('			<cfset #column.getName()#ascOrDescIcon = (FindNoCase("#column.getColumn()# asc", url.orderby))? "&darr;" : "&uarr;" />');
 				ct.AppendBody('			<th><a href="?method=##attributes.method##&amp;offset=##attributes.offset##&amp;maxresults=##attributes.maxresults##&amp;orderby=#column.getName()# ###column.getName()#ascOrDesc##&amp;q=##attributes.q##">#column.getDisplayName()# ###column.getName()#ascOrDescIcon##</a></th>');
+				ct.appendLineBreak();
 			}
 			columnCount++;
 			
