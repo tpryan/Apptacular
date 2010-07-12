@@ -20,6 +20,7 @@
 <cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT)>
 	<cfset messagesURL = baseURL  & messagesPath & XMLFormat(messagesOptions) />
 	<cf_ideWrapper messageURL="#messagesURL#" />
+	<cfabort>
 <cfelse>
 	<cflocation url="#messagesURL#" addtoken="false" />
 </cfif>
