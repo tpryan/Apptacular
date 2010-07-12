@@ -409,7 +409,7 @@ component  extends="codeGenerator"
 				var ftid = foreignTable.discoverValidId();
 				
 				
-				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
+				if (table.getForeignTableCount(foreignTable.getName()) gt 1 OR CompareNoCase(table.getName(), foreignTable.getName()) eq 0){
 					update.addSimpleSet('#entityName#.set#column.getName()#(EntityLoad("#ftEntityName#", "#ftid#", true))', 3);  
 				}
 				else{
@@ -559,7 +559,7 @@ component  extends="codeGenerator"
 				
 				read.AddSimpleComment("Need to test if #column.getName()# is null that we don't try and test an empty string versus null", 2);
 				
-				if (table.getForeignTableCount(foreignTable.getName()) gt 1 AND not table.hasCompositePrimaryKey()){
+				if ((table.getForeignTableCount(foreignTable.getName()) gt 1 OR CompareNoCase(table.getName(), foreignTable.getName()) eq 0) AND not table.hasCompositePrimaryKey()){
 					read.StartSimpleIF('not IsNull(#entityName#.get#column.getName()#())',2);
 					read.AddSimpleSet('assertEquals(fromQuery["#column.getColumn()#"][1], #entityName#.get#column.getName()#().get#ftIdentity#())', 3);
 				}
@@ -750,7 +750,7 @@ component  extends="codeGenerator"
 				
 			
 				
-				if (table.getForeignTableCount(foreignTable.getName()) gt 1){
+				if (table.getForeignTableCount(foreignTable.getName()) gt 1 OR CompareNoCase(table.getName(), foreignTable.getName()) eq 0){
 					var setterName = column.getName();
 				}
 				else{

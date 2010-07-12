@@ -79,7 +79,7 @@ component extends="codeGenerator"{
 					continue;
 				}
 				
-				if (table.getForeignTableCount(fTable.getName()) gt 1){
+				if (table.getForeignTableCount(fTable.getName()) gt 1 OR CompareNoCase(table.getName(), ftable.getName()) eq 0){
 					property.setName(column.getName());
 				}	
 				else{
@@ -339,11 +339,17 @@ component extends="codeGenerator"{
 			else if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				fkEName = fkTable.getentityName();
-				populate.AddOperation('		<cfset #fkEName# = entityLoad("' & fkEName  & '", arguments.formStruct.#fkEName#, true) />');
-				populate.AddOperation('		<cfset This.set#fkEName#(#fkEName#) />');
 				
-				populate.AddOperationScript('		#fkEName# = entityLoad("' & fkEName  & '", arguments.formStruct.#fkEName#, true);');
-				populate.AddOperationScript('		This.set#fkEName#(#fkEName#);');
+				if (table.getForeignTableCount(fTable.getName()) gt 1 OR CompareNoCase(table.getName(), ftable.getName()) eq 0){
+					var formItem = column.getName();
+				}	
+				else{
+					var formItem = fTable.getEntityName();
+				}
+				
+				populate.AddSimpleSet('#formItem# = entityLoad("#fkEName#", arguments.formStruct.#formItem#, true)', 2);
+				populate.AddSimpleSet('This.set#formItem#(#formItem#)', 2);
+				
 			}
 	    	else if (not config.isMagicField(column.getName())){ 
 				populate.AddOperation('		<cfif StructKeyExists(arguments.formstruct, "#column.getName()#")>');

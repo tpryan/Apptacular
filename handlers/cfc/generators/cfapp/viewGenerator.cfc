@@ -71,7 +71,7 @@ component extends="codeGenerator"{
 				}
 				
 				//If the table is linked more then once, you'll have to set pretty names yourself
-				if (table.getForeignTableCount(fkTable.getName()) gt 1){
+				if (table.getForeignTableCount(fkTable.getName()) gt 1 OR CompareNoCase(table.getName(), fktable.getName()) eq 0){
 					ct.AppendBody('			<th>#column.getDisplayName()#</th>');
 				}	
 				else{
@@ -160,7 +160,7 @@ component extends="codeGenerator"{
 				var idString = "&amp;#fkTable.getIdentity()#";
 				
 				ct.AppendBody("			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->");
-				if (table.getForeignTableCount(fkTable.getName()) gt 1){
+				if (table.getForeignTableCount(fkTable.getName()) gt 1 OR CompareNoCase(table.getName(), fktable.getName()) eq 0){
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
 					ct.AppendBody('				<td><a href="#page##method##idString#=###EntityName#.get#column.getName()#().get#fkTable.getIdentity()#()##">###EntityName#.get#column.getName()#().get#fkTable.getForeignKeyLabel()#()##</a></td>');
 					ct.AppendBody('			<cfelse>');
@@ -338,7 +338,7 @@ component extends="codeGenerator"{
 				var idString = "&amp;#fkTable.getIdentity()#";
 				
 				ct.AppendBody('		<tr>');
-				if (table.getForeignTableCount(fkTable.getName()) gt 1){
+				if (table.getForeignTableCount(fkTable.getName()) gt 1 OR CompareNoCase(table.getName(), fktable.getName()) eq 0){
 					ct.AppendBody('			<th>#column.getName()#</th>');
 					ct.AppendBody('			<!--- Deal with all of the issues around showing the a good UI for the foreign [#fkTable.getEntityName()#] object referenced here  --->');
 					ct.AppendBody('			<cfif not isNull(#EntityName#.get#column.getName()#())>');
@@ -530,14 +530,15 @@ component extends="codeGenerator"{
 					}
 					
 					ct.AppendBody('		<tr>');
-					// if the table is linked to this table multiple times, then call it be the column in this table.
-					if (table.getForeignTableCount(fkTable.getName()) gt 1){
+					// if the table is linked to this table multiple times, or a self join, then call it be the column in this table.
+					if (table.getForeignTableCount(fkTable.getName()) gt 1 OR CompareNoCase(table.getName(), fktable.getName()) eq 0){
+						ct.AppendBody('			<!--- Multiple references to the same table or self join--->');
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
 						ct.AppendBody('			<cfelse>');
 						ct.AppendBody('				<cfset #columnName#Value = #EntityName#.get#columnName#().get#FKTable.getIdentity()#() />');
 						ct.AppendBody('			</cfif>');
-						ct.AppendBody('			<th><label for="#columnName#">#fkTable.getDisplayName()#:</label></th>');
+						ct.AppendBody('			<th><label for="#columnName#">#column.getDisplayName()#:</label></th>');
 		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#columnName#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###columnName#Value##" orderby="#fkTable.getOrderby()#" /></td>');
 
 					}
@@ -553,7 +554,7 @@ component extends="codeGenerator"{
 						ct.AppendBody('			<th><label for="#fkTable.getEntityName()#">#fkTable.getDisplayName()#:</label></th>');
 		 				ct.AppendBody('			<td><cf_foreignkeySelector name="#fkTable.getEntityName()#" entityname="#fkTable.getEntityName()#" identity="#fkTable.getIdentity()#" foreignKeylabel="#fkTable.getforeignKeylabel()#" fieldValue="###fkTable.getEntityName()#Value##" orderby="#fkTable.getOrderby()#" /></td>');
 					}
-						
+					ct.AppendBody('		</tr>');	
 			}
 			
 			// if it is a foriegn key, and there are many of them, we're NOT wiring them up as many to ones
@@ -567,7 +568,7 @@ component extends="codeGenerator"{
 					ct.AppendBody('		<tr>');
 					
 					// if the table is linked to this table multiple times, then call it be the column in this table.
-					if (table.getForeignTableCount(fkTable.getName()) gt 1){
+					if (table.getForeignTableCount(fkTable.getName()) gt 1 OR CompareNoCase(table.getName(), fktable.getName()) eq 0){
 						ct.AppendBody('			<cfif url.#table.getIdentity()# eq 0 OR IsNull(#EntityName#.get#columnName#())>');
 						ct.AppendBody('				<cfset #columnName#Value = 0 /> ');
 						ct.AppendBody('			<cfelse>');
@@ -850,7 +851,7 @@ component extends="codeGenerator"{
 						continue;
 					}
 					
-					if (table.getForeignTableCount(fTable.getName()) gt 1){
+					if (table.getForeignTableCount(fTable.getName()) gt 1 OR CompareNoCase(table.getName(), ftable.getName()) eq 0){
 						var propertyname = column.getName();
 					}	
 					else{
