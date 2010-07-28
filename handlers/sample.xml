@@ -1,8 +1,24 @@
 <event>
     <ide>
-        <projectview projectlocation="/Users/terryr/Sites/centaur.dev/apptacular_scratch" projectname="Apptacular_scratch">
-            <resource path="/Users/terryr/Sites/centaur.dev/apptacular_scratch" type="project" />
-        </projectview>
+        <rdsview>
+            <database name="apptacular_blog">
+                <table name="author">
+                    <fields>
+                        <field cfsqltype="CF_SQL_INTEGER" cftype="numeric" javatype="4" length="10" name="authorID" nullallowed="false" primarykey="true" type="INT UNSIGNED" />
+                        <field cfsqltype="CF_SQL_VARCHAR" cftype="string" javatype="12" length="255" name="firstName" nullallowed="false" primarykey="false" type="VARCHAR" />
+                        <field cfsqltype="CF_SQL_VARCHAR" cftype="string" javatype="12" length="255" name="lastName" nullallowed="false" primarykey="false" type="VARCHAR" />
+                        <field cfsqltype="CF_SQL_VARCHAR" cftype="string" javatype="12" length="255" name="email" nullallowed="false" primarykey="false" type="VARCHAR" />
+                        <field cfsqltype="CF_SQL_TIMESTAMP" cftype="date" javatype="93" length="19" name="createdOn" nullallowed="false" primarykey="false" type="DATETIME" />
+                        <field cfsqltype="CF_SQL_TIMESTAMP" cftype="date" javatype="93" length="19" name="updatedOn" nullallowed="false" primarykey="false" type="DATETIME" />
+                        <field cfsqltype="CF_SQL_TINYINT" cftype="numeric" javatype="-6" length="3" name="isEditor" nullallowed="false" primarykey="false" type="TINYINT" />
+                        <field cfsqltype="CF_SQL_DATE" cftype="date" javatype="91" length="10" name="dob" nullallowed="false" primarykey="false" type="DATE" />
+                    </fields>
+                </table>
+            </database>
+        </rdsview>
     </ide>
-    <user />
+    <user>
+        <input name="GenerateRemoteServices" value="true" />
+		<input name="Location" value="/Users/terryr/Sites/centaur.dev/apptacular_scratch" />
+    </user>
 </event>
