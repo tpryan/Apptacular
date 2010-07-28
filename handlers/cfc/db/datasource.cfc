@@ -301,7 +301,7 @@ component accessors="true" extends="dbItem"
     */
 	public any function dePluralizeSingleTable(any table){
 		var locTable = arguments.table;
-		locTable.setEntityName( varibales.stringUtil.depluralize(locTable.getEntityName()) );
+		locTable.setEntityName( variables.stringUtil.depluralize(locTable.getEntityName()) );
 		locTable.setAllNamesBasedOnEntityName();
 		locTable.populateColumns();	
 		return locTable;
