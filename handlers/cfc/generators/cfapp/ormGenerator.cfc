@@ -175,7 +175,7 @@ component extends="codeGenerator"{
 						}
 					}
 					property.setOrderby(otherJoinTable.getOrderBy());
-			   		property.setLazy(true);
+			   		property.setRemotingFetch(true);
 					property.setSingularname(otherJoinTable.getEntityName());
 			   		cfc.AddProperty(property);
 					
