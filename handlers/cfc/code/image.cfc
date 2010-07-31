@@ -5,7 +5,7 @@ component displayname="image" extends="file" hint="A cfc representation of an im
 	*/
 	public image function init(){
 		variables.origfileLocation ="";
-		
+		This.setOverwriteable(true); 
 		return This;
 	}
 	

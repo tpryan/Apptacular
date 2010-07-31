@@ -18,11 +18,13 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		variables.lineBreak = createObject("java", "java.lang.System").getProperty("line.separator");
 		This.setExtension('cfc');
 		This.setOutput(FALSE);
-		This.setFormat('cfscript'); 
+		This.setFormat('cfscript');
+		This.setOverwriteable(true); 
 		
 		variables.constructorArray = ArrayNew(1);
 		variables.functionArray = ArrayNew(1);
 		variables.propertyArray = ArrayNew(1);
+		variables.commentHeader = ArrayNew(1);
 		
 		return This;
 	}
@@ -32,6 +34,20 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	*/		
 	private string function generateCFMLHeader(){
 		var header = arrayNew(1);
+		var i = 0;
+		
+		if (ArrayLen(variables.commentHeader) > 0){
+			ArrayAppend(header, "<!--- ");
+			ArrayAppend(header, variables.lineBreak);
+			for (var i = 1; i <= ArrayLen(variables.commentHeader); i++){
+				ArrayAppend(header, variables.commentHeader[i]);
+			}
+			ArrayAppend(header, variables.lineBreak);
+			ArrayAppend(header, "--->");
+			ArrayAppend(header, variables.lineBreak);
+			
+		}
+		
 		ArrayAppend(header, '<cfcomponent');
 		ArrayAppend(header, addHeaderAttributes());
 		ArrayAppend(header, '>');
@@ -45,6 +61,25 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	*/	
 	private string function generateCFScriptHeader(){
 		var header = arrayNew(1);
+		
+		var i = 0;
+		
+		if (ArrayLen(variables.commentHeader) > 0){
+			ArrayAppend(header, "/* ");
+			if (ArrayLen(variables.commentHeader) > 1){
+				ArrayAppend(header, variables.lineBreak);
+			}
+			for (var i = 1; i <= ArrayLen(variables.commentHeader); i++){
+				ArrayAppend(header, variables.commentHeader[i]);
+			}
+			if (ArrayLen(variables.commentHeader) > 1){
+				ArrayAppend(header, variables.lineBreak);
+			}	
+			ArrayAppend(header, "*/");
+			ArrayAppend(header, variables.lineBreak);
+			
+		}
+		
 		ArrayAppend(header, 'component');
 		ArrayAppend(header, addHeaderAttributes());
 		ArrayAppend(header, '{');
@@ -241,6 +276,14 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	*/
 	public void function addProperty(required property property){
 		ArrayAppend(variables.propertyArray, arguments.property);
+	}
+	
+	/**
+		* @hint Adds a simple comment to both the CFML and script of the header.
+	*/
+	public void function PreprendSimpleComment(required string comment){
+		ArrayAppend(variables.commentHeader, arguments.comment);
+		
 	}
 
 }

@@ -10,6 +10,7 @@ component displayname="Custom Tag" hint="A cfc representation of a Custom tag fo
 		This.setName(arguments.Name);
 		This.setFileLocation(arguments.fileLocation);
 		This.setFormat('cfml');
+		This.setOverwriteable(true);
 		
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 

@@ -10,6 +10,7 @@ component displayname="CFPage" extends="file" hint="A cfc representation of a cf
 		This.setFormat('cfml');
 		This.setName(arguments.Name);
 		This.setFileLocation(arguments.fileLocation);
+		This.setOverwriteable(true);
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		variables.body = ArrayNew(1);
@@ -45,13 +46,38 @@ component displayname="CFPage" extends="file" hint="A cfc representation of a cf
 	*/
 	public void function write(){
 		conditionallyCreateDirectory(This.getFileLocation());
+	
 
-		if (CompareNoCase(This.getFormat(), "cfscript") eq 0)
-			fileWrite(getFileName(), Trim(getCFScript()));
-		else{
-			fileWrite(getFileName(), Trim(getCFML()));
+		if (This.getOverwriteable() or not fileExists(This.getFileName())){
+			if (CompareNoCase(This.getFormat(), "cfscript") eq 0)
+				fileWrite(getFileName(), Trim(getCFScript()));
+			else{
+				fileWrite(getFileName(), Trim(getCFML()));
+			}
 		}
 	}
+	
+	
+	/**
+	* @hint Allows control over tabs in operations that write to script or cfml
+	*/
+	private string function getTabs(numeric tabs=0){
+		
+		if (not structKeyExists(variables.tabs, arguments.tabs)){
+			var tab = "	";
+			var tabString = ArrayNew(1);
+			var i=0;
+		
+			for (i = 1;i <= arguments.tabs; i++){
+				ArrayAppend(tabString,tab);
+			}
+			
+			variables.tabs[arguments.tabs] = ArraytoList(tabString, "");
+		}
+			
+		return variables.tabs[arguments.tabs];
+	}	
+
 	
 	
 }

@@ -10,6 +10,7 @@ component displayname="build" extends="file" hint="A cfc representation of an an
 		This.setProjectname("");
 		This.setExtension('xml');
 		This.setName('build');
+		This.setOverwriteable(true); 
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		variables.body = CreateObject("java","java.lang.StringBuilder").Init();

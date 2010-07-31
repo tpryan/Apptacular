@@ -10,9 +10,11 @@ component displayname="Application CFC" hint="A CFC representation of an Applica
 		This.setOutput(FALSE); 
 		This.setExtension('cfc');
 		This.setFormat('cfscript');
+		This.setOverwriteable(true);
 		variables.constructorArray = ArrayNew(1);
 		variables.functionArray = ArrayNew(1);
 		variables.propertyArray = ArrayNew(1);
+		variables.commentHeader = ArrayNew(1);
 		variables.appPropertyArray = ArrayNew(1);
 		
 		return This;

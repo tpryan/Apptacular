@@ -2,6 +2,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	property name="name" type="string" hint="The name of the file";
 	property name="fileLocation" type="string" hint="Path of the folder containing the file.";
 	property name="extension" type="string" hint="The extension of the file.";
+	property name="overwriteable" type="boolean" hint="Whether or not this file can be overwriteable.";
 
 	/**
 	* @hint The init that fires up all of this stuff. 
@@ -11,7 +12,7 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 		variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 		variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 		variables.body = ArrayNew(1);
-		
+		This.setOverwriteable(true);
 		return This;
 	}
 	
@@ -63,7 +64,10 @@ component displayname="file" hint="A cfc representation of any file" accessors="
 	public void function write(){
 		conditionallyCreateDirectory(This.getFileLocation());
 
-		fileWrite(This.getFileName(), Trim(This.getFileContent()));
+		if (This.getOverwriteable() or not fileExists(This.getFileName())){
+			fileWrite(This.getFileName(), Trim(This.getFileContent()));
+		}	
+	
 	}
 	
 	

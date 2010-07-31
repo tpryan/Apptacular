@@ -167,6 +167,9 @@ component{
 					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
 					ArrayAppend(files, ORMServiceCFC);
 					
+					var ORMSuperServiceCFC = serviceGenerator.createORMSuperServiceCFC(table);
+					ArrayAppend(files, ORMSuperServiceCFC);
+					
 					variables.log.endEventSeriesItem("service");	
 				
 				}
