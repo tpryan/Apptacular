@@ -328,37 +328,36 @@ component extends="codeGenerator"{
 			column = columns[i];
 			
 			if(column.getIsPrimaryKey()){
-	    		populate.AddOperation('		<cfif StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# gt 0>');
-				populate.AddOperation('			<cfset This = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true) />');
-				populate.AddOperation('		</cfif>');
-				
-				populate.AddOperationScript('		if (StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# > 0){');
-	    		populate.AddOperationScript('			This = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true);');
-				populate.AddOperationScript('		}');
+				populate.StartSimpleIF('StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# gt 0',2);
+				populate.AddSimpleSet('This = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true)',3);
+				populate.EndSimpleIF(2);
+				populate.AddLineBreak();
 	    	}
 			else if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
-				fkEName = fkTable.getentityName();
+				var fkEName = fkTable.getentityName();
 				
 				if (table.getForeignTableCount(fTable.getName()) gt 1 OR CompareNoCase(table.getName(), ftable.getName()) eq 0){
 					var formItem = column.getName();
 				}	
 				else{
-					var formItem = fTable.getEntityName();
+					var formItem = fkTable.getEntityName();
 				}
 				
-				populate.AddSimpleSet('#formItem# = entityLoad("#fkEName#", arguments.formStruct.#formItem#, true)', 2);
-				populate.AddSimpleSet('This.set#formItem#(#formItem#)', 2);
+				populate.StartSimpleIF('StructKeyExists(arguments.formstruct, "#formItem#")',2);
+				populate.AddSimpleSet('#formItem# = entityLoad("#fkEName#", arguments.formStruct.#formItem#, true)', 3);
+				populate.AddSimpleSet('This.set#formItem#(#formItem#)', 3);
+				populate.EndSimpleIF(2);
+				populate.AddLineBreak();
 				
 			}
 	    	else if (not config.isMagicField(column.getName())){ 
-				populate.AddOperation('		<cfif StructKeyExists(arguments.formstruct, "#column.getName()#")>');
-	    		populate.AddOperation('			<cfset This.set#column.getName()#(arguments.formstruct.#column.getName()#)  />');
-				populate.AddOperation('		</cfif>');
 				
-				populate.AddOperationScript('		if (StructKeyExists(arguments.formstruct, "#column.getName()#")){');
-	    		populate.AddOperationScript('			this.set#column.getName()#(arguments.formstruct.#column.getName()#);');
-				populate.AddOperationScript('		}');
+				populate.StartSimpleIF('StructKeyExists(arguments.formstruct, "#column.getName()#")',2);
+				populate.AddSimpleSet('This.set#column.getName()#(arguments.formstruct.#column.getName()#)',3);
+				populate.EndSimpleIF(2);
+				populate.AddLineBreak();
+				
 	    	}
 	    }
 		
