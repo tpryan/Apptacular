@@ -54,7 +54,7 @@ component  extends="codeGenerator"
 	/**
 	* @hint Spins through all of the tables in the database and creates a service cfc for it. 
 	*/
-	public apptacular.handlers.cfc.code.cfc function createORMServiceCFC(required any table){
+	public apptacular.handlers.cfc.code.cfc function createORMEditableServiceCFC(required any table){
 		var i=0;
 		var EntityName = table.getEntityName();
 	    
@@ -62,7 +62,6 @@ component  extends="codeGenerator"
 	    cfc.setName(EntityName & "Service");
 	    cfc.setFileLocation(config.getServiceFilePath());
 		cfc.setFormat(variables.config.getCFCFormat());
-		cfc.setExtends("_" & EntityName & "SuperService");
 		cfc.setOverwriteable(false);
 		cfc.PreprendSimpleComment("It is okay to edit this CFC, changes will not be written over.");
 		
@@ -72,12 +71,12 @@ component  extends="codeGenerator"
 	/**
 	* @hint Spins through all of the tables in the database and creates a service cfc for it. 
 	*/
-	public apptacular.handlers.cfc.code.cfc function createORMSuperServiceCFC(required any table){
+	public apptacular.handlers.cfc.code.cfc function createORMServiceCFC(required any table){
 		var i=0;
 		var EntityName = table.getEntityName();
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
-	    cfc.setName("_" & EntityName & "SuperService");
+	    cfc.setName(EntityName & "Service");
 	    cfc.setFileLocation(config.getServiceFilePath());
 		cfc.setFormat(variables.config.getCFCFormat());
 		cfc.PreprendSimpleComment("DO NOT edit this CFC, changes will be written over.");

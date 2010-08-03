@@ -164,11 +164,17 @@ component{
 					
 					variables.log.startEventSeriesItem("service");
 					
-					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
-					ArrayAppend(files, ORMServiceCFC);
 					
-					var ORMSuperServiceCFC = serviceGenerator.createORMSuperServiceCFC(table);
-					ArrayAppend(files, ORMSuperServiceCFC);
+					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
+					
+					if (config.getMakeSuperSerivces()){
+						var ORMEditableServiceCFC = serviceGenerator.createORMEditableServiceCFC(table);
+						ORMServiceCFC.setName("_" & table.getEntityName() & "SuperService");
+						ORMEditableServiceCFC.setExtends("_" & table.getEntityName() & "SuperService");
+						ArrayAppend(files, ORMEditableServiceCFC);
+					}
+					
+					ArrayAppend(files, ORMServiceCFC);
 					
 					variables.log.endEventSeriesItem("service");	
 				

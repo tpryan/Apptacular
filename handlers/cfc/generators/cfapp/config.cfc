@@ -48,6 +48,7 @@ component accessors="true"{
 	property name="WireOneToManyinViews" displayName="Wire One to Many relationships in views "  type="boolean" hint="Whether or not Apptacular should write out oneToMany interfaces in view. Good to turn off if you have tables with 1000's of records wired to a oneToMany.";
 	property name="LogSQL" displayName="Log SQL" type="boolean" hint="Whether or not generated application should log Hibernate SQL operations to the console.";
 	property name="ReturnQueriesFromService" displayName="Return Queries from Services instead of ORM Arrays"  type="boolean" hint="Whether or not generated application return queries instead of arrays of ORM objects.";
+	property name="MakeSuperSerivces" displayName="Generate Super Service that are extendable by services that you can edit." type="boolean" hint="Whether or not to generate dynaic super services that are extended by a static, editable, base class."; 
 	
 	property name="CFCFormat" hint="Whether or not your CFCs are all CFML or all CFScript. [Options: CFML, CFSCRIPT]";
 	
@@ -145,7 +146,7 @@ component accessors="true"{
 		This.setServiceCountMethod("count");
 		This.setServiceSearchCountMethod("searchCount");
 		This.setReturnQueriesFromService("false");			
-	
+		This.setMakeSuperSerivces("false");
 	}
 	
 	/**
