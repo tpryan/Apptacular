@@ -28,7 +28,7 @@ component accessors="true"{
 		allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,";
 		allowed['config'] = allowed['config'] & "<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,appFolder,";
 		allowed['config'] = allowed['config'] & "<Service Methods>,serviceGetMethod,serviceUpdateMethod,serviceDeleteMethod,serviceListMethod,serviceListPagedMethod,serviceSearchMethod,serviceSearchPagedMethod,serviceInitMethod,serviceCountMethod";
-		allowed['config'] = allowed['config'] & "<Misc>,serviceAccess,ReturnQueriesFromService,CFCFormat,WireOneToManyinViews,LogSQL,depluralize,MakeSuperSerivces,<Formats>,dateformat,timeformat,";
+		allowed['config'] = allowed['config'] & "<Misc>,serviceAccess,ReturnQueriesFromService,CFCFormat,WireOneToManyinViews,LogSQL,depluralize,MakeSuperSerivces,MakeSuperEntities,<Formats>,dateformat,timeformat,";
 		
 		allowed['config'] = allowed['config'] & "<Magic Fields>,createdOnString,updatedOnString,";
 		allowed['config'] = allowed['config'] & "<MXUnit Settings>,CreateTests,MXUnitFilePath,testFolder";
@@ -46,7 +46,7 @@ component accessors="true"{
 		booleans['datasource'] = "";
 		booleans['table'] = "createInterface,IsJoinTable";
 		booleans['column'] = "";
-		booleans['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel,MakeSuperSerivces,CreateTests,WireOneToManyinViews,LogSQL,depluralize,ReturnQueriesFromService";
+		booleans['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel,MakeSuperSerivces,MakeSuperEntities,CreateTests,WireOneToManyinViews,LogSQL,depluralize,ReturnQueriesFromService";
 		booleans['virtualcolumn'] = "";
 	
 		return booleans;

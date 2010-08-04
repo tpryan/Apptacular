@@ -79,7 +79,7 @@ component  extends="codeGenerator"
 	    cfc.setName(EntityName & "Service");
 	    cfc.setFileLocation(config.getServiceFilePath());
 		cfc.setFormat(variables.config.getCFCFormat());
-		cfc.PreprendSimpleComment("DO NOT edit this CFC, changes will be written over.");
+		cfc.PreprendSimpleComment("NOTE: Any changes you make to this CFC will be written over if you regenerate the application.");
 		
 		//create Init method
 		var init= createInitMethod(arguments.table);

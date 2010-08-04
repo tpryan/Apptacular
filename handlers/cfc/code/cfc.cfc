@@ -8,7 +8,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 	property name="output" type="boolean" default="false" hint="Whether or not this CFC should leak output.";
 	property name="persistent" type="boolean" default="false" hint="Whether or not this CFC should use ORM tools.";
 	property name="format" type="string" hint="CFML or CFScript";
-
+	property name="mappedsuperclass" type="boolean" default="false" hint="if this CFC is an ORM mapped super class.";
 	
 	/**
 	* @hint The init that fires up all of this stuff. 
@@ -117,6 +117,10 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		
 		if (This.getOutput()){
 			arrayAppend(results, ' output="#This.getOutput()#"');
+		}
+		
+		if (len(This.getMappedSuperClass()) gt 0){
+			arrayAppend(results, ' mappedSuperClass="#This.getMappedSuperClass()#"');
 		}
 		
 		returnString = ArrayToList(results, "");

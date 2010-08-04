@@ -123,7 +123,18 @@ component{
 					
 					variables.log.startEventSeriesItem("orm");
 					
+					
 					var ORMCFC = ormGenerator.createORMCFC(table);
+					
+					if (config.getMakeSuperEntities()){
+						var ORMEditableEntityCFC = ormGenerator.createORMEditableEntityCFC(table);
+						ORMEditableEntityCFC.setName("_superClass" & table.getEntityName());
+						ORMCFC.setExtends("_superClass" & table.getEntityName());
+						ArrayAppend(files, ORMEditableEntityCFC);
+					}
+					
+					
+					
 					ArrayAppend(files, ORMCFC);
 					
 					variables.log.endEventSeriesItem("orm");

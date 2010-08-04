@@ -4,6 +4,25 @@
 component extends="codeGenerator"{
 
 	/**
+	* @hint Spins through all of the tables in the database and creates a service cfc for it. 
+	*/
+	public apptacular.handlers.cfc.code.cfc function createORMEditableEntityCFC(required any table){
+		var i=0;
+		var EntityName = table.getEntityName();
+	    
+	    var cfc  = New apptacular.handlers.cfc.code.cfc();
+	    cfc.setName(table.getEntityName());
+	    cfc.setFileLocation(config.getEntityFilePath());
+		cfc.setFormat(variables.config.getCFCFormat());
+		cfc.setMappedSuperClass(true);
+		cfc.setOverwriteable(false);
+		cfc.PreprendSimpleComment("It is okay to edit this CFC, changes will not be written over.");
+		
+		return cfc;
+	}
+
+
+	/**
 	* @hint Contains all the code it takes to generate orm/entity CFCs for every table in the database. 
 	*/
 	public apptacular.handlers.cfc.code.cfc function createORMCFC(required any table){
@@ -18,6 +37,7 @@ component extends="codeGenerator"{
 	    cfc.setName(table.getEntityName());
 	    cfc.setFileLocation(variables.config.getEntityFilePath());
 	   	cfc.setPersistent(true);
+		cfc.PreprendSimpleComment("NOTE: Any changes you make to this CFC will be written over if you regenerate the application.");
 		
 		// Create Init
 		var init= New apptacular.handlers.cfc.code.func();
