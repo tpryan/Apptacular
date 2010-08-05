@@ -20,6 +20,8 @@
 		    		<input name="Location" default="{$projectlocation}" label="Enter destination" tooltip="Location where generated CFCs will be stored" type="projectdir"/>
 					<input name="GenerateRemoteServices" label="Create Remote Services" tooltip="This will expose your application via remote services to Flex or AJAX projects. There are security implications so don't check unless you know you need this." type="boolean" default="false" /> 
 				</action>
+				<action name="------------------------------" />
+				<action name="About Apptacular" handlerid="about"></action>
 			</menu>
 		</contribution>
 		<contribution target="projectview" >
@@ -39,7 +41,9 @@
 				<action name="------------------------------" />
 				<action name="Check for Updates" handlerid="update"></action>			
 				<action name="------------------------------" />
-				<action name="Prune Excess Files" handlerid="purge"></action>	
+				<action name="Prune Excess Files" handlerid="purge"></action>
+				<action name="------------------------------" />
+				<action name="About Apptacular" handlerid="about"></action>	
 			</menu>
 		</contribution>
     </menucontributions>	
@@ -54,6 +58,7 @@
 		<handler id="configtable" type="CFM" filename="handlerEditTable.cfm" />
 		<handler id="handlerCreateProject" type="CFM" filename="handlerCreateProject.cfm" />
 		<handler id="update" type="CFM" filename="handlerupdate.cfm" />
+		<handler id="about" type="CFM" filename="handlerAbout.cfm" />
 	</handlers>
 
 </application>
