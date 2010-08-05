@@ -56,3 +56,17 @@
         <h3>Using Remote Services with Flex</h3> 
                 
 		<h3>Getting Started with Unit Testing</h3>
+		
+		<h3>Using Inheritance and Super Classes</h3>
+		<p>One of the problems with using scaffolding is that your business model may change after 
+		you've customized your files with new functions and properties. Many scaffolding solutions 
+		use Inheritance to fix this.  The scaffolder will regenerate dynamic files which are in 
+		turn extended by static files that are generated once, but then never touched again. </p>
+		<p>That can be done with services using the Application Configuration 
+		<em>Generate Super Service that are extendable by services that you can edit.</em>
+	
+		</p>
+		<p>That's not really possible using ColdFusion ORM Entities.  However ColdFusion 9.0.1 introduced
+		the ability to create unpersisted superclasses that are in turn extended by your actual ORM 
+		entities. This can be done using the Application Configuration 
+		<em>Generate Super Entities that can be edited but are extended by static entities.</em></p>

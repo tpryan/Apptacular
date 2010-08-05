@@ -128,8 +128,8 @@ component{
 					
 					if (config.getMakeSuperEntities()){
 						var ORMEditableEntityCFC = ormGenerator.createORMEditableEntityCFC(table);
-						ORMEditableEntityCFC.setName("_superClass" & table.getEntityName());
-						ORMCFC.setExtends("_superClass" & table.getEntityName());
+						ORMEditableEntityCFC.setName("_" & table.getEntityName()& "SuperEntity");
+						ORMCFC.setExtends("_" & table.getEntityName()& "SuperEntity");
 						ArrayAppend(files, ORMEditableEntityCFC);
 					}
 					
