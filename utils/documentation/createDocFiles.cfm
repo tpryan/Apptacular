@@ -1,4 +1,4 @@
-<cfset docPath = expandPath('../docs') />
+<cfset docPath = expandPath('../../docs') />
 <cfif not directoryExists(docPath)>
 	<cfset directoryCreate(docPath) />
 </cfif>

@@ -33,7 +33,7 @@
 	
 	<target name="build.documentation">
 		<echo message="Generating documentation."/>
-		<get src="http://${server}/apptacular/utils/CreateDocFiles.cfm" dest="getresult.html" verbose="true" />
+		<get src="http://${server}/apptacular/utils/documentation/CreateDocFiles.cfm" dest="getresult.html" verbose="true" />
 		<delete file='getresult.html' />
 	</target>		
 
