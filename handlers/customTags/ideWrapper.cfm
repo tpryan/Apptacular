@@ -1,3 +1,4 @@
+<cfsetting showdebugoutput="false" />
 <cfprocessingdirective suppresswhitespace="yes">
 <cfif thisTag.executionMode is "start">
 <cfparam name="attributes.messageURL" type="string" />

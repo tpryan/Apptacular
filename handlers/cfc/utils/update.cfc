@@ -1,6 +1,5 @@
 component{
 
-
 	public function init(required string currentVersion, required buildURL, required appURL){
 	
     	variables.currentVersion = arguments.currentVersion;
@@ -49,8 +48,6 @@ component{
 		httpObj.setPath(directory);
 		httpObj.setFile("Apptacular.zip");
 		var result = httpObj.send();
-	
-	
 	}
 
 }

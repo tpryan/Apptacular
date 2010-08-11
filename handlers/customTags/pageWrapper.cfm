@@ -1,3 +1,4 @@
+<cfsetting showdebugoutput="false" />
 <cfprocessingdirective suppresswhitespace="yes">
 <cfif thisTag.executionMode is "start">
 <cfset utils = new apptacular.handlers.cfc.utils.utils() />
