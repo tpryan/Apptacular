@@ -112,7 +112,20 @@
 	
 	</target>
 
-	<target name="test" depends="test.apptacular,test.rebuild.apps,test.build.report" />
+	<target name="test" depends="test.setup,test.apptacular,test.rebuild.apps,test.build.report,test.teardown" />
+
+
+	<target name="test.setup">
+		<echo message="Deactivating debugging on ColdFusion Server."/>
+		<get src="http://${server}/apptacular/utils/debugging/disableDebugging.cfm" dest="getresult.html" verbose="true" />
+		<delete file='getresult.html' />
+	</target>
+	
+	<target name="test.teardown">
+		<echo message="Reactivating debugging on ColdFusion Server."/>
+		<get src="http://${server}/apptacular/utils/debugging/enableDebugging.cfm" dest="getresult.html" verbose="true" />
+		<delete file='getresult.html' />
+	</target>	
 
 	<target name="test.apptacular">
 		<echo message="Running Apptacular Tests"/>

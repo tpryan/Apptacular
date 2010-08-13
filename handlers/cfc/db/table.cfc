@@ -416,6 +416,7 @@ component accessors="true" extends="dbItem"
 			column.setisMemeberOfCompositeForeignKey(false);
 			column.setisComputed(false);
 			column.setisIdentity(false);
+			column.setIncludeInEntity(true);
 			
 			//dont create blank foriegn keys or they will cause issues.
 			if (CompareNoCase(column.getForeignKeyTable(), "N/A") neq 0){

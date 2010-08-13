@@ -38,8 +38,35 @@
 			XMLProps = XMLParse(FileRead(filePath));
 		
 			for (j = 1; j <= ArrayLen(props); j++){
-				newvalue = updateStruct[columns[i]][props[j]];
-				XMLProps['column'][props[j]]['XMLText'] = newvalue;
+				if (compareNocase("INCLUDEINENTITY",Trim(props[j])) eq 0){
+					if (structKeyExists(updateStruct[columns[i]], props[j])){
+						XMLProps['column'][props[j]]['XMLText'] = true;
+					}
+					else{
+						XMLProps['column'][props[j]]['XMLText'] = false;
+					}
+					
+				} 
+				else{
+				
+					try{
+					newvalue = updateStruct[columns[i]][props[j]];
+					
+					}catch(any e){
+						writeDump(columns[i],"console");
+						writeDump(props[j],"console");
+						rethrow;
+						
+					}
+					
+					
+					
+					XMLProps['column'][props[j]]['XMLText'] = newvalue;
+				}
+				
+				
+				
+				
 			}
 			FileWrite(filePath,XMLProps);
 
@@ -81,8 +108,6 @@
 				</cfloop>
 			</tr>
 		
-		
-			<cflog text="#uilist#" />
         	<cfloop query="columns">
 			<tr>
 				<cfloop list="#columns.columnList#" index="attribute">
@@ -91,7 +116,6 @@
 					<cfelseif ListFindNoCase("uiType", attribute)>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />
-						<cflog text="#attribute#: #columns[attribute][columns.currentRow]#" />
 						<td>
 							<select name="#fieldname#" id="#attribute#">
 								<cfloop list="#uilist#" index="uilisttype">
@@ -104,7 +128,13 @@
 						<cfset value = columns[attribute][columns.currentRow] />
 						<td>
 							<input name="#fieldname#" type="text" value="#value#" tabindex="#currentRow#" />
-						</td>			
+						</td>
+					<cfelseif ListFindNoCase("includeInEntity", attribute)>
+						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
+						<cfset value = columns[attribute][columns.currentRow] />
+						<td>
+							<input name="#fieldname#" type="checkbox" value="true" <cfif value> checked="checked"</cfif> tabindex="#currentRow#" />
+						</td>					
 					<cfelse>
 						<cfset fieldname = columns['column'][columns.currentRow] & "." & attribute />
 						<cfset value = columns[attribute][columns.currentRow] />

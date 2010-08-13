@@ -63,6 +63,10 @@ component extends="codeGenerator"{
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
 			
+			if (not column.getIncludeInEntity()){
+				continue;
+			}
+			
 			if (column.getIsForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());
 				
@@ -140,6 +144,10 @@ component extends="codeGenerator"{
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			var column = columns[i];
+			
+			if (not column.getIncludeInEntity()){
+				continue;
+			}
 			
 			if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
 	       		ct.AppendBody('			<td>###entityName#.get#columns[i].getName()#()##</td>');
@@ -318,6 +326,10 @@ component extends="codeGenerator"{
 		
 		for (i = 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
+			
+			if (not column.getIncludeInEntity()){
+				continue;
+			}
 		 	
 			if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
 	       		ct.AppendBody('		<tr>');
@@ -508,6 +520,10 @@ component extends="codeGenerator"{
 			var column = columns[i];
 			var columnName = column.getName();
 			var fktableCount = 0;
+			
+			if (not column.getIncludeInEntity()){
+				continue;
+			}
 			
 			if (column.getisForeignKey()){
 				var fkTable = datasource.getTable(column.getForeignKeyTable());

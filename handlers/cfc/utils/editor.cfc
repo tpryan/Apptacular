@@ -24,7 +24,7 @@ component accessors="true"{
 		var allowed = structNew();
 		allowed['datasource'] = "displayName,prefix";
 		allowed['table'] = "entityName,displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable";
-		allowed['column'] = "name,column,displayName,uiType";
+		allowed['column'] = "name,column,displayName,uiType,includeInEntity";
 		allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,";
 		allowed['config'] = allowed['config'] & "<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,appFolder,";
 		allowed['config'] = allowed['config'] & "<Service Methods>,serviceGetMethod,serviceUpdateMethod,serviceDeleteMethod,serviceListMethod,serviceListPagedMethod,serviceSearchMethod,serviceSearchPagedMethod,serviceInitMethod,serviceCountMethod";
@@ -45,7 +45,7 @@ component accessors="true"{
 		var booleans = structNew();
 		booleans['datasource'] = "";
 		booleans['table'] = "createInterface,IsJoinTable";
-		booleans['column'] = "";
+		booleans['column'] = "includeInEntity";
 		booleans['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateLogin,CreateServices,CreateViews,OverwriteDataModel,MakeSuperSerivces,MakeSuperEntities,CreateTests,WireOneToManyinViews,LogSQL,depluralize,ReturnQueriesFromService";
 		booleans['virtualcolumn'] = "";
 	

@@ -82,7 +82,9 @@ component extends="codeGenerator"{
 			property.setORMType(column.getOrmType());
 			property.setColumn(column.getColumn());
 	       	
-			
+			if (not column.getIncludeInEntity()){
+				continue;
+			}
 	       	
 			//If it is an identity. 
 	       	if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
@@ -346,6 +348,10 @@ component extends="codeGenerator"{
 		
 		for (i= 1; i <= ArrayLen(columns); i++){
 			column = columns[i];
+			
+			if (not column.getIncludeInEntity()){
+				continue;
+			}
 			
 			if(column.getIsPrimaryKey()){
 				populate.StartSimpleIF('StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# gt 0',2);
