@@ -53,9 +53,16 @@
 			failed = true;
 		}
 		else{
-			dsName = DirectoryList(dbConfigPath, false, "name")[1];
+			
+			dsArray = DirectoryList(dbConfigPath, false, "name");
+			
+			for (i=ArrayLen(dsArray); i >= 1; i--){
+				if (FindNoCase(".svn", dsArray[i])){
+					ArrayDeleteAt(dsArray, i);
+				}
+			}
+			dsName = dsArray[1];
 		}
-		
 		
 	}
 	//handle direct input from a form (Create Application)
@@ -70,6 +77,9 @@
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
 		appRoot = rootFilePath; 
 	}
+
+
+
 
 </cfscript>	
 
