@@ -23,19 +23,16 @@
     */
 	public string function findCFCPathFromFilePath(string path){
 		
-		var localPath = arguments.path;
-		
+		var localPath = replace(arguments.path, "\", "/", "all");
+		var localWebroot = replace(variables.webroot, "\", "/", "all");
 		
 		if (right(localPath, 4) eq ".cfc"){
 			localPath = left(localPath, Len(localPath) - 4);
 		}
 		
-		
-		
 		var results = "";
-		results = replaceNoCase(localPath, webroot, "", "one");
+		results = replaceNoCase(localPath, localWebroot, "", "one");
 		results = replaceList(results, "/,\", ".,.");
-		
 		
 		if (compare(right(results, 1), ".") eq 0){
 			results = Left(results, len(results) -1);

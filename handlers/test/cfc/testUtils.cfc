@@ -21,6 +21,23 @@ component extends="mxunit.framework.TestCase"{
 		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
     }
 	
+	public void function findCFCPathFromFilePathWindowsPathsUsingBackslashes(){
+		var utils = new apptacular.handlers.cfc.utils.utils("c:/Inetpub/wwwroot/");
+		var PathToTest = "c:/inetpub/wwwroot/BlogDemo/services/";
+		var expectedPath = "BlogDemo.services";
+		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
+		debug(utils.findCFCPathFromFilePath(PathToTest));
+    }
+	
+	public void function findCFCPathFromFilePathWindowsPathsUsingBackslashesMixed(){
+		var utils = new apptacular.handlers.cfc.utils.utils("D:\inetpub\wwwroot\");
+		var PathToTest = "D:/inetpub/wwwroot/Wayeo_Edit_Send\services";
+		var expectedPath = "Wayeo_Edit_Send.services";
+		AssertEquals(expectedPath, utils.findCFCPathFromFilePath(PathToTest));
+		debug(utils.findCFCPathFromFilePath(PathToTest));
+    }
+	
+	
 	public void function findCSSPathFromFilePathNixPaths(){
 		var utils = new apptacular.handlers.cfc.utils.utils("/Users/terryr/Sites/centaur.dev/");
 		var PathToTest = "/Users/terryr/Sites/centaur.dev/extension/apptacular/handlers/grad.jpg";
