@@ -178,7 +178,7 @@ component extends="codeGenerator"{
 					foreignColumns = foreignTable.getColumns();
 					
 					//Don't wire up many to many's if the far table is set not to be wired up
-					if (not otherJoinTable.getcreateInterface()){
+					if (not otherJoinTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 						continue;
 					}
 					

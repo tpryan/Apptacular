@@ -109,6 +109,16 @@ component accessors="true" extends="dbItem"
 				for (j=1; j <= ArrayLen(joinedTables); j++){
 					tablesStruct[joinedTables[j]].setHasJoinTable(TRUE);
 					tablesStruct[joinedTables[j]].addJoinTable(joinTableName);
+					
+					var refs = tablesStruct[joinedTables[j]].getReferences();
+					for (k=1; k <= ArrayLen(refs); k++){
+						if (compareNoCase(refs[k].getforeignKeyTable(),localTable.getName()) eq 0 ){
+							refs[k].setIsJoinTable(true);
+							refs[k].setOtherTable(localTable.getOtherJoinTable(tablesStruct[joinedTables[j]].getName()));
+						}
+					}
+					tablesStruct[joinedTables[j]].getReferences(refs);
+					
 				}
 			}
 		}

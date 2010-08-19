@@ -1,7 +1,34 @@
 <cfsetting showdebugoutput="FALSE" />
 <cfset path = urlDecode(url.path) />
 
-<cfset message = "" />
+
+
+
+<cfparam name="url.tab" type="string" default="table" />
+<cfparam name="url.message" type="string" default="" />
+
+<cfset tableOpen = true />
+<cfset columnsOpen = false />
+<cfset virtualOpen = false />
+<cfset referenceOpen = false />
+
+
+<cfswitch expression="#url.tab#">
+	<cfcase value="columns">
+		<cfset tableOpen = false />
+		<cfset columnsOpen = true />
+	</cfcase>
+	<cfcase value="virtual">
+		<cfset tableOpen = false />
+		<cfset virtualOpen = true />
+	</cfcase>
+	<cfcase value="reference">
+		<cfset tableOpen = false />
+		<cfset referenceOpen = true />
+	</cfcase>
+</cfswitch>
+
+<cfset message = url.message />
 
 <cfscript>
 	variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
@@ -34,6 +61,7 @@
 	FROM 	files
 	WHERE	name != '_table.xml'
 	AND		name not like  'vc_%'
+	AND 	name not like 'ref_%'
 </cfquery>
 
 <cfquery name="virtualColumns" dbtype="query">
@@ -44,25 +72,37 @@
 	AND		name not like '%apptacularTempNew%'
 </cfquery>
 
+<cfquery name="refs" dbtype="query">
+	SELECT 	*
+	FROM 	files
+	WHERE	name != '_table.xml'
+	AND		name like  'ref_%'
+</cfquery>
+
 
 
 <cf_pageWrapper>
 
+<cfset prevLink = URLEncodedFormat(breadcrumbStruct.previous) />
+<cfset prevLabel= ListLast(breadcrumbStruct.previous, FS) />
+<cfset nextLink = URLEncodedFormat(breadcrumbStruct.next) />
+<cfset nextLabel= ListLast(breadcrumbStruct.next, FS) />
+<cfset dsLink = URLEncodedFormat(datasourcePath) />
+<cfset dsLabel= ListLast(datasourcePath, FS) />
 
 <cfoutput>
 	<table class="breadcrumb">
 		<tr>
 			<cfif len(breadcrumbStruct.previous)>
-				<td id="prev"><a href="editTable.cfm?path=#URLEncodedFormat(breadcrumbStruct.previous)#">&larr;<strong>#ListLast(breadcrumbStruct.previous, FS)#</strong></a></td>
+				<td id="prev" class="nav"><a href="editTable.cfm?path=#prevLink#">&larr;#prevLabel#</a></td>
 			<cfelse>
 				<td id="prev"></td>
 			</cfif>
 			
-			
-			<td><a href="editDatasource.cfm?datasourcepath=#URLEncodedFormat(datasourcePath)#">&uarr;<strong>#ListLast(datasourcePath, FS)#</strong>&uarr;</a></td>
+			<td><a href="editDatasource.cfm?datasourcepath=#dsLink#">&uarr;#dsLabel#&uarr;</a></td>
 			
 			<cfif len(breadcrumbStruct.next)>
-				<td id="next"><a href="editTable.cfm?path=#URLEncodedFormat(breadcrumbStruct.next)#"><strong>#ListLast(breadcrumbStruct.next, FS)#</strong>&rarr;</a></td>
+				<td id="next" class="nav"><a href="editTable.cfm?path=#nextLink#">#nextLabel#&rarr;</a></td>
 			<cfelse>
 				<td id="next"></td>
 			</cfif>		
@@ -76,29 +116,48 @@
 <cfset tableCFC = "apptacular.handlers.cfc.db.table" />
 <cfset docHelper = new apptacular.handlers.cfc.utils.docHelper(tableCFC) />
 
-<cf_XMLForm fileToEdit="#tablePath#" message="#message#" cfcreference="#tableCFC#" helper="#docHelper#" /> 
-<cfoutput>
-<table>
-<tr>
-<td><cf_XMLColumnsForm tablePathToEdit="#path#" /></td>
-<td> 
-	<h2>Edit Virtual Columns</h2>
-	<p class="helplink"><a href="../doc/fields.cfm?item=virtualcolumn">Virtual Column Reference</a></p>
-	<table>
-		<tr><td><a href="editVirtualColumn.cfm?path=#path#">Add Virtual Column</a></td></tr>
+
+<cflayout type="accordion" >
+
+	<cflayoutarea title="Table" selected="#tableOpen#">
+		<div class="accpanel">
+		<cf_XMLForm fileToEdit="#tablePath#" message="#message#" cfcreference="#tableCFC#" helper="#docHelper#" /> 
+		</div>
+	</cflayoutarea> 
 	
-    	<cfloop query="virtualColumns">
+	<cflayoutarea title="Columns" selected="#columnsOpen#">
+		<div class="accpanel">
+		<cf_XMLColumnsForm tablePathToEdit="#path#" />
+		</div>
+	</cflayoutarea> 
+	
+	<cflayoutarea title="Virtual Columns" selected="#virtualOpen#">
+		<div class="accpanel">
+		<cfoutput>	
+		<h2>Edit Virtual Columns</h2>
+		<p class="helplink">
+			<a href="../doc/fields.cfm?item=virtualcolumn">Virtual Column Reference</a>
+		</p>
+		<p>
+			<a href="editVirtualColumn.cfm?path=#path#">Add Virtual Column</a><br />
+		</p>
+		<cfloop query="virtualColumns">
 			<cfset path = directory & FS & name />
 			<cfset vc = GetToken(GetToken(GetFileFromPath(path),1,"."), 2, "_")/>
-			<tr><td><a href="editVirtualColumn.cfm?path=#path#">#vc#</a> </td>
-			<td>(<a href="editVirtualColumn.cfm?path=#path#&amp;delete">Delete</a>)</td></tr>
+			<p><a href="editVirtualColumn.cfm?path=#path#">#vc#</a> 
+			(<a href="editVirtualColumn.cfm?path=#path#&amp;delete">Delete</a>)</p>
 		</cfloop>
-    
-	</table>
-</td>
-</tr>
-</table>
-</cfoutput>
-
+		    
+		</cfoutput>
+		</div>
+	</cflayoutarea>
+	
+	<cflayoutarea title="Related Tables" selected="#referenceOpen#">
+		<div class="accpanel">
+		<cf_XMLRefsForm fileQuery="#refs#" tablePathToEdit="#path#" message="#message#"  />
+		</div>
+	</cflayoutarea> 
+	 
+</cflayout>
 
 </cf_pageWrapper>

@@ -35,11 +35,23 @@
 			conditionallyCreateDirectory(tableSchemaPath);
 			FileWrite(tableSchemaPath & variables.FS & "_table.xml", tables[i].serialize());
 			
+			//Handle Columns
 			var columns = tables[i].getColumns();
 			for (j=1; j <= arraylen(columns); j++){
 				//Write XML to disk
 				FileWrite(tableSchemaPath & variables.FS & columns[j].getName() & ".xml", columns[j].serialize());
 			}
+			
+			//Handle Refs
+			var refs = tables[i].getReferences();
+			
+			if (Not isNull(refs)){
+				for (j=1; j <= arraylen(refs); j++){
+					//Write XML to disk
+					FileWrite(tableSchemaPath & variables.FS & "ref_" & refs[j].getforeignKeyTable() & ".xml", refs[j].serialize());
+				}
+			}
+			
 		}
 		
 	
@@ -109,18 +121,41 @@
 					if (CompareNoCase(configCS, dbCS) neq 0 ){
 						var column = reWriteObject(column, checksums[columnCSPath]['filePath'], "column");
 					}
-					
 				}
 				
 				StructDelete(checksums, columnCSPath);
-				
 				ArrayAppend(columnsArray, column);
 				columnsStruct[columnName] = column;
+			}
+			
+			//Handle Refs
+			var refs = table.getReferences();
+			var refArray = ArrayNew(1);
+			
+			
+			
+			if (Not isNull(refs)){
+				for (j=1; j <= arraylen(refs); j++){
+					var reference = refs[j];
+					var refCSPath = DSCSPath & "/" & tableName & "/ref_" & reference.getforeignKeyTable();
+					var configCS = checksums[refCSPath]['checksum'];
+					var dbCS = reference.getChecksum();
+				
+				
+					if (CompareNoCase(configCS, dbCS) neq 0 ){
+						var reference = reWriteObject(reference, checksums[refCSPath]['filePath'], "reference");
+					}
+				
+				}
+				StructDelete(checksums, refCSPath);
+				ArrayAppend(refArray, reference);
 				
 			}
 			
+			
 			table.setColumns(columnsArray);
 			table.setColumnsStruct(columnsStruct);
+			table.setReferences(refArray);
 						
 			//add edited or unedited tables back to the datsource
 			tableStruct[tableName] = table;
@@ -189,11 +224,11 @@
 		catch(any e){
 			writeLog("Apptacular Error:  There is a good chance that you have added a variable to 
 				the variables scope of one of your database CFC's that doesn't need to be serialized.
-				Edit DbItem.cfc and delete project .apptacular to fix.");
-			writeDump("here there be errors ");
-			writeDump(newObject);
-			writeDump(keys);
-			writeDump(i);
+				Edit DbItem.cfc and delete project .apptacular folder to fix.");
+			writeDump("here there be errors", "console");
+			writeDump(newObject, "console");
+			writeDump(keys, "console");
+			writeDump(i, "console");
 			//writeDump(keys[i]);
 			//writeDump(newObject);
 			writeDump(e);

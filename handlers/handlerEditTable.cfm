@@ -57,11 +57,6 @@
 		
 	}
 	
-	
-	
-	
-	
-	
 	schemaPath = projectPath & "/.apptacular/schema";
 	tablepath = schemaPath & "/" & dsName & "/" & tableNAme;
 	//Ensure that overwrites are respected.
@@ -71,8 +66,6 @@
 	handlerOptions = "?path=" & tablepath;
 	handlerURL = baseURL & handlerPath & handlerOptions;
 </cfscript>
-
-
 
 <cfif not FileExists(configPath) OR not DirectoryExists(tablepath)>
 

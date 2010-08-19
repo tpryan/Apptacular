@@ -75,7 +75,7 @@
 	}
 
 	#prev, #next
-	{ width: 200px;}	
+	{ width: 250px;}	
 		
 	#next{
 		text-align: right;
@@ -143,6 +143,26 @@
 	
 	#updatenotice p a{color: #2A587A;}
 	#updatenotice p a:hover{color:#5D8BAD;}
+	
+	/* Makes the accordian panels transparent*/
+	.x-panel-body {
+		background:none;
+	}
+	
+	.accpanel{
+		padding: 10px;
+	}
+	
+	.x-panel-header{
+		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
+		color: #2A587A;
+	}
+	
+	.breadcrumb .nav{
+		font-weight: bold;
+	}
+	
+	
 </style>
 
 <!--[if lt IE 7]>

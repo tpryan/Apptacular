@@ -83,27 +83,29 @@ component accessors="true" extends="dbItem"
 		
 		
 		log.startEventSeriesItem("popTable");
-		populateTable();
+			populateTable();
 		log.endEventSeriesItem("popTable");
 		
-		log.startEventSeriesItem("popFK");
-		populateForeignKeys();
-		log.endEventSeriesItem("popFK");
-		
 		log.startEventSeriesItem("popCol");
-		populateColumns();
+			populateColumns();
 		log.endEventSeriesItem("popCol");
 		
+		log.startEventSeriesItem("popFK");
+			populateForeignKeys();
+		log.endEventSeriesItem("popFK");
+		
+		
+		
 		log.startEventSeriesItem("popRefCount");
-		populateReferenceCounts();
+			populateReferenceCounts();
 		log.endEventSeriesItem("popRefCount");
 		
 		log.startEventSeriesItem("poprc");
-		populateRowCount();
+			populateRowCount();
 		log.endEventSeriesItem("poprc");
 		
 		log.startEventSeriesItem("calcFKLabel");
-		calculateForeignKeyLabel();
+			calculateForeignKeyLabel();
 		log.endEventSeriesItem("calcFKLabel");
 		
 		
@@ -286,6 +288,9 @@ component accessors="true" extends="dbItem"
 				var ref = New reference();
 				ref.setForeignKeyTable(foreignkeys.fktable_name[i]);
 				ref.setForeignKey(foreignkeys.fkcolumn_name[i]);
+				ref.setIncludeInEntity(true);
+				ref.setIsJoinTable(false);
+				ref.setOtherTable("");
 				arrayAppend(refArray, ref);
 			}
 			This.setReferences(refArray);

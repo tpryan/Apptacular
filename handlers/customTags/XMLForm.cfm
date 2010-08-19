@@ -15,13 +15,16 @@
 	<cfset message = attributes.message />
 	<cfset tooltips = generateToolTips(attributes.cfcreference) />
 	
-	<cfif structKeyExists(form, "submit")>
+	<cfif structKeyExists(form, "submit") and not FindNoCase("references", form.submit)>
 	
 		<cfset XMLInfo = Duplicate(form) />
 		<cfset fileToEdit = XMLInfo.filetoedit />
 		<cfset structDelete(XMLInfo, "filetoedit") />
 		<cfset structDelete(XMLInfo, "fieldnames") />
 		<cfset structDelete(XMLInfo, "submit") />
+		<cfset structDelete(XMLInfo, "_CF_CONTAINERID") />
+		<cfset structDelete(XMLInfo, "_CF_NOCACHE") />
+		<cfset structDelete(XMLInfo, "_CF_NODEBUG") />
 		
 		<cfset XML = XMLParse(FileRead(fileToEdit)) />
 		<cfset XMLRoot = StructKeyArray(XML)[1] />
@@ -51,10 +54,11 @@
 	<cfoutput>
 		<h1>Edit #XMLRoot#</h1>
 		<p class="helplink"><a href="../doc/fields.cfm?item=#XMLRoot#">#CapFirst(XMLRoot)# Reference</a></p>
+		<br />
 		<cfif len(message)>
 			<p class="alert">#message#</p>
 		</cfif>
-		<cfform action="" method="post">
+		<form action="" method="post" target="_top">
 			<input type="hidden" name="fileToEdit" value="#fileToEdit#" /> 	
 			<table>
 			
@@ -79,7 +83,7 @@
 					<tr>	
 						<th><label for="#key#">#helper.getDisplayName(key)#</label></th>
 						<td>
-							<cftextarea name="#key#" >#XML[XMLRoot][key]['XMLText']#</cftextarea>
+							<textarea name="#key#" >#XML[XMLRoot][key]['XMLText']#</textarea>
 						</td>			
 					</tr>	
 				<cfelse>
@@ -92,7 +96,7 @@
 					<tr>	
 						<th><label for="#key#">#helper.getDisplayName(key)#</label></th>
 						<td>
-							<cfinput name="#key#" type="text" id="#key#" value="#setting#" />
+							<input name="#key#" type="text" id="#key#" value="#setting#" />
 						</td>			
 					</tr>
 				</cfif>
@@ -101,11 +105,11 @@
 			</cfloop>
 				<tr>
 					<th />
-					<td><input type="submit" name="submit" value="Save" />
+					<cfoutput><td><input type="submit" name="submit" value="Save #XMLRoot#" /></cfoutput>
 				</tr>
 			</table>
 			
-		</cfform>
+		</form>
 	
     </cfoutput>
 

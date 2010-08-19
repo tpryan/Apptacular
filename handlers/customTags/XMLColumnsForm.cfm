@@ -22,6 +22,9 @@
 		formInfo = duplicate(form);
 		structDelete(formInfo, "submitcolumns");
 		structDelete(formInfo, "fieldnames");
+		structDelete(formInfo, "_CF_CONTAINERID");
+		structDelete(formInfo, "_CF_NOCACHE");
+		structDelete(formInfo, "_CF_NODEBUG");
 
 		updateStruct = structNew();
 		formKeys = structKeyArray(formInfo);
@@ -84,7 +87,8 @@
 		SELECT 	*
 		FROM 	files
 		WHERE	name != '_table.xml'
-		AND		name not like  'vc_%'
+		AND		name not like 'vc_%'
+		AND 	name not like 'ref_%'
 	</cfquery>
 	
 	
@@ -95,12 +99,12 @@
 	</cfscript>
 	
 	<h2>Edit Columns</h2>
-	<p class="helplink"><a href="../doc/fields.cfm?item=column">Column Reference</a></p>
+	<p class="helplink"><a href="../doc/fields.cfm?item=column">Column Reference</a></p><br />
 		<cfif len(message)>
 			<cfoutput><p class="alert">#message#</p></cfoutput>
 		</cfif>
 	<table id="columns">
-	<cfform format="html" action="?path=#path#" method="post">
+	<cfform format="html" action="?path=#path#&amp;tab=columns" method="post">
 		<cfoutput>
 			<tr>
 				<cfloop list="#columns.columnList#" index="attribute">
@@ -150,7 +154,7 @@
         </cfoutput>
 
 
-	   <tr><td><input type="submit" name="submitcolumns" value="Save" /></td></tr> 
+	   <tr><td><input type="submit" name="submitcolumns" value="Save Columns" /></td></tr> 
 	</cfform>
 	</table>
 
@@ -183,7 +187,8 @@
 		var queryString = "	SELECT  *  
                           	FROM  	resultSet
 							WHERE 	name != '_table.xml'
-							AND		name not like  'vc_%'"; 
+							AND		name not like  'vc_%'
+							AND 	name not like 'ref_%'"; 
 		qoq.setAttributes(resultSet = files);  
 		qoq.SetDBType("query"); 
 		var columns = qoq.execute(sql=queryString).getResult(); 
@@ -198,7 +203,13 @@
 			
 			for (j = 1; j <= ArrayLen(props); j++){
 				if(ListFindNoCase(arguments.allowedColumns, props[j])){
+					try{
 					QuerySetCell(result, props[j], XMLProps.column[props[j]].XMLText);
+					}
+					catch (any e){
+						writeDump(filePath,"console");
+						rethrow;
+					}
 				}
 			}
 			
