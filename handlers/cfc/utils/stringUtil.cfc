@@ -75,6 +75,26 @@ component{
 	
 	}
 
+	public string function CapFirst(required string str){
+		var newstr = "";
+	    var word = "";
+	    var separator = " ";
+		var i = 0;
+    	var wordArray = listToArray(arguments.str, separator);
 	
+	
+		for (i = 1; i <= ArrayLen(wordArray); i++){
+			var word = wordArray[i]; 
+			
+			newstr = UCase(left(word,1));
+	        if (len(word) gt 1){
+	            newstr = newstr & right(word,len(word)-1);
+	        }
+			wordArray[i] = newstr;
+	        
+	    }
+
+    	return ArrayToList(wordArray, separator);
+	}
 
 }

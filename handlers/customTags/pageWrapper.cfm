@@ -30,7 +30,7 @@
 		background-image: url(<cfoutput>#bgcsspath#</cfoutput>);
 		background-repeat: repeat-x;
 		background-position-y: -100px;
-		
+		font-size: 90%;
 		margin: 0;
 		color: #FFFFFF;
 		
@@ -156,11 +156,37 @@
 	.x-panel-header{
 		font-family: "Adobe Clean", "Myriad Pro", Calibri, Tahoma, Arial, Helvetica, sans-serif;
 		color: #2A587A;
+		font-size: 100%;
+		
+		
 	}
 	
 	.breadcrumb .nav{
 		font-weight: bold;
 	}
+	
+	th{
+		padding: 1px 5px 3px 5px;
+		border-bottom: 1px dotted #cccccc;
+	}
+	
+	table.config th{
+		width: 250px;
+	}
+	
+	td{
+		padding: 1px 5px 3px 5px;
+		border-bottom: 1px dotted #cccccc;
+		
+	}
+	tr{
+		
+	}
+	table{
+		border-top: 1px dotted #cccccc;
+		width: 100%;
+	}
+	
 	
 	
 </style>

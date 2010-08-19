@@ -1,4 +1,3 @@
-
 <cf_pageWrapper>
 <cfoutput>
 <h1>About Apptacular</h1>

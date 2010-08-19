@@ -12,6 +12,8 @@
 		<cfset helper = attributes.helper />
 	</cfif>
 	
+	<cfset stringUtil = new apptacular.handlers.cfc.utils.stringUtil() />
+	
 	<cfset message = attributes.message />
 	<cfset tooltips = generateToolTips(attributes.cfcreference) />
 	
@@ -53,7 +55,7 @@
 	
 	<cfoutput>
 		<h1>Edit #XMLRoot#</h1>
-		<p class="helplink"><a href="../doc/fields.cfm?item=#XMLRoot#">#CapFirst(XMLRoot)# Reference</a></p>
+		<p class="helplink"><a href="../doc/fields.cfm?item=#XMLRoot#">#stringUtil.CapFirst(XMLRoot)# Reference</a></p>
 		<br />
 		<cfif len(message)>
 			<p class="alert">#message#</p>
@@ -148,30 +150,3 @@
 	}
 </cfscript>
 
-<!---
-Capitalizes the first letter in each word.
-Made udf use strlen, rkc 3/12/02
-v2 by Sean Corfield.
-
-@param string      String to be modified. (Required)
-@return Returns a string. 
-@author Raymond Camden (ray@camdenfamily.com) 
-@version 2, March 9, 2007 
---->
-<cffunction name="CapFirst" returntype="string" output="false">
-    <cfargument name="str" type="string" required="true" />
-    
-    <cfset var newstr = "" />
-    <cfset var word = "" />
-    <cfset var separator = "" />
-    
-    <cfloop index="word" list="#arguments.str#" delimiters=" ">
-        <cfset newstr = newstr & separator & UCase(left(word,1)) />
-        <cfif len(word) gt 1>
-            <cfset newstr = newstr & right(word,len(word)-1) />
-        </cfif>
-        <cfset separator = " " />
-    </cfloop>
-
-    <cfreturn newstr />
-</cffunction>

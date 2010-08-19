@@ -5,5 +5,5 @@
 
 
 <cf_pageWrapper>
-	<cf_XMLForm fileToEdit="#configPath#" message="" helper="#docHelper#" cfcreference="apptacular.handlers.cfc.generators.cfapp.config" />
+	<cf_XMLConfigForm fileToEdit="#configPath#" message="" helper="#docHelper#" cfcreference="apptacular.handlers.cfc.generators.cfapp.config" />
 </cf_pageWrapper>

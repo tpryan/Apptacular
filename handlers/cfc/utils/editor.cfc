@@ -25,9 +25,9 @@ component accessors="true"{
 		allowed['datasource'] = "displayName,prefix";
 		allowed['table'] = "entityName,displayName,displayPlural,ForeignKeyLabel,orderby,plural,createInterface,IsJoinTable";
 		allowed['column'] = "name,column,displayName,uiType,includeInEntity";
-		allowed['config'] = "LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,";
+		allowed['config'] = "<Application Basics>,LockApplication,CreateAppCFC,CreateEntities,CreateViews,CreateServices,CreateLogin,OverwriteDataModel,";
 		allowed['config'] = allowed['config'] & "<Path Information>,rootCFCPath,rootFilePath,cssfolder,customTagFolder,entityFolder,serviceFolder,appFolder,";
-		allowed['config'] = allowed['config'] & "<Service Methods>,serviceGetMethod,serviceUpdateMethod,serviceDeleteMethod,serviceListMethod,serviceListPagedMethod,serviceSearchMethod,serviceSearchPagedMethod,serviceInitMethod,serviceCountMethod";
+		allowed['config'] = allowed['config'] & "<Service Methods>,serviceGetMethod,serviceUpdateMethod,serviceDeleteMethod,serviceListMethod,serviceListPagedMethod,serviceSearchMethod,serviceSearchPagedMethod,serviceInitMethod,serviceCountMethod,";
 		allowed['config'] = allowed['config'] & "<Misc>,serviceAccess,ReturnQueriesFromService,CFCFormat,WireOneToManyinViews,LogSQL,depluralize,MakeSuperSerivces,MakeSuperEntities,<Formats>,dateformat,timeformat,";
 		
 		allowed['config'] = allowed['config'] & "<Magic Fields>,createdOnString,updatedOnString,";
