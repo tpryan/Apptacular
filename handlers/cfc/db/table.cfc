@@ -121,7 +121,7 @@ component accessors="true" extends="dbItem"
 	 * @hint Add a jointable relationship
 	 */	
 	public void function addJoinTable(required string joinTable){
-		var joinTables = This.getJoinTables();
+		var joinTablesArray = This.getJoinTables();
 		
 		if (ArrayFind(joinTables,arguments.joinTable) eq 0){
 			ArrayAppend(joinTables, arguments.joinTable);
@@ -206,6 +206,20 @@ component accessors="true" extends="dbItem"
 		}
 		
 	}
+	
+	public array function getJoinTablesRefs(){
+		var refs =  this.getReferences();
+		var results = [];
+		var i = 0;
+		
+		for (i = 1; i <= ArrayLen(refs); i++){
+			if (refs[i].getIsJoinTable()){
+				ArrayAppend(results, refs[i]);
+			}
+		}
+		return results;
+	}
+	
 	
 	/**
 	 * @hint Gets the other table in a many to many join. 

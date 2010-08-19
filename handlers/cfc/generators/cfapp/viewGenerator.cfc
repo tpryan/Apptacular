@@ -125,7 +125,7 @@ component extends="codeGenerator"{
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
 			
-				if (not otherJoinTable.getcreateInterface()){
+				if (not otherJoinTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
 			
@@ -235,7 +235,7 @@ component extends="codeGenerator"{
 				var joinTable = dataSource.getTable(joinTables[i]);
 				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));	
 				
-				if (not otherJoinTable.getcreateInterface()){
+				if (not otherJoinTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
 					
@@ -409,12 +409,13 @@ component extends="codeGenerator"{
 		}
 		
 		if (table.getHasJoinTable()){
-			var joinTables = table.getJoinTables();
-			for (i = 1; i <= ArrayLen(joinTables); i++){
-				var joinTable = dataSource.getTable(joinTables[i]);
-				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			var refs = table.getJoinTablesRefs();
+			for (i = 1; i <= ArrayLen(refs); i++){
+				var ref = refs[i];
+				var joinTable = dataSource.getTable(ref.getForeignKeyTable());
+				var otherJoinTable = datasource.getTable(ref.getOtherTable());		
 			
-				if (not otherJoinTable.getcreateInterface()){
+				if (not otherJoinTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
 			
@@ -669,24 +670,25 @@ component extends="codeGenerator"{
 		}
 		
 		
-		
 		//Wire up many to many relationships
 		if (table.getHasJoinTable()){
-			var joinTables = table.getJoinTables();
-			for (i = 1; i <= ArrayLen(joinTables); i++){
-				var joinTable = dataSource.getTable(joinTables[i]);
-				var otherJoinTable = datasource.getTable(joinTable.getOtherJoinTable(table.getName()));		
+			var refs = table.getJoinTablesRefs();
+			for (i = 1; i <= ArrayLen(refs); i++){
+				var ref = refs[i];
+				var joinTable = dataSource.getTable(ref.getForeignKeyTable());
+				var otherJoinTable = datasource.getTable(ref.getOtherTable());		
 			
-				if (not otherJoinTable.getcreateInterface()){
+				if (not otherJoinTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
-			
+				
 				ct.AppendBody('		<tr>');
 				ct.AppendBody('			<th>#otherJoinTable.getDisplayPlural()#</th>');
 				ct.AppendBody('			<td><cf_manyToManySelector name="#otherJoinTable.getPlural()#" entityname="#otherJoinTable.getEntityName()#" identity="#otherJoinTable.getIdentity()#" foreignKeylabel="#otherJoinTable.getForeignKeyLabel()#" selected="###EntityName#.get#otherJoinTable.getPlural()#()##"  orderby="#otherJoinTable.getOrderby()#"  /></td>');
 				ct.AppendBody('		</tr>');
 			}
 		}
+		
 		
 		ct.AppendBody('		<tr>');
 		ct.AppendBody('			<th />');
