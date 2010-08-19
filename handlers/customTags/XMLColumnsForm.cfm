@@ -104,8 +104,9 @@
 			<cfoutput><p class="alert">#message#</p></cfoutput>
 		</cfif>
 	<table id="columns">
-	<cfform format="html" action="?path=#path#&amp;tab=columns" method="post">
-		<cfoutput>
+	<cfoutput>
+	<form action="?path=#path#&amp;tab=columns" method="post">
+		
 			<tr>
 				<cfloop list="#columns.columnList#" index="attribute">
 					<th>#attribute#</th>
@@ -155,7 +156,7 @@
 
 
 	   <tr><td><input type="submit" name="submitcolumns" value="Save Columns" /></td></tr> 
-	</cfform>
+	</form>
 	</table>
 
 

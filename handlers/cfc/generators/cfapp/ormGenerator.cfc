@@ -217,7 +217,7 @@ component extends="codeGenerator"{
 				else{
 				
 					//Don't wire up many to many's if the far table is set not to be wired up
-					if (not foreignTable.getcreateInterface()){
+					if (not foreignTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 						continue;
 					}
 				

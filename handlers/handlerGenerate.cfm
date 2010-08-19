@@ -1,10 +1,6 @@
 <cfsetting showdebugoutput="false" />
 
 
-<cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sample.xml')#" variable="form.ideeventInfo" />
-</cfif>
-
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 
 <cfscript>

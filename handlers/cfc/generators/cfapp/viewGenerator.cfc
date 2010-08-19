@@ -102,7 +102,7 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 
-				if (not foreignTable.getcreateInterface()){
+				if (not foreignTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
 	
@@ -212,7 +212,7 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
-				if (not foreignTable.getcreateInterface()){
+				if (not foreignTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
 				
@@ -788,7 +788,7 @@ component extends="codeGenerator"{
 				var ref = references[j];
 				var foreignTable = datasource.getTable(ref.getForeignKeyTable());
 				
-				if (not foreignTable.getcreateInterface()){
+				if (not foreignTable.getcreateInterface() OR not ref.getIncludeInEntity()){
 					continue;
 				}
 				

@@ -167,23 +167,18 @@
 	
 	th{
 		padding: 1px 5px 3px 5px;
-		border-bottom: 1px dotted #cccccc;
+		
 	}
 	
 	table.config th{
 		width: 250px;
 	}
 	
-	td{
+	table.config td{
 		padding: 1px 5px 3px 5px;
-		border-bottom: 1px dotted #cccccc;
 		
 	}
-	tr{
-		
-	}
-	table{
-		border-top: 1px dotted #cccccc;
+	table.config{
 		width: 100%;
 	}
 	
