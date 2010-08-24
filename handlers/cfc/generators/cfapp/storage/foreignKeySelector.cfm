@@ -16,21 +16,20 @@
 <cfset orderby = attributes.orderby />
 
 <cfif thisTag.executionMode is "start">
-
-	<cfset Entities = EntityLoad(entityName,{}, orderby) />
 	
+	<cfset HQL = "SELECT #identity#, #foreignKeylabel# FROM #entityName# ORDER BY #orderby#" />
+	<cfset entityArray = ormExecuteQuery(HQL) />
 	
 	<cfoutput>
 	<select name="#name#" id="#name#">
 		<cfif not attributes.required><option></option></cfif>
-		<cfloop array="#entities#" index="entity">
-			<cfinvoke component="#entity#" method="get#identity#" returnvariable="id" />
-			<cfinvoke component="#entity#" method="get#foreignKeylabel#" returnvariable="fklabel" />
+		<cfloop array="#entityArray#" index="item">
+			<cfset id = item[1] />
+			<cfset fklabel = item[2] />
 			<option value="#id#"<cfif id eq fieldValue> selected="selected"</cfif>>#fklabel#</option>
 		</cfloop>
 	</select>
 	</cfoutput>
-	
 
 <cfelse>
 </cfif>
