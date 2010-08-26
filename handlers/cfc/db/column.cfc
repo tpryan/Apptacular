@@ -36,4 +36,5 @@ component accessors="true" extends="dbItem"
 		return (CompareNoCase(This.getName(), This.getColumn()) eq 0);	
 	}
 
+
 }

@@ -20,6 +20,8 @@ component accessors="true" extends="dbItem"
 	property name="createInterface" displayname="Should this table get wired up?" type="boolean" hint="Whether or not this table should have interfaces built for it. ";  
 	property name="schema" displayname="Schema" hint="The schema that contains the table."; 
 	property name="prefix" displayname="Prefix" hint="An prefix on this table in the database.";
+	property name="isAutoIncrementing" type="boolean" hint="Is incrementing the uniquekey handled by the database.";
+	
 	
 	property name="columns" type="column[]" hint="An array of all of the columns in the table.";
 	property name="columnsStruct" type="struct" hint="An struct of all of the columns in the table.";
@@ -777,11 +779,94 @@ component accessors="true" extends="dbItem"
 		This.setForeignTables(structNew());
 		This.setreferenceCounts(structNew());
 		This.setCreateInterface(TRUE);
+		
+		This.determineAutoInc();
 	}
 	
 	
+	public void function determineAutoInc(){
+		var isAutoInc = false;
+		
+		if (FindNoCase("Microsoft",variables.Engine)){
+			isAutoInc  = determineAutoIncMSSQL();
+		}
+		else if (FindNoCase("mysql",variables.Engine)){
+			isAutoInc  = determineAutoIncMySQL();
+		}
+		else if (FindNoCase("derby",variables.Engine)){
+			isAutoInc  = determineAutoIncDerby();
+		}
+		
+		This.setIsAutoIncrementing(isAutoInc);
+		
+	}
+	
+	private boolean function determineAutoIncMySQL(){
+		var q = new Query();
+		q.setDatasource(variables.datasource);
+		q.setSQL("SHOW TABLE STATUS");
+		var result = q.execute().getResult(); 
 	
 	
+		var qoq = new Query(); 
+		var queryString = "	SELECT  	Auto_Increment 
+	                      	FROM  		resultSet
+							WHERE 		name = '#This.getName()#'"; 
+		qoq.setAttributes(resultSet = result);  
+		qoq.SetDBType("query");
+		qoq.setSQL(queryString); 
+		var autoInc = qoq.execute().getResult().Auto_Increment; 
+	
+		if (IsNull(autoInc) or len(autoInc) < 1){
+			return false;
+		}
+		else{
+			return true;
+		}
+		
+	}
+	
+	private boolean function determineAutoIncMSSQL(){
+		var id = New storedProc();
+		id.setProcedure("sp_help");
+		id.addParam(cfsqltype="cf_sql_varchar", type="in",value="#variables.fullyQualifiedTableName#");
+		id.setDataSource(variables.datasource);
+		id.addProcResult(name="identity",resultset=3);   
+	
+	
+		var idInfo = id.execute().getprocResultSets().identity.identity;
+		
+	
+		if (FindNoCase("No identity column defined", idInfo)){
+			return false;
+		}
+		else{
+			return true;
+		}
+		
+	}
+	
+	private boolean function determineAutoIncDerby(){
+		var q = new Query();
+		q.setDatasource(variables.datasource);
+		q.setSQL("	SELECT c.AUTOINCREMENTINC
+					FROM SYS.SYSCOLUMNS c
+					INNER JOIN  SYS.SYSTABLES t
+					ON c.REFERENCEID = t.TABLEID
+					WHERE t.TABLENAME = '#This.getName()#'
+					AND c.AUTOINCREMENTINC is not null");
+		var result = q.execute().getResult(); 
+	
+	
+	
+		if (result.recordCount < 1){
+			return false;
+		}
+		else{
+			return true;
+		}
+		
+	}
 	
 	
 	
