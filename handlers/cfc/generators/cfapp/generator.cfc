@@ -180,6 +180,7 @@ component{
 					
 					if (config.getMakeSuperSerivces()){
 						var ORMEditableServiceCFC = serviceGenerator.createORMEditableServiceCFC(table);
+						ORMEditableServiceCFC.setName(table.getEntityName() & "Service");
 						ORMServiceCFC.setName("_" & table.getEntityName() & "SuperService");
 						ORMEditableServiceCFC.setExtends("_" & table.getEntityName() & "SuperService");
 						ArrayAppend(files, ORMEditableServiceCFC);
