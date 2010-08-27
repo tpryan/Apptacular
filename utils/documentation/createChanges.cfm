@@ -1,5 +1,5 @@
 <cfscript>
-	gitdir = ExpandPath("../");
+	gitdir = ExpandPath("../../");
 	gitpath = "/usr/local/git/bin/git";
 	prettyFormat = "$%an%n%ad%n%s%n^";
 	arguments = "--no-pager --git-dir=#gitdir#.git log --stat --pretty=#prettyFormat# --date-order --name-only";
