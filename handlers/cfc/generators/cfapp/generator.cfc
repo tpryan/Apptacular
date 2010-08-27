@@ -99,6 +99,16 @@ component{
 			variables.log.startEvent("auth", "Authentication Files");
 		
 			var authCFC = serviceGenerator.createAuthenticationService();
+			
+			if (config.getMakeSuperSerivces()){
+				var AuthEditableServiceCFC = serviceGenerator.createEditableServiceCFC("authentication");
+				AuthEditableServiceCFC.setName("authenticationService");
+				authCFC.setName("_authenticationSuperService");
+				AuthEditableServiceCFC.setExtends("_authenticationSuperService");
+				ArrayAppend(files, AuthEditableServiceCFC);
+			}
+			
+			
 			ArrayAppend(files, authCFC);
 			
 			variables.log.endEvent("auth");
@@ -179,7 +189,7 @@ component{
 					var ORMServiceCFC = serviceGenerator.createORMServiceCFC(table);
 					
 					if (config.getMakeSuperSerivces()){
-						var ORMEditableServiceCFC = serviceGenerator.createORMEditableServiceCFC(table);
+						var ORMEditableServiceCFC = serviceGenerator.createEditableServiceCFC(table.getEntityName());
 						ORMEditableServiceCFC.setName(table.getEntityName() & "Service");
 						ORMServiceCFC.setName("_" & table.getEntityName() & "SuperService");
 						ORMEditableServiceCFC.setExtends("_" & table.getEntityName() & "SuperService");

@@ -54,12 +54,11 @@ component  extends="codeGenerator"
 	/**
 	* @hint Spins through all of the tables in the database and creates a service cfc for it. 
 	*/
-	public apptacular.handlers.cfc.code.cfc function createORMEditableServiceCFC(required any table){
+	public apptacular.handlers.cfc.code.cfc function createEditableServiceCFC(required string name){
 		var i=0;
-		var EntityName = table.getEntityName();
 	    
 	    var cfc  = New apptacular.handlers.cfc.code.cfc();
-	    cfc.setName(EntityName & "Service");
+	    cfc.setName(arguments.name & "Service");
 	    cfc.setFileLocation(config.getServiceFilePath());
 		cfc.setFormat(variables.config.getCFCFormat());
 		cfc.setOverwriteable(false);
