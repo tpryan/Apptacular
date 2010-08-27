@@ -89,8 +89,16 @@ component extends="codeGenerator"{
 			//If it is an identity. 
 	       	if (column.getIsPrimaryKey() or FindNoCase("Identity", column.getDataType())){
 	       		property.setFieldtype('id');
-	       		property.setGenerator('native');
-	       	}
+	       		
+				if (table.getisAutoIncrementing()){
+					property.setGenerator('native');
+				}
+				else{
+					property.setGenerator('assigned');
+				}
+	       	
+			
+			}
 			
 			//if it is a many to one based on fkeys	
 	       	else if (column.getisForeignKey() AND not column.getIsMemeberOfCompositeForeignKey()){
@@ -355,7 +363,18 @@ component extends="codeGenerator"{
 			
 			if(column.getIsPrimaryKey()){
 				populate.StartSimpleIF('StructKeyExists(arguments.formstruct, "#column.getName()#") AND arguments.formstruct.#column.getName()# gt 0',2);
-				populate.AddSimpleSet('This = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true)',3);
+				populate.AddLineBreak();
+				populate.AddSimpleSet('var item = EntityLoad("#table.getEntityName()#", arguments.formstruct.#column.getName()#, true)',3);
+				populate.AddLineBreak();
+				
+				populate.StartSimpleIF('not isNull(item)',3);
+				
+				populate.AddSimpleSet('This = item',4);
+				populate.EndSimpleIF(3,true);
+				populate.StartSimpleElse(3);
+				populate.AddSimpleSet('This.set#column.getName()#(arguments.formstruct.#column.getName()#)',4);
+				populate.EndSimpleIF(3);
+				
 				populate.EndSimpleIF(2);
 				populate.AddLineBreak();
 	    	}

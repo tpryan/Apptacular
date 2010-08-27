@@ -533,8 +533,11 @@ component extends="codeGenerator"{
 			}			
 			
 			// if a primary key make it a hidden field.	
-	 		if (column.getIsPrimaryKey()){
-	 			ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
+	 		if (column.getIsPrimaryKey() AND table.getIsAutoIncrementing()){
+				ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
+	 		}
+			else if (column.getIsPrimaryKey() AND column.getisForeignKey()){
+				ct.AppendBody('			<input name="#columnName#" type="hidden" value="###EntityName#.get#columnName#()##" />');
 	 		}
 			
 			// if it is a foriegn key, and there are few of them, we're wiring them up as many to ones
