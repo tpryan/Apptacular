@@ -1011,6 +1011,7 @@ component extends="codeGenerator"{
 	    
 		var path = variables.config.getCustomTagFilePath();
 		var csspath = variables.config.getCSSRelativePath();
+		var cssFile = variables.config.getCSSFileName();
 	    var wrapper  =  New apptacular.handlers.cfc.code.CFPage("pageWrapper", path);
 	    
 	    wrapper.AppendBody('<cfprocessingdirective suppresswhitespace="yes">');
@@ -1019,7 +1020,7 @@ component extends="codeGenerator"{
 		wrapper.AppendBody('<html xmlns="http://www.w3.org/1999/xhtml">');
 		wrapper.AppendBody('<head>');
 		wrapper.AppendBody('<cfoutput><title>#datasource.getDisplayName()#</title></cfoutput>');
-		wrapper.AppendBody('<link rel="stylesheet" href="#csspath#/screen.css" type="text/css" media="screen"/>');
+		wrapper.AppendBody('<link rel="stylesheet" href="#csspath#/#cssFile#" type="text/css" media="screen"/>');
 		wrapper.AppendBody('</head>');
 		wrapper.AppendBody('<body>');
 		wrapper.AppendBody('<h1>#variables.datasource.getDisplayName()#</h1>');

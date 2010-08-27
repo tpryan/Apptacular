@@ -78,6 +78,8 @@ component accessors="true"{
 	property name="serviceCountMethod" displayName="Count method name"  type="string" hint="The name of the method in a serivice that returns a count of records in the underlying table.";
 	property name="ServiceSearchCountMethod" displayName="Search Count method name"  type="string" hint="The name of the method in a service that returns the count of records in a search result.";
 	
+	property name="CSSFileName" displayname="CSS File Name" type="string" hint="The name of the CSS file to use. Helpful to replace Apptacular regenerated CSS with your own.";
+	
 	/**
 	* @hint The init that fires up all of this stuff. 
 	*/
@@ -135,6 +137,7 @@ component accessors="true"{
 		This.setDepluralize(false);
 		This.setDateFormat("mm/dd/yyyy");
 		This.setTimeFormat("h:mm tt");
+		This.setCSSFileName("screen.css");
 	
 		This.setServiceDeleteMethod("destroy");
 		This.setServiceGetMethod("get");
