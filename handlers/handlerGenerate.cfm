@@ -1,10 +1,8 @@
 <cfsetting showdebugoutput="false" />
 
-
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 
 <cfscript>
-	
 	
 	//Instantiate a bunch of utily objects.
 	utils = New cfc.utils.utils();
@@ -134,6 +132,8 @@
 	//process DB version of schema
 	db = New cfc.db.datasource(dsName, stringUtils, log, reservedWordHelper);
 	
+	
+	
 	//process config default 
 	config = New cfc.generators.cfapp.Config(appRoot, appCFCPath);
 	
@@ -167,7 +167,11 @@
 	if (config.getOverwriteDataModel()){
 		datamodel= dbConfig.overwriteConfig(db);
 		datamodel.dePrefixTables();
+		
+
 		datamodel.checkForJoinTables();
+		
+			
 		
 		if (config.getDepluralize()){
 			datamodel.depluralize();
@@ -187,6 +191,15 @@
 		messagesURL = baseURL & messagesPath & messagesOptions;
 	}
 	else{
+		relativePath = "/" & replace(rootFilePath, expandPath('/'), "","one");
+		
+		//Adding a pre load event for scripting events before apptacular runs
+		if (FileExists(rootFilePath & "/.apptacular/pre.cfm")){
+			log.startEvent("preload", "Apptacular Preloader Launched");
+				include "#relativePath#/.apptacular/pre.cfm";
+			log.endEvent("preload");
+		}
+	
 		ormGenerator = new cfc.generators.cfapp.ormGenerator(datamodel, config);
 		viewGenerator = new cfc.generators.cfapp.viewGenerator(datamodel, config);
 		serviceGenerator = new cfc.generators.cfapp.serviceGenerator(datamodel, config);
@@ -201,13 +214,30 @@
 		generator.writeFiles();
 		log.endEvent("filewrite");
 		
+		//Adding a post load event for scripting events before apptacular runs
+		if (FileExists(rootFilePath & "/.apptacular/post.cfm")){
+		
+			log.startEvent("postload", "Apptacular Postloader Launched");
+				include "#relativePath#/.apptacular/post.cfm";
+			log.endEvent("postload");	
+		}
+		
+		
 		log.endEvent("app");
 		log.logTimes();
 		TickCount = log.getEvent("app").totalTime;
 		
+		
+		
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
 		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";
 		messagesURL = baseURL  & messagesPath & messagesOptions;
+		
+		
+		
+		
+		
+		
 	}
 </cfscript>
 

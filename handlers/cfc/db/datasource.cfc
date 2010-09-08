@@ -142,6 +142,7 @@ component accessors="true" extends="dbItem"
 		var j = 0;
 		var tablesArray = This.getTables();
 		var tablesStruct = This.getTablesStruct();
+		var alteredTableArray = [];
 	
 		//check for join tables.
 		var tablesStructKeys = StructKeyArray(tablesStruct);
@@ -165,10 +166,10 @@ component accessors="true" extends="dbItem"
 		
 		// poppulate array
 		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
-			ArrayAppend(tablesArray, tablesStruct[tablesStructKeys[i]]);
+			ArrayAppend(alteredTableArray, tablesStruct[tablesStructKeys[i]]);
 		}
 		
-		This.setTables(tablesArray);
+		This.setTables(alteredTableArray);
 		This.setTablesStruct(tablesStruct);
 	
 	}

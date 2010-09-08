@@ -95,6 +95,13 @@
 			var table = tables[i];
 			var tableName = table.getName();
 			var tableCSPath = DSCSPath & "/" & tableName;
+
+			//short circuit if the table or config doesn't exist
+			if (not structKeyExists(checksums, tableCSPath)){
+				tableStruct[tableName] = table;
+				continue;
+			}
+			
 			var configCS = checksums[tableCSPath]['checksum'];
 			var dbCS = table.getChecksum();
 			
@@ -109,10 +116,19 @@
 			var columnsStruct = StructNew();
 			var columns = table.getColumns();
 			
+			
 			for (j=1; j <= arraylen(columns); j++){
 				var column = columns[j];
 				var columnName = column.getName();
 				var columnCSPath = DSCSPath & "/" & tableName & "/" & columnName;
+				
+				
+				//short circuit if the table or config doesn't exist
+				if (not structKeyExists(checksums, columnCSPath)){
+					columnsStruct[columnName] = column;
+					continue;
+				}
+				
 				
 				if (structKeyExists(checksums, columnCSPath) AND FileExists(checksums[columnCSPath]['filePath'])){
 					var configCS = checksums[columnCSPath]['checksum'];
@@ -124,7 +140,6 @@
 				}
 				
 				StructDelete(checksums, columnCSPath);
-				ArrayAppend(columnsArray, column);
 				columnsStruct[columnName] = column;
 			}
 			
@@ -152,8 +167,14 @@
 				
 			}
 			
+			var AlteredColumns = [];
 			
-			table.setColumns(columnsArray);
+			
+			for (j=1; j <= ArrayLen(columns); j++){
+				ArrayAppend(AlteredColumns, columnsStruct[columns[j].getName()]);
+			}
+			
+			table.setColumns(AlteredColumns);
 			table.setColumnsStruct(columnsStruct);
 			table.setReferences(refArray);
 						
@@ -193,6 +214,7 @@
 		for (i=1; i <= ArrayLen(tablesStructKeys); i++){
 			ArrayAppend(tablesArray, tableStruct[tablesStructKeys[i]]);
 		}
+		
 		newDataSource.setTables(tablesArray);
 		newDataSource.setTablesStruct(tableStruct);
 		
