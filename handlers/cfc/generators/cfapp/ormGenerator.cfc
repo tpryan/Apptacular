@@ -587,6 +587,8 @@ component extends="codeGenerator"{
 	    appCFC.addApplicationProperty('datasource', dbname) ;
 	    appCFC.addApplicationProperty('customTagPaths', 'GetDirectoryFromPath(GetCurrentTemplatePath()) & "customtags"', false) ;
 		appCFC.addApplicationProperty('ormsettings.eventHandler', "#config.getEntityCFCPath()#.eventHandler") ;
+		appCFC.addApplicationProperty('ormsettings.dbcreate', "#config.getDbcreate()#") ;
+		
 		if (config.getLogSQL()){
 			appCFC.addApplicationProperty('ormsettings.logSQL', true) ;
 		}

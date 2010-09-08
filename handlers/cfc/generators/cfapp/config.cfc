@@ -78,6 +78,9 @@ component accessors="true"{
 	property name="serviceCountMethod" displayName="Count method name"  type="string" hint="The name of the method in a serivice that returns a count of records in the underlying table.";
 	property name="ServiceSearchCountMethod" displayName="Search Count method name"  type="string" hint="The name of the method in a service that returns the count of records in a search result.";
 	
+	property name="DBCreate" displayName="Ormsettings DBCreate"  type="string" hint="How should ORM react to new CFC's, should it create new tables, or ignore them. Valid options: none, update (apptacular default), dropcreate";
+	
+	
 	property name="CSSFileName" displayname="CSS File Name" type="string" hint="The name of the CSS file to use. Helpful to replace Apptacular regenerated CSS with your own.";
 	
 	/**
@@ -152,6 +155,7 @@ component accessors="true"{
 		This.setReturnQueriesFromService("false");			
 		This.setMakeSuperSerivces("false");
 		This.setMakeSuperEntities("false");
+		This.setDBCreate("update");
 	}
 	
 	/**
