@@ -295,6 +295,7 @@ component extends="codeGenerator"{
 			vcGetter.setName("get" & vc.getName());
 			vcGetter.setAccess("public");
 			vcGetter.setReturnType(vc.getType());
+			vcGetter.setHint("Getter for Virtual Column [#vc.getName()#]");
 			
 			
 			var code = vc.getGetterCode();
@@ -312,11 +313,11 @@ component extends="codeGenerator"{
 			property.setType(vc.getType());
 			property.setPersistent(false);
 			property.setSetter(false);
+			property.setHint("Virtual Column [#vc.getName()#]");
 			cfc.AddProperty(property);
 			
 			//Add initialization to start up for object.
-			init.addOperation('		<cfset variables.#vc.getName()# = This.get#vc.getName()#() />');
-			init.AddOperationScript('		variables.#vc.getName()# = This.get#vc.getName()#();');
+			init.addSimpleSet("variables.#vc.getName()# = This.get#vc.getName()#()", 1);
 			
 		}
 		
