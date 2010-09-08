@@ -174,7 +174,7 @@ component displayname="CFC" extends="CFPage" hint="A cfc representation of a cfc
 		
 		var props = ArrayNew(1);
 		
-		ArrayAppend(props, variables.lineBreak);
+		ArrayAppend(props, "");
 		var i = 0;
 		
 		for (i = 1; i lte ArrayLen(variables.propertyArray); i++){

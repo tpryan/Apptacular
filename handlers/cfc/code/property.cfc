@@ -164,7 +164,7 @@ component accessors="true" {
        	}
 		
 			
-		return ArrayToList(lprops, "");
+		return Trim(ArrayToList(lprops, ""));
 	}
 	
 	
