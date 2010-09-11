@@ -313,7 +313,7 @@ component extends="codeGenerator"{
 			property.setType(vc.getType());
 			property.setPersistent(false);
 			property.setSetter(false);
-			property.setHint("Virtual Column [#vc.getName()#]");
+			property.setHint("Virtual Column");
 			cfc.AddProperty(property);
 			
 			//Add initialization to start up for object.
