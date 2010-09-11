@@ -162,6 +162,9 @@ component accessors="true" {
 		if (len(This.getRemotingFetch())){
        		ArrayAppend(lprops, 'remotingFetch="#This.getRemotingFetch()#" ');
        	}
+		if (len(This.getHint())){
+       		ArrayAppend(lprops, 'hint="#This.getHint()#" ');
+       	}
 		
 			
 		return Trim(ArrayToList(lprops, ""));
