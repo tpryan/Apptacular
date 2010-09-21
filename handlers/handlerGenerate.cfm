@@ -1,5 +1,6 @@
 <cfsetting showdebugoutput="false" />
 
+
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 
 <cfscript>
@@ -165,6 +166,10 @@
 	
 	//Overwrite the datamodel from the xml configs
 	if (config.getOverwriteDataModel()){
+		
+		
+		
+		
 		datamodel= dbConfig.overwriteConfig(db);
 		datamodel.dePrefixTables();
 		
@@ -247,6 +252,7 @@
 <cfthread name="#createUUID()#" action="run">
 	<cfhttp url="#script_Path#" timeout="0" />
 </cfthread>
+
 
 <cf_ideWrapper messageURL="#messagesURL#">
 <commands>

@@ -117,6 +117,7 @@
 			var columns = table.getColumns();
 			
 			
+			
 			for (j=1; j <= arraylen(columns); j++){
 				var column = columns[j];
 				var columnName = column.getName();
@@ -154,10 +155,13 @@
 					var reference = refs[j];
 					var refCSPath = DSCSPath & "/" & tableName & "/ref_" & reference.getforeignKeyTable();
 					
+					
 					if (not structKeyExists(checksums, refCSPath)){
 						ArrayAppend(refArray, reference);
 						continue;
 					}
+					
+					
 					
 					var configCS = checksums[refCSPath]['checksum'];
 					var dbCS = reference.getChecksum();
@@ -166,15 +170,16 @@
 					if (CompareNoCase(configCS, dbCS) neq 0 ){
 						var reference = reWriteObject(reference, checksums[refCSPath]['filePath'], "reference");
 					}
+					StructDelete(checksums, refCSPath);
+					ArrayAppend(refArray, reference);
 				
 				}
-				StructDelete(checksums, refCSPath);
-				ArrayAppend(refArray, reference);
+				
 				
 			}
 			
-			var AlteredColumns = [];
 			
+			var AlteredColumns = [];
 			
 			for (j=1; j <= ArrayLen(columns); j++){
 				ArrayAppend(AlteredColumns, columnsStruct[columns[j].getName()]);
