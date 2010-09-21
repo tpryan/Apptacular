@@ -153,6 +153,12 @@
 				for (j=1; j <= arraylen(refs); j++){
 					var reference = refs[j];
 					var refCSPath = DSCSPath & "/" & tableName & "/ref_" & reference.getforeignKeyTable();
+					
+					if (not structKeyExists(checksums, refCSPath)){
+						ArrayAppend(refArray, reference);
+						continue;
+					}
+					
 					var configCS = checksums[refCSPath]['checksum'];
 					var dbCS = reference.getChecksum();
 				
