@@ -21,7 +21,6 @@ component extends="codeGenerator"{
 		return cfc;
 	}
 
-
 	/**
 	* @hint Contains all the code it takes to generate orm/entity CFCs for every table in the database. 
 	*/
