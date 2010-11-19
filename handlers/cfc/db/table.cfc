@@ -149,9 +149,15 @@ component accessors="true" extends="dbItem"
 		var i  = 0;
 		
 		for (i=1; i <= ArrayLen(columns); i++){
-			if(columns[i].getisPrimaryKey() and not columns[i+1].getisForeignKey()){
-				result = columns[i+1].getName();
-				break;
+			if (ArrayIsDefined(columns, i+1)){
+				if(columns[i].getisPrimaryKey() and not columns[i+1].getisForeignKey()){
+					result = columns[i+1].getName();
+					break;
+				}
+				else{
+					result = columns[i].getName();
+					break;
+				}
 			}
 			else{
 				result = columns[i].getName();
