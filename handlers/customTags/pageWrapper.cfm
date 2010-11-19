@@ -73,6 +73,15 @@
 		color: #000000;
 		
 	}
+	
+	form.menuoption input.submit{
+		display:inline;
+		font-size: 18px;
+	}
+	
+	form.menuoption {
+		display:inline;
+	}
 
 	#prev, #next
 	{ width: 250px;}	
@@ -238,6 +247,32 @@
 </div>
 </cfif>
 <div id="header"></div>
+
+<cfif structKeyExists(url, "ideeventInfo") and (structKeyExists(url, "ideversion") AND url.ideversion gte 2)>
+ 	<form class="menuoption" action="/apptacular/handlers/handlerGenerate.cfm" method="post">
+ 		<cfoutput>
+ 		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
+			<input class="submit" type="submit" name="submit" value="Regenerate Application" />
+ 		</cfoutput>
+		
+ 	</form>
+	<form class="menuoption" action="/apptacular/handlers/handlerEditConfig.cfm" method="post">
+ 		<cfoutput>
+ 		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
+			<input class="submit"  type="submit" name="submit" value="Edit Application Configuration" />
+ 		</cfoutput>
+		
+ 	</form>
+	<form class="menuoption" action="/apptacular/handlers/handlerEditDB.cfm" method="post">
+ 		<cfoutput>
+ 		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
+			<input class="submit"  type="submit" name="submit" value="Edit Database Data Model" />
+ 		</cfoutput>
+		
+ 	</form>
+</cfif>    
+
+
 <div id="content">
 <cfelse>
 </div> <!--- end content --->

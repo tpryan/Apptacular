@@ -17,6 +17,7 @@
 	
 	<cfoutput>
     	<form action="handlerGenerate.cfm" method="post">
+    		<input name="projectname" type="hidden" value="#url.projectname#" />
 			<input name="projectPath" type="hidden" value="#url.rootFilePath#" />
 			<input name="dsName" type="hidden" value="#url.dsName#" />
 			<input name="confirmed" type="hidden" value="true" />

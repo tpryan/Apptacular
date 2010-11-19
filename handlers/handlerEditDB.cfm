@@ -3,7 +3,9 @@
 	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
 </cfif>
 
-
+<cfif left(form.ideeventInfo, 1) neq "<">
+    <cfset form.ideeventInfo = URLDecode(form.ideeventInfo) />
+</cfif>
 
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "editDB/editDatasource.cfm" />
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />
@@ -47,4 +49,4 @@
 	FileWrite(configPath, configXML);
 </cfscript>
 
-<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#" />
+<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#&amp;ideeventInfo=#UrlEncodedFormat(form.ideeventInfo)#" />

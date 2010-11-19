@@ -1,7 +1,10 @@
 <event>
-    <ide>
-        <projectview projectlocation="/Users/terryr/Sites/centaur.dev/max" projectname="maxsms">
-            <resource path="/Users/terryr/Sites/centaur.dev/max" type="project" />
+    <ide version="2.0">
+        <callbackurl>
+            http://10.224.123.168:53795/index.cfm
+        </callbackurl>
+        <projectview projectlocation="/Users/terryr/Sites/centaur.dev/apptacular_scratch" projectname="maxsms">
+            <resource path="/Users/terryr/Sites/centaur.dev/apptacular_scratch" type="project" />
         </projectview>
     </ide>
     <user />

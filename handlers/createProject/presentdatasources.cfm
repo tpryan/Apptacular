@@ -5,11 +5,14 @@
 	if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
 		rds = application.rds;
 		projectPath = url.projectPath;
+		projectName = url.projectName;
 	}
 	else{
 		rds.username = form.username;
 		rds.password = form.password;
 		projectPath = form.projectPath;
+		projectName = form.projectName;
+
 	}
 	
 	
@@ -65,6 +68,7 @@
 		<table>
 		<form action="../handlerGenerate.cfm" method="post">
 			<input type="hidden" name="projectPath" value="#projectPath#" />
+			<input type="hidden" name="projectname" value="#projectname#" />
 			<tr>
 			<th><label for="datasource">Datasource:</label></th>
 			<td>

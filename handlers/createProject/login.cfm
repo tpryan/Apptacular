@@ -11,6 +11,7 @@
 	<table>
 	<form action="presentdatasources.cfm" method="post">
 		<input type="hidden" name="projectPath" value="#url.projectPath#" />
+		<input type="hidden" name="projectName" value="#url.projectName#" />
 		<tr>
 		<th><label for="username">Username:</label></th>
 		<td><input name="username" id="username" type="text" /></td>

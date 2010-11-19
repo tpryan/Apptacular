@@ -3,6 +3,12 @@
 
 <cfparam name="form.ideeventInfo" default="<event><ide></ide></event>" />
 
+
+
+<cfif left(form.ideeventInfo, 1) neq "<">
+    <cfset form.ideeventInfo = URLDecode(form.ideeventInfo) />
+</cfif>  
+
 <cfscript>
 	
 	//Instantiate a bunch of utily objects.
@@ -18,6 +24,13 @@
 	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");
 	
 	xmldoc = XMLParse(ideeventInfo); 
+	
+	if (StructKeyExists(xmldoc.event.ide.XMLAttributes, "version")){
+	    ideVersion = xmldoc.event.ide.XMLAttributes.version;
+	}
+	else{
+		ideVersion = 1.0;
+	}    
 	
 	
 	//handle input from the rds view (Generate Application)
@@ -35,7 +48,8 @@
 		}
 		
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
-		appRoot = rootFilePath; 
+		appRoot = rootFilePath;
+		projectname = ""; 
 	}
 	//handle input from the project view (Regenerate Application)
 	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
@@ -44,6 +58,7 @@
 		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
 		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 		appRoot = utils.findAppRoot(rootFilePath,resourcePath);
+		projectname = XMLDoc.event.ide.projectview.XMLAttributes.projectname;
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
@@ -75,7 +90,8 @@
 		}
 		
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
-		appRoot = rootFilePath; 
+		appRoot = rootFilePath;
+		projectname = form.projectname; 
 	}
 
 
@@ -115,7 +131,7 @@
 	
 	<cfif isApptacular.RecordCount eq 0 and otherFiles.RecordCount gt 0>
 		<cfset messagesPath = getDirectoryFromPath(cgi.script_name) & "/handlerGenerateWarning.cfm" />
-		<cfset messagesOptions = "?rootFilePath=#rootFilePath#&amp;dsName=#dsName#" />
+		<cfset messagesOptions = "?rootFilePath=#rootFilePath#&amp;dsName=#dsName#&projectname=#projectname#" />
 		<cfset messagesURL = baseURL  & messagesPath & messagesOptions />
 		
 		<cf_ideWrapper messageURL="#messagesURL#" />
@@ -235,7 +251,7 @@
 		
 		
 		messagesPath = getDirectoryFromPath(cgi.script_name) & "/messages.cfm";
-		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#";
+		messagesOptions = "?type=generated&amp;fileCount=#generator.fileCount()#&amp;seconds=#TickCount#&amp;ideeventInfo=#UrlEncodedFormat(form.ideeventInfo)#";
 		messagesURL = baseURL  & messagesPath & messagesOptions;
 		
 		
@@ -254,7 +270,7 @@
 </cfthread>
 
 
-<cf_ideWrapper messageURL="#messagesURL#">
+<cf_ideWrapper messageURL="#messagesURL#" ideVersion="#ideVersion#" projectname="#projectname#">
 <commands>
 	<command name="refreshproject">
 		<params>

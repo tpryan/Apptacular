@@ -3,6 +3,11 @@
 	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
 </cfif>
 
+<cfif left(form.ideeventInfo, 1) neq "<">
+    <cfset form.ideeventInfo = URLDecode(form.ideeventInfo) />
+</cfif>
+
+
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "editConfig/editconfig.cfm" />
 <cfset handlerURL = "http://" & cgi.server_name & handlerPath />
 
@@ -29,4 +34,4 @@
 	<cfabort> 
 </cfif>
 
-<cf_ideWrapper messageURL="#handlerURL#?configPath=#configPath#" /> 
+<cf_ideWrapper messageURL="#handlerURL#?configPath=#configPath#&amp;ideeventInfo=#UrlEncodedFormat(form.ideeventInfo)#" /> 

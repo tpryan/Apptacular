@@ -15,9 +15,11 @@
 	
 	if (structKeyExists(XMLDoc.event.ide, "eventinfo")){
 		projectPath = XMLDoc.event.ide.eventinfo.XMLAttributes.projectlocation;
+		projectname = XMLDoc.event.ide.eventinfo.XMLAttributes.projectname; 
 	}
 	else{
 		projectPath = XMLDoc.event.ide.projectview.resource.XmlAttributes['path'];
+		projectname = XMLDoc.event.ide.projectview.XMLAttributes.projectname; 
 	}
 	
 	
@@ -25,6 +27,6 @@
 </cfscript>
 
 
-<cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#" />
+<cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#&amp;projectname=#projectname#" />
 
 
