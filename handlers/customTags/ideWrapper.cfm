@@ -6,8 +6,13 @@
     
 <cfif thisTag.executionMode is "start">
 <cfparam name="attributes.messageURL" type="string" />
-    
-<cfset attributes.messageURL = attributes.messageURL & "&amp;ideVersion=#attributes.ideVersion#" />    
+
+<cfif Find("?",attributes.messageURL) gt 0>
+	<cfset attributes.messageURL = attributes.messageURL & "&amp;ideVersion=#attributes.ideVersion#" /> 
+<cfelse>
+   	<cfset attributes.messageURL = attributes.messageURL & "?ideVersion=#attributes.ideVersion#" />  
+</cfif>                
+   
 
 <cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT) eq 0>
 	<cflocation url="#ReplaceNoCase(attributes.messageURL, "&amp;", "&","ALL")#" addtoken="false" />
