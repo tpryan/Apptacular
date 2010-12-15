@@ -6,7 +6,7 @@
 
 
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "editDB/editActiveTables.cfm" />
-<cfset handlerURL = "http://" & cgi.server_name & handlerPath />
+<cfset handlerURL = "http://" & cgi.server_name & ":" & cgi.server_port & handlerPath />
 
 <cfscript>
 	utils = New cfc.utils.utils();
