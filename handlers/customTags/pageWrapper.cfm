@@ -248,7 +248,18 @@
 </cfif>
 <div id="header"></div>
 
+<cfif structKeyExists(url, "ideeventInfo")>
+	<cfset url.ideeventinfo = XMLParse(url.ideeventinfo) />
+</cfif>    
+
+<cfif structKeyExists(form, "ideeventInfo") and (structKeyExists(form, "ideversion") AND form.ideversion gte 2)>
+	<cfset url.ideeventInfo = form.ideeventInfo />   
+</cfif>
+
+
+
 <cfif structKeyExists(url, "ideeventInfo") and (structKeyExists(url, "ideversion") AND url.ideversion gte 2)>
+    
  	<form class="menuoption" action="/apptacular/handlers/handlerGenerate.cfm" method="post">
  		<cfoutput>
  		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
@@ -258,6 +269,7 @@
  	</form>
 	<form class="menuoption" action="/apptacular/handlers/handlerEditConfig.cfm" method="post">
  		<cfoutput>
+ 		    <input name="ideversion" type="hidden" value="#url.ideversion#" />
  		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
 			<input class="submit"  type="submit" name="submit" value="Edit Application Configuration" />
  		</cfoutput>
@@ -265,6 +277,7 @@
  	</form>
 	<form class="menuoption" action="/apptacular/handlers/handlerEditDB.cfm" method="post">
  		<cfoutput>
+ 		    <input name="ideversion" type="hidden" value="#url.ideversion#" />
  		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
 			<input class="submit"  type="submit" name="submit" value="Edit Database Data Model" />
  		</cfoutput>

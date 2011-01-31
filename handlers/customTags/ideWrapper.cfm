@@ -2,7 +2,8 @@
 <cfprocessingdirective suppresswhitespace="yes">
     
 <cfparam name="attributes.ideVersion" type="numeric" default="1.0" >
-<cfparam name="attributes.projectname" type="string" default="" >   
+<cfparam name="attributes.projectname" type="string" default="" > 
+<cfparam name="attributes.rootFilePath" type="string" default="" >    
     
 <cfif thisTag.executionMode is "start">
 <cfparam name="attributes.messageURL" type="string" />
@@ -11,10 +12,15 @@
 	<cfset attributes.messageURL = attributes.messageURL & "&amp;ideVersion=#attributes.ideVersion#" /> 
 <cfelse>
    	<cfset attributes.messageURL = attributes.messageURL & "?ideVersion=#attributes.ideVersion#" />  
-</cfif>                
-   
+</cfif>
+
+
+<cfif structKeyExists(url, "ideeventInfo")>
+   	<cfset attributes.messageURL = attributes.messageURL & "&amp;ideeventInfo=#UrlEncodedFormat(url.ideeventInfo)#" />  
+</cfif> 
 
 <cfif FindNoCase("Jakarta",cgi.HTTP_USER_AGENT) eq 0>
+    <cflog text="Redirecting out of Eclipse Browser - #attributes.messageURL#" >
 	<cflocation url="#ReplaceNoCase(attributes.messageURL, "&amp;", "&","ALL")#" addtoken="false" />
 </cfif>
 

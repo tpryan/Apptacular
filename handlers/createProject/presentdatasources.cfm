@@ -1,17 +1,20 @@
-﻿<cfscript>
-
+﻿
+<cfscript>
+	
 	loginFail = false;
 
 	if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
 		rds = application.rds;
 		projectPath = url.projectPath;
 		projectName = url.projectName;
+		ideVersion = url.ideVersion;
 	}
 	else{
 		rds.username = form.username;
 		rds.password = form.password;
 		projectPath = form.projectPath;
 		projectName = form.projectName;
+		ideVersion = form.ideVersion;
 
 	}
 	
@@ -55,7 +58,7 @@
 </cfscript>
 
 <cfif loginFail>
-	<cflocation url="login.cfm?message=loginFail&projectPath=#projectPath#" addtoken="false" />
+	<cflocation url="login.cfm?message=loginFail&projectPath=#projectPath#&ideVersion=#ideVersion#" addtoken="false" />
 
 	<cfabort>
 </cfif>
@@ -69,6 +72,7 @@
 		<form action="../handlerGenerate.cfm" method="post">
 			<input type="hidden" name="projectPath" value="#projectPath#" />
 			<input type="hidden" name="projectname" value="#projectname#" />
+			<input type="hidden" name="ideVersion" value="#ideVersion#" />
 			<tr>
 			<th><label for="datasource">Datasource:</label></th>
 			<td>

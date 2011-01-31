@@ -25,6 +25,9 @@
 	
 	xmldoc = XMLParse(ideeventInfo); 
 	
+	
+	writeDump(xmlDoc,"console");
+	
 	if (StructKeyExists(xmldoc.event.ide.XMLAttributes, "version")){
 	    ideVersion = xmldoc.event.ide.XMLAttributes.version;
 	}
@@ -91,7 +94,8 @@
 		
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
 		appRoot = rootFilePath;
-		projectname = form.projectname; 
+		projectname = form.projectname;
+		ideVersion = ListFirst(form.ideVersion); 
 	}
 
 
@@ -270,7 +274,7 @@
 </cfthread>
 
 
-<cf_ideWrapper messageURL="#messagesURL#" ideVersion="#ideVersion#" projectname="#projectname#">
+<cf_ideWrapper messageURL="#messagesURL#" ideVersion="#ideVersion#" projectname="#projectname#" rootFilePath="#rootFilePath#">
 <commands>
 	<command name="refreshproject">
 		<params>

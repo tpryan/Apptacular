@@ -22,11 +22,20 @@
 		projectname = XMLDoc.event.ide.projectview.XMLAttributes.projectname; 
 	}
 	
+	if (StructKeyExists(xmldoc.event.ide.XMLAttributes, "version")){
+	    ideVersion = xmldoc.event.ide.XMLAttributes.version;
+	}
+	else{
+		ideVersion = 1.0;
+	}    
+	
 	
 	handlerURL = baseURL & handlerPath;
 </cfscript>
 
 
-<cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#&amp;projectname=#projectname#" />
+
+
+<cf_ideWrapper messageURL="#handlerURL#?projectPath=#projectPath#&amp;projectname=#projectname#&amp;ideVersion=#ideVersion#" ideVersion="#ideVersion#" />
 
 

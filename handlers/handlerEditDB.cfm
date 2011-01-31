@@ -1,4 +1,12 @@
 <cfsetting showdebugoutput="FALSE" />
+<cfparam name="form.ideVersion" default="1.0" type="any" />
+
+
+<cfif not isSimpleValue (form.ideVersion)>
+	<cfset form.ideVersion =  form.ideVersion.event.ide.version />   
+</cfif>
+
+
 <cfif not structKeyExists(form, "ideeventInfo")>
 	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
 </cfif>
@@ -49,4 +57,4 @@
 	FileWrite(configPath, configXML);
 </cfscript>
 
-<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#&amp;ideeventInfo=#UrlEncodedFormat(form.ideeventInfo)#" />
+<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#&amp;ideeventInfo=#UrlEncodedFormat(form.ideeventInfo)#&amp;ideVersion=#form.ideVersion#" /> 
