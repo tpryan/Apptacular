@@ -1,6 +1,10 @@
 <cfparam name="url.projectPath" type="string" />
 <cfparam name="url.message" type="string" default="" />
-<cfparam name="url.ideVersion" type="numeric" default="1.0" />
+<cfparam name="url.ideVersion" type="any" default="1.0" />
+
+<!--- TODO: Go back and figure out why two ideVersions are added. For now fix. --->
+<cfset url.ideVersion = ListFirst(url.ideVersion) />
+
 <cf_pageWrapper>
 <cfoutput>
 	<cfif FindNoCase("loginFail", url.message)>
