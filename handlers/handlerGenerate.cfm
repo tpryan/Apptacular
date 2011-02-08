@@ -99,10 +99,47 @@
 	}
 
 
-
-
 </cfscript>	
 
+<!--- TODO: Come up with a better solution to this problem... or adopt it full scale --->
+<cfif not isNull(appRoot) and len(appRoot) gt 0>
+	<cfset application.currentproject.path = appRoot />
+</cfif>
+<cfif not isNull(projectname) and len(projectname) gt 0>
+	<cfset application.currentproject.name = projectname />
+</cfif>
+
+<cfif not isNull(dsname) and len(dsname) gt 0>
+	<cfset application.currentproject.datsource = dsname />
+</cfif>
+
+<cfif not isNull(dbConfigPath) and len(dbConfigPath) gt 0>
+	<cfset application.currentproject.dbconfigpath = dbConfigPath />
+</cfif>
+
+<cfif not isNull(rootFilePath) and len(rootFilePath) gt 0>
+	<cfset application.currentproject.rootFilePath = rootFilePath />
+</cfif>
+
+<cfif not isNull(ideversion) and len(ideversion) gt 0>
+	<cfset application.ideversion = ideversion />
+</cfif>
+
+<cfif isNull(appRoot)>
+	<cfset approot = application.currentproject.path />
+</cfif>
+<cfif isNull(projectname)>
+	<cfset projectname = application.currentproject.name />
+</cfif>
+<cfif isNull(dsName)>
+	<cfset dsName = application.currentproject.datsource />
+</cfif>	
+<cfif isNull(dbConfigPath)>
+	<cfset dbConfigPath = application.currentproject.dbConfigPath />
+</cfif>	
+<cfif isNull(rootFilePath)>
+	<cfset rootFilePath = application.currentproject.rootFilePath />
+</cfif>	
 	
 <cfif failed>
 	<cf_ideWrapper messageURL="#messagesURL#" />
@@ -112,8 +149,13 @@
 <!--- New test to make sure that you do not build an apptacular project into a populated
 		project without asking.  --->
 
-<cfif not structKeyExists(form, "confirmed")>		
+<cfif not structKeyExists(form, "confirmed")>
+	
+	
+	
 	<cfdirectory action="list" directory="#appRoot#" name="projectFiles" listinfo="name" />
+	
+	
 	
 	<cfquery name="isApptacular" dbtype="query">
 		SELECT 	*
@@ -143,6 +185,8 @@
 	</cfif>
 
 </cfif>
+
+
 
 <cfscript>
 	log = New cfc.utils.log(dsName);
