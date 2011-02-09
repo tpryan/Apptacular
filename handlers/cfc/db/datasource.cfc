@@ -45,6 +45,7 @@ component accessors="true" extends="dbItem"
 	public void function populateTables(){
 		var i = 0;
 		var j = 0;
+		var k = 0;
 		var tablesArray = ArrayNew(1);
 		var tablesStruct = StructNew();
 		var tablesStructKey = ArrayNew(1);
