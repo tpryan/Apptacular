@@ -2,7 +2,7 @@
 
 
 <cfinclude template="inc_CreateListOfExtra.cfm" />
-
+<cfset approot = builderHelper.getProjectPath() />
 
 
 
@@ -11,8 +11,8 @@
 
 	<h1>Extra Files</h1>
 	<cfoutput>
-	<h2>#url.approot#</h2>
-	<form action="deleteProcess.cfm?appRoot=#url.appRoot#" method="post" name="deleteForm">
+	<h2>#approot#</h2>
+	<form action="deleteProcess.cfm?appRoot=#appRoot#" method="post" name="deleteForm">
 	<cfif extrafilesList.RecordCount gt 1>
 		<input type="button" name="CheckAll" value="Check All" onClick="checkAll(document.deleteForm.filesToDelete)">
 		<input type="button" name="UnCheckAll" value="Uncheck All" onClick="uncheckAll(document.deleteForm.filesToDelete)">
@@ -21,7 +21,7 @@
 	<ul>
 	<cfoutput query="extrafilesList">
 		<li><label><input name="filesToDelete" type="checkbox" value="#path#" />
-		..#ReplaceNoCase(path, url.appRoot, "", "all")#</label></li>
+		..#ReplaceNoCase(path, appRoot, "", "all")#</label></li>
 	</cfoutput>
 	</ul>
 	

@@ -1,4 +1,5 @@
 <cfscript>
+	BuilderHelper = application.builderHelper;
 	failed = FALSE;
 	utils = New apptacular.handlers.cfc.utils.utils();
 	FS = createObject("java", "java.lang.System").getProperty("file.separator");
@@ -6,8 +7,8 @@
 	
 	
 	// get folders needed for these operations. 
-	rootFilePath = url.appRoot;
-	resourcePath = url.appRoot;
+	rootFilePath = builderHelper.getProjectPath();
+	resourcePath = builderHelper.getResourcePath();
 	dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 	
 	

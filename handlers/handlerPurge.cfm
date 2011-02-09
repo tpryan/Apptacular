@@ -1,21 +1,24 @@
 <cfsetting showdebugoutput="FALSE" />
-<cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
-</cfif>
+
+<cfif structKeyExists(form, "ideeventinfo")>
+	<cfset builderHelper = new cfc.utils.builderHelper(form.ideEventInfo) />
+	<cfset application.BuilderHelper = builderHelper />
+<cfelse>
+	<cfset BuilderHelper = application.builderHelper />	 
+</cfif>	
 
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "purge/showlist.cfm" />
 <cfset handlerURL = "http://" & cgi.server_name & ":" & cgi.server_port & handlerPath />
 <cfscript>
 	utils = New cfc.utils.utils();
-	XMLDoc = xmlParse(ideeventInfo);
 	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
 	
 	handlerPath = getDirectoryFromPath(cgi.script_name) & "purge/showlist.cfm" ;
 	handlerURL = baseURL & handlerPath;
 	
-	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-	resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
+	projectPath = builderHelper.getProjectPath();
+	resourcePath = builderHelper.getResourcePath();
 	configPath = utils.findConfig(projectPath,resourcePath);
 </cfscript>
 
@@ -34,4 +37,4 @@
 
 <cfset appRoot = utils.findAppRoot(projectPath,resourcePath) />
 
-<cf_ideWrapper messageURL="#handlerURL#?appRoot=#appRoot#" />
+<cf_ideWrapper messageURL="#handlerURL#" ideVersion="#builderHelper.getCFBuilderVersion()#" />
