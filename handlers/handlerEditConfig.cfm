@@ -1,9 +1,4 @@
 <cfsetting showdebugoutput="FALSE" />
-<cfparam name="form.ideVersion" default="1.0" type="any" />
-
-<cfif not isSimpleValue (form.ideVersion)>
-	<cfset form.ideVersion =  form.ideVersion.event.ide.version />   
-</cfif>
 
 <cfif structKeyExists(form, "ideeventinfo")>
 	<cfset builderHelper = new cfc.utils.builderHelper(form.ideEventInfo) />

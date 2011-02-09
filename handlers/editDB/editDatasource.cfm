@@ -1,11 +1,15 @@
 
 <cfsetting showdebugoutput="FALSE" />
 
-<cfif StructKeyExists(url, "datasourcePath")>
-	<cfset schemaPath= url.datasourcePath />
-</cfif>
 
 <cfscript>
+	builderHelper = application.builderhelper;
+	utils = New apptacular.handlers.cfc.utils.utils();
+	projectPath = BuilderHelper.getProjectPath();
+	resourcePath = BuilderHelper.getResourcePath();
+	configPath = utils.findConfig(projectPath,resourcePath);
+	schemaPath = utils.findConfig(projectPath,resourcePath, "schema");
+	
 	variables.NL = createObject("java", "java.lang.System").getProperty("line.separator");
 	variables.FS = createObject("java", "java.lang.System").getProperty("file.separator");	
 	files = DirectoryList(schemaPath, true, "query", "*.xml");
