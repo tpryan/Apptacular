@@ -31,7 +31,7 @@
 		<cfif attributes.ideVersion lt 2.0>
 			<dialog title="Apptacular" image="handlers/logo.png"  width="710" height="530" />
 		<cfelse>
-		    <view id="ApptacularView" title="Apptacular" />
+		    <view id="ApptacularView" title="Apptacular" icon="handlers/icon.png" />
 			<cfif len(attributes.projectname)>
 				<commands>
 					<command type="refreshProject">
