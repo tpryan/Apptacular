@@ -1,7 +1,11 @@
 <cfsetting showdebugoutput="FALSE" />
-<cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
-</cfif>
+
+<cfif structKeyExists(form, "ideeventinfo")>
+	<cfset builderHelper = new cfc.utils.builderHelper(form.ideEventInfo) />
+	<cfset application.BuilderHelper = builderHelper />
+<cfelse>
+	<cfset BuilderHelper = application.builderHelper />	 
+</cfif>	
 
 
 
@@ -14,8 +18,8 @@
 	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
 	
-	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-	resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
+	projectPath = builderHelper.getProjectPath();
+	resourcePath = builderHelper.getResourcePath();
 	configPath = utils.findConfig(projectPath,resourcePath);
 	schemaPath = utils.findConfig(projectPath,resourcePath, "schema");
 	
@@ -42,4 +46,4 @@
 	FileWrite(configPath, configXML);
 </cfscript>
 
-<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#" />
+<cf_ideWrapper messageURL="#handlerURL#?datasourcePath=#schemaPath#" ideVersion="#builderHelper.getCFBuilderVersion()#" /> 
