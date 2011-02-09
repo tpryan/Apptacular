@@ -14,7 +14,7 @@
 <cfzip action="unzip" destination="#apptacularPArentFolder#" file="#resultFile#" overwrite="true" />
 <cfset fileDelete(resultFile) />
 
-<cf_pageWrapper>
+<cf_pageWrapper showToolbar="false">
 	<cfoutput><p>Apptacular has been updated to version #application.update.getLatestVersion()#</p></cfoutput>
 </cf_pageWrapper>
 <cfset applicationStop() />

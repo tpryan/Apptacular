@@ -1,4 +1,4 @@
-<cf_pageWrapper>
+<cf_pageWrapper showToolbar="false">
 	
 	<cfset isOnline = application.update.isOnline() />
 	
