@@ -1,18 +1,27 @@
 <cfsetting showdebugoutput="FALSE" />
-<cfset configPath= url.configPath />
-<cfset message = "" />
-<cfset config = "apptacular.handlers.cfc.generators.cfapp.config" />
-<cfset docHelper = new apptacular.handlers.cfc.utils.docHelper(config) />
-<cfset configFileService = new apptacular.handlers.services.configFileService() />
-<cfset configFileService.setConfigFile(url.configPath) />
 
-<cfif structKeyExists(form, "submit") and not FindNoCase("references", form.submit)>
-		
-	<cfset configFileService.setConfigs(form) />
-	<cfset configFileService.save() />
+<cfscript>
+	utils = New apptacular.handlers.cfc.utils.utils();
+	cgiUtils = New apptacular.handlers.cfc.utils.cgiUtils(cgi);
+	projectPath = application.builderHelper.getProjectPath();
+	resourcePath = application.builderHelper.getResourcePath();
+	configPath = utils.findConfig(projectPath,resourcePath);
+	message = "";
+	config = "apptacular.handlers.cfc.generators.cfapp.config";
+	docHelper = new apptacular.handlers.cfc.utils.docHelper(config);
+	configFileService = new apptacular.handlers.services.configFileService();
+	configFileService.setConfigFile(configPath);	
 
-	<cfset message = "Changes Saved" />
-</cfif>
+	if (structKeyExists(form, "submit") && not FindNoCase("references", form.submit)){
+		configFileService.setConfigs(form);
+		configFileService.save();
+		message = "Changes Saved";
+	}	
+
+
+</cfscript>	
+
+
 
 
 <cf_pageWrapper>

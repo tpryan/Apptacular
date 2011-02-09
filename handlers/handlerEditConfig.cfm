@@ -4,13 +4,15 @@
 <cfif not isSimpleValue (form.ideVersion)>
 	<cfset form.ideVersion =  form.ideVersion.event.ide.version />   
 </cfif>
-<cfif not structKeyExists(form, "ideeventInfo")>
-	<cffile action="read" file="#ExpandPath('./sampleEditSchema.xml')#" variable="ideeventInfo" />
-</cfif>
 
-<cfif left(form.ideeventInfo, 1) neq "<">
-    <cfset form.ideeventInfo = URLDecode(form.ideeventInfo) />
-</cfif>
+<cfif structKeyExists(form, "ideeventinfo")>
+	<cfset builderHelper = new cfc.utils.builderHelper(form.ideEventInfo) />
+	<cfset application.BuilderHelper = builderHelper />
+<cfelse>
+	<cfset BuilderHelper = application.builderHelper />	 
+</cfif>	
+
+
 
 
 <cfset handlerPath = getDirectoryFromPath(cgi.script_name) & "editConfig/editconfig.cfm" />
@@ -20,9 +22,8 @@
 	utils = New cfc.utils.utils();
 	cgiUtils = New cfc.utils.cgiUtils(cgi);
 	baseURL = cgiUtils.getBaseURL();
-	XMLDoc = xmlParse(ideeventInfo);
-	projectPath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-	resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
+	projectPath = BuilderHelper.getProjectPath();
+	resourcePath = BuilderHelper.getResourcePath();
 	configPath = utils.findConfig(projectPath,resourcePath);
 </cfscript>
 
@@ -39,4 +40,4 @@
 	<cfabort> 
 </cfif>
 
-<cf_ideWrapper messageURL="#handlerURL#?configPath=#configPath#&amp;ideeventInfo=#UrlEncodedFormat(form.ideeventInfo)#&amp;ideVersion=#form.ideVersion#" /> 
+<cf_ideWrapper messageURL="#handlerURL#" ideVersion="#builderHelper.getCFBuilderVersion()#" /> 
