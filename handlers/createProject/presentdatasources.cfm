@@ -2,54 +2,58 @@
 <cfscript>
 	
 	loginFail = false;
+	builderHelper = application.builderHelper;
+	projectPath = builderHelper.getProjectPath();
+	projectName = builderHelper.getProjectName();
+	ideVersion = builderHelper.getCFBuilderVersion();
 
-	if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
-		rds = application.rds;
-	}
-	else{
-		rds.username = form.username;
-		rds.password = form.password;
-		
-
-	}
 	
 	
-	projectPath = application.builderHelper.getProjectPath();
-	projectName = application.builderHelper.getProjectName();
-	ideVersion = application.builderHelper.getCFBuilderVersion();
+	if (builderHelper.getCFBuilderVersion() < 2){
 	
-	
-	try{
-		admin= New CFIDE.adminapi.administrator();
-		admin.login(rds.password, rds.username);
-		datasource = new CFIDE.adminapi.datasource();
-		datasources = datasource.getDatasources();
-		datasourceArray = StructKeyArray(datasources);
-		ArraySort(datasourceArray, "textnocase", "asc");
-		
-		
-		if (structKeyExists(form, "rememberme")){
-		application.rds = {};
-		application.rds.username = form.username;
-		application.rds.password = form.password;
-		application.rds.rememberMe = true;
-	}
-		
-	}	
-	catch(any e){
-		if (FindNoCase("CFACCESSDENIED", e.errorcode)){
-			loginFail = true;
-			application.rds = {};
-			application.rds.username = "";
-			application.rds.password = "";
-			application.rds.rememberMe = false;
+		if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
+			rds = application.rds;
 		}
 		else{
-			writeDump(e);
-			rethrow;
+			rds.username = form.username;
+			rds.password = form.password;
 		}
 	
+		try{
+			admin= New CFIDE.adminapi.administrator();
+			admin.login(rds.password, rds.username);
+			datasource = new CFIDE.adminapi.datasource();
+			datasources = datasource.getDatasources();
+			datasourceArray = StructKeyArray(datasources);
+			ArraySort(datasourceArray, "textnocase", "asc");
+			
+			
+			if (structKeyExists(form, "rememberme")){
+			application.rds = {};
+			application.rds.username = form.username;
+			application.rds.password = form.password;
+			application.rds.rememberMe = true;
+		}
+			
+		}	
+		catch(any e){
+			if (FindNoCase("CFACCESSDENIED", e.errorcode)){
+				loginFail = true;
+				application.rds = {};
+				application.rds.username = "";
+				application.rds.password = "";
+				application.rds.rememberMe = false;
+			}
+			else{
+				writeDump(e);
+				rethrow;
+			}
+		}
 	}
+	else{
+		datasourceArray = builderHelper.getDatasources();
+	
+	}	
 	
 
 </cfscript>
@@ -74,7 +78,11 @@
 				<select name="dsName">
 					<option></option>
 					<cfloop array="#datasourceArray#" index="ds">
-						<option value="#ds#">#ds#</option>
+						<cfif IsStruct(ds)>
+							<option value="#ds.name#">#ds.name# (#ds.server#)</option>
+						<cfelse>			
+							<option value="#ds#">#ds#</option>
+						</cfif>
 					</cfloop>
 				</select>
 			</td>

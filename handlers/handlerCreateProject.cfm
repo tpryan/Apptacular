@@ -6,7 +6,7 @@
 	builderHelper = new cfc.utils.builderHelper(ideeventInfo);
 	application.builderHelper = builderHelper;
 
-	if (application.rds.rememberMe){
+	if ((application.rds.rememberMe) || (builderHelper.getCFBuilderVersion() >= 2)){
 		handlerPath = getDirectoryFromPath(cgi.script_name) & "createProject/presentdatasources.cfm";
 	}
 	else{

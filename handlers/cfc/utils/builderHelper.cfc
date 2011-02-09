@@ -125,8 +125,16 @@ component {
 		var resultOb = execute(req);
 		var result = [];
 		for(var i=1; i <= arrayLen(resultOb.event.ide.command_results.command_result.datasources.datasource); i++) {
-			arrayAppend(result, {name=resultOb.event.ide.command_results.command_result.datasources.datasource[i].xmlAttributes.name, server=resultOb.event.ide.command_results.command_result.datasources.datasource[i].xmlAttributes.server});
+			arrayAppend(result, resultOb.event.ide.command_results.command_result.datasources.datasource[i].xmlAttributes.server & "$" & resultOb.event.ide.command_results.command_result.datasources.datasource[i].xmlAttributes.name);
 		}
+		
+		ArraySort(result,"textnocase");
+		
+		for(var i=1; i <= arrayLen(result); i++) {
+			result[i] = {name=GetToken(result[i], 2, "$"),server=GetToken(result[i], 1, "$") };
+		}
+		
+		
 		return result;
 	}
 
