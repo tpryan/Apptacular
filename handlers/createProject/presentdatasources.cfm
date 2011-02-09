@@ -5,21 +5,18 @@
 
 	if (structKeyExists(application, "rds") AND structKeyExists(application.rds, "rememberme") and application.rds.rememberme){
 		rds = application.rds;
-		projectPath = url.projectPath;
-		projectName = url.projectName;
-		ideVersion = url.ideVersion;
 	}
 	else{
 		rds.username = form.username;
 		rds.password = form.password;
-		projectPath = form.projectPath;
-		projectName = form.projectName;
-		ideVersion = form.ideVersion;
+		
 
 	}
 	
 	
-	
+	projectPath = application.builderHelper.getProjectPath();
+	projectName = application.builderHelper.getProjectName();
+	ideVersion = application.builderHelper.getCFBuilderVersion();
 	
 	
 	try{
@@ -58,21 +55,19 @@
 </cfscript>
 
 <cfif loginFail>
-	<cflocation url="login.cfm?message=loginFail&projectPath=#projectPath#&ideVersion=#ideVersion#" addtoken="false" />
+	<cflocation url="login.cfm?message=loginFail" addtoken="false" />
 
 	<cfabort>
 </cfif>
 
 
-<cf_pageWrapper>
+<cf_pageWrapper showToolBar="false">
 <cfoutput>
 	<div id="content">
 		<p>Pick the datasource you'd like to use to create your application</p>
 		<table>
 		<form action="../handlerGenerate.cfm" method="post">
-			<input type="hidden" name="projectPath" value="#projectPath#" />
-			<input type="hidden" name="projectname" value="#projectname#" />
-			<input type="hidden" name="ideVersion" value="#ideVersion#" />
+			<input type="hidden" name="operation" value="createProject" />
 			<tr>
 			<th><label for="datasource">Datasource:</label></th>
 			<td>

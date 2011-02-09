@@ -12,7 +12,7 @@
 </cfquery>
 
 
-<cf_pageWrapper>
+<cf_pageWrapper showtoolbar="false">
 	<p>The folder you want to build in is already populated and is not an Apptacular app. Is this okay?</p>
 	
 	<cfoutput>

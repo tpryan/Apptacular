@@ -16,6 +16,9 @@
 	stringUtils = New cfc.utils.stringUtil();
 	reservedWordHelper = New cfc.utils.reservedWordHelper();
 	cgiUtils = New cfc.utils.cgiUtils(cgi);
+	builderHelper = new cfc.utils.builderHelper(ideeventInfo);
+	
+	
 	
 	//Set a bunch of starting values for app.
 	baseURL = cgiUtils.getBaseURL();
@@ -26,42 +29,44 @@
 	xmldoc = XMLParse(ideeventInfo); 
 	
 	
-	writeDump(xmlDoc,"console");
 	
-	if (StructKeyExists(xmldoc.event.ide.XMLAttributes, "version")){
-	    ideVersion = xmldoc.event.ide.XMLAttributes.version;
-	}
-	else{
-		ideVersion = 1.0;
-	}    
+	ideVersion = builderHelper.getCFBuilderVersion(); 
 	
 	
 	//handle input from the rds view (Generate Application)
 	if (structKeyExists(XMLDoc.event.ide, "rdsview")){
 	
-		dsName=XMLDoc.event.ide.rdsview.database[1].XMLAttributes.name;
 		rootFilePath = XMLSearch(xmldoc, "/event/user/input[@name='Location']")[1].XMLAttributes.value;
+		if (right(rootFilePath, 1) neq FS){
+			rootFilePath = rootFilePath & FS;
+		}
+		builderHelper.setProjectPath(rootFilePath);
+		builderHelper.setResourcePath(rootFilePath);
+		dsName=builderHelper.getRdsDatasource();
+		
 		
 		if (ArrayLen(XMLSearch(xmldoc, "/event/user/input[@name='GenerateRemoteServices']")) gt 0 ){
 			generateRemoteServices = XMLSearch(xmldoc, "/event/user/input[@name='GenerateRemoteServices']")[1].XMLAttributes.value;
 		}
 		
-		if (right(rootFilePath, 1) neq FS){
-			rootFilePath = rootFilePath & FS;
-		}
-		
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
 		appRoot = rootFilePath;
-		projectname = ""; 
+		projectname = builderHelper.getProjectName(); 
 	}
 	//handle input from the project view (Regenerate Application)
-	else if (structKeyExists(XMLDoc.event.ide, "projectview")){
+	else if (
+		( structKeyExists(XMLDoc.event.ide, "projectview") ) ||
+		( structKeyExists(form, "operation") && compareNoCase(form.operation,"regenerate") ==0  )
+	){
+	 	builderHelper = application.builderHelper;
 	
-		rootFilePath = XMLDoc.event.ide.projectview.XMLAttributes.projectlocation;
-		resourcePath = XMLDoc.event.ide.projectview.resource.XMLAttributes.path;
+		rootFilePath = builderHelper.getProjectPath();
+		resourcePath = builderHelper.getResourcePath();
+		projectname = builderHelper.getProjectName();
+		
 		dbConfigPath = utils.findConfig(rootFilePath,resourcePath,"schema");
 		appRoot = utils.findAppRoot(rootFilePath,resourcePath);
-		projectname = XMLDoc.event.ide.projectview.XMLAttributes.projectname;
+		
 		
 		//Short circuit non apptacular apps.
 		if (not directoryExists(dbConfigPath)){
@@ -72,21 +77,18 @@
 		}
 		else{
 			
-			dsArray = DirectoryList(dbConfigPath, false, "name");
-			
-			for (i=ArrayLen(dsArray); i >= 1; i--){
-				if (FindNoCase(".svn", dsArray[i])){
-					ArrayDeleteAt(dsArray, i);
-				}
-			}
-			dsName = dsArray[1];
+			dsArray = DirectoryList(dbConfigPath, true, "path","_datasource.xml");
+			dsName = Replace(dsArray[1], "\", "/", "ALL");
+			dsName = ListLast(getDirectoryFromPath(dsName), "/");
 		}
 		
 	}
 	//handle direct input from a form (Create Application)
-	else if (structKeyExists(form, "projectPath")){
+	else if (structKeyExists(form, "operation") && compareNoCase(form.operation, "createProject") eq 0){
+		builderHelper = application.builderHelper;
+			
 		dsName = form.dsName;
-		rootFilePath = form.projectpath;
+		rootFilePath = builderHelper.getProjectPath();
 		generateRemoteServices = StructKeyExists(form, "generateRemoteServices");
 		if (right(rootFilePath, 1) neq FS){
 			rootFilePath = rootFilePath & FS;
@@ -94,52 +96,21 @@
 		
 		dbConfigPath = rootFilePath & ".apptacular/schema"; 
 		appRoot = rootFilePath;
-		projectname = form.projectname;
-		ideVersion = ListFirst(form.ideVersion); 
+		projectname = builderHelper.getProjectName();
+		ideVersion = builderHelper.getCFBuilderVersion();
 	}
+	
 
+
+	if (len(builderHelper.getProjectPath()) > 0){
+		application.builderHelper = builderHelper;
+	}	 
+	else if (structKeyExists(application, "builderHelper")) {
+		builderHelper = application.builderHelper;
+	}	
 
 </cfscript>	
 
-<!--- TODO: Come up with a better solution to this problem... or adopt it full scale --->
-<cfif not isNull(appRoot) and len(appRoot) gt 0>
-	<cfset application.currentproject.path = appRoot />
-</cfif>
-<cfif not isNull(projectname) and len(projectname) gt 0>
-	<cfset application.currentproject.name = projectname />
-</cfif>
-
-<cfif not isNull(dsname) and len(dsname) gt 0>
-	<cfset application.currentproject.datsource = dsname />
-</cfif>
-
-<cfif not isNull(dbConfigPath) and len(dbConfigPath) gt 0>
-	<cfset application.currentproject.dbconfigpath = dbConfigPath />
-</cfif>
-
-<cfif not isNull(rootFilePath) and len(rootFilePath) gt 0>
-	<cfset application.currentproject.rootFilePath = rootFilePath />
-</cfif>
-
-<cfif not isNull(ideversion) and len(ideversion) gt 0>
-	<cfset application.ideversion = ideversion />
-</cfif>
-
-<cfif isNull(appRoot)>
-	<cfset approot = application.currentproject.path />
-</cfif>
-<cfif isNull(projectname)>
-	<cfset projectname = application.currentproject.name />
-</cfif>
-<cfif isNull(dsName)>
-	<cfset dsName = application.currentproject.datsource />
-</cfif>	
-<cfif isNull(dbConfigPath)>
-	<cfset dbConfigPath = application.currentproject.dbConfigPath />
-</cfif>	
-<cfif isNull(rootFilePath)>
-	<cfset rootFilePath = application.currentproject.rootFilePath />
-</cfif>	
 	
 <cfif failed>
 	<cf_ideWrapper messageURL="#messagesURL#" />
@@ -189,6 +160,20 @@
 
 
 <cfscript>
+
+	if (isNull(appRoot)){
+		approot = builderHelper.getProjectPath();
+	}
+	
+	if (isNull(rootfilepath)){
+		rootfilepath = builderHelper.getProjectPath();
+	}
+	
+	
+	if (isNull(dbconfigpath)){
+		dbConfigPath = rootFilePath & ".apptacular/schema"; 
+	}
+
 	log = New cfc.utils.log(dsName);
 	log.startEvent("app", "Apptacular Process");
 	

@@ -1,5 +1,6 @@
 <cfsetting showdebugoutput="false" />
 <cfprocessingdirective suppresswhitespace="yes">
+<cfparam name="attributes.showToolBar" default="true" type="boolean" >	
 <cfif thisTag.executionMode is "start">
 <cfset utils = new apptacular.handlers.cfc.utils.utils() />
 <cfset imageFolder = ReplaceNoCase(getDirectoryFromPath(getCurrentTemplatePath()), "/customtags", "/", "one") />
@@ -257,36 +258,31 @@
 </cfif>
 
 
-
-<cfif structKeyExists(application, "ideversion") and application.ideversion gte 2>
-    <cfoutput><h1>#application.currentproject.name#</h1></cfoutput>
-	
- 	<form class="menuoption" action="/apptacular/handlers/handlerGenerate.cfm" method="post">
- 		<cfoutput>
-		 	<input name="ideversion" type="hidden" value="#application.ideversion#" />
- 		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
-			<input class="submit" type="submit" name="submit" value="Regenerate Application" />
- 		</cfoutput>
+<cfif attributes.showToolBar>
+	<cfif structKeyExists(application, "builderHelper") and application.builderHelper.getCFBuilderVersion() gte 2>
+	    <cfoutput><h1>#application.builderHelper.getProjectName()#</h1></cfoutput>
 		
- 	</form>
-	<form class="menuoption" action="/apptacular/handlers/handlerEditConfig.cfm" method="post">
- 		<cfoutput>
- 		    <input name="ideversion" type="hidden" value="#application.ideversion#" />
- 		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
-			<input class="submit"  type="submit" name="submit" value="Edit Application Configuration" />
- 		</cfoutput>
-		
- 	</form>
-	<form class="menuoption" action="/apptacular/handlers/handlerEditDB.cfm" method="post">
- 		<cfoutput>
- 		    <input name="ideversion" type="hidden" value="#application.ideversion#" />
- 		    <input name="ideeventInfo" type="hidden" value="#UrlEncodedFormat(url.ideeventInfo)#" />
-			<input class="submit"  type="submit" name="submit" value="Edit Database Data Model" />
- 		</cfoutput>
-		
- 	</form>
-</cfif>    
-
+	 	<form class="menuoption" action="/apptacular/handlers/handlerGenerate.cfm" method="post">
+	 		<cfoutput>
+			 	<input type="hidden" name="operation" value="regenerate" />
+				<input class="submit" type="submit" name="submit" value="Regenerate Application" />
+	 		</cfoutput>
+			
+	 	</form>
+		<form class="menuoption" action="/apptacular/handlers/handlerEditConfig.cfm" method="post">
+	 		<cfoutput>
+				<input class="submit"  type="submit" name="submit" value="Edit Application Configuration" />
+	 		</cfoutput>
+			
+	 	</form>
+		<form class="menuoption" action="/apptacular/handlers/handlerEditDB.cfm" method="post">
+	 		<cfoutput>
+				<input class="submit"  type="submit" name="submit" value="Edit Database Data Model" />
+	 		</cfoutput>
+			
+	 	</form>
+	</cfif>    
+</cfif>
 
 <div id="content">
 <cfelse>
