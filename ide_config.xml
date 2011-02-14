@@ -5,7 +5,11 @@
 	<email>terry.ryan@adobe.com</email>	
 	<description>Generate a scaffolded application suitable for backend administration 
 	based on ColdFusion Object Relational Mapping (ORM) technology. Additionally, this will generate
-	remote services for Flex clients and unit testing code for use with MXUnit.</description>	
+	remote services for Flex clients and unit testing code for use with MXUnit.
+	
+	Please note, Apptacular REQUIRES COLDFUSION 9. It uses ORM technology that was added in version 9, 
+	and cannot use earlier versions. 
+	</description>	
 	
 	<!-- Create an onProjectCreate Handler that allows you to run apptacular when you create an app -->	
 	<events> 
