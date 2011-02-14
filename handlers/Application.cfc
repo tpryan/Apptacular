@@ -1,5 +1,6 @@
 component {
 
+	include "./application_cfsetting.cfm";
 	this.name = "apptacularhandlers";
 	this.customTagPaths = ExpandPath('customTags/');
 	this.mappings["/Apptacular"] = expandPath("../");
