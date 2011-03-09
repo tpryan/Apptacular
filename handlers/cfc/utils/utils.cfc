@@ -88,6 +88,7 @@
 			var configFile = "/.apptacular/schema";
 			
 			var pathToConfig = lresourcepath & configFile;
+			
 	
 			while (not directoryExists(pathToConfig)){
 				lresourcepath = listDeleteAt(lresourcepath, ListLen(lresourcepath, variables.FS), variables.FS);
