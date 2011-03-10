@@ -1,0 +1,12 @@
+<event>
+    <ide version="2.0">
+        <callbackurl>
+            http://10.0.1.10:51395/index.cfm?extension=ColdFusion Builder Test Creator
+        </callbackurl>
+        <projectview projectlocation="/Users/terryr/Sites/centaur.dev/apptacular" projectname="Apptacular">
+            <server contextroot="/" hostname="centaur.dev" name="centaur.dev" port="80" wwwroot="/Users/terryr/Sites/centaur.dev" />
+            <resource path="/Users/terryr/Sites/centaur.dev/apptacular/handlers/test/utils" type="folder" />
+        </projectview>
+    </ide>
+    <user />
+</event>
