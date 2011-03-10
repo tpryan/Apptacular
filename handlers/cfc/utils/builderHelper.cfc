@@ -124,7 +124,10 @@ component {
 		else req = "<response><ide><commands><command type=""getdatasources""></command></commands></ide></response>";
 		var resultOb = execute(req);
 		var result = [];
-		for(var i=1; i <= arrayLen(resultOb.event.ide.command_results.command_result.datasources.datasource); i++) {
+		
+		
+		var i=1;
+		for(i=1; i <= arrayLen(resultOb.event.ide.command_results.command_result.datasources.datasource); i++) {
 			arrayAppend(result, resultOb.event.ide.command_results.command_result.datasources.datasource[i].xmlAttributes.server & "$" & resultOb.event.ide.command_results.command_result.datasources.datasource[i].xmlAttributes.name);
 		}
 		
@@ -206,12 +209,19 @@ component {
 
 		result.name = tableOb.xmlAttributes.name;
 		result.fields = [];
-		for(var x=1; x <= arrayLen(tableOb.field); x++) {
+		var x = 1;
+		for(x=1; x <= arrayLen(tableOb.field); x++) {
 			var fieldOb = tableOb.field[x];
 			var field = {};
-			for(var key in fieldOb.xmlAttributes) {
+			
+			var keys = StructKeyArray(fieldOb.xmlAttributes);
+			var j = 1;
+			
+			for (j=1; j <= ArrayLen(keys); j++){
+				key = keys[j];
 				field[key] = fieldOb.xmlAttributes[key];
-			}
+			}	
+			
 			arrayAppend(result.fields, field);
 		}
 
@@ -236,9 +246,13 @@ component {
 			for(var x=1; x <= arrayLen(tableOb.field); x++) {
 				var fieldOb = tableOb.field[x];
 				var field = {};
-				for(var key in fieldOb.xmlAttributes) {
+				var keys = StructKeyArray(fieldOb.xmlAttributes);
+				var j = 1;
+				
+				for (j=1; j <= ArrayLen(keys); j++){
+					key = keys[j];
 					field[key] = fieldOb.xmlAttributes[key];
-				}
+				}	
 				arrayAppend(table.fields, field);
 			}
 			arrayAppend(result, table);
@@ -247,7 +261,3 @@ component {
 	}
 	
 }
-
-
-
-	
