@@ -435,6 +435,23 @@ component accessors="true" extends="dbItem"
 		excludedTableList = excludedTableList & "'xml_schema_attributes','xml_schema_collections','xml_schema_component_placements',";
 		excludedTableList = excludedTableList & "'xml_schema_components','xml_schema_elements','xml_schema_facets','xml_schema_model_groups',";
 		excludedTableList = excludedTableList & "'xml_schema_namespaces','xml_schema_types','xml_schema_wildcard_namespaces','xml_schema_wildcards'";
+		excludedTableList = excludedTableList & ",'change_tracking_tables','change_tracking_databases','conversation_priorities','cryptographic_providers'";
+		excludedTableList = excludedTableList & ",'database_audit_specification_details','database_audit_specifications','dm_audit_actions','dm_audit_class_type_map'";
+		excludedTableList = excludedTableList & ",'dm_cdc_errors','dm_cdc_log_scan_sessions','dm_cryptographic_provider_properties','dm_database_encryption_keys'";
+		excludedTableList = excludedTableList & ",'dm_db_mirroring_auto_page_repair','dm_db_mirroring_past_actions','dm_db_persisted_sku_features','dm_db_script_level'";
+		excludedTableList = excludedTableList & ",'dm_exec_procedure_stats','dm_exec_trigger_stats','dm_filestream_file_io_handles','dm_filestream_file_io_requests','dm_fts_fdhosts'";
+		excludedTableList = excludedTableList & ",'dm_fts_outstanding_batches','dm_os_dispatcher_pools','dm_os_dispatchers','dm_os_memory_brokers','dm_os_memory_node_access_stats'";
+		excludedTableList = excludedTableList & ",'dm_os_memory_nodes','dm_os_nodes','dm_os_process_memory','dm_os_spinlock_stats','dm_os_sys_memory','dm_resource_governor_configuration'";
+		excludedTableList = excludedTableList & ",'dm_resource_governor_resource_pools','dm_resource_governor_workload_groups','dm_server_audit_status','dm_tran_commit_table'";
+		excludedTableList = excludedTableList & ",'dm_xe_map_values','dm_xe_object_columns','dm_xe_objects','dm_xe_packages','dm_xe_session_event_actions','dm_xe_session_events'";
+		excludedTableList = excludedTableList & ",'dm_xe_session_object_columns','dm_xe_session_targets','dm_xe_sessions','fulltext_index_fragments','fulltext_stoplists'";
+		excludedTableList = excludedTableList & ",'fulltext_stopwords','fulltext_system_stopwords','function_order_columns','resource_governor_configuration'";
+		excludedTableList = excludedTableList & ",'resource_governor_resource_pools','resource_governor_workload_groups','server_audit_specification_details','server_audit_specifications'";
+		excludedTableList = excludedTableList & ",'server_audits','server_event_session_actions','server_event_session_events','server_event_session_fields','server_event_session_targets'";
+		excludedTableList = excludedTableList & ",'server_event_sessions','server_file_audits','server_principal_credentials','spatial_index_tessellations','spatial_indexes'";
+		excludedTableList = excludedTableList & ",'spatial_reference_systems','sql_expression_dependencies','syscursorcolumns','syscursorrefs','syscursors','syscursortables'";
+		excludedTableList = excludedTableList & ",'table_types','trigger_event_types'";
+	
 	
 		return excludedTableList;
 	}
